@@ -6,6 +6,16 @@ The first example collection supports the University of Basel M365 Deep Dives wi
 
 ## Available now
 
+**Prototype library (branch `prototype/visual-library-v1`, not yet reviewed or merged).** Open `index.html`:
+- Landing with three entries: Persona wählen, Use Case wählen, Eigene Situation.
+- Five university worlds plus one fictional business department (Brunner Haustechnik AG, Kundenportal project); all seven legacy scenarios reachable.
+- Six-question deterministic configurator with rationale, assumptions, an alternative and live name preview.
+- Szene (Teams-inspired channel with Beiträge / Dateien / Aufgaben tabs, or a personal OneDrive/To Do view) and three Prinzip explainers, sharing people, names and setup variant.
+- Präsentieren: 16:9 stage, annotations on/off (H), exit with Esc. PNG/SVG export is not implemented.
+See [the prototype handoff](docs/PROTOTYPE-HANDOFF.md) for tests, screenshots and limitations.
+
+**Seed atlas** (now `atlas.html`, unchanged apart from a link back to the library):
+
 A working, offline-capable atlas migrated from [m365-toolbox](https://github.com/blackmath88/m365-toolbox):
 - Five university working worlds: administration, research, individual academic work, a commission and teaching.
 - 24 fictional people, 45 artefacts, seven scenarios and 25 decision points.
@@ -13,7 +23,7 @@ A working, offline-capable atlas migrated from [m365-toolbox](https://github.com
 - Personal OneDrive + To Do scenes where a Team is unnecessary.
 - Keyboard-accessible view controls and a print briefing.
 
-Open `index.html` in a browser. No install, account, Microsoft tenant, backend or build is required. Edit `worlds.js` to change the existing collection, then run:
+Open `atlas.html` for the seed atlas. No install, account, Microsoft tenant, backend or build is required. Edit `worlds.js` to change the existing collection, then run:
 
 ```sh
 node check-worlds.mjs
@@ -25,7 +35,7 @@ node check-worlds.mjs
 
 A world holds people, roles, relationships and collaboration structure. Scenarios describe specific situations and learning decisions. Scenes render the selected situation as a recognisable collaboration interface.
 
-The existing atlas is the seed viewer. The next Weavr test targets a landing/library, lightweight configurator, Szene / Prinzip visual modes and 16:9 presentation, including one business example. A full editor, portable collections and PNG export are later work. None of these new capabilities is implemented yet. Today, authoring means editing the data file; print produces a briefing.
+The existing atlas is the seed viewer. The next Weavr test targets a landing/library, lightweight configurator, Szene / Prinzip visual modes and 16:9 presentation, including one business example. A full editor, portable collections and PNG export are later work. A first prototype of these is on the branch above (see the handoff); the full editor, portable collections and export are not implemented. Authoring still means editing the data files; the atlas print produces a briefing.
 
 The planned library includes Business and Higher Education. Two main modes share the same situation: Szene (screenshot-like) and Prinzip (conceptual explanations, setup maps and comparisons).
 
@@ -41,7 +51,9 @@ The planned library includes Business and Higher Education. Two main modes share
 
 | Path | Purpose |
 | --- | --- |
-| `index.html`, `atlas.css`, `atlas.js` | Seed atlas and scene viewer |
+| `index.html`, `src/` | Prototype library: `library.js` (business fixture, situations, use cases), `model.js` (thin v3 adapter), `configurator.js`, `views.js` (Szene/Prinzip), `app.js` (router, state, presentation), `app.css` |
+| `atlas.html`, `atlas.css`, `atlas.js` | Seed atlas and scene viewer (legacy) |
+| `tests/` | `model.test.mjs` (node --test), `journey.mjs` + `cdp.mjs` (headless Chromium journey and screenshots) |
 | `worlds.js` | Existing Unibas example collection; compatibility schema v2 |
 | `check-worlds.mjs` | Dependency-free content and scene validation |
 | `assets/tokens.css` | Locally copied visual tokens |

@@ -8,6 +8,10 @@ PR #1 (atlas extraction) and PR #2 (initial plan/research prompt) are merged. Th
 
 Current task: revise the build plan to the agreed visual-first scope and integrate the documentation directly into main, as explicitly requested. Documentation only; no implementation or Weavr dispatch in this task.
 
+## Prototype run (2026-10-28)
+
+Branch `prototype/visual-library-v1` (base `759c94b`) holds a first visual-first prototype built in a direct Claude session: landing/library, configurator, Szene, three Prinzip explainers and Präsentieren, with unit and headless-browser tests. It is unreviewed and unmerged. See [PROTOTYPE-HANDOFF.md](PROTOTYPE-HANDOFF.md).
+
 ## Implemented versus planned
 
 Implemented: the seed atlas, five higher-education worlds, data-driven scenes and print briefings.
