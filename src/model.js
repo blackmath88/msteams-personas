@@ -128,7 +128,16 @@
     var peopleNames = names.people || {};
     var scene, principles;
 
-    if (s.complete) {
+    if (s.complete && s.personalScene) {
+      var ps = s.personalScene, me = w.people[0].id;
+      scene = {
+        personal: true, team: w.people[0].name, teamNote: ps.note, active: 'Dateien', channels: [], members: [me], posts: [],
+        files: ps.files.map(function (f) { return { name: f.name, kind: f.kind, by: me, when: '', note: f.note, mark: f.mark }; }),
+        tasks: ps.todo.map(function (x) { return { title: x, owner: me, due: '', bucket: 'To Do', done: false }; }),
+        outside: ps.outside || [], notes: ps.notes || {}
+      };
+      principles = s.principles;
+    } else if (s.complete) {
       scene = {
         personal: false, team: variant.team, teamNote: variant.teamNote, active: variant.active,
         channels: variant.channels, members: variant.members,
@@ -141,7 +150,7 @@
     }
 
     var people = w.people.map(function (p, i) {
-      return { id: p.id, idx: i, original: p.name, name: peopleNames[p.id] || p.name, role: p.role, external: !!p.external || ((a && a.map && a.map.external_people) || []).indexOf(p.id) >= 0, outside: ((a && a.map && a.map.outside) || []).indexOf(p.id) >= 0 || !!p.external };
+      return { id: p.id, idx: i, original: p.name, name: peopleNames[p.id] || p.name, role: p.role, external: !!p.external || ((a && a.map && a.map.external_people) || []).indexOf(p.id) >= 0, outside: ((a && a.map && a.map.outside) || []).indexOf(p.id) >= 0 || !!p.outside };
     });
     var byId = {};
     people.forEach(function (p) { byId[p.id] = p; });

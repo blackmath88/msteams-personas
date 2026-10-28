@@ -7,7 +7,7 @@ import vm from 'node:vm';
 const ctx = { window: {} };
 ctx.globalThis = ctx;
 vm.createContext(ctx);
-for (const f of ['worlds.js', 'src/library.js', 'src/model.js', 'src/configurator.js']) vm.runInContext(readFileSync(new URL('../' + f, import.meta.url), 'utf8'), ctx);
+for (const f of ['worlds.js', 'src/library.js', 'src/library-he.js', 'src/model.js', 'src/configurator.js']) vm.runInContext(readFileSync(new URL('../' + f, import.meta.url), 'utf8'), ctx);
 // model.js / configurator.js attach to window
 const { Model, Configurator, LIB, HE_WORLDS } = ctx.window;
 
@@ -34,10 +34,12 @@ test('all situation references resolve (people, use cases, principles)', () => {
     for (const pid of ['chat', 'doc', 'tasks']) {
       const b = v.principles[pid];
       assert.ok(b && b.recommend, `${s.id}: principle ${pid} recommendation`);
-      for (const ref of [...(b.inChat || []), ...(b.later || []), ...(b.editors || []), ...(b.personal || []).map(x => x.who), ...(b.shared || []).map(x => x.who)])
+      for (const ref of [...(b.inChat || []), ...(b.later || []), ...(b.editors || []), ...(b.personal || []).map(x => x.who), ...(b.shared || []).filter(x => !x.whoLabel).map(x => x.who)])
         assert.ok(ids.has(ref), `${s.id}.${pid}: unknown person ${ref}`);
       assert.doesNotMatch(v.fill(b.problem + b.recommend + b.boundary), /\{p:|\{s\}|\{c\}/, `${s.id}.${pid}: unresolved token`);
     }
+    for (const x of v.variants) assert.doesNotMatch(v.fill(x.why), /\{p:|\{s\}|\{c\}/, `${s.id}: variant ${x.id} token`);
+    for (const x of [...v.scene.files.map(f => f.note), ...Object.values(v.scene.notes)]) assert.doesNotMatch(v.fill(x), /\{p:/, `${s.id}: scene token`);
     for (const q of v.scene.posts) { assert.ok(ids.has(q.by), `${s.id}: post author ${q.by}`); for (const r of q.replies || []) assert.ok(ids.has(r.by)); }
     for (const t of v.scene.tasks) assert.ok(ids.has(t.owner), `${s.id}: task owner ${t.owner}`);
     for (const m of v.scene.members) assert.ok(ids.has(m), `${s.id}: member ${m}`);
@@ -53,6 +55,20 @@ test('custom names flow into scene and principle text; originals stay intact', (
   const orig = Model.build('leadership-forum');
   assert.equal(orig.person('regula-aebi').name, 'Regula Aebi');
   assert.equal(HE_WORLDS.worlds[0].people.find(p => p.id === 'regula-aebi').name, 'Regula Aebi');
+});
+
+test('every situation is complete and documented contradictions are explicit variants', () => {
+  for (const s of LIB.situations) assert.ok(s.complete, `${s.id} not complete`);
+  const ids = v => Model.build(v).variants.map(x => x.id).join();
+  assert.equal(ids('sitzungszyklus'), 'gastzugang,link');
+  assert.equal(ids('semesterstart'), 'ohne-bewertung,mit-bewertung');
+  assert.ok(Model.build('sitzungszyklus', { variant: 'gastzugang' }).scene.members.includes('beat-kunz'));
+  assert.ok(!Model.build('sitzungszyklus', { variant: 'link' }).scene.members.includes('beat-kunz'));
+  assert.match(Model.build('sitzungszyklus').variants[0].why, /Annahme/);
+  const nora = ['nora-publikation', 'nora-abwesenheit', 'nora-reihe'].map(id => Model.build(id));
+  for (const v of nora) assert.ok(v.scene.personal && v.scene.channels.length === 0, 'Nora stays without a Team');
+  assert.equal(new Set(nora.map(v => v.scene.files.map(f => f.name).join())).size, 3, 'each Nora scenario has its own scene');
+  assert.equal(new Set(nora.map(v => v.principles.chat.recommend)).size, 3, 'each Nora scenario has its own principle binding');
 });
 
 test('variants change structure, not just labels', () => {

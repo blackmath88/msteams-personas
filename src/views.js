@@ -45,7 +45,7 @@
             return c === sc.active ? '<li class="on" aria-current="true"># ' + esc(c) + '</li>' : '<li class="off" title="In diesem Beispiel nicht ausgearbeitet"># ' + esc(c) + '</li>';
           }).join('') + '</ul>' +
           '<p class="tw-k">Mitglieder · ' + members.length + '</p><ul class="tw-mem">' + members.map(function (p) {
-            return '<li>' + av(p, 's') + '<span>' + esc(short(p.name)) + (p.outside ? ' <em>andere Einheit</em>' : '') + '</span></li>';
+            return '<li>' + av(p, 's') + '<span>' + esc(short(p.name)) + (p.external ? ' <em>extern</em>' : p.outside ? ' <em>andere Einheit</em>' : '') + '</span></li>';
           }).join('') + '</ul>' +
         '</div>' +
         '<div class="tw-main">' +
@@ -82,9 +82,9 @@
         (reps.length ? '<ol class="tw-replies">' + reps.slice(0, rmax).map(function (r) {
           var rp = vm.person(r.by);
           return '<li>' + av(rp, 's') + '<p><strong>' + esc(short(rp.name)) + '</strong> <time>' + esc(r.time) + '</time><br>' + esc(vm.fill(r.text)) + '</p></li>';
-        }).join('') + (reps.length > rmax ? '<li class="more">+ ' + (reps.length - rmax) + ' weitere Antwort(en)</li>' : '') + '</ol>' : '') +
+        }).join('') + (reps.length > rmax ? '<li class="more">+ ' + (reps.length - rmax) + (reps.length - rmax === 1 ? ' weitere Antwort' : ' weitere Antworten') + '</li>' : '') + '</ol>' : '') +
         '</li>';
-    }).join('') + (list.length > max ? '<li class="more">+ ' + (list.length - max) + ' weitere Beiträge</li>' : '') + '</ol>';
+    }).join('') + (list.length > max ? '<li class="more">+ ' + (list.length - max) + (list.length - max === 1 ? ' weiterer Beitrag' : ' weitere Beiträge') + '</li>' : '') + '</ol>';
   }
 
   function files(vm, o) {
@@ -137,7 +137,7 @@
 
   function diagramChat(vm, b, o) {
     var inChat = b.inChat.map(vm.person), later = b.later.map(vm.person);
-    var laterHtml = later.length ? later.map(function (p) { return chip(p); }).join('') : placeholder('wer später dazukommt');
+    var laterHtml = later.length ? later.map(function (p) { return chip(p); }).join('') : placeholder(b.laterLabel || 'wer später dazukommt');
     var left = '<div class="pd-box pd-chatbox"><p class="pd-boxh">' + ic('i-chat') + 'Chat zu zweit</p><ul class="pd-people">' + inChat.map(function (p) { return chip(p); }).join('') + '</ul>' +
       '<p class="pd-bubble">«' + esc(vm.fill(b.decision)) + '»</p></div>' +
       link('sieht den Entscheid nicht', true) + '<ul class="pd-people pd-out">' + laterHtml + '</ul>';
@@ -145,18 +145,18 @@
     var placeName = vm.scene.personal ? 'Im Dokument' : '# ' + vm.scene.active;
     var right = '<div class="pd-box pd-chanbox"><p class="pd-boxh">' + (vm.scene.personal ? ic('i-doc') : ic('i-people')) + esc(placeName) + '</p>' +
       '<p class="pd-post"><strong>' + esc(vm.fill(b.decision)) + '</strong><small>von ' + esc(short(inChat[0].name)) + ', mit Antworten darunter</small></p></div>' +
-      link('finden es später', false) + '<ul class="pd-people">' + (all.length > 1 ? all : all.concat([])).map(function (p) { return chip(p); }).join('') + (all.length < 2 ? placeholder('Coautorin, Vertretung') : '') + '</ul>';
+      link('finden es später', false) + '<ul class="pd-people">' + (all.length > 1 ? all : all.concat([])).map(function (p) { return chip(p); }).join('') + (b.laterLabel ? placeholder(b.laterLabel) : '') + '</ul>';
     return panel('before', 'Heute', 'Entscheid im Chat', left) + arrow() + panel('after', 'Für diese Situation', vm.scene.personal ? 'Dort, wo alle Beteiligten schon sind' : 'Entscheid als Kanalbeitrag', right);
   }
 
   function diagramDoc(vm, b) {
     var eds = b.editors.map(vm.person), dr = vm.person(b.drafter);
+    var holders = eds.map(function (p) { return short(p.name); }).concat(b.editorsLabel ? [b.editorsLabel] : []);
     var left = '<ol class="pd-copies">' + b.copies.map(function (c, i) {
-      var p = eds[i % eds.length];
-      return '<li>' + ic('i-doc') + '<span><strong>' + esc(c) + '</strong><small>bei ' + esc(short(p.name)) + '</small></span></li>';
+      return '<li>' + ic('i-doc') + '<span><strong>' + esc(c) + '</strong><small>bei ' + esc(holders[i % holders.length]) + '</small></span></li>';
     }).join('') + '</ol>' + '<p class="pd-q">Welche Fassung gilt?</p>';
     var right = '<div class="pd-box pd-onedoc"><p class="pd-boxh">' + ic('i-doc') + esc(vm.fill(b.artefact)) + '</p><p class="pd-small">eine Datei, Link statt Anhang</p></div>' +
-      link('bearbeiten und kommentieren am selben Ort', false) + '<ul class="pd-people">' + eds.map(function (p) { return chip(p); }).join('') + '</ul>';
+      link('bearbeiten und kommentieren am selben Ort', false) + '<ul class="pd-people">' + eds.map(function (p) { return chip(p); }).join('') + (b.editorsLabel ? placeholder(b.editorsLabel) : '') + '</ul>';
     return panel('before', 'Heute', 'Kopien im Anhang', left) + arrow() + panel('after', 'Für diese Situation', 'Ein gemeinsames Dokument', right) +
       '<div class="pd-life" aria-label="Ablauf vom Entwurf zum gemeinsamen Dokument">' +
         '<div class="pd-stage"><p class="pd-tag">Persönlich</p><p><strong>' + esc(vm.fill(b.draft)) + '</strong><small>Entwurf bei ' + esc(short(dr.name)) + '</small></p></div>' +
@@ -172,9 +172,9 @@
         (b.shared[0] && b.shared[0].who === x.who ? '<li>' + esc(b.shared[0].t) + '</li>' : '') + '</ul><p class="pd-small">nur für diese Person sichtbar</p></li>';
     }).join('');
     var left = '<ul class="pd-lists">' + lists + '</ul><p class="pd-q">Wer erledigt was bis wann?</p>';
-    var right = b.shared.length ? '<div class="pd-box pd-plan"><p class="pd-boxh">' + ic('i-list') + 'Gemeinsamer Plan</p><ul class="pd-rows">' + b.shared.map(function (t) {
-      var p = vm.person(t.who);
-      return '<li><span>' + esc(t.t) + '</span><span class="pd-own">' + av(p, 's') + esc(short(p.name)) + '</span>' + (t.due ? '<span class="pd-due">' + esc(t.due) + '</span>' : '') + '</li>';
+    var right = b.shared.length ? '<div class="pd-box pd-plan"><p class="pd-boxh">' + ic('i-list') + esc(b.sharedLabel || 'Gemeinsamer Plan') + '</p><ul class="pd-rows">' + b.shared.map(function (t) {
+      var own = t.who ? av(vm.person(t.who), 's') + esc(short(vm.person(t.who).name)) : '<span class="av av-s av-ghost" aria-hidden="true">?</span>' + esc(t.whoLabel);
+      return '<li><span>' + esc(t.t) + '</span><span class="pd-own">' + own + '</span>' + (t.due ? '<span class="pd-due">' + esc(t.due) + '</span>' : '') + '</li>';
     }).join('') + '</ul></div>' + link('für alle Beteiligten sichtbar', false) :
       '<div class="pd-box pd-plan"><p class="pd-boxh">' + ic('i-list') + 'Kein eigener Aufgabenplan</p><p class="pd-lean">' + esc(vm.fill(b.lean || b.recommend)) + '</p></div>';
     right += '<p class="pd-keep">' + ic('i-person') + 'Persönliche To-dos bleiben in der eigenen Liste</p>';
@@ -196,7 +196,7 @@
       '<div class="pr-foot">' +
         '<p class="pr-rec"><strong>Empfehlung hier</strong>' + esc(vm.fill(b.recommend)) + '</p>' +
         (o.annot ? '<p class="pr-bound"><strong>Grenze</strong>' + esc(vm.fill(b.boundary)) + '</p>' : '') +
-        (o.annot && alt ? '<p class="pr-alt"><strong>Alternative</strong>' + esc(alt.label) + (o.stage ? '' : ': ' + esc(alt.why)) + '</p>' : '') +
+        (o.annot && alt ? '<p class="pr-alt"><strong>Alternative</strong>' + esc(alt.label) + (o.stage ? '' : ': ' + esc(vm.fill(alt.why))) + '</p>' : '') +
       '</div></article>';
   }
 

@@ -28,8 +28,8 @@ window.LIB = {
       { id: 'petra-schmid', name: 'Petra Schmid', role: 'Abteilungsleitung Marketing', focus: 'Budget, Prioritäten, Freigaben' },
       { id: 'luca-bernasconi', name: 'Luca Bernasconi', role: 'Projektleitung Kundenportal', focus: 'Plan, Termine, Abstimmung zwischen den Bereichen' },
       { id: 'aylin-demir', name: 'Aylin Demir', role: 'Content & Kampagnen', focus: 'Texte, Bilder, Launch-Kommunikation' },
-      { id: 'marco-gerber', name: 'Marco Gerber', role: 'IT, Schnittstellen', focus: 'Anbindung ans CRM; gehört zur IT, nicht zur Abteilung' },
-      { id: 'sandra-huber', name: 'Sandra Huber', role: 'Vertrieb Innendienst', focus: 'Anforderungen aus Kundensicht; gehört zum Vertrieb' },
+      { id: 'marco-gerber', name: 'Marco Gerber', role: 'IT, Schnittstellen', focus: 'Anbindung ans CRM; gehört zur IT, nicht zur Abteilung', outside: true },
+      { id: 'sandra-huber', name: 'Sandra Huber', role: 'Vertrieb Innendienst', focus: 'Anforderungen aus Kundensicht; gehört zum Vertrieb', outside: true },
       { id: 'tim-vogel', name: 'Tim Vogel', role: 'Agentur Nordlicht (extern)', focus: 'Gestaltung und Portaltexte, nur für dieses Projekt', external: true }
     ],
     artefacts: [
@@ -198,7 +198,7 @@ window.LIB = {
         doc: {
           problem: 'Die Anforderungsliste kursiert als Anhang: {p:sandra-huber} ergänzt, {p:tim-vogel} arbeitet mit einer Fassung von letzter Woche.',
           artefact: 'Anforderungsliste Kundenportal', copies: ['Anforderungen_v3.xlsx', 'Anforderungen_v3_SH.xlsx', 'Anforderungen_final_Agentur.xlsx'],
-          editors: ['sandra-huber', 'luca-bernasconi', 'tim-vogel'], drafter: 'aylin-demir', draft: 'Ideen für die Launch-Kampagne',
+          editors: ['luca-bernasconi', 'sandra-huber', 'tim-vogel'], drafter: 'aylin-demir', draft: 'Ideen für die Launch-Kampagne',
           recommend: 'Eine Liste in «{c}», alle kommentieren direkt darin. Die Agentur erhält Zugriff nur auf das, was sie braucht.',
           boundary: 'Kampagnenideen bleiben bei {p:aylin-demir}, bis sie reif sind. Wie die Agentur technisch Zugriff erhält, klärt eure IT; das Bild zeigt eine Annahme, keine geprüfte Berechtigung.'
         },

@@ -185,8 +185,8 @@
     return crumbs([['Bibliothek', '#/'], [vm.world.name, '#/personas/' + vm.world.id], [vm.title]]) +
       '<section class="sp"><div class="sp-h"><div>' + collBadge(vm.collection) + '<h1>' + esc(vm.title) + '</h1><p class="lead">' + esc(vm.scenario.trigger) + '</p></div>' +
         '<a class="btn btn-p" href="' + route(p.sid, vid, p.mode, isP ? pid : p.sub, true) + '">' + ic('i-laptop') + 'Präsentieren</a></div>' +
-      (vm.variants.length ? '<fieldset class="variants"><legend>Aufbau</legend>' + vm.variants.map(function (v) {
-        return '<a class="var' + (v.id === vid ? ' on' : '') + '" href="' + route(p.sid, v.id, p.mode, p.sub) + '"' + (v.id === vid ? ' aria-current="true"' : '') + '><strong>' + esc(v.label) + (v === vm.variants[0] ? ' <small>unsere Wahl</small>' : ' <small>Alternative</small>') + '</strong><span>' + esc(v.why) + '</span></a>';
+      (vm.variants.length > 1 ? '<fieldset class="variants"><legend>Aufbau</legend>' + vm.variants.map(function (v) {
+        return '<a class="var' + (v.id === vid ? ' on' : '') + '" href="' + route(p.sid, v.id, p.mode, p.sub) + '"' + (v.id === vid ? ' aria-current="true"' : '') + '><strong>' + esc(v.label) + (v === vm.variants[0] ? ' <small>unsere Wahl</small>' : ' <small>Alternative</small>') + '</strong><span>' + esc(vm.fill(v.why)) + '</span></a>';
       }).join('') + '</fieldset>' : '') +
       '<div class="sp-bar"><nav class="modes" aria-label="Darstellung">' +
           '<a href="' + route(p.sid, vid, 'szene') + '"' + (!isP ? ' aria-current="page"' : '') + '>Szene</a>' +
@@ -273,7 +273,7 @@
     var s = Math.min(availW / W, availH / H);
     inner.style.transform = 'scale(' + s + ')';
     /* Long text: step down density until the visual fits; flag anything still cut off. */
-    var vis = inner.firstElementChild, over = function () { return vis.scrollHeight > vis.clientHeight + 2; };
+    var vis = inner.firstElementChild, over = function () { return [vis].concat(Array.prototype.slice.call(vis.querySelectorAll('.tw-main'))).some(function (e) { return e.scrollHeight > e.clientHeight + 2; }); };
     inner.classList.remove('dense', 'denser');
     var flag = inner.querySelector('.stage-overflow'); if (flag) flag.remove();
     if (over()) inner.classList.add('dense');

@@ -105,12 +105,16 @@ try {
   const sClip = (await stageFits()) ? 0 : 1;
   check('presentation Szene posts not clipped', sClip === 0, sClip + ' clipped');
   await p.shot(OUT + '10-present-business-szene.png');
-  for (const sid of ['leadership-forum/eigenes-team', 'kundenportal/eigenes-team', 'kundenportal/kanal', 'heat-health/-']) for (const v of ['prinzip/chat', 'prinzip/doc', 'prinzip/tasks', 'szene/posts', 'szene/files', 'szene/tasks']) {
+  for (const sid of ['leadership-forum/eigenes-team', 'leadership-forum/kanal', 'kundenportal/eigenes-team', 'kundenportal/kanal', 'heat-health/-', 'sitzungszyklus/gastzugang', 'sitzungszyklus/link', 'semesterstart/ohne-bewertung', 'semesterstart/mit-bewertung', 'nora-publikation/-', 'nora-abwesenheit/-', 'nora-reihe/-']) for (const v of ['prinzip/chat', 'prinzip/doc', 'prinzip/tasks', 'szene/posts', 'szene/files', 'szene/tasks']) {
     await p.goto(BASE + `#/p/${sid}/${v}`); await p.sleep(150);
     const ok = await stageFits();
     if (!ok) check(`stage fits: ${sid} ${v}`, false);
+    for (const route of [`#/p/${sid}/${v}`, `#/s/${sid}/${v}`]) {
+      if (route[2] === 's') { await p.goto(BASE + route); await p.sleep(100); }
+      if (/\{p:|\{s\}|\{c\}/.test(await p.eval('document.body.innerText'))) check(`no raw tokens: ${route}`, false);
+    }
   }
-  check('stage fit sweep (4 situations × 6 views) done', true);
+  check('stage fit + token sweep (12 situation/variant combinations × 6 views, stage and page) done', true);
   await p.goto(BASE + '#/p/kundenportal/eigenes-team/prinzip/doc');
   await p.shot(OUT + '15-present-business-prinzip-doc.png');
   await p.goto(BASE + '#/p/nora-reihe/-/szene');
@@ -150,6 +154,29 @@ try {
   await p.eval('window.confirm = () => true');
   await click('[data-act="reset"]');
   check('reset returns to step 1 with defaults', (await hash()) === '#/konfigurator/1' && await p.eval('document.querySelector("input[name=goal][value=projekt]").checked'));
+
+  // Remaining university worlds: complete scenes and explicit variants
+  await p.size(1440, 900);
+  await p.goto(BASE + '#/s/sitzungszyklus/gastzugang/szene');
+  check('commission guest variant lists external member, marked extern', /Beat Kunz\s*extern/.test(await $('.tw-mem', 'innerText')));
+  await p.shot(OUT + '40-commission-szene-gast.png', true);
+  await click('a.var[href*="/link/"]');
+  check('commission link variant: external member not in team', !/Beat Kunz/.test(await $('.tw-mem', 'innerText')));
+  await p.goto(BASE + '#/s/sitzungszyklus/link/prinzip/tasks');
+  check('commission tasks principle: lean, no plan', /Kein eigener Aufgabenplan/.test(await $('.pd-after', 'innerText')));
+  await p.shot(OUT + '41-commission-prinzip-tasks.png', true);
+  await p.goto(BASE + '#/s/semesterstart/mit-bewertung/szene');
+  check('teaching variant adds Bewertung channel', /Bewertung/.test(await $('.tw-chans', 'innerText')));
+  await p.goto(BASE + '#/s/semesterstart/ohne-bewertung/prinzip/doc');
+  await p.shot(OUT + '42-teaching-prinzip-doc.png', true);
+  await p.goto(BASE + '#/s/heat-health/gruppenteam/szene');
+  check('research scene: three posts, no variant switcher', (await count('.tw-post')) === 3 && (await count('.variants')) === 0);
+  await p.shot(OUT + '43-research-szene.png', true);
+  await p.goto(BASE + '#/s/nora-reihe/-/prinzip/tasks');
+  check('Nora series principle shows secretariat as non-person owner', /Sekretariat/.test(await $('.pd-after', 'innerText')));
+  await p.shot(OUT + '44-nora-reihe-prinzip-tasks.png', true);
+  await p.goto(BASE + '#/s/nora-publikation/-/szene');
+  check('Nora publication has its own personal scene', /Kapitel 3 kürzen/.test(await $('.tw', 'innerText')));
 
   // Direct links + legacy
   await p.goto(BASE + '#/s/semesterstart/-/prinzip/doc');
