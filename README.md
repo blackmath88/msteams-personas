@@ -25,11 +25,12 @@ node check-worlds.mjs
 
 A world holds people, roles, relationships and collaboration structure. Scenarios describe specific situations and learning decisions. Scenes render the selected situation as a recognisable collaboration interface.
 
-The existing atlas is the seed viewer. A browser-based authoring workspace, portable scenario collections and dedicated screenshot/slide export are planned; they are not implemented yet. Today, authoring means editing the data file and checking it; print produces a compact briefing rather than a screenshot export.
+The existing atlas is the seed viewer. The next Weavr test targets a landing/library, lightweight configurator, Szene / Prinzip visual modes and 16:9 presentation, including one business example. A full editor, portable collections and PNG export are later work. None of these new capabilities is implemented yet. Today, authoring means editing the data file; print produces a briefing.
 
-The planned library includes Business and Higher Education collections. The same situation will support screenshot-like scenes, conceptual setup maps, principle explainers and before/after comparisons.
+The planned library includes Business and Higher Education. Two main modes share the same situation: Szene (screenshot-like) and Prinzip (conceptual explanations, setup maps and comparisons).
 
-- [Detailed build plan](docs/BUILD-PLAN.md)
+- [Revised visual-first build plan](docs/BUILD-PLAN.md)
+- [Weavr first-test brief and operator steps](docs/WEAVR-FIRST-TEST.md)
 - [Perplexity use-case research prompt](docs/research/PERPLEXITY-USE-CASES-PROMPT.md)
 - [Product brief](docs/PRODUCT.md)
 - [Roadmap and acceptance criteria](docs/ROADMAP.md)

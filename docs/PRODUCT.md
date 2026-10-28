@@ -10,7 +10,9 @@ The value is a reusable visual environment for training, workshop discussion, co
 
 Visitors first understand the vision through a visual example. They can explore a recognisable situation or describe their own, then customise a copy. Business and Higher Education are collections within the same library.
 
-Each situation supports screenshot-like scenes, conceptual setup maps, principle explainers and before/after comparisons. These views share people, artefacts, scenario and selected setup variant; they are projections of one model. Customisation has a live preview, followed by presentation and export.
+The first test has three entry points: Persona wählen, Use Case wählen and Eigene Situation. A six-question configurator suggests a contextual template and alternative, with lightweight naming customisation and live preview.
+
+Two primary visual modes share people, artefacts, scenario and setup variant: Szene (screenshot-like scenes) and Prinzip (conceptual explainers, including setup maps and before/after). Präsentieren provides a clean 16:9 stage with annotations on/off. A full authoring editor and PNG export follow later.
 
 See [the build plan](BUILD-PLAN.md) for the complete UX, delivery slices and acceptance criteria.
 
@@ -24,11 +26,11 @@ The collection is fictional and uses German / Swiss spelling. Its recommendation
 
 ## Core workflow
 
-1. Create or duplicate a working world.
-2. Define people, roles, relationships, current tools, artefacts and proposed collaboration structure.
-3. Add a scenario: trigger, current friction, learning objective, alternatives, recommendation and boundary.
-4. Compose one or more scenes from that scenario, with selected channel, posts, replies, files, tasks and annotations.
-5. Preview what a participant should see, present it, and export a clean visual or a portable collection.
+1. Understand the vision and choose a persona, use case or own situation.
+2. Select a scenario or answer six work-oriented questions.
+3. Review the suggested starting point, its rationale and an alternative.
+4. Adjust situation/participant names and explore Szene or Prinzip.
+5. Present the selected visual in 16:9. Dedicated file export is a later milestone.
 
 ## Domain model
 
@@ -43,7 +45,7 @@ The collection is fictional and uses German / Swiss spelling. Its recommendation
 | Scene | A renderable moment: visible structure, selected view, content, perspective and annotations |
 | Training sequence | Ordered scenes and facilitator notes linked to a course/module |
 
-These are design responsibilities for the future model. The imported `HE_WORLDS` / `HE_ATLAS` globals remain unchanged for compatibility; they do not already implement this full model. Introduce a versioned collection format and adapter before changing the seed data.
+These are design responsibilities for the future model. The imported `HE_WORLDS` / `HE_ATLAS` globals remain unchanged for compatibility; they do not already implement this full model. Use only a thin v3 model and legacy adapter for the first configurator/rendering path. Preserve unconsumed content and defer a complete schema migration.
 
 ## Visual output
 
@@ -55,13 +57,13 @@ Support a clean scene view for slides, an optional annotated teaching view, and 
 
 - Browser-first and static/local-first; no tenant provisioning or Microsoft Graph dependency.
 - No production credentials, real user accounts or real internal documents.
-- Manual authoring first; AI generation is not needed for the initial product.
+- Deterministic configuration and lightweight customisation first; no AI dependency.
 - No backend, multi-user collaboration or hosted publishing in the first authoring slice.
 - No claim that a mock scene proves real permissions or exact current Teams behaviour.
 - The existing toolbox remains available; this repository owns its independent successor.
 
 ## Product success
 
-A trainer can create a small new fictional world, add a use case, and produce a legible training visual without editing application code or building anything in Microsoft Teams.
+For the first test, a trainer can choose an example or configure a situation, understand a suggested setup through Szene and Prinzip, change names, and present a legible visual without code or a real Team.
 
-That outcome requires authoring and export work beyond the migrated atlas. The seed viewer provides the initial content, comparison pattern and rendering foundation.
+The full product later adds arbitrary authoring and visual file export. The current implementation remains the seed atlas; planned capabilities must not be described as already delivered.

@@ -1,19 +1,19 @@
 # Roadmap
 
-The implementation detail and acceptance criteria live in [BUILD-PLAN.md](BUILD-PLAN.md). This file is the short index.
+The current first-test scope is [BUILD-PLAN.md](BUILD-PLAN.md). The proposed Weavr envelope and operator steps are in [WEAVR-FIRST-TEST.md](WEAVR-FIRST-TEST.md).
 
-| Slice | Deliverable | Status |
+| Stage | Deliverable | Status |
 | --- | --- | --- |
-| Foundation | Standalone atlas and original university content | Merged in PR #1; browser verification outstanding |
-| 1 | Versioned collections, legacy adapter and explicit setup alternatives | Planned |
-| 2 | Landing, library, Business/Higher Education collections and scenario selection | Planned |
-| 3 | Screenshot-like scenes, setup maps, principle explainers and comparisons | Planned; some legacy renderers exist |
-| 4 | Customisation studio with live preview, recovery and import/export | Planned |
-| 5 | Presentation and reliable visual export | Planned |
-| 6 | Curated launch cases and Unibas/isolutions sequences | Planned; university seed content exists |
+| Foundation | Standalone university atlas | Merged; browser verification outstanding |
+| First test | Landing/library, thin adapter, one business example, six-question configurator, Szene, three Prinzip explainers, 16:9 Präsentieren | Planned, not implemented |
+| Later | Full authoring editor, persistent drafts and portable collections | Deferred |
+| Later | PNG/SVG export, more scene types and principle diagrams | Deferred |
+| Later | Wider business collection and reviewed webinar sequences | Deferred |
 
-First build envelope: slices 1–3 for the five existing worlds plus one business case. The following milestone adds one complete authoring → visual export path.
+Two primary visual modes: Szene and Prinzip. Setup maps and before/after comparisons belong within these modes. The first test uses a configurator and limited naming fields rather than a full editor.
 
-Research brief: [Perplexity use-case prompt](research/PERPLEXITY-USE-CASES-PROMPT.md).
+Build a visible end-to-end example early; do not require a complete schema migration before visual progress. Keep legacy content through a thin adapter.
 
-Plans are evidence, not permission to dispatch, merge, deploy, spend on APIs or widen a Weavr Mission.
+Research: [Perplexity prompt](research/PERPLEXITY-USE-CASES-PROMPT.md). It does not block a clearly labelled fictional business fixture.
+
+The user authorised direct integration of the revised documentation. Runtime implementation remains subject to the actual Weavr Mission, Needs, dispatch and review authority.

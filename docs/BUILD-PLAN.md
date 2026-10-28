@@ -1,189 +1,161 @@
-# Build plan — library, customisation and visual explanation
+# Build plan — visual-first library test
 
-Status: proposed implementation plan; no runtime changes in this document.
-Date: 2026-10-28.
+Status: agreed direction for the first Weavr implementation test; implementation remains to be built.
+Updated: 2026-10-28.
 Repository: blackmath88/msteams-personas.
-Baseline: the standalone atlas from merged PR #1.
+Baseline: the existing atlas plus merged planning PR #2.
 
-## Product outcome
+## Outcome
 
-A visitor understands the promise, chooses a recognisable situation or describes their own, adapts it, and produces useful Teams/M365 visuals without building a real Teams environment.
+A visitor understands the vision, chooses a familiar persona or use case, or describes their own situation, and obtains readable Teams-inspired scenes and conceptual explanations without building a real Team.
 
-The library is the front door. Higher Education and Business are collections. The same underlying situation powers screenshot-like scenes, setup maps, principle explainers and before/after comparisons.
+Higher Education and Business are collections in one library. The first release must demonstrate both. Keep the existing university content; add one fictional small business department coordinating a cross-functional project.
 
-First-use journey:
-1. Understand the vision on arrival.
-2. Explore an example or describe a situation.
-3. Open a world and select a specific scenario.
-4. Switch visual perspectives.
-5. Customise a copy with a live preview.
-6. Present or export the result; save the editable situation.
+The product has two primary visual modes:
+- **Szene** — screenshot-like collaboration scenes.
+- **Prinzip** — conceptual explanations, including setup maps and before/after comparisons.
 
-## Current evidence and gaps
+These are projections of the same selected world/scenario/variant. Four equal top-level visual tabs are no longer the target.
 
-Implemented: five fictional university worlds, 24 people, 45 artefacts, seven scenarios, 25 decision points, comparison scenes, diagrams, three world views and print briefings. Content validation and JS syntax checks passed during extraction.
+## Current baseline
 
-Missing: collection-neutral landing/library, business examples, browser authoring, full scenario selection, explicit alternative setups, dedicated scene presentation and image export. Much of the current renderer reads scenarios[0]; mock channel/tab labels are not interactive app controls.
+Available: five university worlds, 24 people, 45 artefacts, seven scenarios, 25 decision points, today/M365 comparisons, diagrams and print briefings. Much of the existing renderer uses scenarios[0]; it is not yet a configurator or general-purpose scene studio.
 
-Desktop/mobile interaction, visual polish and print behaviour still need browser verification. Source validation alone does not establish visual acceptance.
+Content validation and syntax checks passed during extraction. Browser/mobile/visual/print checks remain outstanding; do not treat the existing viewer as visually accepted.
 
-Content corrections to resolve during migration:
-- Older webinar scripts use Forschungswerkstatt while the newer worlds use Leadership Forum and Heat & Health. Record the selected teaching context; do not silently blend the stories.
-- Leadership Forum recommends a separate Team but its displayed base model remains a channel in the parent Team. Represent these as explicit alternatives, and label the selected one.
-- The commission document hook says an external member reads without an account while the recommendation chooses guest access. Reconcile the example and its assumptions.
-- Keep optional structures optional: the teaching world's Bewertung channel must not appear as required when its own recommendation makes it conditional.
+No business starter, configurator, scene presentation mode or PNG export is implemented yet. Research has been requested, not completed.
 
-## Product UX
+## First test: one bounded vertical slice
 
-### Landing and library
+Build the landing/library, deterministic configurator, shared scene/principle rendering and presentation mode. Use only a thin v3 model and adapter needed for that path. Do not front-load a complete schema migration or a full editor.
 
-Lead with a visual example and a clear promise: see how your work could look in Teams without setting it up. Offer Explore examples and Describe your situation. Do not lead with an empty editor.
+### 1. Landing and library
 
-Show curated previews with situation, central friction, people/size, work rhythm and a small scene/map thumbnail. Offer Business and Higher Education collections plus a few useful filters: collaboration pattern, learning question, lifecycle and external participation. Search should match everyday work language.
+German UI, Swiss spelling. State the vision in one line with an immediately visible example.
 
-Describe your situation asks only for useful setup facts: work goal, people, duration/rhythm, external involvement, shared artefacts and main friction. Use deterministic template suggestions; the user chooses and edits. No AI dependency.
+Three entry points:
+- **Persona wählen** — browse working-world archetypes, not demographic profiles.
+- **Use Case wählen** — enter through a practical friction/learning question.
+- **Eigene Situation** — answer a short configurator.
 
-### Example detail
+Use the five existing university cards and one business card, with collection, people/size, friction and small visual preview. Persona and use-case entry points converge on the same underlying world/scenario data.
 
-Show an identity summary and scenario selector, then four labelled views:
-- Scene: a clean screenshot-like fictional collaboration interface.
-- Setup map: people, workspaces/channels, artefacts and relationships.
-- Principle: an explanation of a specific collaboration decision.
-- Before / after: aligned moments and their numbered changes.
+Make all seven existing scenarios reachable through explicit selection or a clearly linked legacy view; no data disappears because only the first scenario is shown. Broad search/filter systems are optional later, not first-test acceptance.
 
-Keep scenario, setup variant and visual view separate. A viewer must always know which situation and alternative is shown. Changing visual view preserves the selected scenario and variant.
+### 2. Configurator instead of full editor
 
-### Customise
+Ask six short questions, with reasonable defaults:
+1. What work are you trying to organise, and what is difficult today?
+2. Who works together, and roughly how many people are involved?
+3. Is the work ongoing, temporary or recurring, and at what rhythm?
+4. Are external people involved?
+5. Which artefacts/responsibilities need to be shared, and what stays personal?
+6. Are there confidentiality or access boundaries that affect the setup?
 
-Create a copy; preserve the curated original. Desktop: labelled editor beside a large live preview. Mobile: explicit Edit / Preview switch with state preserved.
+Use transparent deterministic template matching. Show the suggested starting point and its rationale, plus at least one meaningful alternative where supported. No claim that six answers determine a uniquely correct Teams configuration.
 
-Group fields by situation, people, structure and scene content. Support names/roles, membership, team/channel structure, posts/replies, files and simple tasks. Provide sensible sample content and reset/undo. Avoid a long schema form on first arrival.
-
-Show the consequences of editing shared entities consistently. If a referenced person or channel is removed, ask for reassignment or show an actionable validation error.
-
-### Present and export
-
-Hide authoring controls. Offer clean or annotated visuals, a fixed 16:9 frame, individual scene/map/principle exports, and separate print briefing output. Retain a quiet fictional-example label and source attribution.
-
-## Shared domain and rendering contract
-
-| Entity | Responsibility |
-| --- | --- |
-| Collection | Context, locale, theme, references and related worlds |
-| Working world | Work goal, rhythm, people, relationships and boundaries |
-| Person | Stable fictional identity and role, referenced across moments |
-| Artefact | Stable file/task/knowledge identity, owner and location |
-| Scenario | Trigger, friction, learning objective, decisions and consequences |
-| Setup variant | Named structural alternative and explicit membership/storage assumptions |
-| Moment | A before/decision/after state referencing people and artefacts |
-| View | Scene, map, principle or comparison projection of that moment |
-| Sequence | Ordered moments with facilitator notes and module links |
-
-Use a versioned JSON-compatible document and a legacy adapter. Preserve all imported worlds/scenarios/decision content; do not flatten alternatives into a single recommended configuration. Avoid a schema that hard-codes five worlds, German copy, university identity or exactly one Team.
-
-All views read the same document and selected IDs. Shared names, memberships and artefact locations must not be duplicated independently per renderer. View-specific layout/annotations are allowed. Editing a person or moving an artefact must update every relevant view.
-
-## Delivery slices and acceptance
-
-### 1. Establish the collection model and content baseline
-
-Deliver: versioned schema, validator, adapter for HE_WORLDS/HE_ATLAS, migration report and a small business fixture. Preserve the current atlas while adapting its data access.
+Allow lightweight adjustment of the situation/team name and participant names beside the preview. Preserve curated originals. A full editor for arbitrary channels, posts, files and tasks is deferred.
 
 Acceptance:
-- All five existing worlds and all seven scenarios are addressable by stable ID.
-- Missing references, duplicate IDs and unsupported versions report useful errors.
-- Every current content field is mapped or explicitly preserved as legacy content.
-- Two collections load without changing renderer source.
-- Named variants resolve the known model/recommendation contradictions.
-- New format validation does not imply Microsoft technical correctness; flag assumptions separately.
+- At least two different answer sets produce meaningfully different structures/content.
+- A user can go back and change answers without losing the current customisation.
+- Cancel/reset is explicit; explain that the first-test customised draft is session-only and warn before discarding it.
+- No backend, AI calls or Microsoft login is required.
+- Confidentiality answers surface assumptions/boundaries; they do not certify real tenant permissions.
 
-### 2. Build the library-first viewer
+### 3. Thin shared model and adapter
 
-Deliver: landing promise/visual, collection browsing, lightweight filters/search, example detail, scenario selector, direct links and return navigation. Preserve the existing viewer as a temporary fallback until parity is checked.
+Keep HE_WORLDS/HE_ATLAS source content and provenance. Add a minimal v3 view model containing only what the first test needs: collection/world/scenario IDs, people, artefacts, selected setup variant, scene state, principle bindings and configurator answers.
 
-Acceptance:
-- A new visitor can identify the purpose and open a relevant example in a short usability check.
-- Both collections are discoverable.
-- Every imported scenario is selectable; no implicit scenarios[0] selection drives all detail views.
-- URL state restores collection, world, scenario, variant and view.
-- Browser Back works predictably; keyboard focus and empty states are clear.
+Adapt legacy content without a wholesale rewrite. Preserve unconsumed fields; retain a path to the legacy atlas for detailed content. Keep the model extensible, but do not build a schema platform ahead of the visible experience.
 
-### 3. Complete the four visual projections
+Shared entities must have stable IDs. Updating a participant or situation name updates Szene, Prinzip and Präsentieren together. Store view-specific annotations/layout separately from domain facts.
 
-Deliver: shared render context, readable Teams-inspired scene, labelled setup map, focused principle explainer, before/after comparison.
+### 4. Szene
 
-Acceptance:
-- One scene/map/principle/comparison set is complete for Leadership Forum and one business case.
-- Renaming a shared person or moving an artefact updates all relevant projections.
-- Connections and numbered annotations map to the same underlying objects.
-- The scene supports readable posts/replies and files; personal-work examples remain supported.
-- Simulated controls either work within the mock or are clearly presented as illustration.
-- Maps communicate membership, work location and ownership; they do not claim to enforce permissions.
-- Layouts remain legible at 375px, desktop and 200% zoom.
+Build one clear reusable Teams-inspired renderer with readable channel posts/replies and a file view, sufficient for the selected teaching point. Reuse or adapt current scene code.
 
-### 4. Add the customisation studio
+First-test complete examples:
+- Campus & People Development / Leadership Forum.
+- A generic small department coordinating a cross-functional project.
 
-Deliver: duplicate example, minimal situation questionnaire, deterministic starter suggestions, edit fields and live preview, validation, undo/reset and draft recovery.
+Keep the other existing worlds browsable using adapted or legacy visuals. Preserve Nora's personal-work alternative; do not force every world into a Team.
 
-Acceptance:
-- A user creates a small business world or adapts an example without editing code.
-- A supported scenario includes people, channel/file/post content and two moments.
-- Invalid edits do not destroy the last valid preview or silently drop data.
-- Curated source examples remain intact.
-- Refresh can recover a saved local draft; denied storage falls back to explicit download/save messaging.
-- Collection download/import round-trips stable IDs and supported content.
-- Imported text is rendered safely as text; imported executable content is never evaluated.
+Use a simplified original screen grammar, no Microsoft logos, and a quiet fictional-example label. Mock controls must either work within their supported scene views or be visibly illustrative. Do not imitate the whole Teams application.
 
-### 5. Add presentation and reliable export
+Chat, Planner and OneDrive/To Do scene families are future extensions, except where existing personal-work visuals can be retained with little change.
 
-Deliver: presentation mode, clean/annotated toggle, 16:9 frame, PNG and SVG where appropriate, editable JSON export, separate print briefing.
+### 5. Prinzip: three explainers first
 
-Acceptance:
-- A user exports a legible 1920 x 1080 scene without editor controls.
-- Conceptual graphics export with text and connectors intact.
-- Long names, overflowing posts and missing fonts produce a deliberate fit/error state.
-- Locally loaded assets export without remote image/CORS dependency.
-- Fictional-example labelling and attribution remain present.
-- Exported visual matches the selected scenario, variant and moment.
+The first three are:
+1. **Chat oder Kanal?** Who needs to find a conversation/decision later?
+2. **Persönlicher Entwurf oder gemeinsames Dokument?** One working object versus attachment copies.
+3. **Persönliche oder gemeinsame Verantwortung?** Personal tasks versus visible shared commitments.
 
-### 6. Curate launch collections and webinar sequences
+For each: show a concrete problem, simple conceptual diagram, contextual recommendation, alternative/boundary and link back to the selected scene. Maps and before/after layouts live inside Prinzip; they are not extra primary modes.
 
-Deliver: initial Business and Higher Education collections, coherent sample scene content, source/assumption notes and a Unibas/isolutions teaching sequence.
+Use stable people/artefact references, large text, labelled connectors and restrained annotation. Do not rely on tiny screenshot text. A user should understand the principle without knowing the product navigation.
 
-Candidate business patterns: department operations, cross-functional project, employee/customer onboarding, external service delivery, recurring meeting decisions, knowledge handover. Final selection follows research; these are not accepted findings.
+Guest access, standard/private/shared channels, notification behaviour and detailed storage/permission diagrams are deferred until authoritative assumptions are checked. Avoid broad unsupported technical claims in the first explainers.
 
-Acceptance:
-- Research produces a candidate matrix and six recommended launch patterns across both collections.
-- At least three business starter templates have distinct collaboration needs.
-- Each launch example has a clear learning question, alternatives and an outside-M365 boundary.
-- At least one complete sequence supports the actual Unibas/isolutions webinar material and is reviewed with the collaborators before being labelled approved.
-- Recommendations distinguish Microsoft mechanisms, practitioner patterns and our synthesis.
+### 6. Präsentieren
 
-## Sequence and first implementation envelope
+Provide a 16:9 stage, hide library/configurator controls and allow annotations on/off for either visual mode. Include an obvious exit control and Escape behaviour. Preserve selected scenario, variant and custom names.
 
-Dependencies: slice 1 precedes 2; slices 2 and 3 precede the studio; a small export spike during slice 3 checks fidelity before slice 5. Curate existing content throughout; research can proceed before coding and informs business template selection.
+Acceptance: at desktop, the complete stage fits within the viewport without clipping important content; narrow screens remain navigable. Long text has a deliberate fit/overflow treatment. A manual screenshot is possible. PNG/SVG generation and download are explicitly deferred.
 
-First bounded build: slices 1–3 for the five imported worlds plus one business case. Finish one end-to-end library → scenario → four-view experience before extending authoring.
+## Content consistency work inside the slice
 
-First authoring milestone: duplicate that business case, edit people and scene content, preview, save/re-import and export a visual. Avoid building a broad generic editor before this path works.
+- Leadership Forum's own-Team recommendation and parent-Team/channel model must be named alternatives, not contradictory claims in one scene.
+- Reconcile the commission's external-member hook with its selected access assumption; do not invent a no-account guarantee.
+- Keep the teaching world's Bewertung structure conditional.
+- Use Leadership Forum consistently for the complete university demonstration. Do not import the older Forschungswerkstatt script into this story without an explicit mapping.
+- The new business case is fictional synthesis pending research validation, not an evidence-backed industry standard.
 
-## Architecture and quality
+## First-test acceptance and proof
 
-Retain static/local-first operation and local assets. Prefer semantic HTML, CSS and vanilla JS while splitting data access, selection state, validation, renderers, editor and export into clear modules. Change frameworks only for an evidenced implementation need.
+A run is complete only when:
+- Landing communicates the promise and all three entries work.
+- Five university cards and one business card are available.
+- Persona/use-case browsing reaches real, labelled scenario content; legacy scenarios remain reachable.
+- Configurator produces an editable named starting point with rationale and a visible alternative.
+- Leadership Forum and the business case demonstrate Szene and Prinzip from the same state.
+- All three principle explainers are present, readable and contextual.
+- Name changes remain consistent across both modes and the presentation stage.
+- Präsentieren works with annotation toggle and exit; PNG is clearly absent.
+- Existing content validator passes, and no university content was silently discarded.
+- Desktop, 375px mobile, keyboard use and 200% zoom have browser evidence.
 
-Meaningful checks:
-- Schema/reference and import/export round-trip tests.
-- State tests covering scenario/variant selection and shared edits.
-- Browser tests for library → scenario → customise → export, including reload recovery and malformed import.
-- Visual review of both a business and university case at mobile/desktop, zoom, keyboard navigation, reduced motion and print.
-- Inspect exported artifacts, not just a successful export callback.
+Required proof packet: exact branch/commit and base, changed paths, tests with commands/results, screenshots of landing/configurator/Szene/Prinzip/presentation for the two complete examples, limitations and remaining acceptance items. Missing browser capability means a checkpoint or blocked visual acceptance, not a claim of visual completion.
 
-Keep internal IDs and schema details out of user flows. Use explicit mock/illustration labels for product fidelity. A scene is educational evidence, not proof of current tenant behaviour.
+Use meaningful tests for adapter references, deterministic configurations, shared-name consistency and the primary browser journey. Run node check-worlds.mjs after data/scene changes and check all five legacy worlds/three views after renderer changes. Do not write prose-only mirror tests.
 
-## Research handoff
+## Implementation route
 
-Use docs/research/PERPLEXITY-USE-CASES-PROMPT.md. Store resulting evidence separately from accepted fictional scenario content. Record URLs, dates, claim type, uncertainty and technical dependencies before promoting research suggestions into launch templates.
+Plain semantic HTML, local CSS and vanilla JavaScript; offline operation and no runtime CDN. Split selection state, adapter, configurator, renderers and presentation code where useful. No framework/backend migration.
 
-## Scope and authority
+Suggested order:
+1. Inspect baseline and propose a short file-level plan; identify actual browser/test capability.
+2. Thin adapter plus one business fixture and landing cards.
+3. Build the three principle explainers early, alongside the common render state.
+4. Wire the configurator and a complete Szene for the two examples.
+5. Add presentation mode, run checks, capture proof and return for review.
 
-This change records a plan and research prompt only. No implementation, deployment, merge, API spend or Weavr Mission dispatch is implied. Current Weavr overview has no matching project. If governed work is introduced, inspect live state and the canonical operating contract; use GitHub .weavr/inbox commands for approved Weavr writes.
+Checkpoint partial work honestly. Do not spend the whole attempt generalising the data layer before a visible example exists.
+
+## Later milestones — outside this test
+
+- Full authoring studio for arbitrary people, channels, posts/files/tasks.
+- Persistent draft recovery and portable collection import/export.
+- PNG/SVG export and production-ready slide output.
+- More business templates, wider scene families and principle library.
+- Webinar sequences, facilitator notes and collaborator acceptance.
+- Advanced filters/search, perspective lenses and scenario playback.
+
+Research prompt: [PERPLEXITY-USE-CASES-PROMPT.md](research/PERPLEXITY-USE-CASES-PROMPT.md). Research is useful input, not a blocker for one clearly labelled fictional business fixture.
+
+## Weavr boundary
+
+Use [WEAVR-FIRST-TEST.md](WEAVR-FIRST-TEST.md) as the proposed bounded Mission brief. The build plan is evidence, not a dispatch or waiver.
+
+The user authorised direct integration of this documentation revision into main. That authority does not grant an implementation runtime automatic merge/deployment permission. Do not change canonical Weavr scope, waive Needs or dispatch without explicit intent. Approved conversational Weavr writes use immutable GitHub .weavr/inbox commands under the canonical operating contract.

@@ -1,36 +1,36 @@
 # Current status
 
-Date: 2026-10-28.
+Updated: 2026-10-28.
 
-## Task contract
+## Repository baseline and current task
 
-Outcome: establish `blackmath88/msteams-personas` as a standalone home for the existing atlas and the new persona/scenario visual-tool direction.
+PR #1 (atlas extraction) and PR #2 (initial plan/research prompt) are merged. The source atlas originates from m365-toolbox commit 4af0e42219b346eb7676317f213e3998c5792cf8.
 
-Foundation: merged PR #1; source pinned at m365-toolbox commit `4af0e42219b346eb7676317f213e3998c5792cf8`.
+Current task: revise the build plan to the agreed visual-first scope and integrate the documentation directly into main, as explicitly requested. Documentation only; no implementation or Weavr dispatch in this task.
 
-Write scope: new repository only; migrate viewer/data/validator/tokens, fix standalone paths and identity, add product/provenance/roadmap documentation. Preserve the source repository. No deployment, source deletion, merge, tenant integration or API spending.
+## Implemented versus planned
 
-## Capability boundary
+Implemented: the seed atlas, five higher-education worlds, data-driven scenes and print briefings.
 
-Implemented: the imported atlas, existing example worlds and data-driven scenes.
+Next planned test: landing with three entry points, thin v3 adapter, one business example, six-question configurator, Szene and three Prinzip explainers, plus 16:9 presentation. Lightweight naming fields are in scope. Full authoring, persistent drafts, portable collection import/export and PNG/SVG export are deferred.
 
-Planned: browser-based authoring, portable collections, scene export and teaching sequences.
+Historical briefs in docs/origin are reference material, not current execution instructions.
 
-Historical planning files in `docs/origin/` are reference material. Their apparent incomplete status does not override the migrated source or this status.
+## Weavr observation
 
-## Weavr
+The live project msteams visuals is registered under ID https-github-com-blackmath88-msteams-personas. At the latest check in this task, the project overview returned no saved Mission, Plan, Needs or Sessions. The user reports a Mission is in place; refresh/reconcile live state before creating a duplicate.
 
-The live overview was checked before preparation. No corresponding project or Mission was found. No Weavr writes or dispatches are part of this extraction.
+No eligible active execution route was established from the overview. Cloud runners may be ephemeral, so verify routing rather than treating the absence of a cloud runner as a permanent blocker. No Weavr write, waiver, scope change or dispatch was performed here.
 
-## Verification
+See [WEAVR-FIRST-TEST.md](WEAVR-FIRST-TEST.md) for the proposed envelope and operator sequence.
 
-- Existing validator: five worlds, 24 people, 45 artefacts, seven scenarios, 25 decision points; zero errors and zero warnings.
-- JavaScript syntax checks pass for atlas.js and worlds.js.
-- Root HTML asset/navigation references resolve locally; no parent-repository paths remain.
-- Browser checks could not run: Playwright is installed but Chromium is unavailable in this environment. Desktop/mobile visual, interaction and print checks remain outstanding.
+## Verification carried forward
 
-## Next bounded slice
+- Content validator: five worlds, 24 people, 45 artefacts, seven scenarios, 25 decision points; zero errors/warnings during extraction.
+- JS syntax and local HTML asset/navigation references passed.
+- Browser verification remains outstanding; previous browser setup attempts did not establish a working Chromium runtime.
+- This revision changes documentation only; links and consistency are checked, runtime tests are not required.
 
-The library-first direction is recorded in [BUILD-PLAN.md](BUILD-PLAN.md). Start with the collection adapter, selectable scenarios and four visual projections for existing worlds plus one business case. The following milestone adds a complete customisation and export path. User-facing editable authoring, business starter content and screenshot export are not yet available.
+## Next action
 
-The 2026-10-28 planning change contains documentation only. Research is requested through docs/research/PERPLEXITY-USE-CASES-PROMPT.md and has not yet been conducted.
+Refresh the existing Weavr project. Reuse an existing Mission if present; otherwise save one from the first-test brief. Align its scope and inputs with the revised docs/BUILD-PLAN.md, inspect Plan & Needs, verify the execution route, and dispatch explicitly through Weavr. Review the resulting proof before integrating implementation.

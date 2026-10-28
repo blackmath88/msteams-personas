@@ -1,9 +1,12 @@
 # Repository working agreement
 
-Read README.md, docs/PRODUCT.md, docs/STATUS.md and docs/ROADMAP.md before implementation.
+Read README.md, docs/PRODUCT.md, docs/STATUS.md, docs/BUILD-PLAN.md and docs/WEAVR-FIRST-TEST.md before implementation.
 
 This repository owns a standalone persona/scenario visual tool. The Unibas / isolutions atlas is the initial example collection. Keep implemented capabilities distinct from roadmap items.
 
+- Follow the first-test boundary: configurator and lightweight naming fields; defer the full editor and PNG export.
+- Use German UI with Swiss spelling; keep the data adaptable to other locales.
+- Use Szene and Prinzip as the two primary visual modes; maps/comparisons fit within them.
 - Preserve offline use and locally loaded assets in the current viewer.
 - Keep fictional content and source attribution.
 - Run `node check-worlds.mjs` after data or scene changes.
