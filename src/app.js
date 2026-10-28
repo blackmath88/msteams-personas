@@ -153,7 +153,7 @@
         '<div class="res-main"><p class="kick">Vorschlag</p><h2>' + esc(r.best.label) + '</h2><p class="res-base">Grundlage: ' + esc(vm.title) + ' (' + esc(vm.world.name) + ')</p>' +
           '<h3>Warum das passt</h3><ul class="why">' + r.best.reasons.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' +
           (r.cautions.length ? '<h3>Annahmen und Grenzen</h3><ul class="caut">' + r.cautions.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : '') +
-          '<div class="res-alt"><p class="kick">Alternative</p><h3>' + esc(r.alt.label) + '</h3><p>' + esc(r.alt.reasons[0] || alt.friction) + '</p><a href="' + route(r.alt.situation, r.alt.variant, 'szene') + '">Alternative ansehen</a></div>' +
+          '<div class="res-alt"><p class="kick">Alternative</p><h3>' + esc(r.alt.label) + '</h3><p>' + esc(alt.variant && r.alt.variant ? alt.variant.why : (r.alt.reasons.join(' ') || alt.friction)) + '</p><p class="res-base">Grundlage: ' + esc(alt.title) + '</p><a href="' + route(r.alt.situation, r.alt.variant, 'szene') + '">Alternative ansehen</a></div>' +
         '</div>' +
         '<div class="res-edit">' + nameForm(vm) + '</div>' +
         '<div class="res-prev"><p class="kick">Live-Vorschau</p><div id="preview">' + V.scene(vm, { annot: false }) + '</div></div>' +
@@ -272,6 +272,13 @@
     var availW = window.innerWidth - 24, availH = window.innerHeight - (ctl ? ctl.offsetHeight : 0) - 24;
     var s = Math.min(availW / W, availH / H);
     inner.style.transform = 'scale(' + s + ')';
+    /* Long text: step down density until the visual fits; flag anything still cut off. */
+    var vis = inner.firstElementChild, over = function () { return vis.scrollHeight > vis.clientHeight + 2; };
+    inner.classList.remove('dense', 'denser');
+    var flag = inner.querySelector('.stage-overflow'); if (flag) flag.remove();
+    if (over()) inner.classList.add('dense');
+    if (over()) inner.classList.add('denser');
+    if (over()) inner.insertAdjacentHTML('beforeend', '<p class="stage-overflow">Gekürzt: Volltext in der Arbeitsansicht</p>');
     st.style.width = W * s + 'px'; st.style.height = H * s + 'px';
   }
 

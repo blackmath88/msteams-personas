@@ -188,7 +188,8 @@ h2{font-size:24px;letter-spacing:-.01em;font-weight:650}
 .tw-files{width:100%;border-collapse:collapse;font-size:14px}
 .tw-files th{text-align:left;font-size:12px;color:var(--ink-3);font-weight:600;padding:6px 8px;border-bottom:1px solid #e6e6ea}
 .tw-files td{padding:9px 8px;border-bottom:1px solid #f0f0f3;vertical-align:top}
-.tw-files td:first-child{display:flex;gap:8px;align-items:center;font-weight:600}
+.tw-files td{overflow-wrap:anywhere}
+.tw-files .fn{display:inline-flex;gap:8px;align-items:center;font-weight:600}
 .tw-files td:last-child{color:var(--ink-2)}
 .tw-tasks{list-style:none;display:grid;gap:6px}
 .tw-tasks li{display:grid;grid-template-columns:22px minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:9px 10px;border:1px solid #e6e6ea;border-radius:8px;position:relative}
@@ -280,7 +281,7 @@ body.presenting #app{padding:0;max-width:none}
 kbd{font:inherit;font-size:11.5px;border:1px solid #6b7080;border-radius:4px;padding:0 5px;color:#c6cad6}
 .stage{position:relative;overflow:hidden;border-radius:6px;box-shadow:0 10px 40px rgba(0,0,0,.4)}
 .stage-in{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:0 0;background:var(--page);padding:44px 56px 56px;display:flex;flex-direction:column}
-.stage-in>.tw,.stage-in>.pr{flex:1;min-height:0}
+.stage-in>.tw,.stage-in>.pr{flex:1;min-height:0;overflow:hidden}
 .stage-foot{position:absolute;left:56px;bottom:16px;font-size:15px;color:var(--ink-3)}
 .tw-stage{font-size:20px;display:flex;flex-direction:column}
 .tw-stage .tw-body{flex:1;min-height:0;grid-template-columns:300px minmax(0,1fr)}
@@ -294,7 +295,6 @@ kbd{font:inherit;font-size:11.5px;border:1px solid #6b7080;border-radius:4px;pad
 .tw-stage .tw-head h3{font-size:24px}
 .tw-stage .tw-tabs button{font-size:18px}
 .tw-stage .tw-pt{font-size:22px}
-.tw-stage .tw-tx,.tw-stage .tw-replies li p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .tw-stage .tw-replies li{font-size:17px}
 .tw-stage .tw-files,.tw-stage .tw-tt strong,.tw-stage .tw-notes li{font-size:19px}
 .tw-stage .tw-main{overflow:hidden}
@@ -305,7 +305,6 @@ kbd{font:inherit;font-size:11.5px;border:1px solid #6b7080;border-radius:4px;pad
 .pr-stage .pr-h h3{font-size:42px}
 .pr-stage .pr-q{font-size:22px}
 .pr-stage .pr-problem{font-size:20px}
-.pr-stage .pd{flex:1;min-height:0}
 .pr-stage .pd-panel h4{font-size:26px}
 .pr-stage .pd-bubble,.pr-stage .pd-post strong{font-size:22px}
 .pr-stage .pp{font-size:17px;max-width:120px}
@@ -313,7 +312,6 @@ kbd{font:inherit;font-size:11.5px;border:1px solid #6b7080;border-radius:4px;pad
 .pr-stage .pd-link span,.pr-stage .pd-copies strong,.pr-stage .pd-rows li,.pr-stage .pd-list ul{font-size:18px}
 .pr-stage .pd-box{max-width:520px}.pr-stage .pd-copies{max-width:480px}
 .pr-stage .pr-foot p{font-size:19px}
-.pr-stage .pr-foot p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 
 /* ============ Responsive ============ */
 @media (max-width:1020px){
@@ -344,6 +342,32 @@ kbd{font:inherit;font-size:11.5px;border:1px solid #6b7080;border-radius:4px;pad
   .pr{padding:18px}
   .cfg-q{padding:18px}
   .tgl{margin-left:0}
+  .var span{display:none}
+  .variants{margin:14px 0;gap:6px}
   .stage-note{display:none}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Stage density steps, chosen by fitStage() when content would overflow the 16:9 canvas */
+.stage-in.dense .pr-stage{font-size:17px;padding:26px 32px}
+.stage-in.dense .pr-stage .pr-h h3{font-size:34px}
+.stage-in.dense .pr-stage .pr-problem,.stage-in.dense .pr-stage .pr-foot p{font-size:17px}
+.stage-in.dense .pr-stage .pd-panel{padding:12px}
+.stage-in.dense .pr-stage .pd-link{height:40px}
+.stage-in.dense .pr-stage .pd{margin-top:12px}
+.stage-in.dense .tw-stage{font-size:17px}
+.stage-in.dense .tw-stage .tw-pt{font-size:19px}
+.stage-in.denser .pr-stage .pd-life{padding:8px}
+.stage-in.denser .pr-stage .pd-panel h4{font-size:21px;margin-bottom:6px}
+.stage-in.denser .pr-stage .pp .av{width:36px;height:36px}
+.stage-in.denser .pr-stage .pr-foot{margin-top:10px}
+.stage-in.denser .pr-stage .pr-foot p{padding:10px 12px;font-size:16px}
+.stage-overflow{position:absolute;right:56px;bottom:16px;font-size:14px;color:var(--warn)}
+.pr-stage .pd-boxh{font-size:19px}
+.pr-stage .pd-small,.pr-stage .pd-post small{font-size:15px}
+.stage-in{padding-top:32px}
+.stage-in.denser .pr-stage .pd-copies{gap:5px}
+.stage-in.denser .pr-stage .pd-copies li{padding:5px 12px}
+.stage-in.denser .pr-stage .pd-q{margin-top:6px}
+.stage-in.denser .pr-stage .pr-problem{margin-top:10px;padding:8px 14px}
+.stage-in.denser .pr-stage .pd-stage{padding:6px 12px}

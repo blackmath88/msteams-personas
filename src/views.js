@@ -88,11 +88,11 @@
   }
 
   function files(vm, o) {
-    return '<table class="tw-files"><thead><tr><th scope="col">Name</th><th scope="col">Geändert</th><th scope="col">Hinweis</th></tr></thead><tbody>' +
+    return '<table class="tw-files"><thead><tr><th scope="col">Name</th>' + (o.personal ? '' : '<th scope="col">Geändert</th>') + '<th scope="col">' + (o.personal ? 'Freigabe' : 'Hinweis') + '</th></tr></thead><tbody>' +
       vm.scene.files.map(function (f) {
         var p = f.by ? vm.person(f.by) : null;
-        return '<tr><td>' + mark(f.mark, o.annot) + ic(FILE_IC[f.kind] || 'i-doc') + '<span>' + esc(f.name) + '</span></td><td>' +
-          (p ? esc(short(p.name)) + (f.when ? ', ' + esc(f.when) : '') : '–') + '</td><td>' + esc(vm.fill(f.note)) + '</td></tr>';
+        return '<tr><td><span class="fn">' + mark(f.mark, o.annot) + ic(FILE_IC[f.kind] || 'i-doc') + '<span>' + esc(f.name) + '</span></span></td>' +
+          (o.personal ? '' : '<td>' + (p ? esc(short(p.name)) + (f.when ? ', ' + esc(f.when) : '') : '–') + '</td>') + '<td>' + esc(vm.fill(f.note)) + '</td></tr>';
       }).join('') + '</tbody></table>';
   }
 
@@ -113,7 +113,7 @@
     return '<figure class="tw tw-personal' + (o.stage ? ' tw-stage' : '') + (o.annot ? ' annot' : '') + '" aria-label="Szene: persönliche Ablage von ' + esc(me.name) + '">' +
       '<div class="tw-bar"><span class="tw-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="tw-app">Persönliche Ablage</span><span class="tw-label">Fiktives Beispiel · kein Team</span></div>' +
       '<div class="tw-body tw-pbody">' +
-        '<div class="tw-main"><div class="tw-head"><h3>' + av(me, 's') + ' Meine Dateien</h3></div><div class="tw-content">' + files(vm, o) + '</div></div>' +
+        '<div class="tw-main"><div class="tw-head"><h3>' + av(me, 's') + ' Meine Dateien</h3></div><div class="tw-content">' + files(vm, { annot: o.annot, personal: true }) + '</div></div>' +
         '<div class="tw-main tw-todo"><div class="tw-head"><h3>' + ic('i-list') + ' To Do</h3></div><ul class="tw-tasks">' + sc.tasks.map(function (t) {
           return '<li><span class="tw-chk" aria-hidden="true"></span><span class="tw-tt"><strong>' + esc(t.title) + '</strong></span></li>';
         }).join('') + '</ul><p class="tw-pnote">' + esc(sc.teamNote) + '</p></div>' +
@@ -196,7 +196,7 @@
       '<div class="pr-foot">' +
         '<p class="pr-rec"><strong>Empfehlung hier</strong>' + esc(vm.fill(b.recommend)) + '</p>' +
         (o.annot ? '<p class="pr-bound"><strong>Grenze</strong>' + esc(vm.fill(b.boundary)) + '</p>' : '') +
-        (o.annot && alt ? '<p class="pr-alt"><strong>Alternative</strong>' + esc(alt.label) + ': ' + esc(alt.why) + '</p>' : '') +
+        (o.annot && alt ? '<p class="pr-alt"><strong>Alternative</strong>' + esc(alt.label) + (o.stage ? '' : ': ' + esc(alt.why)) + '</p>' : '') +
       '</div></article>';
   }
 

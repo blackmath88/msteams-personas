@@ -91,7 +91,7 @@ try {
   const fit = await p.eval(`(()=>{const r=document.querySelector('.stage').getBoundingClientRect();return r.right<=innerWidth&&r.bottom<=innerHeight&&Math.abs(r.width/r.height-16/9)<0.01})()`);
   check('stage is 16:9 and fits viewport', fit);
   check('site chrome hidden in presentation', (await p.eval('getComputedStyle(document.querySelector(".site")).display')) === 'none');
-  const clipped = await p.eval(`(()=>{const s=document.querySelector('.stage-in').getBoundingClientRect();return [...document.querySelectorAll('.stage-in .pr-foot p, .stage-in .pd-panel')].filter(e=>e.getBoundingClientRect().bottom>s.bottom+1).length})()`);
+  const clipped = await p.eval(`(()=>{const v=document.querySelector('.stage-in').firstElementChild;const d=document.querySelector('.stage-in .pd').getBoundingClientRect(),f=document.querySelector('.stage-in .pr-foot').getBoundingClientRect();return (v.scrollHeight>v.clientHeight+2?1:0)+(d.bottom>f.top+1?1:0)})()`);
   check('presentation content not clipped (Prinzip)', clipped === 0, clipped + ' clipped');
   await p.shot(OUT + '08-present-prinzip-annot.png');
   await p.key('h', 'KeyH', 72);
@@ -101,9 +101,18 @@ try {
   await p.key('Escape', 'Escape', 27);
   check('Escape exits presentation to same view', /^#\/s\/leadership-forum\/eigenes-team\/prinzip/.test(await hash()) && (await count('.stage')) === 0);
   await p.goto(BASE + '#/p/kundenportal/eigenes-team/szene/posts');
-  const sClip = await p.eval(`(()=>{const s=document.querySelector('.stage-in').getBoundingClientRect();return [...document.querySelectorAll('.stage-in .tw-post')].filter(e=>e.getBoundingClientRect().bottom>s.bottom+1).length})()`);
+  const stageFits = () => p.eval(`(()=>{const v=document.querySelector('.stage-in').firstElementChild;const m=v.querySelector('.tw-main')||v;return v.scrollHeight<=v.clientHeight+2&&m.scrollHeight<=m.clientHeight+2&&!document.querySelector('.stage-overflow')})()`);
+  const sClip = (await stageFits()) ? 0 : 1;
   check('presentation Szene posts not clipped', sClip === 0, sClip + ' clipped');
   await p.shot(OUT + '10-present-business-szene.png');
+  for (const sid of ['leadership-forum/eigenes-team', 'kundenportal/eigenes-team', 'kundenportal/kanal', 'heat-health/-']) for (const v of ['prinzip/chat', 'prinzip/doc', 'prinzip/tasks', 'szene/posts', 'szene/files', 'szene/tasks']) {
+    await p.goto(BASE + `#/p/${sid}/${v}`); await p.sleep(150);
+    const ok = await stageFits();
+    if (!ok) check(`stage fits: ${sid} ${v}`, false);
+  }
+  check('stage fit sweep (4 situations × 6 views) done', true);
+  await p.goto(BASE + '#/p/kundenportal/eigenes-team/prinzip/doc');
+  await p.shot(OUT + '15-present-business-prinzip-doc.png');
   await p.goto(BASE + '#/p/nora-reihe/-/szene');
   await p.shot(OUT + '11-present-nora.png');
 
