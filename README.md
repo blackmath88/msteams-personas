@@ -21,12 +21,16 @@ node check-worlds.mjs
 
 ## Product direction
 
-**Define a world → choose a scenario → compose a scene → present or export it.**
+**Explore the library → choose or describe a situation → customise → understand it visually → present or export.**
 
 A world holds people, roles, relationships and collaboration structure. Scenarios describe specific situations and learning decisions. Scenes render the selected situation as a recognisable collaboration interface.
 
 The existing atlas is the seed viewer. A browser-based authoring workspace, portable scenario collections and dedicated screenshot/slide export are planned; they are not implemented yet. Today, authoring means editing the data file and checking it; print produces a compact briefing rather than a screenshot export.
 
+The planned library includes Business and Higher Education collections. The same situation will support screenshot-like scenes, conceptual setup maps, principle explainers and before/after comparisons.
+
+- [Detailed build plan](docs/BUILD-PLAN.md)
+- [Perplexity use-case research prompt](docs/research/PERPLEXITY-USE-CASES-PROMPT.md)
 - [Product brief](docs/PRODUCT.md)
 - [Roadmap and acceptance criteria](docs/ROADMAP.md)
 - [Current status and bounded scope](docs/STATUS.md)

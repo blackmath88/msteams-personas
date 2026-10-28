@@ -6,7 +6,7 @@ Date: 2026-10-28.
 
 Outcome: establish `blackmath88/msteams-personas` as a standalone home for the existing atlas and the new persona/scenario visual-tool direction.
 
-Base: empty target repository; source pinned at m365-toolbox commit `4af0e42219b346eb7676317f213e3998c5792cf8`.
+Foundation: merged PR #1; source pinned at m365-toolbox commit `4af0e42219b346eb7676317f213e3998c5792cf8`.
 
 Write scope: new repository only; migrate viewer/data/validator/tokens, fix standalone paths and identity, add product/provenance/roadmap documentation. Preserve the source repository. No deployment, source deletion, merge, tenant integration or API spending.
 
@@ -31,4 +31,6 @@ The live overview was checked before preparation. No corresponding project or Mi
 
 ## Next bounded slice
 
-Define portable collections and a compatibility adapter before implementing a browser authoring workspace. Use the product brief and acceptance criteria in the roadmap. User-facing editable authoring and screenshot export are not yet available.
+The library-first direction is recorded in [BUILD-PLAN.md](BUILD-PLAN.md). Start with the collection adapter, selectable scenarios and four visual projections for existing worlds plus one business case. The following milestone adds a complete customisation and export path. User-facing editable authoring, business starter content and screenshot export are not yet available.
+
+The 2026-10-28 planning change contains documentation only. Research is requested through docs/research/PERPLEXITY-USE-CASES-PROMPT.md and has not yet been conducted.
