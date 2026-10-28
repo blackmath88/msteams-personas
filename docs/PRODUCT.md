@@ -6,6 +6,14 @@ A place to set up fictional people, working worlds and use cases, then render co
 
 The value is a reusable visual environment for training, workshop discussion, consulting and adoption design. A trainer can change the story, people, channels or artefacts without recreating demo accounts, uploading dummy documents or cleaning up a tenant.
 
+## Library-first experience
+
+Visitors first understand the vision through a visual example. They can explore a recognisable situation or describe their own, then customise a copy. Business and Higher Education are collections within the same library.
+
+Each situation supports screenshot-like scenes, conceptual setup maps, principle explainers and before/after comparisons. These views share people, artefacts, scenario and selected setup variant; they are projections of one model. Customisation has a live preview, followed by presentation and export.
+
+See [the build plan](BUILD-PLAN.md) for the complete UX, delivery slices and acceptance criteria.
+
 ## First use case
 
 University of Basel M365 training with isolutions is the first example collection.
