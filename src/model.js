@@ -62,20 +62,27 @@
     var shared = w.artefacts.filter(function (x) { return x.state === 'shared'; });
     var art = first(shared) || first(w.artefacts);
     var drafts = w.artefacts.filter(function (x) { return x.state === 'personal' || x.state === 'draft'; });
-    var pick = first((sc.decision_points || []).map(function (d) { return d.pick && d.pick.label; }).filter(Boolean));
+    var fr = sc.current_state.frictions;
+    /* Match frictions and decisions to each principle by keyword/module rather than by position. */
+    var about = function (re) { return first(fr.filter(function (t) { return re.test(t); })); };
+    var dpFor = function (mods) {
+      var d = first((sc.decision_points || []).filter(function (x) { return x.pick && x.modules.some(function (m) { return mods.indexOf(m) >= 0; }); }));
+      return d && d.pick.label;
+    };
+    var pick = dpFor(['communication']) || dpFor(['teams']) || first((sc.decision_points || []).map(function (d) { return d.pick && d.pick.label; }).filter(Boolean));
     var M = a.model;
     var or = function (x, y) { return x || y; };
     var base = art ? art.name.replace(/\s+/g, '_') : 'Dokument';
     return {
       chat: {
-        problem: or(sc.current_state.frictions[0], w.tension),
-        decision: or(pick, 'Entscheid zur Zusammenarbeit'),
+        problem: or(about(/Chat|Mail|Entscheid|Absprache|Rückfrage|Verteiler/), w.tension),
+        decision: w.size === 1 && M.communication.change ? M.communication.change : [pick, M.communication.change].filter(Boolean).sort(function (x, y) { return x.length - y.length; })[0] || 'Entscheid zur Zusammenarbeit',
         inChat: ppl.slice(0, Math.min(2, ppl.length)), later: ppl.slice(2, 5),
         recommend: or(M.communication.change, M.communication.stay),
         boundary: [M.communication.stay, M.communication.outside].filter(Boolean).join(' ')
       },
       doc: {
-        problem: or(sc.current_state.frictions[1], sc.current_state.frictions[0]),
+        problem: or(about(/Fassung|Kopie|Anhang|Entwurf|OneDrive|Version|Ordner/), fr[0]),
         artefact: art ? art.name : 'Dokument',
         copies: [base + '_v2.docx', base + '_final.docx', base + '_final_kommentiert.docx'],
         editors: art && art.owner && ppl.indexOf(art.owner) >= 0 ? [art.owner].concat(ppl.filter(function (x) { return x !== art.owner; }).slice(0, 2)) : ppl.slice(0, 3),
@@ -85,8 +92,9 @@
         boundary: [M.documents.stay, M.documents.outside].filter(Boolean).join(' ')
       },
       tasks: {
-        problem: or(sc.current_state.frictions[2], sc.current_state.frictions[0]),
-        personal: ppl.slice(0, 2).map(function (id, i) { return { who: id, items: [i ? 'Eigene Vorbereitung' : 'Persönliche Notizen'] }; }),
+        problem: or(about(/Pendenz|Aufgabe|To-Do|To Do|erledigt|Frist/i), w.tension),
+        personal: w.people.slice(0, 2).map(function (p, i) { return { who: p.id, items: [(p.stays_personal && p.stays_personal[0]) || (i ? 'Eigene Vorbereitung' : 'Persönliche Notizen')] }; }),
+        lean: M.tasks.stay,
         shared: (sc.m365_model && sc.m365_model.planner_buckets ? sc.m365_model.planner_buckets.slice(0, 3) : []).map(function (b, i) { return { t: b, who: ppl[i % ppl.length], due: '' }; }),
         recommend: or(M.tasks.change, M.tasks.m365),
         boundary: [M.tasks.stay, M.tasks.m365].filter(Boolean).join(' ')

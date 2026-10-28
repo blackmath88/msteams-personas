@@ -176,9 +176,9 @@
       var p = vm.person(t.who);
       return '<li><span>' + esc(t.t) + '</span><span class="pd-own">' + av(p, 's') + esc(short(p.name)) + '</span>' + (t.due ? '<span class="pd-due">' + esc(t.due) + '</span>' : '') + '</li>';
     }).join('') + '</ul></div>' + link('für alle Beteiligten sichtbar', false) :
-      '<div class="pd-box pd-plan"><p class="pd-boxh">' + ic('i-list') + 'Persönliche Liste genügt</p><p class="pd-small">Hier braucht es keinen gemeinsamen Plan.</p></div>';
+      '<div class="pd-box pd-plan"><p class="pd-boxh">' + ic('i-list') + 'Kein eigener Aufgabenplan</p><p class="pd-lean">' + esc(vm.fill(b.lean || b.recommend)) + '</p></div>';
     right += '<p class="pd-keep">' + ic('i-person') + 'Persönliche To-dos bleiben in der eigenen Liste</p>';
-    return panel('before', 'Heute', 'Verpflichtungen in persönlichen Listen', left) + arrow() + panel('after', 'Für diese Situation', b.shared.length ? 'Gemeinsame Verantwortung sichtbar' : 'Bewusst persönlich', right);
+    return panel('before', 'Heute', 'Verpflichtungen in persönlichen Listen', left) + arrow() + panel('after', 'Für diese Situation', b.shared.length ? 'Gemeinsame Verantwortung sichtbar' : 'Bewusst schlank', right);
   }
 
   function arrow() { return '<div class="pd-arrow" aria-hidden="true"><svg viewBox="0 0 40 24"><path d="M2 12h32m-9-8 9 8-9 8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'; }
