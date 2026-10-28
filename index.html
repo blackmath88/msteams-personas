@@ -3,13 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Arbeitswelten Hochschule — msteams-personas</title>
-<meta name="description" content="Fünf fiktive Arbeitswelten einer Hochschule und je ein passendes M365-Arbeitsmodell.">
-<link rel="stylesheet" href="assets/tokens.css">
-<link rel="stylesheet" href="atlas.css">
+<title>msteams-personas</title>
+<meta name="description" content="Bibliothek fiktiver Arbeitssituationen: Teams-ähnliche Szenen und Prinzip-Bilder, ohne ein echtes Team zu bauen.">
+<link rel="stylesheet" href="src/app.css">
 </head>
 <body>
-
 <!-- Icon sprite: small hand-drawn line icons in the Fluent spirit. Always paired with a text label. -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
@@ -37,22 +35,24 @@
 </svg>
 
 <a class="skip" href="#main">Zum Inhalt</a>
-
-<header class="site no-print">
+<header class="site">
   <div class="site-in">
-    <a class="back" href="#/"><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg>msteams-personas</a>
-    <p class="site-note">Fiktive Personen und Einheiten. Keine echten Angaben zur Universität Basel.</p>
+    <a class="brand" href="#/"><span class="brand-m" aria-hidden="true"></span>msteams-personas</a>
+    <nav aria-label="Einstiege"><a href="#/personas">Persona</a><a href="#/usecases">Use Case</a><a href="#/konfigurator/1">Eigene Situation</a><a href="atlas.html">Legacy-Atlas</a></nav>
   </div>
 </header>
-
 <main id="main" tabindex="-1">
-  <noscript><p class="wrap noscript">Diese Seite braucht JavaScript, um die Arbeitswelten aus <code>worlds.js</code> darzustellen.</p></noscript>
-  <div id="app"></div>
+  <noscript><p class="wrap">Diese Seite braucht JavaScript. Alles läuft lokal, ohne Server oder Konto.</p></noscript>
+  <div id="app" class="wrap"></div>
 </main>
-
+<footer class="foot"><p class="wrap">Alle Personen, Einheiten und Inhalte sind fiktiv. Keine echten Angaben zur Universität Basel oder zu einer Firma. Vereinfachte, eigene Darstellung; kein Produkt von Microsoft.</p></footer>
 <p id="live" class="sr-only" role="status" aria-live="polite"></p>
 
 <script src="worlds.js"></script>
-<script src="atlas.js"></script>
+<script src="src/library.js"></script>
+<script src="src/model.js"></script>
+<script src="src/configurator.js"></script>
+<script src="src/views.js"></script>
+<script src="src/app.js"></script>
 </body>
 </html>
