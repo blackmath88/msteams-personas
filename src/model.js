@@ -69,6 +69,17 @@
       var d = first((sc.decision_points || []).filter(function (x) { return x.pick && x.modules.some(function (m) { return mods.indexOf(m) >= 0; }); }));
       return d && d.pick.label;
     };
+    /* Worlds with several scenarios share one atlas model; bind to the scenario's own decision instead. */
+    var multi = w.scenarios.length > 1;
+    var dpIn = function (order) {
+      for (var i = 0; i < order.length; i++) {
+        var d = first((sc.decision_points || []).filter(function (x) { return x.pick && x.modules.indexOf(order[i]) >= 0; }));
+        if (d) return d;
+      }
+      return null;
+    };
+    var why = function (d) { var t = d && d.pick.why.replace(/^Unsere Wahl für diesen Kontext:\s*/, ''); return t && t.charAt(0).toUpperCase() + t.slice(1); };
+    var own = multi ? { chat: dpIn(['communication', 'documents', 'teams']), doc: dpIn(['documents', 'teams', 'loop']), tasks: dpIn(['planner']) } : {};
     var pick = dpFor(['communication']) || dpFor(['teams']) || first((sc.decision_points || []).map(function (d) { return d.pick && d.pick.label; }).filter(Boolean));
     var M = a.model;
     var or = function (x, y) { return x || y; };
@@ -76,9 +87,9 @@
     return {
       chat: {
         problem: or(about(/Chat|Mail|Entscheid|Absprache|Rückfrage|Verteiler/), w.tension),
-        decision: w.size === 1 && M.communication.change ? M.communication.change : [pick, M.communication.change].filter(Boolean).sort(function (x, y) { return x.length - y.length; })[0] || 'Entscheid zur Zusammenarbeit',
+        decision: own.chat ? own.chat.pick.label : [pick, M.communication.change].filter(Boolean).sort(function (x, y) { return x.length - y.length; })[0] || 'Entscheid zur Zusammenarbeit',
         inChat: ppl.slice(0, Math.min(2, ppl.length)), later: ppl.slice(2, 5),
-        recommend: or(M.communication.change, M.communication.stay),
+        recommend: own.chat ? why(own.chat) : or(M.communication.change, M.communication.stay),
         boundary: [M.communication.stay, M.communication.outside].filter(Boolean).join(' ')
       },
       doc: {
@@ -88,7 +99,7 @@
         editors: art && art.owner && ppl.indexOf(art.owner) >= 0 ? [art.owner].concat(ppl.filter(function (x) { return x !== art.owner; }).slice(0, 2)) : ppl.slice(0, 3),
         drafter: (first(drafts) && ppl.indexOf(first(drafts).owner) >= 0) ? first(drafts).owner : ppl[0],
         draft: first(drafts) ? first(drafts).name : 'Rohentwurf',
-        recommend: or(M.documents.change, M.documents.stay),
+        recommend: own.doc ? own.doc.pick.label + '. ' + why(own.doc) : or(M.documents.change, M.documents.stay),
         boundary: [M.documents.stay, M.documents.outside].filter(Boolean).join(' ')
       },
       tasks: {
@@ -96,7 +107,7 @@
         personal: w.people.slice(0, 2).map(function (p, i) { return { who: p.id, items: [(p.stays_personal && p.stays_personal[0]) || (i ? 'Eigene Vorbereitung' : 'Persönliche Notizen')] }; }),
         lean: M.tasks.stay,
         shared: (sc.m365_model && sc.m365_model.planner_buckets ? sc.m365_model.planner_buckets.slice(0, 3) : []).map(function (b, i) { return { t: b, who: ppl[i % ppl.length], due: '' }; }),
-        recommend: or(M.tasks.change, M.tasks.m365),
+        recommend: own.tasks ? own.tasks.pick.label + '. ' + why(own.tasks) : or(M.tasks.change, M.tasks.m365),
         boundary: [M.tasks.stay, M.tasks.m365].filter(Boolean).join(' ')
       }
     };
