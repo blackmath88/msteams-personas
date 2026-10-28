@@ -116,7 +116,7 @@ window.LIB = {
         doc: {
           problem: 'Der Veranstaltungsplan liegt in drei Fassungen vor: bei {p:mara-conti}, bei {p:sophie-frei} und bei HR Services.',
           artefact: 'Veranstaltungsplan', copies: ['Veranstaltungsplan_Mara.xlsx', 'Plan_SF_v2.xlsx', 'Teilnehmende_HR.xlsx'],
-          editors: ['mara-conti', 'sophie-frei', 'regula-aebi'], drafter: 'sophie-frei', draft: 'Rohkonzept Termin 5',
+          editors: ['mara-conti', 'sophie-frei', 'regula-aebi'], origin: 'mara-conti', drafter: 'sophie-frei', draft: 'Rohkonzept Termin 5',
           recommend: 'Eine Tabelle in den Dateien von «{c}», geteilt als Link statt als Anhang.',
           boundary: 'Rohkonzepte bleiben bei {p:sophie-frei}, bis sie abgestimmt sind. Anmeldedaten bleiben im Anmeldesystem.'
         },
@@ -142,6 +142,7 @@ window.LIB = {
         {
           id: 'eigenes-team', label: 'Eigenes, befristetes Projektteam',
           why: 'Marketing, IT und Vertrieb arbeiten gleichberechtigt bis zum Launch. Ein eigenes Team bündelt Plan, Anforderungen und Entscheide und wird nach dem Launch archiviert.',
+          assumption: 'Die Agentur ({p:tim-vogel}) ist nicht Mitglied; sie arbeitet nur an freigegebenen Dateien. Wie ihr Zugriff technisch geregelt ist, klärt die IT.',
           team: 'Projekt Kundenportal', teamNote: 'befristet bis Launch + 3 Monate',
           members: ['petra-schmid', 'luca-bernasconi', 'aylin-demir', 'marco-gerber', 'sandra-huber'],
           channels: ['Allgemein', 'Anforderungen', 'Inhalte & Agentur', 'Technik'], active: 'Anforderungen'
@@ -198,7 +199,7 @@ window.LIB = {
         doc: {
           problem: 'Die Anforderungsliste kursiert als Anhang: {p:sandra-huber} ergänzt, {p:tim-vogel} arbeitet mit einer Fassung von letzter Woche.',
           artefact: 'Anforderungsliste Kundenportal', copies: ['Anforderungen_v3.xlsx', 'Anforderungen_v3_SH.xlsx', 'Anforderungen_final_Agentur.xlsx'],
-          editors: ['luca-bernasconi', 'sandra-huber', 'tim-vogel'], drafter: 'aylin-demir', draft: 'Ideen für die Launch-Kampagne',
+          editors: ['luca-bernasconi', 'sandra-huber', 'tim-vogel'], origin: 'sandra-huber', drafter: 'aylin-demir', draft: 'Ideen für die Launch-Kampagne',
           recommend: 'Eine Liste in «{c}», alle kommentieren direkt darin. Die Agentur erhält Zugriff nur auf das, was sie braucht.',
           boundary: 'Kampagnenideen bleiben bei {p:aylin-demir}, bis sie reif sind. Wie die Agentur technisch Zugriff erhält, klärt eure IT; das Bild zeigt eine Annahme, keine geprüfte Berechtigung.'
         },

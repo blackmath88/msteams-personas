@@ -55,6 +55,7 @@
             }).join('') + '</div></div>' +
           '<div class="tw-content" role="tabpanel">' + body + '</div>' +
           (sc.outside && sc.outside.length ? '<p class="tw-outside">' + ic('i-box') + '<span><strong>Bleibt ausserhalb:</strong> ' + sc.outside.map(esc).join(' · ') + '</span></p>' : '') +
+          (vm.variant && vm.variant.assumption ? '<p class="tw-assume">' + ic('i-alert') + '<span><strong>Annahme:</strong> ' + esc(vm.fill(vm.variant.assumption)) + '</span></p>' : '') +
         '</div>' +
         notes +
       '</div></figure>';
@@ -151,18 +152,25 @@
 
   function diagramDoc(vm, b) {
     var eds = b.editors.map(vm.person), dr = vm.person(b.drafter);
+    var origin = vm.person(b.origin || b.editors[0]);
     var holders = eds.map(function (p) { return short(p.name); }).concat(b.editorsLabel ? [b.editorsLabel] : []);
+    /* A copy may name its holder ({n, by}); by is a person id or a label. */
+    var holderOf = function (c, i) { return c.by ? (vm.people.some(function (p) { return p.id === c.by; }) ? short(vm.person(c.by).name) : c.by) : holders[i % holders.length]; };
     var left = '<ol class="pd-copies">' + b.copies.map(function (c, i) {
-      return '<li>' + ic('i-doc') + '<span><strong>' + esc(c) + '</strong><small>bei ' + esc(holders[i % holders.length]) + '</small></span></li>';
+      c = typeof c === 'string' ? { n: c } : c;
+      return '<li>' + ic('i-doc') + '<span><strong>' + esc(c.n) + '</strong><small>bei ' + esc(holderOf(c, i)) + '</small></span></li>';
     }).join('') + '</ol>' + '<p class="pd-q">Welche Fassung gilt?</p>';
     var right = '<div class="pd-box pd-onedoc"><p class="pd-boxh">' + ic('i-doc') + esc(vm.fill(b.artefact)) + '</p><p class="pd-small">eine Datei, Link statt Anhang</p></div>' +
       link('bearbeiten und kommentieren am selben Ort', false) + '<ul class="pd-people">' + eds.map(function (p) { return chip(p); }).join('') + (b.editorsLabel ? placeholder(b.editorsLabel) : '') + '</ul>';
+    var art = esc(vm.fill(b.artefact));
     return panel('before', 'Heute', 'Kopien im Anhang', left) + arrow() + panel('after', 'Für diese Situation', 'Ein gemeinsames Dokument', right) +
-      '<div class="pd-life" aria-label="Ablauf vom Entwurf zum gemeinsamen Dokument">' +
-        '<div class="pd-stage"><p class="pd-tag">Persönlich</p><p><strong>' + esc(vm.fill(b.draft)) + '</strong><small>Entwurf bei ' + esc(short(dr.name)) + '</small></p></div>' +
+      '<div class="pd-bottom"><div class="pd-life" aria-label="Weg von «' + art + '» vom Entwurf zum gemeinsamen Dokument">' +
+        '<p class="pd-life-h">Weg dieses Dokuments</p>' +
+        '<div class="pd-stage"><p class="pd-tag">Persönlich</p><p><strong data-doc>' + art + '</strong><small>Entwurf bei ' + esc(short(origin.name)) + '</small></p></div>' +
         '<div class="pd-arrow-l"><span>teilen, sobald andere mitarbeiten</span></div>' +
-        '<div class="pd-stage pd-stage-on"><p class="pd-tag">Gemeinsam</p><p><strong>' + esc(vm.fill(b.artefact)) + '</strong><small>eine Fassung für alle</small></p></div>' +
-      '</div>';
+        '<div class="pd-stage pd-stage-on"><p class="pd-tag">Gemeinsam</p><p><strong data-doc>' + art + '</strong><small>eine Fassung für alle</small></p></div>' +
+      '</div>' +
+      '<div class="pd-keepdoc" aria-label="Anderes Beispiel: bleibt persönlich"><p class="pd-tag">Anderes Beispiel · bleibt persönlich</p><p><strong>' + esc(vm.fill(b.draft)) + '</strong><small>bei ' + esc(short(dr.name)) + ', wird nicht geteilt, solange niemand mitarbeitet</small></p></div></div>';
   }
 
   function diagramTasks(vm, b) {
@@ -195,8 +203,10 @@
       '<div class="pd">' + DIAG[pid](vm, b, o) + '</div>' +
       '<div class="pr-foot">' +
         '<p class="pr-rec"><strong>Empfehlung hier</strong>' + esc(vm.fill(b.recommend)) + '</p>' +
-        (o.annot ? '<p class="pr-bound"><strong>Grenze</strong>' + esc(vm.fill(b.boundary)) + '</p>' : '') +
-        (o.annot && alt ? '<p class="pr-alt"><strong>Alternative</strong>' + esc(alt.label) + (o.stage ? '' : ': ' + esc(vm.fill(alt.why))) + '</p>' : '') +
+        /* Qualifications stay visible with Hinweise off; only decorative annotation is toggled. */
+        '<p class="pr-bound"><strong>Grenze</strong>' + esc(vm.fill(b.boundary)) + '</p>' +
+        (alt ? '<p class="pr-alt"><strong>Alternative</strong>' + esc(alt.label) + (o.stage ? '' : ': ' + esc(vm.fill(alt.why))) + '</p>' : '') +
+        (vm.variant && vm.variant.assumption ? '<p class="pr-assume"><strong>Annahme</strong>' + esc(vm.fill(vm.variant.assumption)) + '</p>' : '') +
       '</div></article>';
   }
 

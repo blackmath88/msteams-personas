@@ -377,3 +377,29 @@ kbd{font:inherit;font-size:11.5px;border:1px solid #6b7080;border-radius:4px;pad
 .stage-in.dense .tw-stage .tw-post{padding:10px 14px}
 .stage-in.denser .tw-stage{font-size:16px}
 .stage-in.denser .tw-stage .tw-replies li,.stage-in.denser .tw-stage .tw-outside{font-size:15px}
+
+.pd-life{grid-template-columns:minmax(0,1fr) minmax(120px,auto) minmax(0,1fr)}
+.pd-life-h{grid-column:1/-1;font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--ink-3);margin-bottom:-2px}
+.pd-keepdoc{grid-column:1/-1;display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;padding:10px 14px;border:2px dashed var(--line-2);border-radius:12px;background:#fff;margin-top:6px}
+.pd-keepdoc strong{margin-right:8px}.pd-keepdoc small{font-size:13.5px;color:var(--ink-3)}
+.pr-stage .pd-keepdoc small{font-size:16px}
+.stage-in.denser .pr-stage .pd-keepdoc{padding:6px 12px;margin-top:0}
+.transfer{margin-top:14px;padding:12px 14px;border-radius:8px;background:#fdf0d9;color:#5c3a00;font-size:15px}
+.transfer strong{display:block;margin-bottom:2px}
+.pr-assume{background:#fdf0d9!important}.pr-assume strong{color:#7a4d00}
+.tw-assume{display:flex;gap:8px;align-items:flex-start;margin-top:8px;padding:8px 10px;border-radius:6px;background:#fdf0d9;color:#5c3a00;font-size:13.5px}
+.tw-stage .tw-assume{font-size:16px}
+.pr-stage .pr-foot{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.pd-bottom{grid-column:1/-1;display:grid;gap:8px}
+.pd-life{margin-top:0}
+.pd-keepdoc{grid-column:auto;margin-top:0}
+.pr-stage .pd-bottom{grid-template-columns:minmax(0,3fr) minmax(0,1.1fr);gap:14px}
+.pr-stage .pd-keepdoc{display:block;padding:10px 14px}
+.pr-stage .pd-keepdoc strong{display:block}
+.pr-stage .pd-copies{gap:6px}.pr-stage .pd-copies li{padding:6px 12px}
+.pr-stage .pd-bottom>.pd-life{grid-column:auto}
+.stage-in.denser .pr-stage .pr-h h3{font-size:30px}
+.stage-in.denser .pr-stage .pr-q{font-size:18px}
+.stage-in.denser .pr-stage .pd-copies li{padding:4px 12px}
+.stage-in.denser .pr-stage .pd-life{padding:8px 10px;gap:6px}
+.stage-in.denser .pr-stage .pd-keepdoc{padding:6px 12px}

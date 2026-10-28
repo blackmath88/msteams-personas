@@ -1,6 +1,11 @@
 # Prototype handoff: visual-first library v1
 
-Written 2026-10-28, at the end of a 90-minute autonomous run. This is a first prototype for review. It has not been merged or deployed.
+Status as of 2026-10-28, after three passes:
+1. the 90-minute first prototype
+2. slice 2, which completed all worlds
+3. a review correction pass
+
+The prototype is ready for integration review. It has not been merged or deployed, and there is no PR yet.
 
 ## Revision
 
@@ -8,174 +13,167 @@ Written 2026-10-28, at the end of a 90-minute autonomous run. This is a first pr
 | --- | --- |
 | Baseline | `main` at `759c94bae7e61883b5d2634c8d801f759c8f7504` ("Revise build plan for visual-first Weavr test") |
 | Branch | `prototype/visual-library-v1` (git worktree `../msteams-personas-proto`) |
-| Last implementation commit | `da7250e`. The final branch commit adds this handoff and the doc updates; `git log -1 prototype/visual-library-v1` shows it |
-| Execution | Direct Claude session (Opus 5.5). The Orca `orchestration` skill was loaded, but no worker was dispatched: one builder was used, so no unattended worker or deadline enforcement was needed. The archived Weavr mission `msteams-visual-library-first-slice` was not touched |
-
-## Slice 2: all worlds complete (same day, follow-up run)
-
-`src/library-he.js` adds hand-written Szene and Prinzip content for every remaining situation, so all eight situations are now complete. The atlas-derived fallback in `src/model.js` stays in place as the adapter for future worlds.
-
-- **Heat & Health Basel:** a group team with the «Publikationen» channel. It has a revision thread, literature, and a «Rohdaten bleiben in der Infrastruktur» post. The data partner stays outside, with a quarterly update by mail and link.
-- **Sitzungszyklus:** this documented contradiction is now **two explicit variants**:
-  - «externes Mitglied als Gast» is the curated pick. It is labelled as an assumption: org policy has to allow it and an account is needed, which IT checks, not the scene.
-  - «Link pro Sitzung» is the alternative. Here Beat Kunz is not in the team.
-  - Its tasks principle is deliberately lean: no plan for eight Pendenzen a year.
-- **Semesterstart:** the conditional «Bewertung» channel is now **two variants**: without the channel (the default) and with one restricted to the lecturers. The restriction is labelled as an unchecked assumption. Students and grades stay on the learning platform and in the official grading system.
-- **Nora, three scenarios:** each scenario has its own personal scene (files, To Do, notes) and its own principle bindings, still with no Team. Non-person participants (Coautorin, Vertretung, Sekretariat) appear as labelled placeholders.
-- **Fixes:**
-  - Variant texts now resolve name tokens.
-  - External members are marked «extern» and other units «andere Einheit».
-  - Copy holders match the file names.
-  - Plural forms of «+ n weitere» are corrected.
-  - The stage density step-down now also measures the scene's inner panel.
-- **Tests:** `node --test tests/` passes 7/7, including a new test that every situation is complete, the contradiction variants are explicit, and each Nora scenario is distinct. `node tests/journey.mjs` passes **59/59**. That includes a stage-fit sweep and a raw-token sweep over all 12 situation/variant combinations × 6 views, plus new screenshots `40`–`44`.
+| Final commit | The branch head, from `git log -1 prototype/visual-library-v1`. It is the commit that adds this version of the handoff |
+| Execution | Direct Claude session (Opus 5.5), one builder. The Orca orchestration skill was loaded, but no worker was dispatched. The Weavr mission `msteams-visual-library-first-slice` was not touched |
 
 ## Open / run
 
-No build, install or server is required for use. Open `index.html` directly in a browser. All scripts and styles are local, and there is no CDN, web font or network call.
+Open `index.html` directly in a browser. No install, server, account, CDN or network access is needed.
 
-Optional static server for tests:
+The legacy atlas is `atlas.html`. Its code and content are unchanged except for a link back to the library.
+
+The tests need Node ≥ 22 and Chromium:
 
 ```sh
-python3 -m http.server 8765 --bind 127.0.0.1
+node check-worlds.mjs
+node --test tests/
+python3 -m http.server 8765 --bind 127.0.0.1   # in a second terminal
+node tests/journey.mjs                          # writes docs/screenshots/
 ```
 
-The legacy atlas is now `atlas.html`. Its content and code are unchanged; it only gained a link back to the library.
+## Implemented
 
-## What is implemented
-
-**Library and shared selection state**
-- Landing page. The headline is "Teams-Situationen zeigen, ohne ein Team zu bauen". The hero shows the same Leadership Forum situation twice, once as a Szene and once as a Prinzip. Both previews are inert and have explicit open links.
-- Three entry points:
-  - **Persona wählen**: six world cards (five university worlds plus Business), each leading to its situations.
-  - **Use Case wählen**: six frictions, each leading to matching situations, which open in the matching Prinzip.
-  - **Eigene Situation**: the configurator.
-- **Persona and use-case browsing reach the same situations.** All seven legacy scenarios are reachable as explicit situations, which is tested. Every university world also links to its detail view in the legacy atlas.
-- **New business world:** *Marketing & Kommunikation, Brunner Haustechnik AG* coordinating the *Kundenportal bis März* project with IT, Vertrieb and an external agency. It has six fictional people and is labelled as a fictional synthesis that has not been validated by research.
+**Library and shared state**
+- **Landing page:** the headline is "Teams-Situationen zeigen, ohne ein Team zu bauen". The hero shows one situation as both Szene and Prinzip; the previews are inert and have explicit open links.
+- **Entry points:** Persona wählen, Use Case wählen and Eigene Situation. Persona and use-case browsing reach the same eight situations, and all seven legacy scenarios plus the business case are reachable.
+- **Collections:** five university worlds and one fictional business world. The business world is *Brunner Haustechnik AG, Marketing & Kommunikation, Kundenportal bis März*, labelled as unvalidated synthesis.
 - **Shared state:**
-  - Routes have the form `#/s/<situation>/<variant>/<szene|prinzip>/<tab|principle>`, so direct links and browser Back work.
-  - Custom names are stored per situation in `sessionStorage`. This is session-only, as the plan requires.
-  - The annotation toggle is global.
+  - Routes have the form `#/s/<situation>/<variant>/<szene|prinzip>/<tab|principle>`, and `#/p/…` opens the stage. Direct links and browser Back work.
+  - Custom team and participant names are stored per situation in `sessionStorage`, which is session-only by design. The curated originals are never changed.
 
-**Prinzip (three explainers)**
-- The three explainers are *Chat oder Kanal?*, *Persönlicher Entwurf oder gemeinsames Dokument?* and *Persönliche oder gemeinsame Verantwortung?*
-- Each one has:
-  - the situation's concrete problem
-  - a before/after diagram with labelled relationships ("sieht den Entscheid nicht", "finden es später", "teilen, sobald andere mitarbeiten")
-  - a contextual recommendation
-  - its boundary
-  - for situations with variants, the named alternative setup
-- **Leadership Forum and Kundenportal:** the bindings are hand-written.
-- **Other worlds:** the bindings are derived from the curated atlas texts. Frictions are matched to principles by keyword. Worlds with several scenarios (Nora) use each scenario's own decision point instead of the shared world model.
-
-**Resolving content contradictions through explicit variants**
-- **Leadership Forum:** "Eigenes Team für das Forum" (our choice) and "Kanal im bestehenden Team" (alternative) are two selectable variants. Each has its own team name, channels and members, so one scene no longer mixes the two claims.
-- **Kundenportal:** "Eigenes, befristetes Projektteam" and "Projektkanal im Abteilungsteam" are handled the same way.
-- **External access:** this is shown as an assumption ("Annahme, keine geprüfte Berechtigung"). There is no promise of access without an account.
-
-**Configurator**
-- Six questions with defaults, a progress bar, Back / Weiter, "Antworten ändern" and an explicit Zurücksetzen. Reset asks for confirmation and states that the draft is session-only.
-- **Transparent scoring:** each template has explicit rules, and the matched rules are shown as "Warum das passt". The second-best template with a different structure is shown as the alternative. Confidentiality and external-participant answers add assumptions and limits.
-- **Different answers give different structures** (tested):
-  - project with several units → own project team
-  - single unit, ongoing → channel
-  - one person → personal storage plus link
-  - committee → Sitzungszyklus
-  - teaching → Semesterstart
-  - research data → Heat & Health
-- Name fields are shown next to a live preview. Changing answers keeps earlier name customisations.
+**Content: all eight situations hand-written**
+- The text lives in `src/library.js` (Leadership Forum, Kundenportal, business world) and `src/library-he.js` (the other university situations).
+- An atlas-derived fallback remains in `src/model.js` as the adapter for future worlds. No current situation uses it.
+- **Documented contradictions are now explicit, selectable variants:**
+  - **Leadership Forum:** an own team versus a channel in the existing team.
+  - **Kundenportal:** a project team versus a channel in the department team.
+  - **Commission:** guest access versus a link per meeting for the external member.
+  - **Teaching team:** without versus with a «Bewertung» channel restricted to lecturers.
+- Every setup that depends on access or restriction carries an explicit **assumption**. Those assumptions state that the IT checks the real rules, not the scene, and they never promise access without an account.
+- **Nora:** her three scenarios each have their own personal scene (files, To Do) and their own principle bindings, with no Team.
 
 **Szene**
-- An original, simplified frame with no Microsoft logos and a quiet label "Fiktives Beispiel · vereinfachte, Teams-ähnliche Darstellung".
-- It shows a team tile, a channel list, members (marked "andere Einheit" where relevant) and working tabs: **Beiträge** (posts with titles, replies and file chips), **Dateien** (file table) and **Aufgaben** (owners, due dates, done state).
-- Tabs are real buttons: tab role, arrow-key navigation and deep links. Channels other than the active one are visibly muted and carry a tooltip "In diesem Beispiel nicht ausgearbeitet"; they are not fake buttons.
-- Annotations add numbered markers and a "Was hier anders ist" column.
-- **Coverage:**
-  - Complete scenes: Leadership Forum and Kundenportal.
-  - Other team worlds: adapted from the atlas `scenes.target`.
-  - Nora: keeps her personal OneDrive + To Do view, and no Team is created.
+- **Frame:** an original simplified frame with a fictional-example label and no Microsoft logos.
+- **Tabs:** Beiträge, Dateien and Aufgaben work as real tabs, with arrow keys and deep links, and are shown only where content exists.
+- **Channels:** inactive channels are visibly muted and carry a tooltip; they are not fake controls.
+- **Members:** marked «extern» or «andere Einheit» where that applies.
+- **Annotations:** numbered markers and a «Was hier anders ist» column, both controlled by Hinweise.
+- **Persistent footer:** «Bleibt ausserhalb» and «Annahme» stay visible whether Hinweise is on or off.
+
+**Prinzip (three explainers per situation)**
+- The three explainers are *Chat oder Kanal?*, *Persönlicher Entwurf oder gemeinsames Dokument?* and *Persönliche oder gemeinsame Verantwortung?*
+- Each one has: the problem, a before/after diagram with labelled relationships, the recommendation, the boundary, the alternative setup and, if any, the assumption.
+- **Document explainer:** the «Weg dieses Dokuments» strip follows **one** document from its originator's draft to the shared file. What stays personal is a separate, dashed «Anderes Beispiel · bleibt persönlich» box.
+- **Copy holders:** each copy names its holder explicitly where file names imply one.
+- **Non-person participants** (Coautorin, Vertretung, Sekretariat, Agentur) are shown as labelled placeholders.
+
+**Configurator**
+- Six questions with defaults, a progress bar, Back / Weiter, «Antworten ändern», and Zurücksetzen with confirmation.
+- **Scoring:** transparent and deterministic. The matched rules are shown as the rationale, and the alternative has a different structure. Confidentiality and external answers add assumptions.
+- **Context:** if the best match comes from the other collection (for example Business plus a course answer leads to the university teaching team), the result says so explicitly as «Übertragbares Beispiel aus der Hochschule». The live preview and the alternative carry the same tag.
+- **Names:** the name fields next to the live preview keep earlier customisations when answers change.
 
 **Präsentieren**
-- A fixed 1600×900 canvas scaled to fit the viewport. Library and configurator chrome are hidden.
-- Controls: "Beenden (Esc)", Hinweise on/off (checkbox or the H key), and a note that PNG export is not part of this version.
-- Selected situation, variant and custom names are preserved.
-- **Long text:** the stage shows at most 2 posts and 1 reply each, with a "+ n weitere" line. On stage, the alternative is reduced to its label. If content still overflows, the stage steps down through two density levels. If it still does not fit, it shows an explicit "Gekürzt" note.
+- **Stage:** a 1600×900 canvas scaled to the viewport, with library and configurator chrome hidden.
+- **Controls:** «Beenden (Esc)», Hinweise on/off (checkbox or the H key), and a note that PNG export is not part of this version.
+- **Hinweise off:** hides only decorative annotation, meaning markers, the note column and the Situation banner. Boundary, alternative and assumption stay.
+- **Long text:** at most 2 posts with 1 reply each, plus a «+ n weitere» line. The alternative shows only its label on stage. If needed, the stage steps down through two density levels. If it still doesn't fit, an explicit «Gekürzt» note appears; no current view needs it.
 
-## Tests run (all on the final implementation)
+## Tests (final run on the branch head)
 
 | Command | Result |
 | --- | --- |
 | `node check-worlds.mjs` | 5 worlds, 24 people, 45 artefacts, 7 scenarios, 25 decision points; **0 errors, 0 warnings** |
-| `node --check` on all `src/*.js` | pass |
-| `node --test tests/` (`tests/model.test.mjs`) | **6/6 pass**: all legacy scenarios reachable; 5+1 worlds; every person/use-case/principle reference resolves and no unresolved tokens; custom names reach scene + principle text while originals stay intact; variants change structure; configurator deterministic with different results, rationale, a differing alternative and sensitivity assumptions |
-| `node tests/journey.mjs` (headless Chromium via a dependency-free CDP driver, `tests/cdp.mjs`) | **52/52 checks pass** (details below) |
+| `node --check src/*.js` | pass |
+| `node --test tests/` | **9/9 pass** |
+| `node tests/journey.mjs` | **62/62 pass** |
 
-What `journey.mjs` exercises in the real UI:
-- **All three entry points.** Persona leads to Nora's three scenarios and her personal scene. Use case leads to situations and then to the matching principle.
-- **Browser Back.**
-- **Business scene:** tab clicks, arrow-key tabs, and the variant switch.
-- **Principles:** all three, for both complete examples.
-- **Shared naming:** a live update while typing, with focus kept in the field. The names then carry into Prinzip and the stage.
+**What `node --test tests/` covers**
+- All legacy scenarios are reachable, with 5 university worlds plus 1 business world.
+- Every person, use-case, principle, document-origin and copy-holder reference resolves.
+- No raw name tokens remain in principles, variants, assumptions or scene notes.
+- Names carry across modes while the originals stay intact.
+- Variants change structure, and all situations are complete with the contradiction variants present.
+- The configurator is deterministic, different answers give different results, and the alternative differs from the suggestion.
+- The cross-context flag is set correctly.
+- Every access-dependent setup carries an assumption.
+
+**What `node tests/journey.mjs` covers** (headless Chromium through `tests/cdp.mjs`, a dependency-free DevTools driver)
+- **Entry points:** all three, plus browser Back.
+- **Scene tabs:** clicks, arrow keys and the variant switch.
+- **Explainers:** all three for both original complete examples.
+- **Shared naming:** typing keeps focus, and the names carry into Prinzip and the stage.
 - **Stage:**
-  - The stage is 16:9 and fits the viewport.
-  - The chrome is hidden.
-  - There is no clipping or overlap.
-  - H toggles annotations.
+  - 16:9 that fits the viewport.
+  - Chrome hidden.
+  - Hinweise off keeps boundary, alternative and assumption.
   - Esc returns to the same view.
-- **Stage-fit sweep:** 4 situations × 6 views.
+- **Sweep over all 12 situation/variant combinations × 6 views:**
+  - stage fit with no overflow
+  - no raw tokens on the stage or the page
+  - the document explainer shows the same document in the shared box and both lifecycle stages
+- **Other worlds:**
+  - Commission: the guest variant marks the external member, and the link variant leaves him out.
+  - Teaching: the variant adds the «Bewertung» channel.
+  - Research: the scene renders.
+  - Nora: the scenes are distinct.
+- **Assumptions with Hinweise off:** visible in the scene, the principle and the stage.
 - **Configurator:**
   - Back keeps answers.
   - The result shows a rationale and an alternative.
   - Customisation survives a change of answers.
   - The live preview updates.
-  - A different answer set gives a personal starting point.
+  - Different answers give a personal result.
+  - A Business plus course answer is labelled «aus der Hochschule».
   - Reset works.
-- **Direct links:** a direct link to a legacy-world principle works, and the legacy atlas renders.
-- **Keyboard:** the Tab order reaches all three entries.
+- **Direct links and legacy atlas:** a direct link opens correctly, and the legacy atlas renders.
+- **Keyboard:** the Tab order reaches the three entries.
 - **Responsive and errors:**
   - 375 px (5 pages): no horizontal scroll.
-  - 200% zoom, emulated as a 1280×800 window (640×400 CSS px at 2×): no horizontal scroll on landing, Szene or Prinzip.
+  - 200% zoom, emulated as 640×400 CSS px at 2× (3 pages): no horizontal scroll.
   - No JS errors.
 
 **Manual checks**
-- **Interactive pane (desktop app):** the presentation H toggle and the Escape exit work.
-- **Screenshots:** reviewed by eye. Fixes made from that review:
-  - stage overlap and mid-line clamping
-  - hero previews that were too tall and looked interactive
-  - avatar colour collisions and the "L2" team tile
-  - a broken personal file table
-  - a contradictory "kein Plan" panel
-  - weak alternative rationale
-  - legacy principles pulling a mismatched friction
+- **Interactive pane (desktop app):** H toggle and Esc on the stage work.
+- **Screenshots reviewed by eye:** landing, all scene types, the document explainer (desktop and stage), the configurator transfer result, and the clean-stage assumption.
 
-## Screenshots
+## Screenshots (`docs/screenshots/`, regenerated by the journey)
 
-These are in `docs/screenshots/` and are regenerated by `node tests/journey.mjs`:
-- `01` landing (desktop, full page)
+- `01` landing
 - `02`, `03-*` Leadership Forum: Szene and the three Prinzip explainers
 - `04`, `05`, `06-*` Kundenportal: Szene, Aufgaben tab and the three Prinzip explainers
 - `07` Nora personal scene
-- `08`, `09`, `10`, `11`, `15` presentation: Prinzip with/without annotations, business Szene, Nora, business Prinzip on stage
-- `12`, `13`, `14` configurator: question, result for the project, result for personal work
-- `20-mobile-*` 375 px: landing, Szene, Prinzip, configurator, presentation
-- `30` 200% zoom Prinzip
+- `08`–`11`, `15` stage:
+  - Prinzip with and without annotations
+  - business Szene
+  - Nora
+  - business document explainer
+- `12`, `13`, `14`, `16` configurator: question, project result, personal result, cross-context result
+- `20-mobile-*` 375 px
+- `30` 200% zoom
+- `40` commission guest scene; `41` commission tasks
+- `42` teaching document explainer, showing the corrected document identity
+- `43` research scene
+- `44` Nora series tasks
+- `45` stage with Hinweise off, keeping its assumption
 
-## Limitations and open acceptance items
+## Limitations
 
-- **Visual quality** is checked only by screenshot review in Chromium. Firefox and Safari were not tested, and no screen reader was used.
-- **Zoom** is emulated through the device scale factor, not the browser's zoom setting.
-- *(Resolved in slice 2: all worlds now have complete scenes.)* The university scenes for commission and teaching have no Aufgaben tab on purpose; their curated decisions say no task plan.
-- Hand-written content now covers **all eight situations** (24 explainers). The curriculum owners should review it for content, especially the guest-access and «Bewertung» assumptions.
-- **Annotations off** also hides the Situation problem and the boundary/alternative boxes, leaving only the diagram and recommendation. This was a design choice for a clean slide; please review it.
-- **The business case** is fictional synthesis and has not been checked against research (`docs/research/PERPLEXITY-USE-CASES-PROMPT.md`).
-- **Mobile presentation** works and has no horizontal scroll. The stage scales down and becomes small on a phone, but it remains usable.
-- **Out of scope as planned:** PNG/SVG export, a full editor, persistent drafts, collection import/export, and guest or private-channel explainers.
-- `docs/WEAVR-FIRST-TEST.md` still lists `index.html` as the atlas entry. Governance files and that brief were intentionally left unchanged.
+- **Browsers:** visual checks were done in Chromium only. Firefox, Safari and screen readers were not tested, and 200% zoom was emulated.
+- **Customisation depth:** the app adapts templates and names; it does not compose an arbitrary situation. That is accepted for this prototype.
+- **Configurator for Business:** it has only the project templates. Other Business answers lead to clearly labelled university examples.
+- **Content review:** the 24 explainers and the business story are hand-written fiction. The guest-access, restricted-channel and agency-access assumptions in particular need review by the content owners.
+- **Out of scope as planned:** PNG/SVG export, a full editor, persistent drafts, collection import/export, and guest or private-channel technical explainers.
+- **Out-of-date brief:** `docs/WEAVR-FIRST-TEST.md` still names `index.html` as the atlas entry. That governance file was intentionally left unchanged.
 
 ## Workers
 
-None active. No Orca or Weavr dispatch was made. The local test server (`python3 -m http.server 8765`) was started for verification only.
+None. No Orca or Weavr dispatch was made. A local static server was used for verification only.
 
 ## Next concrete action
 
-Review the branch in a browser: open `index.html`, then `#/s/leadership-forum/eigenes-team/prinzip/chat`, then Präsentieren. Decide on the open design question: what "Hinweise aus" should hide. Then have the six hand-written explainers and the Brunner business story reviewed for content. After that, open a PR from `prototype/visual-library-v1` to `main`.
+Do the integration review of `prototype/visual-library-v1`:
+1. Open `index.html`.
+2. Try the commission and teaching variants, including Präsentieren with Hinweise off.
+3. Have the explainer content reviewed.
+4. Then decide on a PR to `main`.

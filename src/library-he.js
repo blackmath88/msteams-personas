@@ -59,7 +59,7 @@
         doc: {
           problem: 'Der Revisionstext liegt in {p:nina-petrovic}s OneDrive; {p:david-brunner} schickt Kommentare als heruntergeladene Kopie zurück.',
           artefact: 'Paper_HeatHealth.docx', copies: ['Paper_HeatHealth_v7.docx', 'Paper_HeatHealth_v7_DB.docx', 'Paper_v7_ER_Kommentare.docx'],
-          editors: ['nina-petrovic', 'david-brunner', 'elena-rossi'], drafter: 'lukas-gerber', draft: 'Konferenzpräsentation',
+          editors: ['nina-petrovic', 'david-brunner', 'elena-rossi'], origin: 'nina-petrovic', drafter: 'lukas-gerber', draft: 'Konferenzpräsentation',
           recommend: 'Ab drei Beteiligten liegt der Entwurf in den Dateien von «{c}». Alle kommentieren in derselben Datei.',
           boundary: 'Präsentationen und Skripte bleiben bei der Person, bis Feedback nötig ist. Sensor- und Gesundheitsdaten gehören nie in Teams, sondern in die Forschungsdateninfrastruktur.'
         },
@@ -76,12 +76,14 @@
     'sitzungszyklus': {
       variants: [
         { id: 'gastzugang', label: 'Ein Kanal, externes Mitglied als Gast',
-          why: 'Die Kommission entscheidet sich für Gastzugang, damit {p:beat-kunz} dieselben Unterlagen sieht wie alle. Annahme: Die Richtlinien beider Hochschulen erlauben das und er nutzt ein Konto dafür. Das prüft die IT, nicht diese Szene.',
+          why: 'Die Kommission entscheidet sich für Gastzugang, damit {p:beat-kunz} dieselben Unterlagen sieht wie alle.',
+          assumption: 'Gastzugang setzt voraus, dass die Regeln beider Hochschulen ihn erlauben und {p:beat-kunz} dafür ein Konto nutzt. Das prüft die IT, nicht diese Szene.',
           team: 'Kommission Digitale Zusammenarbeit', teamNote: 'ein Kanal, bewusst schlank',
           members: ['martina-vogel', 'samuel-huber', 'anna-bachmann', 'karim-haddad', 'sarah-baumgartner', 'claudia-gisler', 'beat-kunz'],
           channels: ['Allgemein'], active: 'Allgemein' },
         { id: 'link', label: 'Ein Kanal, Link pro Sitzung für das externe Mitglied',
-          why: 'Wenn Gastzugang nicht erlaubt oder nicht gewünscht ist: {p:beat-kunz} ist nicht im Team und erhält pro Sitzung einen Link auf den Unterlagenordner. Wie dieser Link geschützt ist, regelt die IT.',
+          why: 'Wenn Gastzugang nicht erlaubt oder nicht gewünscht ist: {p:beat-kunz} ist nicht im Team und erhält pro Sitzung einen Link auf den Unterlagenordner.',
+          assumption: 'Wer den Link öffnen kann und wie er geschützt ist, regeln die Freigabe-Einstellungen der IT. Die Szene zeigt keinen Zugang ohne Konto.',
           team: 'Kommission Digitale Zusammenarbeit', teamNote: 'ein Kanal, bewusst schlank',
           members: ['martina-vogel', 'samuel-huber', 'anna-bachmann', 'karim-haddad', 'sarah-baumgartner', 'claudia-gisler'],
           channels: ['Allgemein'], active: 'Allgemein' }
@@ -121,8 +123,8 @@
         },
         doc: {
           problem: 'Die Unterlagen gehen als Mailanhang an sieben Personen; {p:beat-kunz} hat sie nicht erhalten, {p:martina-vogel} schickt eine neuere Fassung.',
-          artefact: 'Agenda Sitzung 4', copies: ['Agenda_v2.docx', 'Agenda_v2_nach_Rückmeldung_Vogel.docx', 'Agenda_final.pdf'],
-          editors: ['claudia-gisler', 'martina-vogel', 'samuel-huber'], drafter: 'martina-vogel', draft: 'Notizen zur Sitzungsleitung',
+          artefact: 'Agenda Sitzung 4', copies: [{ n: 'Agenda_v2.docx', by: 'claudia-gisler' }, { n: 'Agenda_v2_nach_Rückmeldung_Vogel.docx', by: 'martina-vogel' }, { n: 'Agenda_v1.docx (alter Anhang)', by: 'beat-kunz' }],
+          editors: ['claudia-gisler', 'martina-vogel', 'samuel-huber'], origin: 'claudia-gisler', drafter: 'martina-vogel', draft: 'Notizen zur Sitzungsleitung',
           recommend: 'Ein Ordner pro Sitzung in «{c}», die Mail enthält nur den Link. Die beschlossene Fassung wird als PDF eingefroren.',
           boundary: 'Notizen der Vorsitzenden bleiben persönlich. Wie {p:beat-kunz} Zugriff erhält, hängt vom gewählten Aufbau ab (Gast oder Link) und von den Regeln der IT.'
         },
@@ -145,7 +147,8 @@
           members: ['ruth-ammann', 'simon-luethi', 'fabian-steiner'],
           channels: ['Allgemein', 'Semester'], active: 'Semester' },
         { id: 'mit-bewertung', label: 'Zusätzlicher Kanal «Bewertung» nur für Dozierende',
-          why: 'Nur nötig, wenn tatsächlich vertrauliche Dateien der Dozierenden dazukommen, etwa Gutachten zu Härtefällen. Annahme: Der Kanal ist auf {p:ruth-ammann} und {p:simon-luethi} beschränkt; wie das technisch umgesetzt wird, ist hier nicht geprüft. Noten bleiben trotzdem im offiziellen System.',
+          why: 'Nur nötig, wenn tatsächlich vertrauliche Dateien der Dozierenden dazukommen, etwa Gutachten zu Härtefällen. Noten bleiben trotzdem im offiziellen System.',
+          assumption: 'Der Kanal «Bewertung» ist auf {p:ruth-ammann} und {p:simon-luethi} beschränkt. Wie das technisch umgesetzt wird, ist hier nicht geprüft.',
           team: 'Lehrteam Seminar «Stadt, Raum, Gesellschaft»', teamNote: 'pro Modul, jährlich weiterverwendet',
           members: ['ruth-ammann', 'simon-luethi', 'fabian-steiner'],
           channels: ['Allgemein', 'Semester', 'Bewertung (nur Dozierende)'], active: 'Semester' }
@@ -186,8 +189,8 @@
         },
         doc: {
           problem: 'Material und Semesterplan existieren in mehreren Fassungen in drei Postfächern.',
-          artefact: 'Semesterplan.xlsx', copies: ['Semesterplan_Simon.xlsx', 'Semesterplan_HS_v3.xlsx', 'Semesterplan (Lernplattform).pdf'],
-          editors: ['simon-luethi', 'ruth-ammann', 'fabian-steiner'], drafter: 'simon-luethi', draft: 'Neue Aufgabenstellung Woche 9',
+          artefact: 'Semesterplan.xlsx', copies: [{ n: 'Semesterplan_Simon.xlsx', by: 'simon-luethi' }, { n: 'Semesterplan_HS_v3.xlsx', by: 'ruth-ammann' }, { n: 'Semesterplan (Lernplattform).pdf', by: 'fabian-steiner' }],
+          editors: ['simon-luethi', 'ruth-ammann', 'fabian-steiner'], origin: 'ruth-ammann', drafter: 'simon-luethi', draft: 'Neue Aufgabenstellung Woche 9',
           recommend: 'Eine Quelle im Teamordner; die Lernplattform zeigt den Auszug für die Studierenden.',
           boundary: 'Noten und Einzelbewertungen nie im Team, nur im offiziellen Bewertungssystem. Entwürfe bleiben persönlich, bis sie abgesprochen sind.'
         },
@@ -228,8 +231,8 @@
         },
         doc: {
           problem: 'Der Entwurf liegt in OneDrive, die Coautorin bekommt Kopien per Mail, niemand weiss, welche Fassung gilt.',
-          artefact: 'Artikel_Grenzen.docx', copies: ['Artikel_Nora_v4.docx', 'Artikel_Nora_v4_Kommentare.docx', 'Artikel_v5_zusammengeführt.docx'],
-          editors: ['nora-keller'], editorsLabel: 'Coautorin (Wien)', drafter: 'nora-keller', draft: 'Forschungsnotizen',
+          artefact: 'Artikel_Grenzen.docx', copies: [{ n: 'Artikel_Nora_v4.docx', by: 'nora-keller' }, { n: 'Artikel_Nora_v4_Kommentare.docx', by: 'Coautorin (Wien)' }, { n: 'Artikel_v5_zusammengeführt.docx', by: 'nora-keller' }],
+          editors: ['nora-keller'], editorsLabel: 'Coautorin (Wien)', origin: 'nora-keller', drafter: 'nora-keller', draft: 'Forschungsnotizen',
           recommend: 'Die Datei bleibt in Noras OneDrive; die Coautorin bekommt einen Link mit Bearbeitungsrecht.',
           boundary: 'Notizen und frühe Entwürfe bleiben in OneDrive. Persönliche Arbeit darf persönlich bleiben.'
         },
@@ -269,10 +272,10 @@
           boundary: 'Kein Zugriff auf das ganze OneDrive. Nicht jede Abwesenheit braucht ein Team.'
         },
         doc: {
-          problem: 'Wichtige Dateien liegen verstreut in OneDrive; das Gutachten existiert in zwei Entwürfen.',
-          artefact: 'Übergabe.docx', copies: ['Gutachten_v1.docx', 'Gutachten_v2_neu.docx', 'Notizen_Betreuung.docx'],
-          editors: ['nora-keller'], editorsLabel: 'Vertretung', drafter: 'nora-keller', draft: 'Forschungsnotizen',
-          recommend: 'Eine Übergabe-Seite verlinkt die zwei Dateien, die die Vertretung braucht.',
+          problem: 'Das Gutachten existiert in zwei Entwürfen, und die Vertretung bekäme per Mail eine dritte Kopie.',
+          artefact: 'Gutachten_Entwurf.docx', copies: [{ n: 'Gutachten_v1.docx', by: 'nora-keller' }, { n: 'Gutachten_v2_neu.docx', by: 'nora-keller' }, { n: 'Gutachten_v2 (Mail an Vertretung).docx', by: 'Vertretung' }],
+          editors: ['nora-keller'], editorsLabel: 'Vertretung', origin: 'nora-keller', drafter: 'nora-keller', draft: 'Forschungsnotizen',
+          recommend: 'Das Gutachten liegt einmal in OneDrive und ist für die Vertretung freigegeben; die Übergabe-Notiz verlinkt genau diese Datei.',
           boundary: 'Das OneDrive bleibt zu. Abgaben und Bewertungen der Studierenden liegen im System der Universität.'
         },
         tasks: {
@@ -312,8 +315,8 @@
         },
         doc: {
           problem: 'Das Programm liegt als Word-Datei bei Nora und als Mailanhang beim Sekretariat.',
-          artefact: 'Programm_2027.docx', copies: ['Programm_Workshop.docx', 'Programm_Workshop_Sekretariat.docx', 'Programm_final_v2.docx'],
-          editors: ['nora-keller'], editorsLabel: 'Sekretariat', drafter: 'nora-keller', draft: 'Ideen für Termin 3',
+          artefact: 'Programm_2027.docx', copies: [{ n: 'Programm_Workshop.docx', by: 'nora-keller' }, { n: 'Programm_Workshop_Sekretariat.docx', by: 'Sekretariat' }, { n: 'Programm_final_v2.docx', by: 'nora-keller' }],
+          editors: ['nora-keller'], editorsLabel: 'Sekretariat', origin: 'nora-keller', drafter: 'nora-keller', draft: 'Ideen für Termin 3',
           recommend: 'Ein Ordner in der Institutsablage mit Programm und Kontaktliste, gemeinsam mit dem Sekretariat.',
           boundary: 'Ideen bleiben bei Nora, bis sie ins Programm gehen. Honorare laufen über den Prozess des Sekretariats.'
         },

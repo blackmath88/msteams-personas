@@ -151,12 +151,13 @@
       '<section class="cfg cfg-r"><div class="cfg-h"><h1>Euer Ausgangspunkt</h1><p class="lead">Ein Vorschlag aus festen Regeln, keine einzig richtige Konfiguration. Die Anpassung gilt nur in dieser Sitzung.</p></div>' +
       '<div class="res">' +
         '<div class="res-main"><p class="kick">Vorschlag</p><h2>' + esc(r.best.label) + '</h2><p class="res-base">Grundlage: ' + esc(vm.title) + ' (' + esc(vm.world.name) + ')</p>' +
+          (r.best.transfer ? '<p class="transfer" role="note"><strong>Übertragbares Beispiel aus der ' + esc(r.best.transfer.fromLabel) + '</strong>Für «' + esc(r.best.transfer.toLabel) + '» gibt es dieses Muster in der Bibliothek noch nicht. Das Prinzip ist übertragbar; Rollen, Systeme und Begriffe im Beispiel stammen aus der ' + esc(r.best.transfer.fromLabel) + '. Passt die Namen rechts an eure Situation an.</p>' : '') +
           '<h3>Warum das passt</h3><ul class="why">' + r.best.reasons.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' +
           (r.cautions.length ? '<h3>Annahmen und Grenzen</h3><ul class="caut">' + r.cautions.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : '') +
-          '<div class="res-alt"><p class="kick">Alternative</p><h3>' + esc(r.alt.label) + '</h3><p>' + esc(alt.variant && r.alt.variant ? alt.variant.why : (r.alt.reasons.join(' ') || alt.friction)) + '</p><p class="res-base">Grundlage: ' + esc(alt.title) + '</p><a href="' + route(r.alt.situation, r.alt.variant, 'szene') + '">Alternative ansehen</a></div>' +
+          '<div class="res-alt"><p class="kick">Alternative' + (r.alt.transfer ? ' · Beispiel aus der ' + esc(r.alt.transfer.fromLabel) : '') + '</p><h3>' + esc(r.alt.label) + '</h3><p>' + esc(alt.variant && r.alt.variant ? alt.variant.why : (r.alt.reasons.join(' ') || alt.friction)) + '</p><p class="res-base">Grundlage: ' + esc(alt.title) + '</p><a href="' + route(r.alt.situation, r.alt.variant, 'szene') + '">Alternative ansehen</a></div>' +
         '</div>' +
         '<div class="res-edit">' + nameForm(vm) + '</div>' +
-        '<div class="res-prev"><p class="kick">Live-Vorschau</p><div id="preview">' + V.scene(vm, { annot: false }) + '</div></div>' +
+        '<div class="res-prev"><p class="kick">Live-Vorschau' + (r.best.transfer ? ' · Beispiel aus der ' + esc(r.best.transfer.fromLabel) : '') + '</p><div id="preview">' + V.scene(vm, { annot: false }) + '</div></div>' +
       '</div>' +
       '<div class="cfg-nav"><a class="btn" href="#/konfigurator/6">Antworten ändern</a>' +
         '<a class="btn btn-p" href="' + route(r.best.situation, r.best.variant, 'szene') + '">Szene und Prinzip öffnen</a>' +

@@ -38,6 +38,10 @@ test('all situation references resolve (people, use cases, principles)', () => {
         assert.ok(ids.has(ref), `${s.id}.${pid}: unknown person ${ref}`);
       assert.doesNotMatch(v.fill(b.problem + b.recommend + b.boundary), /\{p:|\{s\}|\{c\}/, `${s.id}.${pid}: unresolved token`);
     }
+    const d = v.principles.doc;
+    if (d.origin) assert.ok(ids.has(d.origin), `${s.id}: doc origin ${d.origin}`);
+    for (const c of d.copies) if (typeof c === 'object') assert.ok(ids.has(c.by) || c.by === d.editorsLabel, `${s.id}: copy holder ${c.by}`);
+    for (const x of v.variants) assert.doesNotMatch(v.fill(x.assumption || ''), /\{p:/, `${s.id}: assumption token`);
     for (const x of v.variants) assert.doesNotMatch(v.fill(x.why), /\{p:|\{s\}|\{c\}/, `${s.id}: variant ${x.id} token`);
     for (const x of [...v.scene.files.map(f => f.note), ...Object.values(v.scene.notes)]) assert.doesNotMatch(v.fill(x), /\{p:/, `${s.id}: scene token`);
     for (const q of v.scene.posts) { assert.ok(ids.has(q.by), `${s.id}: post author ${q.by}`); for (const r of q.replies || []) assert.ok(ids.has(r.by)); }
@@ -64,7 +68,7 @@ test('every situation is complete and documented contradictions are explicit var
   assert.equal(ids('semesterstart'), 'ohne-bewertung,mit-bewertung');
   assert.ok(Model.build('sitzungszyklus', { variant: 'gastzugang' }).scene.members.includes('beat-kunz'));
   assert.ok(!Model.build('sitzungszyklus', { variant: 'link' }).scene.members.includes('beat-kunz'));
-  assert.match(Model.build('sitzungszyklus').variants[0].why, /Annahme/);
+  assert.match(Model.build('sitzungszyklus').variants[0].assumption, /prüft die IT/);
   const nora = ['nora-publikation', 'nora-abwesenheit', 'nora-reihe'].map(id => Model.build(id));
   for (const v of nora) assert.ok(v.scene.personal && v.scene.channels.length === 0, 'Nora stays without a Team');
   assert.equal(new Set(nora.map(v => v.scene.files.map(f => f.name).join())).size, 3, 'each Nora scenario has its own scene');
@@ -94,4 +98,18 @@ test('configurator is deterministic and different answers give different startin
     assert.ok(r.alt && (r.alt.situation !== r.best.situation || r.alt.variant !== r.best.variant), 'alternative differs');
   }
   assert.ok(Configurator.suggest({ ...project, access: 'sensibel' }).cautions.some(c => /Annahme/.test(c)), 'sensitive data surfaces an assumption');
+});
+
+test('configurator flags examples borrowed from the other collection', () => {
+  const base = { context: 'business', goal: 'kurs', friction: 'wissen', size: '2-4', units: 'eine', rhythm: 'wiederkehrend', external: 'keine', share: 'gemischt', access: 'keine' };
+  const r = Configurator.suggest(base);
+  assert.equal(r.best.situation, 'semesterstart');
+  assert.equal(r.best.transfer && r.best.transfer.fromLabel, 'Hochschule');
+  assert.equal(Configurator.suggest({ ...base, context: 'hochschule' }).best.transfer, null);
+  assert.equal(Configurator.suggest({ ...base, goal: 'projekt', units: 'mehrere', rhythm: 'befristet' }).best.transfer, null, 'business project stays in business');
+});
+
+test('setups with access or restriction assumptions carry them explicitly', () => {
+  for (const [sid, vid] of [['sitzungszyklus', 'gastzugang'], ['sitzungszyklus', 'link'], ['semesterstart', 'mit-bewertung'], ['kundenportal', 'eigenes-team']])
+    assert.ok(Model.build(sid, { variant: vid }).variant.assumption, `${sid}/${vid} needs an assumption`);
 });

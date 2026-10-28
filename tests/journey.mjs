@@ -95,7 +95,7 @@ try {
   check('presentation content not clipped (Prinzip)', clipped === 0, clipped + ' clipped');
   await p.shot(OUT + '08-present-prinzip-annot.png');
   await p.key('h', 'KeyH', 72);
-  check('H toggles annotations off', (await count('.stage .pr-bound')) === 0);
+  check('H hides decorative annotation but keeps boundary and alternative', (await count('.stage .pr-problem')) === 0 && (await count('.stage .pr-bound')) === 1 && (await count('.stage .pr-alt')) === 1);
   await p.shot(OUT + '09-present-prinzip-clean.png');
   await p.key('h', 'KeyH', 72);
   await p.key('Escape', 'Escape', 27);
@@ -109,12 +109,16 @@ try {
     await p.goto(BASE + `#/p/${sid}/${v}`); await p.sleep(150);
     const ok = await stageFits();
     if (!ok) check(`stage fits: ${sid} ${v}`, false);
+    if (v === 'prinzip/doc') {
+      const same = await p.eval(`(()=>{const t=[...document.querySelectorAll('.stage [data-doc], .stage .pd-onedoc .pd-boxh')].map(e=>e.textContent.trim());return t.length===3&&t.every(x=>x===t[0])})()`);
+      if (!same) check(`doc identity consistent: ${sid}`, false);
+    }
     for (const route of [`#/p/${sid}/${v}`, `#/s/${sid}/${v}`]) {
       if (route[2] === 's') { await p.goto(BASE + route); await p.sleep(100); }
       if (/\{p:|\{s\}|\{c\}/.test(await p.eval('document.body.innerText'))) check(`no raw tokens: ${route}`, false);
     }
   }
-  check('stage fit + token sweep (12 situation/variant combinations × 6 views, stage and page) done', true);
+  check('stage fit + token + document-identity sweep (12 situation/variant combinations × 6 views) done', true);
   await p.goto(BASE + '#/p/kundenportal/eigenes-team/prinzip/doc');
   await p.shot(OUT + '15-present-business-prinzip-doc.png');
   await p.goto(BASE + '#/p/nora-reihe/-/szene');
@@ -177,6 +181,30 @@ try {
   await p.shot(OUT + '44-nora-reihe-prinzip-tasks.png', true);
   await p.goto(BASE + '#/s/nora-publikation/-/szene');
   check('Nora publication has its own personal scene', /Kapitel 3 kürzen/.test(await $('.tw', 'innerText')));
+
+  // Assumptions survive Hinweise off (scene, principle, stage)
+  await p.goto(BASE + '#/s/sitzungszyklus/gastzugang/szene');
+  await p.eval('(()=>{const t=document.querySelector("[data-act=annot]");t.checked=false;t.dispatchEvent(new Event("change",{bubbles:true}))})()'); await p.sleep(200);
+  check('Hinweise off: scene hides notes but keeps assumption', (await count('.tw-notes')) === 0 && /Gastzugang setzt voraus/.test(await $('.tw-assume')));
+  await p.goto(BASE + '#/p/semesterstart/mit-bewertung/prinzip/chat');
+  check('Hinweise off: stage keeps boundary, alternative and assumption', (await count('.stage .pr-bound')) === 1 && (await count('.stage .pr-alt')) === 1 && /nicht geprüft/.test(await $('.stage .pr-assume')));
+  await p.shot(OUT + '45-present-teaching-clean-assumption.png');
+  await p.key('h', 'KeyH', 72);
+
+  // Configurator: Business context with a course answer gets a labelled transferable example
+  await p.goto(BASE + '#/konfigurator/1');
+  await click('input[name="context"][value="business"]');
+  await click('input[name="goal"][value="kurs"]');
+  await click('input[name="friction"][value="wissen"]');
+  await click('#cfg-form button[type=submit]');
+  await click('input[name="size"][value="2-4"]'); await click('input[name="units"][value="eine"]');
+  await click('#cfg-form button[type=submit]');
+  await click('input[name="rhythm"][value="wiederkehrend"]');
+  for (let i = 3; i <= 6; i++) await click('#cfg-form button[type=submit]');
+  check('Business + course answer: result labelled as example from Hochschule', /Übertragbares Beispiel aus der Hochschule/.test(await $('.transfer')) && /Hochschule/.test(await $('.res-prev .kick')));
+  await p.shot(OUT + '16-configurator-transfer.png', true);
+  await p.eval('window.confirm = () => true');
+  await click('[data-act="reset"]');
 
   // Direct links + legacy
   await p.goto(BASE + '#/s/semesterstart/-/prinzip/doc');

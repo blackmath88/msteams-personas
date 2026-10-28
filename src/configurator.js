@@ -54,6 +54,13 @@
     return { template: t, points: pts, reasons: reasons };
   }
 
+  /* Collection of a library situation, to flag examples borrowed from another context. */
+  function collectionOf(sid) {
+    var LIB = root.LIB, sit = LIB && LIB.situations.filter(function (x) { return x.id === sid; })[0];
+    return sit && LIB.business && sit.world === LIB.business.id ? 'business' : 'hochschule';
+  }
+  var CONTEXT_LABEL = { business: 'Unternehmen', hochschule: 'Hochschule' };
+
   function suggest(answers) {
     var a = {};
     Object.keys(DEFAULTS).forEach(function (k) { a[k] = answers[k] || DEFAULTS[k]; });
@@ -67,10 +74,14 @@
     if (a.access === 'sensibel') cautions.push('Sensible Daten: Das Bild zeigt eine Annahme. Welche Daten in Teams gehören, klären Datenschutz und IT; die Vorschau prüft keine echten Berechtigungen.');
     if (a.access === 'einzelne') cautions.push('Vertrauliche Einzelinhalte bleiben ausserhalb des gemeinsamen Kanals oder in einem separat geregelten Bereich (Annahme, nicht geprüft).');
     if (a.external !== 'keine') cautions.push('Externe: Wie sie technisch Zugriff erhalten, hängt von den Regeln eurer Organisation ab. Die Szene garantiert keinen Zugang ohne Konto.');
+    var transfer = function (sid) {
+      var c = collectionOf(sid);
+      return c === a.context ? null : { from: c, fromLabel: CONTEXT_LABEL[c], toLabel: CONTEXT_LABEL[a.context] };
+    };
     return {
       answers: a,
-      best: { id: best.template.id, label: best.template.label, situation: bt[0], variant: bt[1], reasons: best.reasons, points: best.points },
-      alt: { id: alt.template.id, label: alt.template.label, situation: at[0], variant: at[1], reasons: alt.reasons, points: alt.points },
+      best: { id: best.template.id, label: best.template.label, situation: bt[0], variant: bt[1], reasons: best.reasons, points: best.points, transfer: transfer(bt[0]) },
+      alt: { id: alt.template.id, label: alt.template.label, situation: at[0], variant: at[1], reasons: alt.reasons, points: alt.points, transfer: transfer(at[0]) },
       cautions: cautions
     };
   }
