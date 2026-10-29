@@ -40,6 +40,16 @@ This change records both plans, a NUC task and aligned navigation/instructions. 
 
 Branch `v2/library-teams-export` implements the P0 library UX, the Teams fidelity pass, PNG export, and the P1 Outlook → Explorer → Teams → SharePoint story for Leadership Forum and Kundenportal. Tests: 12/12 logic, 81/81 browser checks. It is unmerged, with no PR. See [V2-BUILD-HANDOFF.md](V2-BUILD-HANDOFF.md).
 
+## V3 build (2026-10-29)
+
+Branch `v3/trainer-library` (base `5081206`) adds:
+- the Teams chat, Planner board and task details, To Do and OneDrive screens;
+- a simulated AI meeting recap with human review;
+- seven teaching sequences, including a new business onboarding world;
+- the trainer flow, focus crop, 2× export and local save with JSON import/export.
+
+Tests: validator clean, 17/17 logic, 109/109 browser checks. It is unmerged, with no PR. See [V3-BUILD-HANDOFF.md](V3-BUILD-HANDOFF.md) and [SCENARIO-BACKLOG.md](SCENARIO-BACKLOG.md).
+
 ## Next action
 
 On the NUC, use docs/ORCA-NUC-BUILD-TASK.md. Start from the current prototype and integrate the current main documentation on a new implementation branch. Deliver P0 as a complete path before broader renderer coverage. Return screenshots and actual export samples for review; no automatic merge/deployment.

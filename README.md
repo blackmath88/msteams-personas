@@ -6,6 +6,9 @@ The first example collection supports the University of Basel M365 Deep Dives wi
 
 ## Available now
 
+Latest build: branch `v3/trainer-library`. See [docs/V3-BUILD-HANDOFF.md](docs/V3-BUILD-HANDOFF.md) for the screens (Teams, chat, Outlook, Explorer, SharePoint, OneDrive, Planner, To Do and a simulated AI recap), the teaching sequences and the PNG export.
+
+
 **Prototype library (branch `prototype/visual-library-v1`, not yet reviewed or merged).** Open `index.html`:
 - Landing with three entries: Persona wählen, Use Case wählen, Eigene Situation.
 - Five university worlds plus one fictional business department (Brunner Haustechnik AG, Kundenportal project); all seven legacy scenarios reachable.
