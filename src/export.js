@@ -79,6 +79,9 @@
     Array.prototype.forEach.call(el.querySelectorAll('.t-posts'), function (c) {
       var f = c.firstElementChild; if (f && f.getBoundingClientRect().top < c.getBoundingClientRect().top - 1) out.push('Beiträge oben abgeschnitten');
     });
+    Array.prototype.forEach.call(el.querySelectorAll('.p-board, .x-tbl, .m-ft'), function (c) {
+      if (c.scrollWidth > c.clientWidth + 2) out.push(c.className.split(' ')[0] + ' rechts abgeschnitten');
+    });
     Array.prototype.forEach.call(el.querySelectorAll('.o-read, .s-lib, .x-main, .t-files, .t-tasks, .t-content, .slide > .sl-app .pr, .sl-notes'), function (c) {
       if (c.scrollHeight > c.clientHeight + 2) out.push(c.className.split(' ')[0] + ' zu lang');
     });

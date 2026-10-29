@@ -75,7 +75,7 @@
 .p-ha>span{display:flex;align-items:center;gap:6px}.p-ha .fi{width:16px}
 .p-mem .m-av{border:2px solid #fff;margin-left:-6px}
 .p-board{display:flex;gap:16px;padding:16px 24px;overflow:hidden;align-items:flex-start}
-.p-bucket{width:280px;flex:none;display:flex;flex-direction:column;gap:8px}
+.p-bucket{width:var(--bw,280px);flex:none;display:flex;flex-direction:column;gap:8px}
 .p-bh{display:flex;justify-content:space-between;align-items:center;font-size:15px;padding:0 4px}.p-bh strong{font-weight:600}
 .p-add{display:flex;align-items:center;gap:8px;background:#fff;border-radius:4px;padding:8px 10px;font-size:14px;color:#424242;box-shadow:0 1px 2px rgba(0,0,0,.1)}
 .p-newb .p-add{background:transparent;box-shadow:none;color:#5b5fc7}
@@ -142,4 +142,5 @@
 .t-pv{padding:8px 20px 0;background:#fff;border-bottom:1px solid #e0e0e0;margin:0}
 .t-pvf{margin-left:auto}
 .s-pane .s-ph{padding-right:30px}
-.t-plan .p-bucket{width:232px}.t-plan .p-board{gap:12px}
+.t-plan .p-board{gap:12px}
+.p-newb{width:150px!important}

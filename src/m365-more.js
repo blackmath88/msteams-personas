@@ -52,9 +52,10 @@
   /* ================= Planner board ================= */
   function plannerTasks(vm) {
     var tasks = vm.scene.tasks.slice();
-    if (vm.ai) vm.ai.suggestions.forEach(function (s) {
+    /* Reviewed AI suggestions lead the board: they are the point of the AI sequence. */
+    if (vm.ai) vm.ai.suggestions.slice().reverse().forEach(function (s) {
       if (s.status === 'rejected') return;
-      tasks.push({ title: s.status === 'edited' ? s.edited : s.text, owner: s.owner, due: s.due, bucket: 'Aus Projektsitzung', done: false, fromAi: true, mark: s.status === 'edited' ? 2 : 1 });
+      tasks.unshift({ title: s.status === 'edited' ? s.edited : s.text, owner: s.owner, due: s.due, bucket: 'Aus Projektsitzung', done: false, fromAi: true, mark: s.status === 'edited' ? 2 : 1 });
     });
     return tasks;
   }
@@ -78,8 +79,9 @@
         board(tasks, buckets, vm, o) +
         '<p class="sr-only">' + open + ' offene Aufgaben</p></section>');
   }
-  function board(tasks, buckets, vm, o) {
-    return '<div class="p-board">' + buckets.map(function (b, bi) {
+  function board(tasks, buckets, vm, o, avail) {
+    var n = buckets.length, w = Math.min(280, Math.floor(((avail || 1208) - 48 - 150 - 16 * n) / n));
+    return '<div class="p-board" style="--bw:' + w + 'px">' + buckets.map(function (b, bi) {
           var bt = tasks.filter(function (t) { return t.bucket === b; });
           var openT = bt.filter(function (t) { return !t.done; }), done = bt.filter(function (t) { return t.done; });
           return '<div class="p-bucket"><p class="p-bh"><strong>' + esc(b) + '</strong>' + fi('more') + '</p><p class="p-add">' + fi('plus') + 'Aufgabe hinzufügen</p>' +
@@ -95,7 +97,7 @@
       if (f) tasks[tasks.indexOf(f)] = Object.assign({}, f, { mark: 1 });
     }
     tasks.forEach(function (t) { if (buckets.indexOf(t.bucket) < 0) buckets.push(t.bucket); });
-    return '<div class="p-views t-pv"><span class="on">' + fi('board') + 'Board</span><span>' + fi('listcheck') + 'Raster</span><span>' + fi('clock') + 'Diagramme</span><span class="t-pvf">' + fi('filter') + 'Filter</span></div>' + board(tasks, buckets, vm, o);
+    return '<div class="p-views t-pv"><span class="on">' + fi('board') + 'Board</span><span>' + fi('listcheck') + 'Raster</span><span>' + fi('clock') + 'Diagramme</span><span class="t-pvf">' + fi('filter') + 'Filter</span></div>' + board(tasks, buckets, vm, o, 1082);
   }
   function card(vm, t, bi, o) {
     var p = vm.person(t.owner), late = /^(Mo|Di)$/.test(t.due);
