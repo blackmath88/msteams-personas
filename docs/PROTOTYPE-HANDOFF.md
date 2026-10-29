@@ -1,5 +1,7 @@
 # Prototype handoff: visual-first library v1
 
+> **Superseded on 2026-10-29 by the v2 build** on branch `v2/library-teams-export`: see [V2-BUILD-HANDOFF.md](V2-BUILD-HANDOFF.md). The v2 build keeps this prototype's content, variants and fixes. It replaces the landing entries, the generic scene window and the «Bildschirmfoto» note with three entries, M365 renderers and real PNG export. The text below describes the v1 state at `e9220ff`.
+
 Status as of 2026-10-28, after three passes:
 1. the 90-minute first prototype
 2. slice 2, which completed all worlds
