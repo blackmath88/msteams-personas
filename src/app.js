@@ -233,14 +233,14 @@
     ['Teams', [['posts', 'Beiträge'], ['files', 'Dateien'], ['tasks', 'Aufgaben im Kanal'], ['chat', 'Chat'], ['recap', 'Besprechung · KI-Simulation']]],
     ['Outlook', [['outlook', 'Posteingang']]],
     ['Dateien', [['explorer', 'Explorer'], ['sharepoint', 'SharePoint'], ['onedrive', 'OneDrive']]],
-    ['Aufgaben', [['planner', 'Planner'], ['todo', 'To Do']]]
+    ['Aufgaben', [['planner', 'Planner'], ['plantask', 'Planner: Aufgabe'], ['todo', 'To Do']]]
   ];
   var WHY_OFF = {
     teams: 'Kein Team in dieser Situation (persönliche Arbeit).', chat: 'Kein Team in dieser Situation (persönliche Arbeit).',
     outlook: 'Nur in Situationen mit Dateigeschichte (Leadership Forum, Kundenportal).', explorer: 'Nur in Situationen mit Dateigeschichte (Leadership Forum, Kundenportal).',
     sharepoint: 'Nur in Situationen mit Dateigeschichte (Leadership Forum, Kundenportal).', recap: 'Nur im KI-Beispiel «Kundenportal bis März».',
     onedrive: 'Für persönliche Arbeitssituationen (Nora Keller). Teams-Situationen zeigen Dateien in Teams oder SharePoint.',
-    planner: 'Diese Situation hat keine gemeinsamen Aufgaben.', todo: 'Diese Situation hat keine Aufgaben.'
+    planner: 'Diese Situation hat keine gemeinsamen Aufgaben.', plantask: 'Aufgabendetails gibt es für Leadership Forum, Kundenportal und die Einarbeitung.', todo: 'Diese Situation hat keine Aufgaben.'
   };
   function defaultSub(vm) { return vm.personal ? 'onedrive' : 'posts'; }
   function subOf(vm, p) { return p.sub || defaultSub(vm); }
@@ -312,7 +312,7 @@
       }).join('');
     else if (sub === 'files' || tool === 'sharepoint') fields = vm.story ? f('docName', 'Gemeinsame Datei', vm.story.doc.original) : '<p class="hint">Dateinamen dieser Situation sind kuratiert; anpassbar sind Namen der Personen.</p>';
     else if (tool === 'chat' && orig.chat) fields = orig.chat.messages.map(function (m, i) { return f('chat.' + i, 'Nachricht ' + (i + 1) + ' (' + V.short(vm.person(m.by).name) + ')', m.text, true); }).join('');
-    else if (sub === 'tasks' || tool === 'planner' || (tool === 'todo' && !vm.personal)) fields = orig.scene.tasks.map(function (t, i) { return f('tasks.' + i, 'Aufgabe ' + (i + 1) + ' (' + V.short(vm.person(t.owner).name) + ')', t.title); }).join('');
+    else if (sub === 'tasks' || tool === 'planner' || tool === 'plantask' || (tool === 'todo' && !vm.personal)) fields = orig.scene.tasks.map(function (t, i) { return f('tasks.' + i, 'Aufgabe ' + (i + 1) + ' (' + V.short(vm.person(t.owner).name) + ')', t.title); }).join('');
     else fields = '<p class="hint">In dieser Ansicht sind die Namen der Personen anpassbar; Inhalte stammen aus der kuratierten Situation.</p>';
     var custom = state.content[vm.id] && customState(vm.id).some(function (x) { return x !== 'Namen'; });
     return '<form class="names contentf" data-sid="' + vm.id + '" data-kind="content" aria-label="Inhalte anpassen"><h3>Inhalte: ' + esc(p.mode === 'prinzip' ? 'Prinzip' : screenLabel(sub)) + '</h3>' +
@@ -352,6 +352,7 @@
   function sequences() {
     return crumbs([['Bibliothek', '#/'], ['Abfolgen']]) +
       '<section class="block"><div class="block-h"><h1>Abfolgen für Schulungen</h1><p class="lead">Drei bis fünf Ansichten in Erzählreihenfolge, mit Lernziel, Prinzip und Grenze. Jede Ansicht lässt sich anpassen und als PNG exportieren, auch die ganze Abfolge auf einmal.</p></div>' +
+      '<ol class="howto"><li><b>Abfolge wählen</b>oder über Team-Personas, Tools und Use Cases eine Situation öffnen.</li><li><b>Szene anpassen</b>Ansicht oben wählen, rechts Namen, Texte und Aufgaben ändern. Alles bleibt in diesem Browser gespeichert.</li><li><b>Bildausschnitt prüfen</b>Nur Anwendung, Folie mit Hinweisen, Fokus-Ausschnitt oder Vorher / Nachher wählen.</li><li><b>Exportieren</b>Einzelnes PNG oder «Ganze Abfolge» in Erzählreihenfolge, wahlweise in 2×.</li></ol>' +
       '<ul class="seqlist">' + LIB.sequences.map(function (s) {
         var vm = vmFor(s.situation, s.variant);
         return '<li><a href="' + seqRoute(s.id, 1) + '"><span class="sit-top">' + collBadge(vm.collection) + (s.ai ? '<span class="badge b-plan">KI-Simulation</span>' : '') + '<span class="wl">' + s.steps.length + ' Ansichten</span></span>' +

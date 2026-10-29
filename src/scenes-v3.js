@@ -180,6 +180,19 @@
     'onboarding': { viewer: 'nadine-odermatt', personal: ['Fragen für das Feedbackgespräch notieren', 'Tastenkürzel Ticketsystem üben'] }
   };
 
+  /* ---------- Planner task details: notes, checklist and one comment for the focused task ---------- */
+  LIB.taskDetails = {
+    'leadership-forum': { task: 0, notes: 'Online-Link aus dem Kanalbeitrag übernehmen. HR-Teilnehmende erhalten die Einladung separat über {p:regula-aebi}.',
+      checklist: [['Text mit {p:sophie-frei} abgestimmt', true], ['Teams-Besprechungslink eingefügt', true], ['Versand an alle Angemeldeten', false]],
+      comment: { by: 'mara-conti', text: 'Der Raum ist storniert, Catering ebenfalls.' } },
+    'kundenportal': { task: 0, notes: 'Agentur liefert die Texte bis Donnerstag. Freigabe durch {p:petra-schmid} im Dokument, nicht per Mail.',
+      checklist: [['Texte der Agentur erhalten', false], ['Rechtliche Hinweise geprüft', false], ['Freigabe im Dokument vermerkt', false]],
+      comment: { by: 'aylin-demir', text: 'Ich lege die Texte in die Anforderungsliste, Abschnitt Startseite.' } },
+    'onboarding': { task: 1, notes: 'Rollen: Erfassung und Ansicht Disposition. Antrag über das IT-Portal, Freigabe durch {p:reto-furrer}.',
+      checklist: [['Antrag im IT-Portal gestellt', true], ['Rolle «Kundendienst» zugewiesen', false], ['Test-Login zusammen mit {p:nadine-odermatt}', false]],
+      comment: { by: 'elif-kaya', text: 'Bitte auch Lesezugriff auf die Vorlagen-Bibliothek.' } }
+  };
+
   /* ---------- Teaching sequences: three to five moments in story order ---------- */
   LIB.sequences = [
     { id: 'dateiversion', title: 'Vom Mail-Anhang zur gemeinsamen Datei', situation: 'leadership-forum', variant: 'eigenes-team',
@@ -206,6 +219,7 @@
       boundary: 'Nicht jede Kleinigkeit braucht eine Aufgabe im Plan. Kleine Teams kommen oft mit einer Liste im Kanal aus.',
       steps: [
         { mode: 'szene', sub: 'planner', label: 'Plan des Teams: Buckets und Verantwortung' },
+        { mode: 'szene', sub: 'plantask', label: 'Eine Aufgabe im Detail' },
         { mode: 'szene', sub: 'todo', label: 'Daniels To Do: persönlich und zugewiesen' },
         { mode: 'szene', sub: 'posts', label: 'Pendenzen-Regel im Kanal' },
         { mode: 'prinzip', sub: 'tasks', label: 'Prinzip: persönliche oder gemeinsame Verantwortung' }
@@ -227,6 +241,16 @@
         { mode: 'szene', sub: 'onedrive', label: 'OneDrive: privat und gezielt geteilt' },
         { mode: 'szene', sub: 'todo', label: 'Noras offene Punkte' },
         { mode: 'prinzip', sub: 'doc', label: 'Prinzip: persönlicher Entwurf oder gemeinsames Dokument' }
+      ] },
+    { id: 'sitzungszyklus', title: 'Wiederkehrende Sitzung: vorbereiten, entscheiden, nachverfolgen', situation: 'sitzungszyklus', variant: 'gastzugang',
+      objective: 'Unterlagen, Entscheide und Pendenzen einer Sitzungsreihe an einem Ort halten, statt jedes Mal einen neuen Mailverteiler zu bauen.',
+      boundary: 'Nicht jedes Gremium braucht einen Aufgabenplan: Bei acht Pendenzen pro Sitzung reicht die Liste im Protokoll. Vertrauliche Traktanden gehören nicht in einen Kanal mit Gästen.',
+      steps: [
+        { mode: 'szene', sub: 'posts', label: 'Unterlagen und Entscheide im Kanal' },
+        { mode: 'szene', sub: 'files', label: 'Eine Ablage statt Mailverteiler' },
+        { mode: 'szene', sub: 'chat', label: 'Rückfrage zu zweit im Chat' },
+        { mode: 'prinzip', sub: 'chat', label: 'Prinzip: Chat oder Kanal?' },
+        { mode: 'prinzip', sub: 'tasks', label: 'Bewusst schlank: kein eigener Plan' }
       ] },
     { id: 'ki-besprechung', title: 'KI-Vorschläge aus der Besprechung prüfen', situation: 'kundenportal', variant: 'eigenes-team', ai: true,
       objective: 'Zeigen, dass KI-Vorschläge aus Besprechungsnotizen erst nach menschlicher Prüfung zu verbindlichen Aufgaben werden.',

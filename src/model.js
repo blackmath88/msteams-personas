@@ -233,6 +233,7 @@
       team: team, teamOriginal: scene.team,
       scene: scene, principles: principles, story: story,
       tools: toolsFor(s, scene, story),
+      taskDetail: detailFor(s, scene, ctx),
       chat: chatFor(s, principles, content, ctx), todo: todoFor(s, scene, principles, story, people), ai: aiFor(s, ctx),
       fill: function (t) { return fill(t, ctx); },
       legacyHref: w.collection === 'business' ? null : 'atlas.html#/w/' + s.world
@@ -243,6 +244,7 @@
     if (scene.personal) return ['onedrive', 'todo'];
     var t = ['teams', 'chat'];
     if (scene.tasks.length) t.push('planner', 'todo');
+    if (scene.tasks.length && LIB.taskDetails && LIB.taskDetails[s.id]) t.push('plantask');
     if (story) t.push('outlook', 'explorer', 'sharepoint');
     if (LIB.ai && LIB.ai[s.id]) t.push('recap');
     return t;
@@ -280,6 +282,11 @@
       assigned: scene.tasks.filter(function (t) { return t.owner === viewer; }),
       plan: true
     };
+  }
+  function detailFor(s, scene, ctx) {
+    var d = LIB.taskDetails && LIB.taskDetails[s.id];
+    if (!d || !scene.tasks[d.task]) return null;
+    return { task: scene.tasks[d.task], notes: fill(d.notes, ctx), checklist: d.checklist.map(function (c) { return [fill(c[0], ctx), c[1]]; }), comment: { by: d.comment.by, text: fill(d.comment.text, ctx) } };
   }
   function aiFor(s, ctx) {
     var a = LIB.ai && LIB.ai[s.id];

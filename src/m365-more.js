@@ -114,6 +114,29 @@
     return out.concat(marks.map(function (m) { return [m, vm.fill(vm.scene.notes[m])]; }));
   }
 
+  /* ================= Planner task details (dialog over the board) ================= */
+  function plantask(vm, o) {
+    o = o || {};
+    var d = vm.taskDetail, t = d.task, p = vm.person(t.owner), done = d.checklist.filter(function (c) { return c[1]; }).length;
+    var base = planner(vm, { annot: false }).replace('class="m3 m3-planner"', 'class="m3 m3-planner m3-plantask"');
+    var cp = vm.person(d.comment.by);
+    var dlg = '<div class="pt-scrim"></div><section class="pt-dlg" aria-label="Aufgabendetails"><header class="pt-h"><span class="p-circ"></span><h3>' + esc(t.title) + '</h3>' + mk(1, o.annot) + '<span class="pt-x">' + fi('more') + fi('x') + '</span></header>' +
+      '<p class="pt-plan">' + esc(vm.team) + ' · Bucket <b>' + esc(t.bucket) + '</b></p>' +
+      '<div class="pt-grid"><div><p class="s-k">Zugewiesen an</p><p class="pt-who">' + avatar(p, 28) + esc(short(p.name)) + '</p></div>' +
+        '<div><p class="s-k">Fortschritt</p><p>' + (done ? 'In Bearbeitung' : 'Nicht begonnen') + '</p></div><div><p class="s-k">Priorität</p><p>Mittel</p></div>' +
+        '<div><p class="s-k">Fälligkeitsdatum</p><p class="pt-due">' + fi('calendar') + esc(t.due) + '</p></div></div>' +
+      '<p class="s-k">Notizen</p><p class="pt-notes">' + esc(d.notes) + '</p>' +
+      '<p class="s-k">Checkliste ' + done + '/' + d.checklist.length + mk(2, o.annot) + '</p><ul class="pt-check">' + d.checklist.map(function (c) {
+        return '<li class="' + (c[1] ? 'done' : '') + '"><span class="d-circ">' + (c[1] ? fi('check') : '') + '</span>' + esc(c[0]) + '</li>';
+      }).join('') + '</ul>' +
+      '<p class="s-k">Kommentare</p><div class="pt-com">' + avatar(cp, 28) + '<p><b>' + esc(short(cp.name)) + '</b><br>' + esc(d.comment.text) + '</p></div></section>';
+    return base.replace(/<\/div>$/, dlg + '</div>');
+  }
+  function plantaskNotes(vm) {
+    var p = vm.person(vm.taskDetail.task.owner);
+    return [[1, 'Eine Aufgabe, eine verantwortliche Person: ' + first(p.name) + '. Termin und Fortschritt sieht das ganze Team.'], [2, 'Zwischenschritte stehen als Checkliste in der Aufgabe, nicht als eigene Aufgaben oder in Mails.']];
+  }
+
   /* ================= To Do ================= */
   function todo(vm, o) {
     o = o || {};
@@ -201,6 +224,7 @@
   A.register('chat', chat, chatNotes);
   A.register('planner', planner, plannerNotes);
   A.register('todo', todo, todoNotes);
+  A.register('plantask', plantask, plantaskNotes);
   A.register('onedrive', onedrive, onedriveNotes);
   A.register('recap', recap, recapNotes);
   A.plannerTasks = plannerTasks;

@@ -144,3 +144,24 @@
 .s-pane .s-ph{padding-right:30px}
 .t-plan .p-board{gap:12px}
 .p-newb{width:150px!important}
+/* ---------- Planner task details ---------- */
+.pt-scrim{position:absolute;inset:0;background:rgba(0,0,0,.28)}
+.pt-dlg{position:absolute;top:64px;right:40px;bottom:24px;width:780px;background:#fff;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,.28);padding:22px 28px;overflow:hidden;font-size:14.5px}
+.pt-h{display:flex;align-items:center;gap:10px;position:relative}
+.pt-h h3{font-size:22px;font-weight:600;flex:1}
+.pt-h .p-circ{width:22px;height:22px}
+.pt-h .m-mk,.pt-dlg .s-k .m-mk{position:relative;top:0;left:0;margin-left:8px}
+.pt-x{display:flex;gap:14px;color:#424242}
+.pt-plan{color:#616161;margin:4px 0 16px 32px}.pt-plan b{font-weight:600;color:#242424}
+.pt-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;padding:12px 0 6px;border-top:1px solid #edebe9;border-bottom:1px solid #edebe9;margin-bottom:6px}
+.pt-grid .s-k{margin-top:0}
+.pt-who,.pt-due{display:flex;align-items:center;gap:8px}.pt-due .fi{width:16px}
+.pt-notes{background:#faf9f8;border:1px solid #edebe9;border-radius:4px;padding:10px 12px;margin-top:4px}
+.pt-dlg .s-k{display:flex;align-items:center;margin-top:16px}
+.pt-check{display:grid;gap:6px;margin-top:6px}
+.pt-check li{display:flex;align-items:center;gap:10px}
+.pt-check li.done{color:#616161;text-decoration:line-through}
+.pt-check .d-circ{border-color:#5b5fc7}.pt-check li.done .d-circ{background:#5b5fc7}
+.pt-com{display:flex;gap:10px;margin-top:6px;background:#faf9f8;border-radius:4px;padding:10px 12px}
+.pt-com b{font-weight:600}
+.pt-dlg{bottom:auto;font-size:16px}.pt-h h3{font-size:24px}

@@ -12,19 +12,19 @@
 (function (root) {
   var V = root.Views, A = root.M365, esc = V.esc;
   var SW = 1920, SH = 1080;
-  var TOOL_LABEL = { teams: 'Microsoft Teams', chat: 'Microsoft Teams · Chat', recap: 'Microsoft Teams · Besprechung (KI-Simulation)', outlook: 'Outlook', explorer: 'Windows Explorer', sharepoint: 'SharePoint', onedrive: 'OneDrive', planner: 'Planner', todo: 'Microsoft To Do' };
+  var TOOL_LABEL = { teams: 'Microsoft Teams', chat: 'Microsoft Teams · Chat', recap: 'Microsoft Teams · Besprechung (KI-Simulation)', outlook: 'Outlook', explorer: 'Windows Explorer', sharepoint: 'SharePoint', onedrive: 'OneDrive', planner: 'Planner', plantask: 'Planner · Aufgabendetails', todo: 'Microsoft To Do' };
   /* Focus crops per tool in app coordinates [x, y, w, h]: the part that carries the lesson. */
   var CROP = {
     teams: [358, 48, 1082, 762], chat: [358, 48, 1082, 762], recap: [358, 48, 1082, 762],
     outlook: [258, 136, 1182, 674], explorer: [0, 0, 1440, 470], sharepoint: [48, 48, 1392, 520],
-    onedrive: [232, 48, 1208, 470], planner: [232, 48, 1208, 600], todo: [260, 48, 1180, 520]
+    onedrive: [232, 48, 1208, 470], planner: [232, 48, 1208, 600], plantask: [560, 48, 880, 762], todo: [260, 48, 1180, 520]
   };
 
   function scaled(html, s, cls, w, h) {
     w = w || A.W; h = h || A.H;
     return '<div class="sl-app ' + (cls || '') + '" style="width:' + Math.round(w * s) + 'px;height:' + Math.round(h * s) + 'px"><div class="sl-in' + (cls === 'sl-pr' ? ' stage-in' : '') + '" style="width:' + w + 'px;height:' + h + 'px;transform:scale(' + s + ')">' + html + '</div></div>';
   }
-  function aiNote(vm, tool) { return vm.ai && (tool === 'recap' || tool === 'planner') ? vm.ai.short : ''; }
+  function aiNote(vm, tool) { return vm.ai && (tool === 'recap' || tool === 'planner' || tool === 'plantask') ? vm.ai.short : ''; }
   function foot(vm, extra) {
     var a = vm.variant && vm.variant.assumption ? 'Annahme: ' + vm.fill(vm.variant.assumption) : '';
     return '<p class="sl-foot"><span>Fiktives Beispiel · nachgebildete Oberfläche, kein Produkt von Microsoft · ' + esc(vm.title) + '</span>' +

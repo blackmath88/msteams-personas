@@ -182,7 +182,7 @@ try {
 
   // ---------- v3: screens, sequences, trainer workflow, persistence ----------
   await p.size(1440, 900);
-  const SCREENS = ['posts', 'files', 'tasks', 'chat', 'recap', 'outlook', 'explorer', 'sharepoint', 'onedrive', 'planner', 'todo'];
+  const SCREENS = ['posts', 'files', 'tasks', 'chat', 'recap', 'outlook', 'explorer', 'sharepoint', 'onedrive', 'planner', 'plantask', 'todo'];
   let sweepBad = [];
   for (const sv of ['leadership-forum/eigenes-team', 'kundenportal/kanal', 'onboarding/kanal', 'onboarding/nur-plan', 'heat-health/-', 'sitzungszyklus/gastzugang', 'semesterstart/mit-bewertung', 'nora-publikation/-', 'nora-abwesenheit/-', 'nora-reihe/-']) {
     for (const sc of SCREENS) {
@@ -197,9 +197,9 @@ try {
       }
     }
   }
-  check('screen sweep: 10 situation/variant × 11 screens render or explain unavailability, slides fit', sweepBad.length === 0, sweepBad.slice(0, 6).join(' | '));
+  check('screen sweep: 10 situation/variant × 12 screens render or explain unavailability, slides fit', sweepBad.length === 0, sweepBad.slice(0, 6).join(' | '));
   await p.goto(BASE + '#/abfolgen');
-  check('sequences page lists six teaching sequences', (await count('.seqlist > li')) === 6);
+  check('sequences page lists seven teaching sequences with a how-to', (await count('.seqlist > li')) === 7 && (await count('.howto li')) === 4);
   await click('.seqlist a[href="#/a/einarbeitung/1"]');
   check('sequence step 1 opens workspace with flow, sequence bar and objective', (await count('.flow .on')) === 1 && (await count('.seqbar ol li')) === 5 && /Lernziel/.test(await $('.seq-obj')) && (await count('.m3-teams')) === 1);
   await click('.seqbar [data-act="seq-next"]');
@@ -232,7 +232,7 @@ try {
   check('2× export produces 3840×2160 PNG', hi.w === 3840 && hi.h === 2160 && /@2x\.png$/.test(hi.name), JSON.stringify(hi));
   await p.eval('(()=>{const t=document.querySelector("[data-act=hires]");t.checked=false;t.dispatchEvent(new Event("change",{bubbles:true}))})()');
   // persistence + JSON
-  await p.goto(BASE + '#/s/leadership-forum/eigenes-team/szene/outlook'); await p.eval('location.reload()'); await p.sleep(600);
+  await p.goto(BASE + '#/s/leadership-forum/eigenes-team/szene/outlook'); await p.eval('location.reload()'); for (let i = 0; i < 50 && !(await p.eval("!!document.querySelector('.m3')").catch(() => false)); i++) await p.sleep(100);
   check('customisations persist after reload (localStorage)', /Maximiliane/.test(await $('.m3', 'innerText')));
   await click('[data-act="json-export"]');
   const js = await p.eval('JSON.stringify(window.__lastJson)');
@@ -245,6 +245,17 @@ try {
   const ok = await p.eval(`window.__importJson(${JSON.stringify(js)})`);
   await p.sleep(200);
   check('JSON import validates schema and situations, restores customisations', !!bad && !!bad2 && ok === null && /Maximiliane/.test(await $('.m3', 'innerText')), [bad, bad2, ok].join(' / '));
+  // realistic long post: honest fit warning instead of silent truncation
+  await p.goto(BASE + '#/s/heat-health/gruppenteam/szene/posts');
+  await setInput('form.contentf textarea[name="posts.0.text"]', 'Die Revision ist eingereicht. '.repeat(30));
+  check('long post text: workspace shows a fit warning (no silent truncation)', await p.eval(`!document.querySelector('.fit-warn').hidden && /Fokus-Ausschnitt/.test(document.querySelector('.fit-warn').textContent)`));
+  await p.goto(BASE + '#/p/heat-health/gruppenteam/szene/posts/folie'); await p.sleep(150);
+  check('long post text: stage reports the fit issue before export', /Hinweis/.test(await $('#png-status')));
+  await p.goto(BASE + '#/s/heat-health/gruppenteam/szene/posts');
+  await setInput('form.contentf textarea[name="posts.0.text"]', '');
+  // Planner task details
+  await p.goto(BASE + '#/s/onboarding/kanal/szene/plantask');
+  check('Planner task details: owner, checklist and comment for the same task', /Zugang Ticketsystem freischalten/.test(await $('.pt-dlg', 'innerText')) && (await count('.pt-check li')) === 3 && /Thomas Lüthi/.test(await $('.pt-who', 'innerText')));
   // AI simulation
   await p.goto(BASE + '#/a/ki-besprechung/1');
   check('AI recap labelled as simulation with human review states', /Simulation für Schulungszwecke/.test(await $('.m3-recap', 'innerText')) && (await count('.r-s')) === 4 && /Verworfen/.test(await $('.m3-recap', 'innerText')) && /Teams Premium/.test(await $('#visual', 'innerText')));
