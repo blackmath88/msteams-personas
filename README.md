@@ -20,6 +20,7 @@ A shared portable project format will connect manual website editing, a guided b
 
 - [Refined concept](docs/SLIDES-AS-CODE-CONCEPT.md)
 - [Active build plan](docs/BUILD-PLAN.md)
+- [Claude/Orca: 30-minute manual + assistant-bridge build](docs/ORCA-NUC-BRIDGE-30MIN.md)
 - [Architecture and UX research prompt](docs/research/PERPLEXITY-ARCHITECTURE-UX-SPARRING.md)
 - [Product brief](docs/PRODUCT.md)
 - [Current status](docs/STATUS.md)

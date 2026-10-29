@@ -2,6 +2,20 @@
 
 Updated: 2026-10-29. Planning only; no new runtime functionality is claimed.
 
+## Active next attempt — larger 30-minute product build
+
+The user requests faster delivery of manual website authoring and AI-assistant integration together. Use [the 30-minute Claude/Orca task](ORCA-NUC-BRIDGE-30MIN.md) as the executable scope. It combines the project contract, manual editor/import/save and external-assistant bridge in one bounded attempt; the numbered slices below are architecture/dependency guidance, not a requirement for separate sequential release cycles.
+
+Implement a coherent Teams + Planner + Prinzip subset with genuinely new project content. Make recommendations, boundaries and facilitator notes editable. Template adaptation stays the default; the bridge is a secondary route for new situations. Three-slide sequences are the default, with optional storyboard approval and sensible defaults.
+
+Share identities where consistency matters, keep messages scene-local, use explicit state snapshots and avoid snapshot inheritance. Add a separate project-to-renderer adapter instead of modifying curated global catalogues.
+
+The same capabilities must serve all planned routes, but interface maturity can differ: deliver website and bridge now, keep a headless/CLI seam, add WebMCP only if the core is verified, and defer hosted HTTP/remote MCP deployment. Local correction of unknown person references is part of the core, not merely an external repair loop.
+
+If supported, two isolated implementation workers may build core and UX concurrently after the coordinator fixes their contract. The total attempt is 30 minutes including integration and proof. Otherwise execute both paths directly. Preparing this task has not launched Claude.
+
+Research disposition: the supplied external review supports complete portable projects and incremental adapters, while treating handoff friction as unproven. It recommends manual-first UX and measuring teaching usefulness separately from valid JSON. Pricing/protocol claims are not adopted as verified implementation dependencies. See [decision note](research/BRIDGE-RESEARCH-DECISIONS.md).
+
 ## Baseline and precedence
 
 main includes the complete V3 trainer library, merged at 300e00601606d295c6b0dd23933dc70452db654c. Fetch and inspect current main before implementing; do not restart from the earlier atlas or prototype branches.

@@ -8,7 +8,9 @@ Create convincing fictional M365 application scenes and conceptual explainers fo
 
 “Slides as Code” is the umbrella concept and working name, not a repository rename or a claim of trademark availability. M365 adoption visuals are the first application. Code is an implementation idea, not something trainers must learn.
 
-## Three equally supported routes
+## Shared capabilities, staged access routes
+
+The next [30-minute implementation attempt](ORCA-NUC-BRIDGE-30MIN.md) builds manual authoring and the assistant bridge together. Template adaptation remains the default; the bridge is secondary and its usability is unproven. Shared capabilities do not require simultaneous maturity of every adapter.
 
 1. Website: browse, compose, edit, preview, save and export without AI or connector setup.
 2. Agent bridge: prepare the teaching project in the user's usual AI assistant, then paste/upload its structured output into the website.

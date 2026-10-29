@@ -23,8 +23,12 @@ See [V3 handoff](V3-BUILD-HANDOFF.md) for screen availability, evidence and know
 
 Existing JSON files are curated-situation override backups. They must not be advertised as arbitrary portable projects.
 
+## Active next attempt
+
+The user requests a larger 30-minute Claude/Orca build combining manual website project authoring and the external-assistant bridge on one shared project contract. See [executable task](ORCA-NUC-BRIDGE-30MIN.md). Core target: new-project Teams + Planner + Prinzip, editable teaching text, safe import/save/reopen, local reference repair and real exports. No runtime has been launched from this planning session.
+
 ## Next action
 
-Challenge the architecture/UX using [the research prompt](research/PERPLEXITY-ARCHITECTURE-UX-SPARRING.md), then implement the new-project adapter/import vertical slice from current main. Prove one genuinely new scenario before broad migration or hosting.
+Use the supplied research disposition and start the 30-minute task from current main. Build manual and assistant routes together; prove one genuinely new scenario and preserve the existing library. Return the implementation branch and evidence for review.
 
 The former V2 Orca task is historical. No builder was launched, runtime code changed or service deployed by this documentation update. The previous Weavr Mission remains archived; no Weavr action is requested here.
