@@ -1,6 +1,6 @@
 # V2 build handoff: three-entry library, M365 renderers, PNG export
 
-Date: 2026-10-29. Build window: 11:49–12:40 CET, within the 90-minute limit.
+Date: 2026-10-29. Build window: 11:49–12:18 CET (about 30 minutes, within the 90-minute limit).
 
 ## Revision and baselines
 
