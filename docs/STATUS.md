@@ -1,40 +1,41 @@
 # Current status
 
-Updated: 2026-10-28.
+Updated: 2026-10-29.
 
-## Repository baseline and current task
+## Branches and evidence
 
-PR #1 (atlas extraction) and PR #2 (initial plan/research prompt) are merged. The source atlas originates from m365-toolbox commit 4af0e42219b346eb7676317f213e3998c5792cf8.
+- main contains the original standalone atlas plus planning documents.
+- prototype/visual-library-v1 contains the built library prototype, last inspected at e9220ff8954ea9a9541c4ee87b34c206a8dd8ede.
+- The latest prototype handoff reports 9/9 logic tests and 62/62 Chromium journey checks. These are reported results; not independently rerun during this planning update.
+- Earlier independent review reran 7/7 logic tests and inspected selected committed screenshots. The user has also tested the prototype and requested higher UI fidelity.
+- No prototype implementation is merged into main by this documentation task.
 
-Current task: revise the build plan to the agreed visual-first scope and integrate the documentation directly into main, as explicitly requested. Documentation only; no implementation or Weavr dispatch in this task.
+## New specification
 
 ## Prototype run (2026-10-28)
 
 Branch `prototype/visual-library-v1` (base `759c94b`) holds a first visual-first prototype built in a direct Claude session: landing/library, configurator, Szene, three Prinzip explainers and Präsentieren, with unit and headless-browser tests. It is unreviewed and unmerged. See [PROTOTYPE-HANDOFF.md](PROTOTYPE-HANDOFF.md).
 
-## Implemented versus planned
+## New specification (v2)
 
-Implemented: the seed atlas, five higher-education worlds, data-driven scenes and print briefings.
+Two plans are now active:
+- UX-LIBRARY-PLAN.md: self-explanatory landing; Team-Personas, Tools, Use Cases; one shared workspace.
+- M365-UI-FIDELITY-PLAN.md: application resemblance, Teams/Outlook/file renderer families, cross-application story and real PNG slide assets.
 
-Next planned test: landing with three entry points, thin v3 adapter, one business example, six-question configurator, Szene and three Prinzip explainers, plus 16:9 presentation. Lightweight naming fields are in scope. Full authoring, persistent drafts, portable collection import/export and PNG/SVG export are deferred.
+BUILD-PLAN.md indexes the implementation priorities. ORCA-NUC-BUILD-TASK.md is the ready-to-paste execution task.
 
-Historical briefs in docs/origin are reference material, not current execution instructions.
+PNG export and targeted content editing are now in scope. Full arbitrary authoring, editable PPTX, backend, external APIs and deployment are deferred.
 
-## Weavr observation
+## Runtime/governance
 
-The live project msteams visuals is registered under ID https-github-com-blackmath88-msteams-personas. At the latest check in this task, the project overview returned no saved Mission, Plan, Needs or Sessions. The user reports a Mission is in place; refresh/reconcile live state before creating a duplicate.
+The live Weavr check in this task returned Mission msteams-visual-library-first-slice as archived and no working Sessions for the project. No Weavr mutation or dispatch was performed.
 
-No eligible active execution route was established from the overview. Cloud runners may be ephemeral, so verify routing rather than treating the absence of a cloud runner as a permanent blocker. No Weavr write, waiver, scope change or dispatch was performed here.
+The user requested a Claude task for direct Orca execution on the NUC. Preparing this task is not a claim that the runtime has started or its deadline is enforced. Inspect live local ownership/runtime capability before launching.
 
-See [WEAVR-FIRST-TEST.md](WEAVR-FIRST-TEST.md) for the proposed envelope and operator sequence.
+## Documentation scope and checks
 
-## Verification carried forward
-
-- Content validator: five worlds, 24 people, 45 artefacts, seven scenarios, 25 decision points; zero errors/warnings during extraction.
-- JS syntax and local HTML asset/navigation references passed.
-- Browser verification remains outstanding; previous browser setup attempts did not establish a working Chromium runtime.
-- This revision changes documentation only; links and consistency are checked, runtime tests are not required.
+This change records both plans, a NUC task and aligned navigation/instructions. Relative links and document consistency are checked. Runtime code/tests are unchanged.
 
 ## Next action
 
-Refresh the existing Weavr project. Reuse an existing Mission if present; otherwise save one from the first-test brief. Align its scope and inputs with the revised docs/BUILD-PLAN.md, inspect Plan & Needs, verify the execution route, and dispatch explicitly through Weavr. Review the resulting proof before integrating implementation.
+On the NUC, use docs/ORCA-NUC-BUILD-TASK.md. Start from the current prototype and integrate the current main documentation on a new implementation branch. Deliver P0 as a complete path before broader renderer coverage. Return screenshots and actual export samples for review; no automatic merge/deployment.
