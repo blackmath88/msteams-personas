@@ -1,6 +1,6 @@
 # V3 build handoff: trainer library with Planner, OneDrive, chat, To Do, sequences and AI simulation
 
-Date: 2026-10-29. Build window: 12:42–about 13:50 CET. The limit was 150 minutes; the work finished well inside it.
+Date: 2026-10-29. Build window: 12:42–14:10 CET. The limit was 150 minutes; the work finished well inside it.
 
 ## Revision
 
@@ -8,7 +8,7 @@ Date: 2026-10-29. Build window: 12:42–about 13:50 CET. The limit was 150 minut
 | --- | --- |
 | Baseline | `v2/library-teams-export` at `5081206cdde007bdb85e85370bf98aae4e504271` (reviewed v2 head) |
 | Branch | `v3/trainer-library`, an isolated worktree `../msteams-personas-v3` cut from the baseline and pushed to origin |
-| Final commit | The branch head, which is the commit that adds this handoff. Run `git log -1 origin/v3/trainer-library`. The implementation commits are `b506e67` → `f49c833`, plus the handoff commit. |
+| Final commit | The branch head. Run `git log -1 origin/v3/trainer-library`. Implementation commits run from `b506e67` to the final «focus crop, curated chats» commit, which also updates this handoff. |
 | Not done | No merge, no PR, no deployment. Weavr was not touched; the archived mission was not revived. |
 
 ## Runtime and supervision
@@ -19,6 +19,9 @@ Date: 2026-10-29. Build window: 12:42–about 13:50 CET. The limit was 150 minut
   - `orca orchestration` offers `worker-start` (its `--timeout-ms` is a wait timeout), `worker-stop` and `check --wait --timeout-ms`.
   - Nothing enforces a runtime deadline on an unattended worker by itself; only a supervising coordinator could stop one. Following the task rule, **no unattended worker was started**, and the work did not need delegation.
 - **Active or unsettled workers:** none. The only process this run left was the local static test server, which it stopped.
+- **Housekeeping:**
+  - The test harness (`tests/cdp.mjs`) never deleted its temporary Chrome profiles. About 4 GB from earlier runs had filled the temp quota. This run deleted those leftover `mtp-cdp-*` directories.
+  - `close()` now removes the profile, so test runs leave nothing behind.
 
 ## Run
 
@@ -67,7 +70,7 @@ Each one has editable content, PNG export and honest availability.
 
 | Screen | Profile | Where | Learning purpose |
 | --- | --- | --- | --- |
-| Teams chat | New Teams, Chat in the rail | All team situations: curated for Leadership Forum, Kundenportal and Onboarding; derived from the «Chat oder Kanal?» binding elsewhere (labelled) | The decision is made in a 1:1 chat: the «before» of the chat principle |
+| Teams chat | New Teams, Chat in the rail | All six team situations, each with a curated conversation. The decision text equals the Prinzip decision, and the chat partners are the principle's «inChat» people (unit-tested). A generated fallback, labelled as such, remains for future situations | The decision is made in a 1:1 chat: the «before» of the chat principle |
 | Planner board | New Planner web, Board by bucket | Situations with shared tasks | Ownership, due dates and buckets visible to the team |
 | Planner task details | Dialog over the board | Leadership Forum, Kundenportal, Onboarding | One owner, a checklist for sub-steps, a comment in context |
 | To Do | To Do web, «Mein Tag» | Team situations with tasks, and Nora | Personal tasks next to «Zugewiesen an mich» tasks from the plan (same identity) |
@@ -78,7 +81,7 @@ Each one has editable content, PNG export and honest availability.
 - A 4-step flow bar («Situation wählen → Szene anpassen → Bildausschnitt prüfen → Exportieren»).
 - A grouped screen picker, focused content fields for each screen, a customisation state in the context bar and a compact variant switcher.
 - Sequences with a step bar, objective and boundary, Zurück/Weiter, arrow keys on the stage and whole-sequence export.
-- A focus crop per tool, and 2× export.
+- A focus crop per tool. For Teams posts and chats it is **content-aware**: it removes the empty band above bottom-anchored conversations and keeps the header. Plus 2× export.
 - localStorage persistence, plus a validated JSON export/import (schema, version, known situations, string-only values, size limits) and a global reset.
 - Assumptions (access, licensing) stay in the workspace and in the slide footer.
 
@@ -104,7 +107,7 @@ Each sequence has an objective, a boundary, 3–5 moments, a principle, and cons
 | --- | --- |
 | `node check-worlds.mjs` | 0 errors, 0 warnings |
 | `node --test tests/model.test.mjs` | **17/17**: 12 earlier tests (adapted to the new availability) plus sequences resolve, chat bindings, task identity, AI rejection/licensing and onboarding-world independence |
-| `node tests/journey.mjs` | **109/109** |
+| `node tests/journey.mjs` | **110/110** |
 
 The browser journey (headless Chromium) covers:
 - all v1/v2 checks;
@@ -118,6 +121,7 @@ The browser journey (headless Chromium) covers:
 - AI review states and the Planner result;
 - a long post triggering a visible fit warning in the workspace and on the stage;
 - Planner task details;
+- the content-aware focus crop;
 - offline (no external resources loaded);
 - 375 px for 9 routes, including the sequence workspace, the tools page and the sequence stage; 200% zoom for 5 routes; keyboard reach of the entries;
 - zero JS errors.
@@ -131,7 +135,8 @@ The browser journey (headless Chromium) covers:
   - `entscheid-chat/01–04`;
   - `planner-todo/01–05` (step 4 as a focus crop);
   - `abwesenheit/01` (OneDrive);
-  - `einzeln/leadership-forum-2027-outlook-fokus.png` and `einzeln/kundenportal-bis-maerz-planner-app@2x.png` (3840 × 2160).
+  - `sitzungszyklus/03` (chat focus) and `sitzungszyklus/05` (Prinzip «Bewusst schlank»: the alternative without a plan);
+  - `einzeln/leadership-forum-2027-outlook-fokus.png`, `einzeln/einarbeitung-im-kundendienst-chat-fokus.png` and `einzeln/kundenportal-bis-maerz-planner-app@2x.png` (3840 × 2160).
 
   All 1× files are 1920 × 1080, 170–290 KB.
 - `docs/png-samples/`: the v2 samples, unchanged.
@@ -149,8 +154,7 @@ No Microsoft screenshots were downloaded or bundled.
 
 - **Labels from familiarity:** several German labels (Planner views, To Do lists, OneDrive «Start/Favoriten», Outlook commands) come from product familiarity, not a captured reference. A real tenant screenshot should be the final reference.
 - **Fonts:** Segoe UI is not installed on the NUC, so the PNGs use the fallback sans-serif.
-- **Teams posts whitespace:** like the real product, Teams posts are bottom-aligned, which leaves space above short channels. In the focus crop this shows as a band at the top. A content-aware crop would be tighter.
-- **Generated chats:** for sitzungszyklus, semesterstart and heat-health the chats are generated from the Prinzip binding. They are labelled as such and are plainer than the curated ones.
+- **Teams whitespace:** like the real product, Teams posts and chats are bottom-aligned. «Nur Anwendung» and «Folie» keep that authentic space; only the focus crop removes it.
 - **Limited coverage:**
   - OneDrive exists only for Nora's situations;
   - the Outlook/Explorer/SharePoint story only for Leadership Forum and Kundenportal;
@@ -163,6 +167,6 @@ No Microsoft screenshots were downloaded or bundled.
 ## Next steps
 
 1. Review against a real screenshot from the target webinar tenant (Teams, Planner, To Do) and adjust labels and density.
-2. Content-aware focus crop for Teams posts and chats.
-3. Write curated chats for the remaining team situations; add OneDrive and Outlook stories for one more business situation.
+2. Add OneDrive and Outlook stories for one more business situation (Kundendienst).
+3. Make the Prinzip recommendation and boundary texts editable for slides.
 4. Recurring-meeting sequence with a non-AI meeting recap (backlog #7) and an external-sharing scene (backlog #9).

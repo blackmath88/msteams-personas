@@ -60,7 +60,7 @@
       var w = Math.round(c[2] * s), h = Math.round(c[3] * s);
       return '<div class="slide slide-fokus" data-kind="fokus" style="width:' + SW + 'px;height:' + SH + 'px">' +
         '<header class="sl-h sl-h-s"><p class="sl-k">' + esc(TOOL_LABEL[tool]) + ' · Ausschnitt</p><h2>' + esc(vm.title) + '</h2></header>' +
-        '<div class="sl-app sl-crop" style="width:' + w + 'px;height:' + h + 'px;left:' + Math.round((SW - w) / 2) + 'px"><div class="sl-in" style="width:' + A.W + 'px;height:' + A.H + 'px;transform:scale(' + s + ') translate(' + (-c[0]) + 'px,' + (-c[1]) + 'px)">' + html + '</div></div>' +
+        '<div class="sl-app sl-crop" data-crop="' + c.join(',') + '" data-tool="' + tool + '" style="width:' + w + 'px;height:' + h + 'px;left:' + Math.round((SW - w) / 2) + 'px"><div class="sl-in" style="width:' + A.W + 'px;height:' + A.H + 'px;transform:scale(' + s + ') translate(' + (-c[0]) + 'px,' + (-c[1]) + 'px)">' + html + '</div></div>' +
         foot(vm, extra) + '</div>';
     }
     var notes = p.annot === false ? [] : A.notes(vm, p.sub);
@@ -95,6 +95,32 @@
     inner.classList.remove('dense', 'denser');
     if (over()) inner.classList.add('dense');
     if (over()) inner.classList.add('denser');
+  }
+
+  /*
+   * Focus crop, content-aware: conversations are bottom-anchored in Teams, which leaves an
+   * empty band above short threads. Cut that band (keeping the channel/chat header) and
+   * re-scale so the conversation fills the slide.
+   */
+  function tighten(slideEl) {
+    var box = slideEl.querySelector('.sl-crop'); if (!box || box.dataset.tight) return;
+    var tool = box.dataset.tool, c = box.dataset.crop.split(',').map(Number), inner = box.querySelector('.sl-in'), m3 = inner.querySelector('.m3');
+    var list = inner.querySelector(tool === 'chat' ? '.c-msgs' : tool === 'teams' ? '.t-posts' : null);
+    var head = inner.querySelector(tool === 'chat' ? '.c-head' : '.t-ch');
+    if (!list || !head || !list.firstElementChild) return;
+    var k = m3.getBoundingClientRect().height / A.H;
+    var y = function (el, edge) { var r = el.getBoundingClientRect(); return (r[edge] - m3.getBoundingClientRect().top) / k; };
+    var headBottom = y(head, 'bottom'), firstTop = y(list.firstElementChild, 'top');
+    var gap = firstTop - headBottom - 24;
+    if (gap < 40) return;
+    /* Move the header down to sit above the first item: crop starts at the header, skips the gap. */
+    var hh = headBottom - c[1];
+    var nc = [c[0], firstTop - 24 - hh, c[2], c[3] - gap];
+    var s = Math.min(1808 / nc[2], 830 / nc[3]), w = Math.round(nc[2] * s), h = Math.round(nc[3] * s);
+    head.style.transform = 'translateY(' + gap + 'px)'; head.style.position = 'relative'; head.style.zIndex = 3;
+    box.style.width = w + 'px'; box.style.height = h + 'px'; box.style.left = Math.round((SW - w) / 2) + 'px';
+    inner.style.transform = 'scale(' + s + ') translate(' + (-nc[0]) + 'px,' + (-nc[1]) + 'px)';
+    box.dataset.tight = '1';
   }
 
   var cssCache = null;
@@ -142,5 +168,5 @@
     setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
   }
 
-  root.Export = { compose: compose, toPNG: toPNG, fitIssues: fitIssues, densify: densify, fileName: fileName, download: download, W: SW, H: SH };
+  root.Export = { compose: compose, toPNG: toPNG, fitIssues: fitIssues, densify: densify, tighten: tighten, fileName: fileName, download: download, W: SW, H: SH };
 })(window);

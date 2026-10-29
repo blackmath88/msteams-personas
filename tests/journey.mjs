@@ -232,7 +232,8 @@ try {
   check('2× export produces 3840×2160 PNG', hi.w === 3840 && hi.h === 2160 && /@2x\.png$/.test(hi.name), JSON.stringify(hi));
   await p.eval('(()=>{const t=document.querySelector("[data-act=hires]");t.checked=false;t.dispatchEvent(new Event("change",{bubbles:true}))})()');
   // persistence + JSON
-  await p.goto(BASE + '#/s/leadership-forum/eigenes-team/szene/outlook'); await p.eval('location.reload()'); for (let i = 0; i < 50 && !(await p.eval("!!document.querySelector('.m3')").catch(() => false)); i++) await p.sleep(100);
+  /* fresh document load (new URL), so the check really reads localStorage */
+  await p.goto(BASE.replace('index.html', 'index.html?reload=1') + '#/s/leadership-forum/eigenes-team/szene/outlook'); await p.sleep(400);
   check('customisations persist after reload (localStorage)', /Maximiliane/.test(await $('.m3', 'innerText')));
   await click('[data-act="json-export"]');
   const js = await p.eval('JSON.stringify(window.__lastJson)');
@@ -245,6 +246,10 @@ try {
   const ok = await p.eval(`window.__importJson(${JSON.stringify(js)})`);
   await p.sleep(200);
   check('JSON import validates schema and situations, restores customisations', !!bad && !!bad2 && ok === null && /Maximiliane/.test(await $('.m3', 'innerText')), [bad, bad2, ok].join(' / '));
+  // content-aware focus crop: no empty band between header and first post
+  await p.goto(BASE + '#/p/leadership-forum/eigenes-team/szene/posts/fokus'); await p.sleep(200);
+  const band = await p.eval(`(()=>{const h=document.querySelector('.stage .t-ch').getBoundingClientRect(),f=document.querySelector('.stage .t-posts > li').getBoundingClientRect(),b=document.querySelector('.stage .sl-crop').getBoundingClientRect();const m=document.querySelector('.stage .m3').getBoundingClientRect(),k=m.height/810;return {gapApp:Math.round((f.top-h.bottom)/k), tight:document.querySelector('.stage .sl-crop').dataset.tight==='1', inside:f.top>=b.top && h.top>=b.top-1}})()`);
+  check('focus crop removes the empty band above posts and keeps the channel header', band.gapApp < 70 && band.inside, JSON.stringify(band));
   // realistic long post: honest fit warning instead of silent truncation
   await p.goto(BASE + '#/s/heat-health/gruppenteam/szene/posts');
   await setInput('form.contentf textarea[name="posts.0.text"]', 'Die Revision ist eingereicht. '.repeat(30));

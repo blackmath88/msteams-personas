@@ -28,6 +28,39 @@
       ],
       others: [['aylin-demir', 'Die Texte für die SSO-Anmeldung sind fast fertig!'], ['petra-schmid', 'Steuerungssitzung verschoben auf Do.']]
     },
+    'sitzungszyklus': {
+      viewer: 'martina-vogel', partner: 'samuel-huber',
+      messages: [
+        { by: 'samuel-huber', time: '17:02', text: 'Martina, die Fakultät ist einverstanden mit dem Pilot, wenn die Lehre im ersten Semester ausgenommen bleibt.' },
+        { by: 'martina-vogel', time: '17:10', text: 'Das passt. Dann geben wir die Kollaborationsrichtlinie als Pilot frei, ohne Lehre.' },
+        { by: 'samuel-huber', time: '17:11', text: 'Sollen wir das noch mit allen abstimmen?' },
+        { by: 'martina-vogel', time: '17:14', text: 'Nicht nötig, das war in Sitzung 4 schon so besprochen. Pilot Kollaborationsrichtlinie freigegeben.', mark: 1, decision: true },
+        { by: 'samuel-huber', time: '17:15', text: 'Gut, ich informiere die Fakultät.' }
+      ],
+      others: [['claudia-gisler', 'Protokoll Sitzung 4 ist im Entwurf.'], ['sarah-baumgartner', 'IT kann den Pilot ab März begleiten.']]
+    },
+    'semesterstart': {
+      viewer: 'simon-luethi', partner: 'fabian-steiner',
+      messages: [
+        { by: 'fabian-steiner', time: '14:20', text: 'Eine Studentin fragt, ob Aufgabe 2 auch zu zweit abgegeben werden darf. Hast du ihr schon geantwortet?' },
+        { by: 'simon-luethi', time: '14:31', text: 'Ja, ich habe ihr «ja» geschrieben. Du?' },
+        { by: 'fabian-steiner', time: '14:32', text: 'Oh. Ich habe «nein, Einzelarbeit» geschrieben, so stand es letztes Jahr im Skript.' },
+        { by: 'simon-luethi', time: '14:35', text: 'Dann ab jetzt: Rückfragen laufen über das Forum der Lernplattform, damit alle dieselbe Antwort sehen.', mark: 1, decision: true },
+        { by: 'fabian-steiner', time: '14:36', text: 'Einverstanden. Weiss Ruth davon?' }
+      ],
+      others: [['ruth-ammann', 'Semesterplan liegt im Kanal.']]
+    },
+    'heat-health': {
+      viewer: 'amira-hassan', partner: 'nina-petrovic',
+      messages: [
+        { by: 'amira-hassan', time: '09:05', text: 'Nina, hier die drei Studien zur Hitzemortalität, die Reviewer 2 erwähnt. Die zweite ist für Abschnitt 4 am wichtigsten.' },
+        { by: 'nina-petrovic', time: '09:12', text: 'Danke! Kannst du kurz sagen, warum die erste nicht passt?' },
+        { by: 'amira-hassan', time: '09:15', text: 'Andere Altersgruppe und kein Stadtvergleich. Für unsere Fragestellung nur am Rand relevant.' },
+        { by: 'nina-petrovic', time: '09:20', text: 'Super. Ab jetzt gilt: Literatur mit Einschätzung im Kanal ablegen. Lukas fängt nächste Woche an.', mark: 1, decision: true },
+        { by: 'amira-hassan', time: '09:21', text: 'Gute Idee, mache ich.' }
+      ],
+      others: [['elena-rossi', 'Revision bitte bis Ende Monat.'], ['marc-schneider', 'Neue Messdaten liegen auf dem Server.']]
+    },
     'onboarding': {
       viewer: 'elif-kaya', partner: 'nadine-odermatt',
       messages: [

@@ -48,7 +48,7 @@ Branch `v3/trainer-library` (base `5081206`) adds:
 - seven teaching sequences, including a new business onboarding world;
 - the trainer flow, focus crop, 2× export and local save with JSON import/export.
 
-Tests: validator clean, 17/17 logic, 109/109 browser checks. It is unmerged, with no PR. See [V3-BUILD-HANDOFF.md](V3-BUILD-HANDOFF.md) and [SCENARIO-BACKLOG.md](SCENARIO-BACKLOG.md).
+Tests: validator clean, 17/17 logic, 110/110 browser checks. It is unmerged, with no PR. See [V3-BUILD-HANDOFF.md](V3-BUILD-HANDOFF.md) and [SCENARIO-BACKLOG.md](SCENARIO-BACKLOG.md).
 
 ## Next action
 

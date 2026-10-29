@@ -171,8 +171,13 @@ test('chat: curated decision matches the principle; generated chats exist for te
     assert.ok(dec && dec.mark === 1, sid);
     assert.ok([v.chat.viewer, v.chat.partner].every(id => v.people.some(p => p.id === id)), sid);
   }
-  const g = Model.build('sitzungszyklus');
-  assert.ok(g.chat && g.chat.generated && g.chat.messages.some(m => m.decision && m.text.includes(g.principles.chat.decision)));
+  for (const sid of ['sitzungszyklus', 'semesterstart', 'heat-health']) {
+    const g = Model.build(sid);
+    assert.ok(g.chat && !g.chat.generated, sid + ': curated chat');
+    const d = g.chat.messages.find(m => m.decision);
+    assert.ok(d.text.includes(g.principles.chat.decision), sid + ': decision text matches the principle');
+    assert.deepEqual([g.chat.viewer, g.chat.partner].sort(), [...g.principles.chat.inChat].sort(), sid + ': chat partners = principle inChat');
+  }
 });
 
 test('task edits keep one identity across Teams tasks, Planner/To Do and Prinzip', () => {

@@ -515,7 +515,7 @@
     var s = Math.max(0.05, Math.min(availW / W, availH / H));
     inner.style.transform = 'scale(' + s + ')';
     st.style.width = W * s + 'px'; st.style.height = H * s + 'px';
-    var sl = inner.querySelector('.slide'); if (sl) X.densify(sl);
+    var sl = inner.querySelector('.slide'); if (sl) { X.densify(sl); X.tighten(sl); }
     var issues = X.fitIssues(inner), note = document.getElementById('png-status');
     if (note && issues.length) note.textContent = 'Hinweis: ' + issues.join(', ');
   }
@@ -550,7 +550,7 @@
         var sp = stepParams(p.seq, i + 1, p.comp), vm = vmFor(sp.sid, sp.variant), kind = kindFor(vm, sp);
         host.innerHTML = compose(vm, sp, kind) || '';
         var sl = host.querySelector('.slide'); if (!sl) return;
-        X.densify(sl);
+        X.densify(sl); X.tighten(sl);
         if (status) status.textContent = 'Abfolge: PNG ' + (i + 1) + ' von ' + p.seq.steps.length + ' …';
         return renderSlide(sl, ('0' + (i + 1)).slice(-2) + '-' + X.fileName(vm, { mode: sp.mode, sub: sp.sub }, kind)).then(function (r) { out.push({ name: r.name, size: r.size, kind: kind }); });
       });

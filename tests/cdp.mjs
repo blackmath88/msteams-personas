@@ -1,6 +1,6 @@
 // Minimal Chrome DevTools Protocol driver (no dependencies; Node >= 22 for global WebSocket).
 import { spawn } from 'node:child_process';
-import { mkdtempSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -52,7 +52,7 @@ export async function launch({ bin = process.env.CHROMIUM || 'chromium', port = 
       writeFileSync(path, Buffer.from(data, 'base64'));
     },
     sleep,
-    async close() { ws.close(); proc.kill(); }
+    async close() { ws.close(); proc.kill(); await sleep(300); try { rmSync(dir, { recursive: true, force: true }); } catch (e) { /* profile cleanup is best effort */ } }
   };
   return page;
 }
