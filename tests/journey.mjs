@@ -27,7 +27,7 @@ try {
   check('landing: three entry points (Team-Personas, Tools, Use Cases)', await count('.entries .entry') === 3 && /Team-Personas[\s\S]*Tools[\s\S]*Use Cases/.test(await $('.entries', 'innerText')));
   check('landing: Eigene Situation as secondary action', (await count('.own a[href="#/konfigurator/1"]')) === 1);
   check('landing: four-app story thumbnails', (await count('.storyrow .appframe .m3')) === 4);
-  check('landing: six world cards', await count('.worlds .world') === 6);
+  check('landing: seven world cards', await count('.worlds .world') === 7);
   check('landing: business card present', /Brunner/.test(await $('.worlds', 'innerText')));
   await p.shot(OUT + '01-landing-desktop.png', true);
 
@@ -37,7 +37,7 @@ try {
   await click('.world a[href="#/personas/nora-keller"]');
   check('Nora world lists her three scenarios', await count('.sits .sit') === 3);
   await click('.sit a[href*="nora-abwesenheit"]');
-  check('Nora personal-work scene renders (no Team)', await count('.tw-personal') === 1);
+  check('Nora personal work opens in OneDrive (no Team)', await count('.m3-onedrive') === 1 && await count('.m3-teams') === 0);
   await p.shot(OUT + '07-nora-personal-scene.png');
   await p.eval('history.back()'); await p.sleep(300);
   check('browser Back returns to persona world', (await hash()) === '#/personas/nora-keller');
@@ -45,7 +45,7 @@ try {
   // Entry 2: Use case
   await p.goto(BASE + '#/');
   await click('.entries a[href="#/usecases"]');
-  check('use-case entry lists six use cases', await count('.ucs li') === 6);
+  check('use-case entry lists seven use cases', await count('.ucs li') === 7);
   await click('.ucs a[href="#/usecases/entscheide"]');
   check('use case converges on situations', await count('.sits .sit') >= 3);
   await click('.sit a[href*="kundenportal"]');
@@ -134,7 +134,7 @@ try {
   await click('.sit a[href*="leadership-forum"]');
   const viaPersona = await hash();
   await p.goto(BASE + '#/tools');
-  check('tools page lists ready and planned tools honestly', (await count('.toolgrid > li')) === 6 && /geplant/i.test(await $('.toolgrid', 'innerText')));
+  check('tools page lists tools with honest states incl. KI-Simulation', (await count('.toolgrid > li')) === 9 && /KI-Simulation/i.test(await $('.toolgrid', 'innerText')));
   await click('.toolgrid a[href="#/tools/outlook"]');
   await click('.sit a[href*="leadership-forum"]');
   const viaTool = await hash();
@@ -146,7 +146,7 @@ try {
   await p.goto(BASE + '#/s/leadership-forum/eigenes-team/szene/posts');
   await setInput('input[name="p:mara-conti"]', 'Mia Costa');
   for (const t of ['outlook', 'explorer', 'sharepoint', 'posts']) {
-    await click(`.toolpick a[href$="/szene/${t}"]`);
+    await click(`.screens a[href$="/szene/${t}"]`);
     // Explorer shows only file names and the viewer (Daniel); the others must show the custom name.
     if (t !== 'explorer' && !/Mia Costa/.test(await $('.m3', 'innerText'))) check(`custom name survives tool switch to ${t}`, false);
   }
@@ -154,20 +154,20 @@ try {
   await p.goto(BASE + '#/s/leadership-forum/eigenes-team/szene/sharepoint');
   await p.eval('document.querySelector("details:not([open])") && document.querySelectorAll("details").forEach(d=>d.open=true)');
   await setInput('form.contentf input[name="docName"]', 'Forum-Plan 2027.xlsx');
+  const idsSP = await p.eval('[...document.querySelectorAll(".m3 [data-docref=canonical]")].map(e=>e.textContent)');
+  await click('.screens a[href$="/szene/posts"]');
   await setInput('form.contentf textarea[name="postText"]', 'Neu <img src=x onerror="window.__xss=1"> & «Plan»');
   check('content field keeps focus while typing', (await p.eval('document.activeElement.name')) === 'postText');
-  const idsSP = await p.eval('[...document.querySelectorAll(".m3 [data-docref=canonical]")].map(e=>e.textContent)');
-  await click('.toolpick a[href$="/szene/posts"]');
   const idsT = await p.eval('[...document.querySelectorAll(".m3 [data-docref=canonical]")].map(e=>e.textContent)');
   check('edited post text rendered as text, not markup', (await count('.m3 img')) === 0 && !(await p.eval('window.__xss')) && /<img src=x/.test(await $('.m3', 'innerText')));
-  await click('.toolpick a[href$="/szene/explorer"]');
+  await click('.screens a[href$="/szene/explorer"]');
   const copies = await p.eval('[...document.querySelectorAll(".m3 [data-docref=copy]")].map(e=>e.textContent)');
   await p.goto(BASE + '#/s/leadership-forum/eigenes-team/prinzip/doc');
   const prDoc = await $('.pd-onedoc .pd-boxh');
   check('cross-app identity: renamed canonical file in SharePoint, Teams and Prinzip', idsSP.length >= 2 && idsSP.every(x => x === 'Forum-Plan 2027.xlsx') && idsT.length >= 1 && idsT.every(x => x === 'Forum-Plan 2027.xlsx') && /Forum-Plan 2027/.test(prDoc), JSON.stringify([idsSP, idsT, prDoc]));
   check('cross-app identity: Explorer copies match Prinzip copies, not the canonical file', copies.includes('Veranstaltungsplan_Mara.xlsx') && copies.includes('Plan_SF_v2.xlsx') && !copies.includes('Forum-Plan 2027.xlsx') && /Veranstaltungsplan_Mara\.xlsx/.test(await $('.pd-copies', 'innerText')));
   await p.goto(BASE + '#/s/heat-health/gruppenteam/szene/outlook');
-  check('unsupported tool shows honest unavailable state', (await count('.unavail')) === 1 && (await count('.m3-outlook')) === 0 && /nicht verfügbar/.test(await $('.toolpick', 'innerText')));
+  check('unsupported tool shows honest unavailable state', (await count('.unavail')) === 1 && (await count('.m3-outlook')) === 0 && /nicht verfügbar/.test(await $('.screens', 'innerText')));
   await p.goto(BASE + '#/s/kundenportal/eigenes-team/szene/files');
   check('old Teams tab route still valid', (await count('.m-ft tbody tr')) === 4);
   // PNG export: real bytes, dimensions, no controls in output
@@ -179,6 +179,82 @@ try {
     pngs.push(res);
     check(`PNG ${kind}: real PNG 1920×1080, selected output, no controls`, res && res.sig === 'PNG' && res.w === 1920 && res.h === 1080 && res.size > 40000 && res.kind === kind && ctlInSlide === 0, JSON.stringify(res));
   }
+
+  // ---------- v3: screens, sequences, trainer workflow, persistence ----------
+  await p.size(1440, 900);
+  const SCREENS = ['posts', 'files', 'tasks', 'chat', 'recap', 'outlook', 'explorer', 'sharepoint', 'onedrive', 'planner', 'todo'];
+  let sweepBad = [];
+  for (const sv of ['leadership-forum/eigenes-team', 'kundenportal/kanal', 'onboarding/kanal', 'onboarding/nur-plan', 'heat-health/-', 'sitzungszyklus/gastzugang', 'semesterstart/mit-bewertung', 'nora-publikation/-', 'nora-abwesenheit/-', 'nora-reihe/-']) {
+    for (const sc of SCREENS) {
+      await p.goto(BASE + `#/s/${sv}/szene/${sc}`); await p.sleep(60);
+      const st = await p.eval(`({m3: document.querySelectorAll('#visual .m3').length, un: document.querySelectorAll('#visual .unavail').length, picked: !!document.querySelector('.screens [aria-current]')})`);
+      if (st.m3 + st.un !== 1) sweepBad.push(`${sv} ${sc}: ${JSON.stringify(st)}`);
+      if (st.m3) {
+        await p.goto(BASE + `#/p/${sv}/szene/${sc}/folie`); await p.sleep(60);
+        const iss = await p.eval(`Export.fitIssues(document.querySelector('.stage-in'))`);
+        if (iss.length) sweepBad.push(`${sv} ${sc} folie: ${iss.join(',')}`);
+        if (/\{p:|\{s\}|\{c\}/.test(await p.eval('document.body.innerText'))) sweepBad.push(`${sv} ${sc}: raw token`);
+      }
+    }
+  }
+  check('screen sweep: 10 situation/variant × 11 screens render or explain unavailability, slides fit', sweepBad.length === 0, sweepBad.slice(0, 6).join(' | '));
+  await p.goto(BASE + '#/abfolgen');
+  check('sequences page lists six teaching sequences', (await count('.seqlist > li')) === 6);
+  await click('.seqlist a[href="#/a/einarbeitung/1"]');
+  check('sequence step 1 opens workspace with flow, sequence bar and objective', (await count('.flow .on')) === 1 && (await count('.seqbar ol li')) === 5 && /Lernziel/.test(await $('.seq-obj')) && (await count('.m3-teams')) === 1);
+  await click('.seqbar [data-act="seq-next"]');
+  check('Weiter moves to step 2 (chat)', /#\/a\/einarbeitung\/2$/.test(await hash()) && (await count('.m3-chat')) === 1);
+  await click('.sp-h a.btn-p');
+  check('sequence stage opens on same step', /#\/ap\/einarbeitung\/2/.test(await hash()) && (await count('.stage-wrap .seqbar')) === 1);
+  await p.key('ArrowRight', 'ArrowRight', 39); await p.sleep(250);
+  check('ArrowRight advances the sequence in presentation', /#\/ap\/einarbeitung\/3/.test(await hash()) && (await count('.stage .m3-planner')) === 1);
+  const seqOut = await p.eval(`window.__exportSeq().then(r=>r)`);
+  check('whole sequence exports 5 PNGs in story order', seqOut.length === 5 && seqOut.every((r, i) => r.name.startsWith(('0' + (i + 1)).slice(-2) + '-') && r.size > 30000), JSON.stringify(seqOut.map(r => r.name)));
+  // focused task editing: one identity in Planner, To Do and Prinzip
+  await p.goto(BASE + '#/s/leadership-forum/eigenes-team/szene/planner');
+  await setInput('form.contentf input[name="tasks.0"]', 'Einladung an alle 60 Teilnehmenden versenden');
+  check('task edit keeps focus and updates Planner live', (await p.eval('document.activeElement.name')) === 'tasks.0' && /Einladung an alle 60/.test(await $('.m3-planner', 'innerText')) && /angepasst/.test(await $('.cstate')));
+  await click('.screens a[href$="/szene/todo"]');
+  const todoHas = /Einladung an alle 60/.test(await $('.m3-todo', 'innerText'));
+  await p.goto(BASE + '#/s/leadership-forum/eigenes-team/prinzip/tasks');
+  check('renamed task identical in To Do (Daniel) and Prinzip', todoHas && /Einladung an alle 60/.test(await $('.pr', 'innerText')));
+  // long names and filenames stay readable in exported Outlook slide
+  await p.goto(BASE + '#/s/leadership-forum/eigenes-team/szene/outlook');
+  await setInput('input[name="p:mara-conti"]', 'Maximiliane Alexandra von Wartensee-Bürgisser');
+  await setInput('form.contentf input[name="docName"]', 'Veranstaltungsplan Leadership Forum 2027 – Gesamtübersicht abgestimmt.xlsx');
+  await p.goto(BASE + '#/p/leadership-forum/eigenes-team/szene/outlook/folie'); await p.sleep(150);
+  const att = await p.eval(`(()=>{const s=document.querySelector('.stage .o-att strong');return {w:s.scrollWidth<=s.clientWidth+1, txt:s.textContent}})()`);
+  check('long attachment name fully visible (no ellipsis), slide fits', att.w && /Mara\.xlsx$/.test(att.txt) && (await p.eval(`Export.fitIssues(document.querySelector('.stage-in')).length`)) === 0, JSON.stringify(att));
+  check('annotation badges are circles', await p.eval(`[...document.querySelectorAll('.stage .m-mk')].every(e=>{const r=e.getBoundingClientRect();return Math.abs(r.width-r.height)<1})`));
+  // 2x export
+  await p.eval('(()=>{const t=document.querySelector("[data-act=hires]");t.checked=true;t.dispatchEvent(new Event("change",{bubbles:true}))})()');
+  const hi = await p.eval(`(async()=>{const b=await window.__exportPng();const u=new Uint8Array(await b.arrayBuffer());const dv=new DataView(u.buffer);return {w:dv.getUint32(16),h:dv.getUint32(20),name:window.__lastPng.name}})()`);
+  check('2× export produces 3840×2160 PNG', hi.w === 3840 && hi.h === 2160 && /@2x\.png$/.test(hi.name), JSON.stringify(hi));
+  await p.eval('(()=>{const t=document.querySelector("[data-act=hires]");t.checked=false;t.dispatchEvent(new Event("change",{bubbles:true}))})()');
+  // persistence + JSON
+  await p.goto(BASE + '#/s/leadership-forum/eigenes-team/szene/outlook'); await p.eval('location.reload()'); await p.sleep(600);
+  check('customisations persist after reload (localStorage)', /Maximiliane/.test(await $('.m3', 'innerText')));
+  await click('[data-act="json-export"]');
+  const js = await p.eval('JSON.stringify(window.__lastJson)');
+  check('JSON download is versioned and contains customisations', /"schema":"msteams-personas.customisations"/.test(js) && /"version":1/.test(js) && /Maximiliane/.test(js));
+  await p.eval('window.confirm = () => true');
+  await click('[data-act="reset-all"]');
+  check('reset all restores originals', /Mara Conti/.test(await $('.m3', 'innerText')) && /Original/.test(await $('.cstate')));
+  const bad = await p.eval(`window.__importJson('{"schema":"x","version":1}')`);
+  const bad2 = await p.eval(`window.__importJson(${JSON.stringify(JSON.stringify({ schema: 'msteams-personas.customisations', version: 1, names: { 'unbekannt': { team: 'x' } } }))})`);
+  const ok = await p.eval(`window.__importJson(${JSON.stringify(js)})`);
+  await p.sleep(200);
+  check('JSON import validates schema and situations, restores customisations', !!bad && !!bad2 && ok === null && /Maximiliane/.test(await $('.m3', 'innerText')), [bad, bad2, ok].join(' / '));
+  // AI simulation
+  await p.goto(BASE + '#/a/ki-besprechung/1');
+  check('AI recap labelled as simulation with human review states', /Simulation für Schulungszwecke/.test(await $('.m3-recap', 'innerText')) && (await count('.r-s')) === 4 && /Verworfen/.test(await $('.m3-recap', 'innerText')) && /Teams Premium/.test(await $('#visual', 'innerText')));
+  await click('.seqbar [data-act="seq-next"]');
+  const pl = await $('.m3-planner', 'innerText');
+  check('Planner shows only reviewed AI tasks (edited text, rejected absent)', /Aus Projektsitzung/.test(pl) && /zwei Personen im Innendienst/.test(pl) && !/Schulung des Innendienstes planen/.test(pl));
+  // offline: every loaded resource is local
+  const ext = await p.eval(`performance.getEntriesByType('resource').map(r=>r.name).filter(n=>!n.startsWith(location.origin)&&!n.startsWith('data:')&&!n.startsWith('blob:'))`);
+  check('offline: no external resources loaded', ext.length === 0, ext.join(' '));
+  await p.eval('window.confirm = () => true');
 
   // Entry 3: configurator
   await p.goto(BASE + '#/');
@@ -209,7 +285,7 @@ try {
   await click('input[name="share"][value="persoenlich"]');
   await click('#cfg-form button[type=submit]');
   await click('#cfg-form button[type=submit]');
-  check('different answers -> personal starting point', /Persönliche Ablage/.test(await $('.res-main h2')) && (await count('#preview .tw-personal')) === 1);
+  check('different answers -> personal starting point', /Persönliche Ablage/.test(await $('.res-main h2')) && (await count('#preview .m3-onedrive')) === 1);
   await p.shot(OUT + '14-configurator-result-personal.png', true);
   await p.eval('window.confirm = () => true');
   await click('[data-act="reset"]');
@@ -235,8 +311,8 @@ try {
   await p.goto(BASE + '#/s/nora-reihe/-/prinzip/tasks');
   check('Nora series principle shows secretariat as non-person owner', /Sekretariat/.test(await $('.pd-after', 'innerText')));
   await p.shot(OUT + '44-nora-reihe-prinzip-tasks.png', true);
-  await p.goto(BASE + '#/s/nora-publikation/-/szene');
-  check('Nora publication has its own personal scene', /Kapitel 3 kürzen/.test(await $('.tw', 'innerText')));
+  await p.goto(BASE + '#/s/nora-publikation/-/szene/todo');
+  check('Nora publication has its own personal scene', /Kapitel 3 kürzen/.test(await $('.m3-todo', 'innerText')));
 
   // Assumptions survive Hinweise off (scene, principle, stage)
   await p.goto(BASE + '#/s/sitzungszyklus/gastzugang/szene');

@@ -303,7 +303,8 @@
       return '<label>' + esc(label) + (area ? '<textarea name="' + name + '" rows="3" placeholder="' + esc(ph) + '">' + esc(val) + '</textarea>' : '<input name="' + name + '" value="' + esc(val) + '" placeholder="' + esc(ph) + '" autocomplete="off">') + '</label>';
     };
     var fields = '';
-    if (p.mode === 'prinzip') fields = '<p class="hint">Das Prinzip übernimmt Namen, Dateinamen und Aufgaben aus den Szenen dieser Situation.</p>';
+    if (p.mode !== 'prinzip' && !A.available(vm, tool)) fields = '<p class="hint">Diese Ansicht gibt es für diese Situation nicht.</p>';
+    else if (p.mode === 'prinzip') fields = '<p class="hint">Das Prinzip übernimmt Namen, Dateinamen und Aufgaben aus den Szenen dieser Situation.</p>';
     else if (tool === 'outlook') fields = f('docName', 'Gemeinsame Datei', vm.story.doc.original) + f('subject', 'Betreff der Mail', LIB.stories[vm.id].mails[0].subject) + f('body', 'Text der Mail', orig.story.mails[0].body, true);
     else if (sub === 'posts') fields = (vm.story ? f('docName', 'Gemeinsame Datei', vm.story.doc.original) : '') + orig.scene.posts.map(function (q, i) {
         return q.canonical ? f('postTitle', 'Beitrag ' + (i + 1) + ': Betreff', q.title) + f('postText', 'Beitrag ' + (i + 1) + ': Text', orig.fill(q.text), true)
@@ -390,7 +391,7 @@
       '<div class="sp-grid"><div class="sp-vis" id="visual">' + visualHtml(vm, p, pid) + '</div>' +
         '<aside class="sp-side" aria-label="Anpassen"><p class="side-h">Anpassen</p>' +
         '<details open><summary>Inhalte dieser Ansicht</summary>' + contentForm(vm, p) + '</details>' +
-        '<details' + (hasCustom(vm.id) ? ' open' : '') + '><summary>Namen</summary>' + nameForm(vm) + '</details>' +
+        '<details open><summary>Namen</summary>' + nameForm(vm) + '</details>' +
         savePanel() +
         '<div class="sp-ctx"><h3>Kontext</h3><p>' + esc(vm.scenario.description) + '</p>' +
           (vm.legacyHref ? '<p><a href="' + vm.legacyHref + '">Details im Legacy-Atlas</a></p>' : '<p class="hint">Fiktive Synthese, noch nicht durch Recherche validiert.</p>') +
