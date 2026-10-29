@@ -1,69 +1,59 @@
-# Product brief — msteams-personas
+# Product brief — configurable M365 adoption visuals
+
+Updated: 2026-10-29. Specifications: [active build plan](BUILD-PLAN.md), [UX](UX-LIBRARY-PLAN.md), [fidelity/output](M365-UI-FIDELITY-PLAN.md).
 
 ## Purpose
 
-A place to set up fictional people, working worlds and use cases, then render convincing screenshot-like collaboration scenes without building the corresponding Teams tenant structures.
+A library where people choose a familiar situation or customise their own and obtain convincing M365 application visuals and conceptual explainers without provisioning a real Teams environment.
 
-The value is a reusable visual environment for training, workshop discussion, consulting and adoption design. A trainer can change the story, people, channels or artefacts without recreating demo accounts, uploading dummy documents or cleaning up a tenant.
+The output supports adoption, training, workshop discussion and consulting. Users should be able to put the result into PowerPoint without rebuilding the scene or preparing dummy accounts/files.
 
 ## Library-first experience
 
-Visitors first understand the vision through a visual example. They can explore a recognisable situation or describe their own, then customise a copy. Business and Higher Education are collections within the same library.
+The landing explains what this is, how it works and what the result looks like.
 
-The first test has three entry points: Persona wählen, Use Case wählen and Eigene Situation. A six-question configurator suggests a contextual template and alternative, with lightweight naming customisation and live preview.
+Three equal entrances:
+- Team-Personas: working context/collaboration archetype.
+- Tools: application interface.
+- Use Cases: work problem/teaching point.
 
-Two primary visual modes share people, artefacts, scenario and setup variant: Szene (screenshot-like scenes) and Prinzip (conceptual explainers, including setup maps and before/after). Präsentieren provides a clean 16:9 stage with annotations on/off. A full authoring editor and PNG export follow later.
+All converge on the same scenario/workspace. Eigene Situation remains a visible secondary configurator action. Business and Higher Education are collections within this library.
 
-See [the build plan](BUILD-PLAN.md) for the complete UX, delivery slices and acceptance criteria.
+## Working flow
 
-## First use case
+1. Choose a persona, tool or use case, or configure a situation.
+2. Select the scenario, named setup variant and application screen/moment.
+3. Adjust supported names and relevant message/file content.
+4. Explore Szene or Prinzip without losing shared context.
+5. Present or export a clean app visual, annotated slide or before/after composition.
 
-University of Basel M365 training with isolutions is the first example collection.
+## Visual model
 
-The same people and artefacts should recur across Teams Basics, Communication in Teams, collaborative documents, Loop, Planner & To Do and Digital Balance. A course should select a relevant moment in a shared world rather than invent unrelated demo data.
+Three responsibilities stay separate:
+- Situation/content: stable people, document identities, messages, tasks, roles and boundaries.
+- Application renderers: recognisable Teams, Outlook, SharePoint, OneDrive and Explorer profiles.
+- Slide composition: output size, viewport/crop, captions, annotations and downloadable PNG.
 
-The collection is fictional and uses German / Swiss spelling. Its recommendations are contextual training examples, not universal configuration rules.
+Szene is the application-level visual mode. Prinzip explains the underlying arrangement through maps, diagrams and comparisons. Strong application fidelity does not replace conceptual explanation.
 
-## Core workflow
+## Context and content
 
-1. Understand the vision and choose a persona, use case or own situation.
-2. Select a scenario or answer six work-oriented questions.
-3. Review the suggested starting point, its rationale and an alternative.
-4. Adjust situation/participant names and explore Szene or Prinzip.
-5. Present the selected visual in 16:9. Dedicated file export is a later milestone.
+The first example collection supports University of Basel M365 Deep Dives with isolutions. Recurring people/artefacts connect Teams, communication, documents, Loop, Planner & To Do and Digital Balance.
 
-## Domain model
+The business example tests reuse beyond university work. Content remains fictional, with contextual recommendations, meaningful alternatives and explicit assumptions. A convincing mock does not prove real tenant permissions.
 
-| Concept | Owns |
-| --- | --- |
-| Collection | Organisation/context, language, theme, module mapping and related worlds |
-| Working world | Stable work context, lifecycle, people, relationships and personal/shared boundaries |
-| Person | Fictional identity and role; scenario-specific participation references the same identity |
-| Collaboration structure | Teams, channels, membership and tools appropriate to that context |
-| Artefact | File, task or knowledge object, with a stable identity and location |
-| Scenario | A specific trigger, friction, learning objective, decision and consequences |
-| Scene | A renderable moment: visible structure, selected view, content, perspective and annotations |
-| Training sequence | Ordered scenes and facilitator notes linked to a course/module |
+## Current versus next
 
-These are design responsibilities for the future model. The imported `HE_WORLDS` / `HE_ATLAS` globals remain unchanged for compatibility; they do not already implement this full model. Use only a thin v3 model and legacy adapter for the first configurator/rendering path. Preserve unconsumed content and defer a complete schema migration.
+The separate prototype branch contains the library, six world cards, eight situations, configurator, scenes/principles and presentation. main still contains the earlier atlas at this planning checkpoint.
 
-## Visual output
+The next build improves the three-entry UX and application resemblance and adds actual PNG export. Prioritise Teams plus conceptual output in a complete university/business path, then the Outlook/Explorer/Teams/SharePoint story, then OneDrive/wider coverage.
 
-Scenes should be recognisable as Teams-inspired collaboration screens, with readable people, channels, posts and files. Use an original, simplified visual language. Keep the teaching point visible instead of recreating every product control.
+Full arbitrary editing, persistent collections, editable PPTX, backend, AI integration and deployment are later work.
 
-Support a clean scene view for slides, an optional annotated teaching view, and a today / proposed-model comparison. Personal work may use OneDrive and To Do. The renderer should share content with the authoring model, not maintain separate text for each output.
+## Boundaries
 
-## Initial boundaries
+Browser-first, local assets, offline use, no Microsoft login or tenant provisioning. Preserve original content/licence provenance, explicit variants and personal-work alternatives. Keep editing controls outside exported visuals.
 
-- Browser-first and static/local-first; no tenant provisioning or Microsoft Graph dependency.
-- No production credentials, real user accounts or real internal documents.
-- Deterministic configuration and lightweight customisation first; no AI dependency.
-- No backend, multi-user collaboration or hosted publishing in the first authoring slice.
-- No claim that a mock scene proves real permissions or exact current Teams behaviour.
-- The existing toolbox remains available; this repository owns its independent successor.
+## Success
 
-## Product success
-
-For the first test, a trainer can choose an example or configure a situation, understand a suggested setup through Szene and Prinzip, change names, and present a legible visual without code or a real Team.
-
-The full product later adds arbitrary authoring and visual file export. The current implementation remains the seed atlas; planned capabilities must not be described as already delivered.
+A trainer can select a situation, make it recognisable as their own, and obtain a crisp believable application screenshot or clear conceptual graphic for a teaching slide—without building anything in the real M365 environment.

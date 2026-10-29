@@ -1,19 +1,19 @@
 # Roadmap
 
-The current first-test scope is [BUILD-PLAN.md](BUILD-PLAN.md). The proposed Weavr envelope and operator steps are in [WEAVR-FIRST-TEST.md](WEAVR-FIRST-TEST.md).
+Current detail: [active build plan](BUILD-PLAN.md).
 
-| Stage | Deliverable | Status |
+| Stage | Deliverable | State |
 | --- | --- | --- |
-| Foundation | Standalone university atlas | Merged; browser verification outstanding |
-| First test | Landing/library, thin adapter, one business example, six-question configurator, Szene, three Prinzip explainers, 16:9 Präsentieren | Planned, not implemented |
-| Later | Full authoring editor, persistent drafts and portable collections | Deferred |
-| Later | PNG/SVG export, more scene types and principle diagrams | Deferred |
-| Later | Wider business collection and reviewed webinar sequences | Deferred |
+| Original foundation | University atlas | On main |
+| Visual-library prototype | Six worlds, eight situations, configurator, Szene/Prinzip and stage | On prototype/visual-library-v1; latest inspected e9220ff |
+| V2 P0 | Three-entry UX, faithful Teams shell and actual PNG output | Planned |
+| V2 P1 | Coherent Outlook/Explorer/Teams/SharePoint teaching story | Planned |
+| V2 P2 | OneDrive personal scene and wider renderer coverage | Planned |
+| Later | Full authoring, portable collections, more templates, editable PPTX | Deferred |
 
-Two primary visual modes: Szene and Prinzip. Setup maps and before/after comparisons belong within these modes. The first test uses a configurator and limited naming fields rather than a full editor.
+- [UX plan](UX-LIBRARY-PLAN.md)
+- [M365 fidelity/output plan](M365-UI-FIDELITY-PLAN.md)
+- [NUC Orca build task](ORCA-NUC-BUILD-TASK.md)
+- [Use-case research prompt](research/PERPLEXITY-USE-CASES-PROMPT.md)
 
-Build a visible end-to-end example early; do not require a complete schema migration before visual progress. Keep legacy content through a thin adapter.
-
-Research: [Perplexity prompt](research/PERPLEXITY-USE-CASES-PROMPT.md). It does not block a clearly labelled fictional business fixture.
-
-The user authorised direct integration of the revised documentation. Runtime implementation remains subject to the actual Weavr Mission, Needs, dispatch and review authority.
+The first Mission is archived; direct Orca work must not revive it or silently inherit its old scope/budget.
