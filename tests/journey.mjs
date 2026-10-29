@@ -60,7 +60,7 @@ try {
   await click('[data-tab="files"]');
   check('scene tab Dateien works', await count('.m-ft tbody tr') === 4);
   await click('[data-tab="tasks"]');
-  check('scene tab Aufgaben works', await count('.m-tasks li:not(.m-th)') === 4);
+  check('scene tab Aufgaben hosts the Planner board (incl. reviewed AI tasks)', (await count('.t-plan .p-card')) >= 3 && /Aus Projektsitzung/.test(await $('.t-plan', 'innerText')));
   await p.shot(OUT + '05-business-szene-aufgaben.png');
   await p.eval('document.querySelector("[data-tab=tasks]").focus()');
   await p.key('ArrowLeft', 'ArrowLeft', 37);
@@ -354,14 +354,14 @@ try {
 
   // Mobile 375px
   await p.size(375, 812, 2);
-  for (const [name, route] of [['landing', '#/'], ['szene', '#/s/leadership-forum/eigenes-team/szene'], ['prinzip', '#/s/kundenportal/eigenes-team/prinzip/doc'], ['konfigurator', '#/konfigurator/1'], ['praesentation', '#/p/leadership-forum/eigenes-team/prinzip/chat']]) {
+  for (const [name, route] of [['landing', '#/'], ['szene', '#/s/leadership-forum/eigenes-team/szene'], ['prinzip', '#/s/kundenportal/eigenes-team/prinzip/doc'], ['konfigurator', '#/konfigurator/1'], ['praesentation', '#/p/leadership-forum/eigenes-team/prinzip/chat'], ['abfolgen', '#/abfolgen'], ['abfolge-schritt', '#/a/einarbeitung/3'], ['tools', '#/tools'], ['abfolge-praesentation', '#/ap/ki-besprechung/1/folie']]) {
     await p.goto(BASE + route);
     check(`375px ${name}: no horizontal scroll`, await noHScroll());
-    await p.shot(OUT + `20-mobile-${name}.png`, name !== 'praesentation');
+    await p.shot(OUT + `20-mobile-${name}.png`, !name.includes('praesentation'));
   }
   // 200% zoom on a 1280x800 window = 640x400 CSS px at scale 2
   await p.size(640, 400, 2);
-  for (const [name, route] of [['landing', '#/'], ['szene', '#/s/kundenportal/eigenes-team/szene'], ['prinzip', '#/s/leadership-forum/eigenes-team/prinzip/tasks']]) {
+  for (const [name, route] of [['landing', '#/'], ['szene', '#/s/kundenportal/eigenes-team/szene'], ['prinzip', '#/s/leadership-forum/eigenes-team/prinzip/tasks'], ['abfolge', '#/a/entscheid-chat/1'], ['planner', '#/s/onboarding/kanal/szene/planner']]) {
     await p.goto(BASE + route);
     check(`200% zoom ${name}: no horizontal scroll`, await noHScroll());
   }

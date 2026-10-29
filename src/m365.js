@@ -199,6 +199,8 @@
       }).join('') + '</tbody></table>';
   }
   function teamsTasks(vm, o) {
+    /* Teams «Aufgaben» tab hosts the team's Planner board (same tasks as the Planner screen). */
+    if (root.M365.plannerBoard) return '<div class="t-tasks t-plan">' + root.M365.plannerBoard(vm, o, true) + '</div>';
     return '<div class="t-tasks">' + cmdbar([['plus', 'Aufgabe hinzufügen', 'm-pri'], ['filter', 'Filter'], ['view', 'Raster']]) +
       '<ul class="m-tasks"><li class="m-th" aria-hidden="true"><span></span><span>Aufgabenname</span><span>Bucket</span><span>Fällig</span><span>Zugewiesen an</span></li>' + vm.scene.tasks.map(function (t) {
         var p = vm.person(t.owner);
@@ -289,7 +291,7 @@
       '<div class="s-cmdrow">' + cmdbar([['plus', 'Neu', 'm-pri'], ['upload', 'Hochladen'], ['edit', 'In Rasteransicht bearbeiten'], ['share', 'Teilen'], ['link', 'Link kopieren'], ['sync', 'Synchronisieren'], ['more', '']]) +
         '<span class="s-view">' + fi('view') + 'Alle Dokumente' + fi('chevd') + fi('filter') + fi('info') + '</span></div>' +
       '<section class="s-lib"><p class="s-crumb">Dokumente <span>›</span> <strong>' + esc(vm.scene.active) + '</strong></p>' +
-        fileTable(vm, vm.scene.files, { annot: o.annot, select: true }, true).replace('<th scope="col">Geändert von</th>', '<th scope="col">Geändert von</th><th class="s-add">+ Spalte hinzufügen</th>').replace(/<\/td><\/tr>/g, '</td><td></td></tr>') +
+        fileTable(vm, vm.scene.files, { annot: false, select: true }, true).replace('<th scope="col">Geändert von</th>', '<th scope="col">Geändert von</th><th class="s-add">+ Spalte hinzufügen</th>').replace(/<\/td><\/tr>/g, '</td><td></td></tr>') +
       '</section>' +
       '<aside class="s-pane"><p class="s-ph">' + ftype(st.doc.name) + '<strong data-docref="canonical">' + esc(st.doc.name) + '</strong></p>' +
         '<p class="s-k">Zugriff</p><p>' + esc(vm.team) + ' – Mitglieder</p>' +
@@ -317,6 +319,7 @@
     var tool = toolOf(sub), st = vm.story;
     if (NOTES[tool]) return NOTES[tool](vm);
     if (tool === 'teams') {
+      if (sub === 'tasks' && NOTES.planner) return NOTES.planner(vm);
       var sc = vm.scene, tab = sub === 'files' || sub === 'tasks' ? sub : 'posts';
       var items = tab === 'files' ? sc.files : tab === 'tasks' ? sc.tasks : sc.posts, marks = [];
       items.forEach(function (x) { if (x.mark && marks.indexOf(x.mark) < 0 && sc.notes[x.mark]) marks.push(x.mark); });

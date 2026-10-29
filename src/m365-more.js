@@ -75,14 +75,27 @@
       '<section class="p-main"><header class="p-head"><span class="p-ic p-ic-l p-ic-' + (vm.world.id.length % 5) + '">' + esc(V.initials(vm.team)) + '</span><div><p class="p-name">' + esc(vm.team) + fi('star') + '</p>' +
           '<div class="p-views"><span>' + fi('listcheck') + 'Raster</span><span class="on">' + fi('board') + 'Board</span><span>' + fi('clock') + 'Diagramme</span><span>' + fi('calendar') + 'Zeitplan</span></div></div>' +
           '<span class="p-ha"><span class="p-filter">' + fi('filter') + 'Filter</span><span>Gruppieren nach Bucket' + fi('chevd') + '</span><span class="p-mem">' + vm.scene.members.slice(0, 4).map(function (id) { return avatar(vm.person(id), 26); }).join('') + '</span></span></header>' +
-        '<div class="p-board">' + buckets.map(function (b, bi) {
+        board(tasks, buckets, vm, o) +
+        '<p class="sr-only">' + open + ' offene Aufgaben</p></section>');
+  }
+  function board(tasks, buckets, vm, o) {
+    return '<div class="p-board">' + buckets.map(function (b, bi) {
           var bt = tasks.filter(function (t) { return t.bucket === b; });
           var openT = bt.filter(function (t) { return !t.done; }), done = bt.filter(function (t) { return t.done; });
           return '<div class="p-bucket"><p class="p-bh"><strong>' + esc(b) + '</strong>' + fi('more') + '</p><p class="p-add">' + fi('plus') + 'Aufgabe hinzufügen</p>' +
             openT.map(function (t) { return card(vm, t, bi, o); }).join('') +
             (done.length ? '<p class="p-done">Erledigte Aufgaben anzeigen <b>' + done.length + '</b>' + fi('chevd') + '</p>' : '') + '</div>';
-        }).join('') + '<div class="p-bucket p-newb"><p class="p-add">Neuen Bucket hinzufügen</p></div></div>' +
-        '<p class="sr-only">' + open + ' offene Aufgaben</p></section>');
+        }).join('') + '<div class="p-bucket p-newb"><p class="p-add">Neuen Bucket hinzufügen</p></div></div>';
+  }
+  /* Board only, for the Teams «Aufgaben» tab. */
+  function plannerBoard(vm, o) {
+    var tasks = plannerTasks(vm), buckets = [];
+    if (!tasks.some(function (t) { return t.mark && !t.done; })) {
+      var f = tasks.filter(function (t) { return !t.done; })[0];
+      if (f) tasks[tasks.indexOf(f)] = Object.assign({}, f, { mark: 1 });
+    }
+    tasks.forEach(function (t) { if (buckets.indexOf(t.bucket) < 0) buckets.push(t.bucket); });
+    return '<div class="p-views t-pv"><span class="on">' + fi('board') + 'Board</span><span>' + fi('listcheck') + 'Raster</span><span>' + fi('clock') + 'Diagramme</span><span class="t-pvf">' + fi('filter') + 'Filter</span></div>' + board(tasks, buckets, vm, o);
   }
   function card(vm, t, bi, o) {
     var p = vm.person(t.owner), late = /^(Mo|Di)$/.test(t.due);
@@ -189,4 +202,5 @@
   A.register('onedrive', onedrive, onedriveNotes);
   A.register('recap', recap, recapNotes);
   A.plannerTasks = plannerTasks;
+  A.plannerBoard = plannerBoard;
 })(window);
