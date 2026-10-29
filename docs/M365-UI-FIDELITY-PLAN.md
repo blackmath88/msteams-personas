@@ -1,3 +1,5 @@
+> Historical V2 build reference. V3 is merged into main at `300e006`. For new work use [the active build plan](BUILD-PLAN.md) and [Slides as Code concept](SLIDES-AS-CODE-CONCEPT.md). Older baseline instructions and deferrals below are not current execution instructions.
+
 # M365 UI fidelity and PowerPoint visual-output plan
 
 Status: next-build specification; code is not implemented by this planning update.

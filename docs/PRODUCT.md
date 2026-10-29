@@ -1,59 +1,36 @@
-# Product brief — configurable M365 adoption visuals
+# Product brief — Slides as Code, starting with M365 training visuals
 
-Updated: 2026-10-29. Specifications: [active build plan](BUILD-PLAN.md), [UX](UX-LIBRARY-PLAN.md), [fidelity/output](M365-UI-FIDELITY-PLAN.md).
+Updated: 2026-10-29.
 
 ## Purpose
 
-A library where people choose a familiar situation or customise their own and obtain convincing M365 application visuals and conceptual explainers without provisioning a real Teams environment.
+Help trainers create believable fictional M365 application scenes, conceptual explainers and connected teaching sequences without preparing a real tenant. “Slides as Code” names the reusable underlying approach; the human interface stays visual and understandable.
 
-The output supports adoption, training, workshop discussion and consulting. Users should be able to put the result into PowerPoint without rebuilding the scene or preparing dummy accounts/files.
+## Supported experience
 
-## Library-first experience
+The V3 application is merged into main. Team-Personas, Tools and Use Cases converge on one workspace. Users adapt curated examples, review scenes/principles, present and export PNGs. Coverage includes Teams, mail, files, tasks and an explicitly simulated AI meeting workflow. See V3-BUILD-HANDOFF.md for exact availability.
 
-The landing explains what this is, how it works and what the result looks like.
+## Next experience
 
-Three equal entrances:
-- Team-Personas: working context/collaboration archetype.
-- Tools: application interface.
-- Use Cases: work problem/teaching point.
+The website remains complete without AI. A trainer can additionally prepare a course in their usual assistant using a generated guided prompt/authoring pack, then paste or upload a portable project, review it, repair errors and edit visually.
 
-All converge on the same scenario/workspace. Eigene Situation remains a visible secondary configurator action. Business and Higher Education are collections within this library.
+The same project must work through the website, CLI and future remote MCP/HTTP service. WebMCP adds assistance inside a compatible browser; it is not the remote service.
 
-## Working flow
+## Domain and outputs
 
-1. Choose a persona, tool or use case, or configure a situation.
-2. Select the scenario, named setup variant and application screen/moment.
-3. Adjust supported names and relevant message/file content.
-4. Explore Szene or Prinzip without losing shared context.
-5. Present or export a clean app visual, annotated slide or before/after composition.
+Separate scenario entities, scene states and slide compositions. Stable IDs preserve people/document/task identity; explicit copies and snapshots express change. Agents can create new scenarios through supported components without rewriting renderers. Curated originals remain intact.
 
-## Visual model
+Outputs: ordered slide images, editable project, preview and manifest; notes, sources and material assumptions remain available. Existing customisation backups are a different format and retain compatibility.
 
-Three responsibilities stay separate:
-- Situation/content: stable people, document identities, messages, tasks, roles and boundaries.
-- Application renderers: recognisable Teams, Outlook, SharePoint, OneDrive and Explorer profiles.
-- Slide composition: output size, viewport/crop, captions, annotations and downloadable PNG.
+## Principles and limits
 
-Szene is the application-level visual mode. Prinzip explains the underlying arrangement through maps, diagrams and comparisons. Strong application fidelity does not replace conceptual explanation.
+Nontechnical trainers do not need code, a custom MCP connection or a new AI subscription. A pasted prompt guides but cannot control their assistant. Imports are validated and previewed before applying. Rendering quality, semantic consistency and teaching usefulness are separate checks.
 
-## Context and content
+Preserve local/offline website use, existing licence/provenance and fictional-content labelling. Hosted rendering, new-project authoring and agent interfaces are planned, not live. No Microsoft connection, in-site AI service or public deployment is implied.
 
-The first example collection supports University of Basel M365 Deep Dives with isolutions. Recurring people/artefacts connect Teams, communication, documents, Loop, Planner & To Do and Digital Balance.
+## References
 
-The business example tests reuse beyond university work. Content remains fictional, with contextual recommendations, meaningful alternatives and explicit assumptions. A convincing mock does not prove real tenant permissions.
-
-## Current versus next
-
-The separate prototype branch contains the library, six world cards, eight situations, configurator, scenes/principles and presentation. main still contains the earlier atlas at this planning checkpoint.
-
-The next build improves the three-entry UX and application resemblance and adds actual PNG export. Prioritise Teams plus conceptual output in a complete university/business path, then the Outlook/Explorer/Teams/SharePoint story, then OneDrive/wider coverage.
-
-Full arbitrary editing, persistent collections, editable PPTX, backend, AI integration and deployment are later work.
-
-## Boundaries
-
-Browser-first, local assets, offline use, no Microsoft login or tenant provisioning. Preserve original content/licence provenance, explicit variants and personal-work alternatives. Keep editing controls outside exported visuals.
-
-## Success
-
-A trainer can select a situation, make it recognisable as their own, and obtain a crisp believable application screenshot or clear conceptual graphic for a teaching slide—without building anything in the real M365 environment.
+- [Concept and architecture](SLIDES-AS-CODE-CONCEPT.md)
+- [Active build plan](BUILD-PLAN.md)
+- [Current status](STATUS.md)
+- [V3 handoff](V3-BUILD-HANDOFF.md)

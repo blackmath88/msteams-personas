@@ -1,3 +1,5 @@
+> Historical V2 build reference. V3 is merged into main at `300e006`. For new work use [the active build plan](BUILD-PLAN.md) and [Slides as Code concept](SLIDES-AS-CODE-CONCEPT.md). Older baseline instructions and deferrals below are not current execution instructions.
+
 # Claude via Orca on NUC — next M365 visual-library build
 
 Use this as a direct implementation task, not a request to prepare another plan.

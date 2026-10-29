@@ -1,32 +1,123 @@
-# Active build plan — M365 visual library v2
+# Active build plan — Slides as Code and the AI-assistant bridge
 
-Updated: 2026-10-29. Planning update only.
+Updated: 2026-10-29. Planning only; no new runtime functionality is claimed.
 
-The next increment combines:
-1. [Library UX](UX-LIBRARY-PLAN.md): self-explanatory landing and Team-Personas / Tools / Use Cases entrances into one workspace.
-2. [Application fidelity and PowerPoint output](M365-UI-FIDELITY-PLAN.md): recognisable M365 application screens, shared situation data and real PNG export.
-3. [Claude / Orca NUC task](ORCA-NUC-BUILD-TASK.md): bounded implementation handoff and acceptance.
+## Baseline and precedence
 
-## Baselines
+main includes the complete V3 trainer library, merged at 300e00601606d295c6b0dd23933dc70452db654c. Fetch and inspect current main before implementing; do not restart from the earlier atlas or prototype branches.
 
-main still contains the earlier atlas/plans at the time of writing. The tested prototype is on prototype/visual-library-v1, last inspected at e9220ff8954ea9a9541c4ee87b34c206a8dd8ede.
+Read [concept and architecture](SLIDES-AS-CODE-CONCEPT.md), [current status](STATUS.md), [V3 evidence](V3-BUILD-HANDOFF.md), the existing UX/fidelity references and repository instructions.
 
-The builder must carry forward that prototype rather than rebuild from main. Integrate current planning documentation into a new implementation branch. Do not merge implementation to main without authorization.
+This plan supersedes the old instruction to build V2 from a separate prototype. The archived Weavr attempt and docs/ORCA-NUC-BUILD-TASK.md are historical. No build, Mission, dispatch, merge or deployment is authorized merely by this plan.
 
-## Priorities
+## Outcome
 
-- P0: three-entry library UX, shared selection, faithful Teams rendering, and real 1920 x 1080 PNG output for Teams and Prinzip, demonstrated in university and business contexts.
-- P1: one coherent Outlook → Explorer → Teams → SharePoint story around the same document.
-- P2: OneDrive personal view and wider interface coverage.
+A nontechnical trainer discusses a course with their usual AI assistant, imports a new project into the website, edits it visually and exports a coherent slide sequence. The same portable project is usable through the website, CLI and future MCP interfaces.
 
-Two primary visual modes remain Szene and Prinzip. Setup maps and comparisons fit inside these modes. Eigene Situation remains a secondary configurator action, not an equal fourth browsing category.
+Preserve V3's library, all existing routes/content/variants, local saves, JSON customisation backups, scenarios and exports.
 
-## Scope changes from the first prototype
+## Slice 0 — challenge and choose
 
-PNG export is now in scope. Targeted content editing needed for useful slides is in scope. A full arbitrary editor, editable PPTX, backend, API integration and deployment remain deferred.
+Use [the research prompt](research/PERPLEXITY-ARCHITECTURE-UX-SPARRING.md) to challenge the bridge, contract size, browser/server split, hosting and integration order.
 
-The old first-test plan remains in git history; docs/WEAVR-FIRST-TEST.md describes a historical attempt. The Weavr Mission is archived. The requested next build is direct Claude via Orca on the NUC, with no automatic merge/deploy.
+Deliver a short decision record: chosen first vertical slice, alternatives rejected, unresolved questions and measurable user-test tasks. Research must not block a small reversible proof indefinitely.
 
-## Verification
+Gate: architecture decisions identify evidence versus hypotheses. No unnecessary backend, framework migration or schema platform.
 
-Preserve existing content/variant fixes and add checks for routing convergence, shared cross-app identity, text editing and real export files. Browser screenshots/reference comparison and inspection of downloaded PNGs are required for a visual acceptance claim.
+## Slice 1 — portable projects and a new-scenario proof
+
+- Define a versioned JSON schema, supported-capability catalogue and structured diagnostics.
+- Separate entity IDs, state snapshots, scene projections and slide composition.
+- Add a pure validator for structure, references, enum/profile availability and limits.
+- Add an adapter from an entirely new project into current renderer view models.
+- Provide three hand-authored valid examples and negative fixtures: an SME onboarding sequence, a research collaboration sequence and personal/shared tasks.
+- Keep current curated content through the existing adapter. Legacy customisation files retain their own import path and identity.
+- Start with a coherent capability subset (Teams posts/chat, Planner and principle slides); accurately advertise what new-project mode can render. Expand through the same contract.
+
+Acceptance:
+A new fictional organisation, people and artefacts render at least three connected scenes without changing source fixtures or renderer code. Unknown references, future versions and unsupported screens produce actionable errors. Display-name changes preserve identity; before/after states remain distinct.
+
+## Slice 2 — website project lifecycle and import UX
+
+- New draft, open/paste/import, summary/preview, edit, save project and reopen.
+- Keep curated originals immutable; never replace active unsaved work without an explicit user choice.
+- Human-readable diagnostics linked to scene/slide and field, not raw schema traces alone.
+- Reject executable data; use escaped text and bounded input. Never evaluate imported scripts.
+- All fields required for the accepted authoring subset must be editable or explicitly marked as preserved read-only metadata; no silently discarded content.
+- Continue supporting the old override backup files with clear labelling.
+
+Acceptance:
+A trainer imports an unseen example, reviews its scope, changes a person and a task, exports it and reopens the saved project with order, notes and identities intact. Invalid import leaves existing work intact. Keyboard, narrow screens and 200% zoom remain usable.
+
+## Slice 3 — assistant bridge, first public-facing milestone
+
+- Add “Mit deinem KI-Assistenten vorbereiten” as a secondary action beside manual authoring.
+- A short brief captures audience, goal, duration, context and applications using useful defaults.
+- Generate a compact versioned authoring pack from the actual capability catalogue.
+- Provide copy prompt and downloadable pack; no connector, account or API key required.
+- Include storyboard-first guidance, fictional examples, declared assumptions and output instructions.
+- Support JSON attachment or pasted JSON in one code fence, with an explicit supported parsing path. Never silently reinterpret ambiguous prose as a valid course.
+- Offer an error-specific repair prompt with a preview of what data will be copied.
+- Distinguish prompt generation, external discussion, import validation and actual rendering.
+
+Acceptance:
+Trial with at least two accessible assistant environments, including one without browsing/tools. Record exact prompt/pack version, failures, manual interventions, time and output quality. If access is unavailable, provide a reproducible test protocol and label the cross-provider result unverified.
+
+Conduct at least five observed trainer tasks before claiming low friction. Initial target to test: three of five trainers reach an exported three-slide sequence without developer help. Treat this as an experiment threshold, not a statistical product claim.
+
+## Slice 4 — headless render runner and CLI
+
+- Expose shared domain operations independently of UI events.
+- Add catalogue, validate, preview and render commands with structured output and documented exit codes.
+- Headless Chromium uses a controlled internal render entry point, not click automation of the authoring UI.
+- Await fonts/layout and return PNGs, editable project, preview/contact sheet and manifest.
+- Report structural errors, visual-fit errors and intentionally cropped content distinctly.
+- Document runtime prerequisites and allow the browser executable to be selected explicitly.
+- Use the same renderer/profile versions and composition path as the website.
+
+Acceptance:
+A clean checkout can validate and render a new-project fixture noninteractively. Compare website and CLI outputs in the same environment. Verify downloaded image bytes/dimensions and inspect exports. Test malformed content, long names, missing assets and timeout cleanup.
+
+## Slice 5 — hosted job service, HTTP and remote MCP
+
+This is a planned integration, not approval to buy services or publish infrastructure.
+
+- Run a small hosting spike with the real browser, fonts and representative sequences.
+- Measure job duration, memory, concurrency, artifact sizes and cost assumptions.
+- Define create job, status, cancel and result delivery; support retries without duplicate jobs.
+- Store only what is necessary and set explicit retention and access rules.
+- Keep discovery/validation lightweight; bound render work and isolate job data.
+- Expose capabilities, catalogue, validate, preview/export and job status via HTTP and remote MCP over the same handlers.
+- Choose and document the current MCP protocol/SDK and client compatibility; do not invent a custom MCP-shaped API.
+- Include artifact retrieval appropriate to target clients; avoid returning entire decks as huge inline base64 payloads.
+- Keep local/offline website rendering available.
+
+Acceptance:
+An external test client submits a custom project, retrieves previews and ordered assets, receives useful failure diagnostics and cannot access another job's artifacts. An MCP client and an HTTP client produce equivalent results. Production exposure waits for explicit deployment authorization.
+
+## Slice 6 — WebMCP browser adapter
+
+Can proceed after shared domain operations stabilize; it does not depend on hosted rendering.
+
+- Feature-detect the current browser API and use the same input schemas and operations.
+- Expose catalogue, current project, create/load draft, update scene, validate, preview and export.
+- Keep agent changes visible and reviewable in the workspace.
+- Respect cancellation, page lifecycle and deliberate save/download semantics.
+- No support means the normal website still works.
+
+Acceptance:
+A compatible browser agent modifies a scene and exports it through registered tools without brittle DOM selectors. Test a browser without WebMCP and record the tested experimental/browser configuration. Do not advertise universal assistant support.
+
+## Cross-cutting verification
+
+Preserve existing model, content and browser checks. The legacy validator covers the original atlas; extend validation to new projects rather than assuming its green result covers the new contract.
+
+Test schema evolution, unsafe text, broken identity links, before/after snapshots, unsupported profiles, long text, import round trips and cancellation. Inspect actual PNGs, notes/assumptions and slide order. A fit check is not proof of UI fidelity or teaching quality.
+
+## Deferred
+
+In-site generative AI, tenant integration, general arbitrary HTML generation, editable native PPTX shapes, public deployment and a broad framework migration. Additional catalogue screens remain useful but must not obscure the bridge's end-to-end acceptance.
+
+## Handoff
+
+Each implementation slice reports exact baseline/final commits, completed routes, format/capability versions, tests actually run, screenshots/export samples, known limitations and next action. Keep this plan and STATUS aligned with the actual state.

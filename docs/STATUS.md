@@ -2,54 +2,29 @@
 
 Updated: 2026-10-29.
 
-## Branches and evidence
+## Implemented and merged
 
-- main contains the original standalone atlas plus planning documents.
-- prototype/visual-library-v1 contains the built library prototype, last inspected at e9220ff8954ea9a9541c4ee87b34c206a8dd8ede.
-- The latest prototype handoff reports 9/9 logic tests and 62/62 Chromium journey checks. These are reported results; not independently rerun during this planning update.
-- Earlier independent review reran 7/7 logic tests and inspected selected committed screenshots. The user has also tested the prototype and requested higher UI fidelity.
-- No prototype implementation is merged into main by this documentation task.
+main includes V3 at 300e00601606d295c6b0dd23933dc70452db654c, incorporating the earlier prototype and V2. There is no need to rebuild from a separate prototype branch.
 
-## New specification
+Implemented: three-entry library, curated worlds/sequences, M365 interface families, targeted editing, presentation, focus crops, PNG sequence export, 2x output, browser-local persistence and customisation-backup JSON.
 
-## Prototype run (2026-10-28)
+Independent review reran 17/17 model tests and the original atlas validator (0 errors, 0 warnings), and inspected selected actual exported images. The V3 builder reports 110/110 Chromium checks; this planning update did not independently repeat them. The legacy validator does not establish validity of a future portable-project contract.
 
-Branch `prototype/visual-library-v1` (base `759c94b`) holds a first visual-first prototype built in a direct Claude session: landing/library, configurator, Szene, three Prinzip explainers and Präsentieren, with unit and headless-browser tests. It is unreviewed and unmerged. See [PROTOTYPE-HANDOFF.md](PROTOTYPE-HANDOFF.md).
+See [V3 handoff](V3-BUILD-HANDOFF.md) for screen availability, evidence and known limitations. Readable imports and interface fidelity remain important product work.
 
-## New specification (v2)
+## Planned, not implemented
 
-Two plans are now active:
-- UX-LIBRARY-PLAN.md: self-explanatory landing; Team-Personas, Tools, Use Cases; one shared workspace.
-- M365-UI-FIDELITY-PLAN.md: application resemblance, Teams/Outlook/file renderer families, cross-application story and real PNG slide assets.
+[Slides as Code concept](SLIDES-AS-CODE-CONCEPT.md) and [active build plan](BUILD-PLAN.md) define:
+- a portable, complete project format and shared domain operations;
+- manual website authoring/import/review;
+- a guided prompt/authoring-pack bridge to the user's existing AI assistant;
+- optional CLI and hosted HTTP/remote MCP;
+- progressive WebMCP browser assistance.
 
-BUILD-PLAN.md indexes the implementation priorities. ORCA-NUC-BUILD-TASK.md is the ready-to-paste execution task.
-
-PNG export and targeted content editing are now in scope. Full arbitrary authoring, editable PPTX, backend, external APIs and deployment are deferred.
-
-## Runtime/governance
-
-The live Weavr check in this task returned Mission msteams-visual-library-first-slice as archived and no working Sessions for the project. No Weavr mutation or dispatch was performed.
-
-The user requested a Claude task for direct Orca execution on the NUC. Preparing this task is not a claim that the runtime has started or its deadline is enforced. Inspect live local ownership/runtime capability before launching.
-
-## Documentation scope and checks
-
-This change records both plans, a NUC task and aligned navigation/instructions. Relative links and document consistency are checked. Runtime code/tests are unchanged.
-
-## V2 build (2026-10-29)
-
-Branch `v2/library-teams-export` implements the P0 library UX, the Teams fidelity pass, PNG export, and the P1 Outlook → Explorer → Teams → SharePoint story for Leadership Forum and Kundenportal. Tests: 12/12 logic, 81/81 browser checks. It is unmerged, with no PR. See [V2-BUILD-HANDOFF.md](V2-BUILD-HANDOFF.md).
-
-## V3 build (2026-10-29)
-
-Branch `v3/trainer-library` (base `5081206`) adds:
-- the Teams chat, Planner board and task details, To Do and OneDrive screens;
-- a simulated AI meeting recap with human review;
-- seven teaching sequences, including a new business onboarding world;
-- the trainer flow, focus crop, 2× export and local save with JSON import/export.
-
-Tests: validator clean, 17/17 logic, 110/110 browser checks. It is unmerged, with no PR. See [V3-BUILD-HANDOFF.md](V3-BUILD-HANDOFF.md) and [SCENARIO-BACKLOG.md](SCENARIO-BACKLOG.md).
+Existing JSON files are curated-situation override backups. They must not be advertised as arbitrary portable projects.
 
 ## Next action
 
-On the NUC, use docs/ORCA-NUC-BUILD-TASK.md. Start from the current prototype and integrate the current main documentation on a new implementation branch. Deliver P0 as a complete path before broader renderer coverage. Return screenshots and actual export samples for review; no automatic merge/deployment.
+Challenge the architecture/UX using [the research prompt](research/PERPLEXITY-ARCHITECTURE-UX-SPARRING.md), then implement the new-project adapter/import vertical slice from current main. Prove one genuinely new scenario before broad migration or hosting.
+
+The former V2 Orca task is historical. No builder was launched, runtime code changed or service deployed by this documentation update. The previous Weavr Mission remains archived; no Weavr action is requested here.
