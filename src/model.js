@@ -7,7 +7,8 @@
   var HE = root.HE_WORLDS, ATLAS = root.HE_ATLAS, LIB = root.LIB;
 
   function worldById(id) {
-    if (id === LIB.business.id) return LIB.business;
+    var bw = (LIB.businessWorlds || [LIB.business]).filter(function (w) { return w.id === id; })[0];
+    if (bw) return bw;
     return HE.worlds.filter(function (w) { return w.id === id; })[0];
   }
   function situationById(id) { return LIB.situations.filter(function (s) { return s.id === id; })[0]; }
@@ -153,7 +154,7 @@
     var s = situationById(id);
     if (!s) return null;
     var w = worldById(s.world), a = ATLAS[s.world];
-    var sc = s.world === LIB.business.id ? w.scenario : w.scenarios.filter(function (x) { return x.id === s.scenario; })[0];
+    var sc = w.collection === 'business' ? w.scenario : w.scenarios.filter(function (x) { return x.id === s.scenario; })[0];
     var variant = s.variants ? (s.variants.filter(function (v) { return v.id === opts.variant; })[0] || s.variants[0]) : null;
     var names = opts.names || {};
     var peopleNames = names.people || {};
@@ -188,6 +189,25 @@
     var team = names.team || scene.team;
     var ctx = { name: function (pid) { return byId[pid] ? byId[pid].name : pid; }, team: team, active: scene.active };
     var content = opts.content || {};
+    /* Task titles edited for the slide: same task identity in Teams, Planner, To Do and Prinzip. */
+    var taskEdits = content.tasks || {};
+    if (Object.keys(taskEdits).some(function (k) { return taskEdits[k]; })) {
+      var renamed = {};
+      scene = Object.assign({}, scene, { tasks: scene.tasks.map(function (t, i) {
+        var nt = (taskEdits[i] || '').trim();
+        if (!nt) return t;
+        renamed[t.title] = nt;
+        return Object.assign({}, t, { title: nt });
+      }) });
+      if (principles.tasks && principles.tasks.shared) principles = Object.assign({}, principles, { tasks: Object.assign({}, principles.tasks, {
+        shared: principles.tasks.shared.map(function (x) { return renamed[x.t] ? Object.assign({}, x, { t: renamed[x.t] }) : x; })
+      }) });
+    }
+    var postEdits = content.posts || {};
+    if (Object.keys(postEdits).length) scene = Object.assign({}, scene, { posts: scene.posts.map(function (q, i) {
+      var pe = postEdits[i]; if (!pe) return q;
+      return Object.assign({}, q, { title: (pe.title || '').trim() || q.title, text: (pe.text || '').trim() || q.text });
+    }) });
     var story = storyFor(s, scene, principles, content, ctx);
     if (story) {
       /* Apply targeted slide-content overrides to copies, never to the curated originals. */
@@ -212,17 +232,66 @@
       people: people, person: function (pid) { return byId[pid] || { id: pid, name: pid, role: '' }; },
       team: team, teamOriginal: scene.team,
       scene: scene, principles: principles, story: story,
-      tools: story ? ['teams', 'outlook', 'explorer', 'sharepoint'] : (scene.personal ? [] : ['teams']),
+      tools: toolsFor(s, scene, story),
+      chat: chatFor(s, principles, content, ctx), todo: todoFor(s, scene, principles, story, people), ai: aiFor(s, ctx),
       fill: function (t) { return fill(t, ctx); },
-      legacyHref: s.world === LIB.business.id ? null : 'atlas.html#/w/' + s.world
+      legacyHref: w.collection === 'business' ? null : 'atlas.html#/w/' + s.world
     };
   }
 
+  function toolsFor(s, scene, story) {
+    if (scene.personal) return ['onedrive', 'todo'];
+    var t = ['teams', 'chat'];
+    if (scene.tasks.length) t.push('planner', 'todo');
+    if (story) t.push('outlook', 'explorer', 'sharepoint');
+    if (LIB.ai && LIB.ai[s.id]) t.push('recap');
+    return t;
+  }
+  /* 1:1 chat: curated where available, otherwise built from the «Chat oder Kanal?» binding. */
+  function chatFor(s, principles, content, ctx) {
+    var c = LIB.chats && LIB.chats[s.id], b = principles.chat;
+    var edits = content.chat || {};
+    if (!c) {
+      if (!b || !b.inChat || b.inChat.length < 2) return null;
+      var a = b.inChat[0], z = b.inChat[1];
+      c = { viewer: a, partner: z, generated: true, others: [], messages: [
+        { by: z, time: '09:02', text: 'Hast du kurz Zeit? Es geht um ' + ctx.team + '.' },
+        { by: a, time: '09:03', text: 'Klar, worum geht es?' },
+        { by: z, time: '09:05', text: 'Wollen wir es so machen: ' + b.decision + '?' },
+        { by: a, time: '09:07', text: 'Ja, einverstanden: ' + b.decision + '.', mark: 1, decision: true }
+      ] };
+    }
+    return {
+      viewer: c.viewer, partner: c.partner, generated: !!c.generated, others: c.others || [],
+      later: (b && b.later) || [], laterLabel: b && b.laterLabel,
+      messages: c.messages.map(function (m, i) { return Object.assign({}, m, { text: (edits[i] || '').trim() || fill(m.text, ctx) }); })
+    };
+  }
+  function todoFor(s, scene, principles, story, people) {
+    var d = LIB.todos && LIB.todos[s.id], ids = people.map(function (p) { return p.id; });
+    if (scene.personal) return { viewer: people[0].id, personal: scene.tasks.map(function (t) { return t.title; }), assigned: [], plan: null };
+    if (!scene.tasks.length) return null;
+    var tp = principles.tasks || {};
+    var viewer = d ? d.viewer : (story && story.viewer) || (tp.personal && tp.personal[0] && tp.personal[0].who) || ids[0];
+    var mine = (tp.personal || []).filter(function (x) { return x.who === viewer; })[0];
+    return {
+      viewer: viewer,
+      personal: d ? d.personal : (mine ? mine.items : []),
+      assigned: scene.tasks.filter(function (t) { return t.owner === viewer; }),
+      plan: true
+    };
+  }
+  function aiFor(s, ctx) {
+    var a = LIB.ai && LIB.ai[s.id];
+    if (!a) return null;
+    return Object.assign({}, a, { suggestions: a.suggestions.map(function (x) { return Object.assign({}, x, { reason: x.reason ? fill(x.reason, ctx) : '' }); }) });
+  }
+
   function worlds() {
-    return HE.worlds.concat([LIB.business]).map(function (w) {
+    return HE.worlds.concat(LIB.businessWorlds || [LIB.business]).map(function (w) {
       return {
         id: w.id, name: w.name, collection: collectionOf(w), tagline: w.tagline, tension: w.tension, size: w.size,
-        label: w.id === LIB.business.id ? 'Abteilung mit Projekt' : (ATLAS[w.id] && ATLAS[w.id].label),
+        label: w.id === LIB.business.id ? 'Abteilung mit Projekt' : w.label || (ATLAS[w.id] && ATLAS[w.id].label),
         people: w.people.map(function (p) { return p.name; }),
         situations: LIB.situations.filter(function (s) { return s.world === w.id; }).map(function (s) { return s.id; })
       };

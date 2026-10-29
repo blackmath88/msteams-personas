@@ -52,16 +52,22 @@ window.LIB.stories = {
 
 /* Tool catalogue: what the library can actually render, and what is planned. */
 window.LIB.tools = [
-  { id: 'teams', label: 'Microsoft Teams', short: 'Teams', status: 'ready', screens: [['posts', 'Kanal: Beiträge'], ['files', 'Kanal: Dateien'], ['tasks', 'Kanal: Aufgaben']],
-    desc: 'Team, Kanäle, Beiträge mit Antworten, Dateien und Aufgaben im Kanal.' },
+  { id: 'teams', label: 'Microsoft Teams', short: 'Teams', status: 'ready', screens: [['posts', 'Kanal: Beiträge'], ['files', 'Kanal: Dateien'], ['tasks', 'Kanal: Aufgaben'], ['chat', 'Chat']],
+    desc: 'Team, Kanäle, Beiträge mit Antworten, Dateien, Aufgaben im Kanal und 1:1-Chat.' },
+  { id: 'chat', label: 'Teams-Chat', short: 'Chat', status: 'ready', screens: [['chat', 'Chat zu zweit']],
+    desc: 'Ein Entscheid im Einzelchat: der Ausgangspunkt für «Chat oder Kanal?».' },
   { id: 'outlook', label: 'Outlook', short: 'Outlook', status: 'story', screens: [['outlook', 'Posteingang mit Anhang']],
     desc: 'Posteingang, Nachrichtenliste und Lesebereich mit Anhang.' },
   { id: 'explorer', label: 'Windows Explorer', short: 'Explorer', status: 'story', screens: [['explorer', 'Downloads mit Kopien']],
     desc: 'Lokaler Downloads-Ordner mit heruntergeladenen Kopien.' },
   { id: 'sharepoint', label: 'SharePoint', short: 'SharePoint', status: 'story', screens: [['sharepoint', 'Dokumentbibliothek']],
     desc: 'Teamwebsite mit der gemeinsamen Dokumentbibliothek.' },
-  { id: 'onedrive', label: 'OneDrive', short: 'OneDrive', status: 'planned', screens: [],
-    desc: 'Persönliche Arbeitsdateien. Geplant; heute zeigt die vereinfachte «Persönliche Ablage» diese Situationen.' },
-  { id: 'planner', label: 'Planner / To Do', short: 'Planner', status: 'partial', screens: [['tasks', 'Aufgaben im Teams-Kanal']],
-    desc: 'Aufgaben erscheinen heute als Reiter im Teams-Kanal; eigene Planner-Ansicht später.' }
+  { id: 'onedrive', label: 'OneDrive', short: 'OneDrive', status: 'ready', screens: [['onedrive', 'Meine Dateien']],
+    desc: 'Persönliche Arbeitsdateien: privat oder gezielt geteilt.' },
+  { id: 'planner', label: 'Planner', short: 'Planner', status: 'ready', screens: [['planner', 'Board mit Buckets']],
+    desc: 'Gemeinsamer Plan: Buckets, Aufgabenkarten, Verantwortliche und Termine.' },
+  { id: 'todo', label: 'Microsoft To Do', short: 'To Do', status: 'ready', screens: [['todo', 'Mein Tag']],
+    desc: 'Persönliche Liste neben zugewiesenen Aufgaben aus dem Plan.' },
+  { id: 'recap', label: 'Besprechung mit KI-Notizen', short: 'KI-Recap', status: 'ki', screens: [['recap', 'Zusammenfassung (Simulation)']],
+    desc: 'Simulierte KI-Notizen und Aufgabenvorschläge mit sichtbarer menschlicher Prüfung. Keine echte KI.' }
 ];

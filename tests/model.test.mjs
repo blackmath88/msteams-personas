@@ -7,7 +7,7 @@ import vm from 'node:vm';
 const ctx = { window: {} };
 ctx.globalThis = ctx;
 vm.createContext(ctx);
-for (const f of ['worlds.js', 'src/library.js', 'src/library-he.js', 'src/story.js', 'src/model.js', 'src/configurator.js']) vm.runInContext(readFileSync(new URL('../' + f, import.meta.url), 'utf8'), ctx);
+for (const f of ['worlds.js', 'src/library.js', 'src/library-he.js', 'src/story.js', 'src/scenes-v3.js', 'src/model.js', 'src/configurator.js']) vm.runInContext(readFileSync(new URL('../' + f, import.meta.url), 'utf8'), ctx);
 // model.js / configurator.js attach to window
 const { Model, Configurator, LIB, HE_WORLDS } = ctx.window;
 
@@ -17,11 +17,11 @@ test('every legacy scenario is reachable through a library situation', () => {
   assert.equal(HE_WORLDS.worlds.reduce((n, w) => n + w.scenarios.length, 0), 7);
 });
 
-test('six worlds: five university, one business', () => {
+test('seven worlds: five university, two business', () => {
   const ws = Model.worlds();
-  assert.equal(ws.length, 6);
+  assert.equal(ws.length, 7);
   assert.equal(ws.filter(w => w.collection === 'hochschule').length, 5);
-  assert.equal(ws.filter(w => w.collection === 'business').length, 1);
+  assert.equal(ws.filter(w => w.collection === 'business').length, 2);
 });
 
 test('all situation references resolve (people, use cases, principles)', () => {
@@ -125,7 +125,7 @@ test('story: copies come from Prinzip copies, canonical file is a scene file', (
       assert.ok(v.story.mails.every(m => !m.attachment || v.story.copies.some(c => c === m.attachment)), `${sid}: mail attachments are copies`);
       assert.ok(!v.story.copies.some(c => c.name === v.story.doc.name), `${sid}: copies distinct from canonical`);
       assert.ok(v.people.some(p => p.id === v.story.viewer));
-      assert.deepEqual([...v.tools], ['teams', 'outlook', 'explorer', 'sharepoint']);
+      for (const t of ['teams', 'chat', 'planner', 'todo', 'outlook', 'explorer', 'sharepoint']) assert.ok(v.tools.includes(t), `${sid}: ${t}`);
     }
   }
 });
@@ -144,6 +144,57 @@ test('story: content overrides rename the canonical file everywhere but leave or
 
 test('situations without a story only offer Teams (or nothing for personal work)', () => {
   assert.equal(Model.build('heat-health').story, null);
-  assert.deepEqual([...Model.build('heat-health').tools], ['teams']);
-  assert.deepEqual([...Model.build('nora-reihe').tools], []);
+  assert.ok(!Model.build('heat-health').tools.includes('outlook'));
+  assert.ok(Model.build('heat-health').tools.includes('teams'));
+  assert.deepEqual([...Model.build('nora-reihe').tools], ['onedrive', 'todo']);
+});
+
+test('sequences: every step resolves to an available screen or a principle', () => {
+  assert.ok(LIB.sequences.length >= 6);
+  for (const q of LIB.sequences) {
+    assert.ok(q.objective && q.boundary, q.id);
+    assert.ok(q.steps.length >= 3 && q.steps.length <= 5, q.id);
+    const v = Model.build(q.situation, { variant: q.variant });
+    assert.ok(v, q.id);
+    for (const st of q.steps) {
+      if (st.mode === 'prinzip') { assert.ok(v.principles[st.sub], `${q.id}: principle ${st.sub}`); continue; }
+      const tool = ['posts', 'files', 'tasks'].includes(st.sub) ? 'teams' : st.sub;
+      assert.ok(v.tools.includes(tool), `${q.id}: ${st.sub} not available`);
+    }
+  }
+});
+
+test('chat: curated decision matches the principle; generated chats exist for team situations', () => {
+  for (const sid of ['leadership-forum', 'kundenportal', 'onboarding']) {
+    const v = Model.build(sid);
+    const dec = v.chat.messages.find(m => m.decision);
+    assert.ok(dec && dec.mark === 1, sid);
+    assert.ok([v.chat.viewer, v.chat.partner].every(id => v.people.some(p => p.id === id)), sid);
+  }
+  const g = Model.build('sitzungszyklus');
+  assert.ok(g.chat && g.chat.generated && g.chat.messages.some(m => m.decision && m.text.includes(g.principles.chat.decision)));
+});
+
+test('task edits keep one identity across Teams tasks, Planner/To Do and Prinzip', () => {
+  const v = Model.build('leadership-forum', { content: { tasks: { 0: 'Einladung an alle versenden' } } });
+  assert.equal(v.scene.tasks[0].title, 'Einladung an alle versenden');
+  assert.ok(v.principles.tasks.shared.some(x => x.t === 'Einladung an alle versenden'));
+  assert.ok(v.todo.assigned.some(t => t.title === 'Einladung an alle versenden'), 'Daniel sees the renamed task');
+  assert.equal(Model.build('leadership-forum').scene.tasks[0].title, 'Einladung Termin 3 versenden');
+});
+
+test('AI simulation: rejected suggestions never become tasks; assumption names licensing', () => {
+  const v = Model.build('kundenportal');
+  assert.ok(v.ai.suggestions.some(s => s.status === 'rejected'));
+  assert.match(v.ai.assumption, /Teams Premium/);
+  assert.match(v.ai.assumption, /Copilot/);
+  assert.ok(!/\{p:/.test(v.ai.suggestions.map(s => s.reason).join('')));
+});
+
+test('onboarding world is its own business context, not renamed university people', () => {
+  const v = Model.build('onboarding');
+  assert.equal(v.collection, 'business');
+  const he = new Set(HE_WORLDS.worlds.flatMap(w => w.people.map(p => p.name)));
+  assert.ok(v.people.every(p => !he.has(p.name)));
+  assert.equal(v.todo.viewer, 'nadine-odermatt');
 });

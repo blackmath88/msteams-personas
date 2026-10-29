@@ -90,7 +90,7 @@
 .t-tx{color:#242424}
 .t-att{display:flex;align-items:center;gap:12px;margin:10px 0 2px;border:1px solid #e0e0e0;border-radius:4px;padding:8px 12px;max-width:440px;background:#fff}
 .t-att .ft{width:28px;height:28px}
-.t-att>span:not(.ft){display:flex;flex-direction:column;min-width:0;flex:1}
+.t-att>span:not(.ft):not(.m-mk){display:flex;flex-direction:column;min-width:0;flex:1}
 .t-att strong{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .t-att small{font-size:12px;color:#616161;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .t-react{margin-top:8px}.t-react span{display:inline-block;border:1px solid #e0e0e0;border-radius:4px;padding:0 8px;font-size:12px;background:#fafafa}
@@ -154,7 +154,7 @@
 .o-ract{display:flex;gap:12px;color:#424242}
 .o-atts{display:flex;gap:8px;margin:0 0 18px 52px}
 .o-att{display:flex;align-items:center;gap:10px;border:1px solid #d1d1d1;border-radius:4px;padding:8px 10px;position:relative;width:300px}
-.o-att .ft{width:28px;height:28px}.o-att>span:not(.ft){display:flex;flex-direction:column;flex:1;min-width:0}.o-att strong{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.o-att small{color:#616161;font-size:12px}
+.o-att .ft{width:28px;height:28px}.o-att>span:not(.ft):not(.m-mk){display:flex;flex-direction:column;flex:1;min-width:0}.o-att strong{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.o-att small{color:#616161;font-size:12px}
 .o-body{margin-left:52px;font-size:15px;line-height:1.5;max-width:720px}
 .o-replybar{display:flex;gap:10px;margin:28px 0 0 52px}.o-replybar span{display:inline-flex;align-items:center;gap:6px;border:1px solid #d1d1d1;border-radius:4px;padding:5px 12px}
 
@@ -260,3 +260,21 @@
 .t-reps{margin-top:8px;padding-top:6px}
 .t-replyl{margin-top:4px;padding:6px 16px 8px}
 .t-compose{padding-bottom:12px}
+
+/* ===== v3 fidelity fixes ===== */
+/* annotation badges are always circles, never stretched by flex parents */
+.m-mk{flex:none!important;min-width:24px;max-width:24px;height:24px;padding:0;display:inline-block}
+.sl-notes .m-mk{min-width:34px;max-width:34px}
+/* lesson-critical file names stay readable: no ellipsis on attachment cards */
+.o-att{width:auto;min-width:300px;max-width:620px;padding:10px 14px}
+.o-att strong{white-space:normal;overflow:visible;overflow-wrap:anywhere;font-size:15px}
+.t-att{max-width:600px}
+.t-att strong{white-space:normal;overflow:visible;overflow-wrap:anywhere}
+.o-chip{max-width:none;overflow:visible}
+.x-tbl th:first-child{width:48%}
+.x-tbl td:first-child{text-overflow:clip}
+/* lighter slide frame decoration */
+.sl-app{box-shadow:0 1px 3px rgba(0,0,0,.14),0 8px 22px rgba(20,30,60,.10);border-radius:8px}
+.slide-fokus .sl-crop{position:absolute;top:168px}
+.slide-fokus .sl-h-s h2{font-size:40px}
+.export-host{position:fixed;left:-30000px;top:0;width:1920px;height:1080px;overflow:hidden}

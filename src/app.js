@@ -16,16 +16,18 @@
 
   /* ---------- session-only state (names per situation, configurator draft, annotation toggle) ---------- */
   var store = {
-    get: function (k, d) { try { var v = sessionStorage.getItem('mtp.' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
-    set: function (k, v) { try { sessionStorage.setItem('mtp.' + k, JSON.stringify(v)); } catch (e) { /* session-only convenience */ } }
+    /* Customised examples persist locally in this browser (no account, no backend). */
+    get: function (k, d) { try { var v = localStorage.getItem('mtp.' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+    set: function (k, v) { try { localStorage.setItem('mtp.' + k, JSON.stringify(v)); } catch (e) { /* storage unavailable: session keeps working */ } }
   };
   var state = {
     names: store.get('names', {}),
     draft: store.get('draft', { answers: {}, touched: false }),
     annot: store.get('annot', true),
-    content: store.get('content', {})
+    content: store.get('content', {}),
+    hires: store.get('hires', false)
   };
-  function save() { store.set('names', state.names); store.set('draft', state.draft); store.set('annot', state.annot); store.set('content', state.content); }
+  function save() { store.set('names', state.names); store.set('draft', state.draft); store.set('annot', state.annot); store.set('content', state.content); store.set('hires', state.hires); }
   function namesFor(sid) { return state.names[sid] || { team: '', people: {} }; }
   function hasCustom(sid) { var n = state.names[sid]; return !!(n && (n.team || Object.keys(n.people || {}).some(function (k) { return n.people[k]; }))); }
 
@@ -60,7 +62,7 @@
   }
 
   /* ---------- Landing ---------- */
-  function sceneHtml(vm) { return vm.personal ? V.scene(vm, { annot: false }) : frameHtml(A.teams(vm, {}), 'Vorschau: ' + vm.team); }
+  function sceneHtml(vm) { return frameHtml(A.app(vm, vm.personal ? 'onedrive' : 'posts', {}), 'Vorschau: ' + vm.team); }
   function frameHtml(html, label, live) { return '<div class="appframe"' + (live ? '' : ' aria-label="' + esc(label) + '"') + '><div class="af-in"' + (live ? '' : ' inert') + '>' + html + '</div></div>'; }
   function landing() {
     var vm = vmFor('leadership-forum', 'eigenes-team');
@@ -87,7 +89,11 @@
         '<ol class="storyrow">' + story.map(function (x) {
           return '<li><a href="' + route('leadership-forum', 'eigenes-team', 'szene', x[0]) + '">' + frameHtml(A.app(vm, x[0], {}), x[1]) + '<strong>' + x[1] + '</strong><span>' + x[2] + '</span></a></li>';
         }).join('') + '</ol></section>' +
-      '<section class="block"><div class="block-h"><h2>Die Bibliothek</h2><p>Fünf Hochschulwelten und ein Business-Beispiel. Alle Personen und Einheiten sind fiktiv.</p></div>' +
+      '<section class="block"><div class="block-h"><h2>Abfolgen für eure Schulung</h2><p>Situation wählen → Szene anpassen → Bildausschnitt prüfen → exportieren. Jede Abfolge verbindet drei bis fünf Ansichten mit einem Prinzip.</p></div>' +
+        '<ul class="seqlist seqlist-s">' + LIB.sequences.map(function (q) {
+          return '<li><a href="#/a/' + q.id + '/1"><strong>' + esc(q.title) + '</strong><span class="sit-f">' + esc(q.objective) + '</span><span class="wl">' + q.steps.length + ' Ansichten' + (q.ai ? ' · KI-Simulation' : '') + '</span></a></li>';
+        }).join('') + '</ul><p class="legacy-l"><a href="#/abfolgen">Alle Abfolgen</a></p></section>' +
+      '<section class="block"><div class="block-h"><h2>Die Bibliothek</h2><p>Fünf Hochschulwelten und zwei Business-Teams. Alle Personen und Einheiten sind fiktiv.</p></div>' +
         '<ul class="worlds">' + ws.map(worldCard).join('') + '</ul></section>' +
       '<section class="block"><div class="block-h"><h2>Drei Prinzipien zum Einstieg</h2><p>Jedes Prinzip zeigt ein Problem, ein Bild, eine Empfehlung im Kontext und ihre Grenze.</p></div>' +
         '<ul class="prlist">' + LIB.principles.map(function (p) {
@@ -96,13 +102,9 @@
   }
 
   /* ---------- Tools ---------- */
-  var STATUS = { ready: ['Bereit', 'b-full'], story: ['Bereit in der Dateigeschichte', 'b-full'], partial: ['Teilweise', 'b-legacy'], planned: ['Geplant', 'b-plan'] };
+  var STATUS = { ready: ['Bereit', 'b-full'], story: ['Bereit in der Dateigeschichte', 'b-full'], partial: ['Teilweise', 'b-legacy'], planned: ['Geplant', 'b-plan'], ki: ['KI-Simulation', 'b-plan'] };
   function toolSits(t) {
-    return LIB.situations.filter(function (s) {
-      var vm = vmFor(s.id);
-      if (t.id === 'onedrive') return vm.personal;
-      return t.id === 'teams' || t.id === 'planner' ? !vm.personal : (vm.tools || []).indexOf(t.id) >= 0;
-    });
+    return LIB.situations.filter(function (s) { return A.available(vmFor(s.id), t.id === 'chat' ? 'chat' : t.id); });
   }
   function tools(tid) {
     if (tid) {
@@ -111,12 +113,12 @@
       var sits = toolSits(t), st = STATUS[t.status];
       return crumbs([['Bibliothek', '#/'], ['Tools', '#/tools'], [t.label]]) +
         '<section class="block"><div class="block-h"><span class="badge ' + st[1] + '">' + st[0] + '</span><h1>' + esc(t.label) + '</h1><p class="lead">' + esc(t.desc) + '</p></div>' +
-        (t.status === 'planned' ? '<p class="transfer" role="note"><strong>Noch keine OneDrive-Ansicht</strong>Diese Situationen zeigen persönliche Arbeit heute in der vereinfachten Darstellung «Persönliche Ablage», nicht als OneDrive-Oberfläche.</p>' : '') +
+        (t.status === 'ki' ? '<p class="transfer" role="note"><strong>Simulation</strong>Die KI-Inhalte sind fest vorgegeben. Es findet keine Inferenz statt und es besteht keine Verbindung zu Microsoft 365.</p>' : '') +
         '<h2 class="h2s">' + (t.screens.length ? 'Ansichten und passende Situationen' : 'Passende Situationen') + '</h2>' +
         '<ul class="sits">' + sits.map(function (s) {
           var vm = vmFor(s.id), sc = t.screens[0] ? t.screens[0][0] : null;
           return '<li class="sit"><a href="' + route(s.id, vm.variant && vm.variant.id, 'szene', sc) + '">' +
-            '<span class="sit-top">' + collBadge(vm.collection) + (sc ? '<span class="badge b-full">' + esc(t.screens[0][1]) + '</span>' : '<span class="badge b-legacy">Persönliche Ablage</span>') + '</span>' +
+            '<span class="sit-top">' + collBadge(vm.collection) + (sc ? '<span class="badge b-full">' + esc(t.screens[0][1]) + '</span>' : '') + '</span>' +
             '<strong>' + esc(vm.title) + '</strong><span class="sit-w">' + esc(vm.world.name) + '</span><span class="sit-f">' + esc(vm.friction) + '</span></a></li>';
         }).join('') + '</ul></section>';
     }
@@ -124,7 +126,8 @@
     return crumbs([['Bibliothek', '#/'], ['Tools']]) +
       '<section class="block"><div class="block-h"><h1>Tools</h1><p class="lead">Startet bei der Oberfläche, die ihr auf der Folie braucht. Nur fertige Ansichten sind als bereit markiert.</p></div>' +
       '<ul class="toolgrid">' + LIB.tools.map(function (t) {
-        var st = STATUS[t.status], prev = t.screens[0] && t.status !== 'partial' ? frameHtml(A.app(vm, t.screens[0][0], {}), t.label) : '<div class="tool-ph">' + (t.status === 'planned' ? 'Geplant' : 'Als Reiter in Teams') + '</div>';
+        var ps = toolSits(t)[0], pvm = ps && vmFor(ps.id);
+        var st = STATUS[t.status], prev = t.screens[0] && pvm ? frameHtml(A.app(pvm, t.screens[0][0], {}), t.label) : '<div class="tool-ph">Geplant</div>';
         return '<li><a href="#/tools/' + t.id + '">' + prev + '<span class="badge ' + st[1] + '">' + st[0] + '</span><strong>' + esc(t.label) + '</strong><span>' + esc(t.desc) + '</span></a></li>';
       }).join('') + '</ul></section>';
   }
@@ -225,77 +228,173 @@
   }
 
   /* ---------- Workspace (Szene / Prinzip) ---------- */
-  var TOOLS = [['teams', 'Teams', 'posts'], ['outlook', 'Outlook', 'outlook'], ['explorer', 'Explorer', 'explorer'], ['sharepoint', 'SharePoint', 'sharepoint'], ['onedrive', 'OneDrive', null]];
+  /* ---------- Screens: what a trainer can pick, grouped by application ---------- */
+  var SCREENS = [
+    ['Teams', [['posts', 'Beiträge'], ['files', 'Dateien'], ['tasks', 'Aufgaben im Kanal'], ['chat', 'Chat'], ['recap', 'Besprechung · KI-Simulation']]],
+    ['Outlook', [['outlook', 'Posteingang']]],
+    ['Dateien', [['explorer', 'Explorer'], ['sharepoint', 'SharePoint'], ['onedrive', 'OneDrive']]],
+    ['Aufgaben', [['planner', 'Planner'], ['todo', 'To Do']]]
+  ];
+  var WHY_OFF = {
+    teams: 'Kein Team in dieser Situation (persönliche Arbeit).', chat: 'Kein Team in dieser Situation (persönliche Arbeit).',
+    outlook: 'Nur in Situationen mit Dateigeschichte (Leadership Forum, Kundenportal).', explorer: 'Nur in Situationen mit Dateigeschichte (Leadership Forum, Kundenportal).',
+    sharepoint: 'Nur in Situationen mit Dateigeschichte (Leadership Forum, Kundenportal).', recap: 'Nur im KI-Beispiel «Kundenportal bis März».',
+    onedrive: 'Für persönliche Arbeitssituationen (Nora Keller). Teams-Situationen zeigen Dateien in Teams oder SharePoint.',
+    planner: 'Diese Situation hat keine gemeinsamen Aufgaben.', todo: 'Diese Situation hat keine Aufgaben.'
+  };
+  function defaultSub(vm) { return vm.personal ? 'onedrive' : 'posts'; }
+  function subOf(vm, p) { return p.sub || defaultSub(vm); }
+  function screenLabel(sub) { var l = null; SCREENS.forEach(function (g) { g[1].forEach(function (x) { if (x[0] === sub) l = g[0] === 'Dateien' || g[0] === 'Aufgaben' || g[0] === 'Outlook' ? x[1] : g[0] + ': ' + x[1]; }); }); return l || sub; }
+
   function visualHtml(vm, p, pid) {
     if (p.mode === 'prinzip') return V.principle(vm, pid, principleMeta(pid), { annot: state.annot });
-    if (vm.personal) return V.scene(vm, { annot: state.annot });
-    var html = A.app(vm, p.sub, { annot: state.annot });
-    if (!html) return unavailable(vm, A.toolOf(p.sub));
-    var notes = state.annot ? A.notes(vm, p.sub) : [];
+    var sub = subOf(vm, p), html = A.app(vm, sub, { annot: state.annot });
+    if (!html) return unavailable(vm, A.toolOf(sub));
+    var notes = state.annot ? A.notes(vm, sub) : [];
+    var tool = A.toolOf(sub);
     return frameHtml(html, 'Nachgebildete Oberfläche', true) +
       '<p class="fit-warn" hidden></p>' +
       (notes.length ? '<aside class="ws-notes" aria-label="Lesehinweise"><p class="tw-k">Was hier zu sehen ist</p><ol>' + notes.map(function (n) {
         return '<li><span class="mk" aria-hidden="true">' + n[0] + '</span><span>' + esc(n[1]) + '</span></li>';
       }).join('') + '</ol></aside>' : '') +
-      (vm.scene.outside && vm.scene.outside.length && A.toolOf(p.sub) === 'teams' ? '<p class="tw-outside">' + ic('i-box') + '<span><strong>Bleibt ausserhalb:</strong> ' + vm.scene.outside.map(esc).join(' · ') + '</span></p>' : '') +
-      (vm.variant && vm.variant.assumption ? '<p class="tw-assume ws-assume">' + ic('i-alert') + '<span><strong>Annahme:</strong> ' + esc(vm.fill(vm.variant.assumption)) + '</span></p>' : '');
+      (vm.scene.outside && vm.scene.outside.length && tool === 'teams' ? '<p class="tw-outside">' + ic('i-box') + '<span><strong>Bleibt ausserhalb:</strong> ' + vm.scene.outside.map(esc).join(' · ') + '</span></p>' : '') +
+      (vm.variant && vm.variant.assumption ? '<p class="tw-assume ws-assume">' + ic('i-alert') + '<span><strong>Annahme:</strong> ' + esc(vm.fill(vm.variant.assumption)) + '</span></p>' : '') +
+      (vm.ai && (tool === 'recap' || tool === 'planner') ? '<p class="tw-assume ws-assume">' + ic('i-alert') + '<span><strong>KI-Simulation:</strong> ' + esc(vm.ai.assumption) + '</span></p>' : '') +
+      (vm.chat && vm.chat.generated && tool === 'chat' ? '<p class="hint">Chatverlauf aus dem Prinzip «Chat oder Kanal?» abgeleitet, nicht einzeln ausgearbeitet.</p>' : '');
   }
   function unavailable(vm, tool) {
     var t = LIB.tools.filter(function (x) { return x.id === tool; })[0] || { label: tool };
-    return '<div class="unavail" role="note"><h3>' + esc(t.label) + ' ist für diese Situation nicht ausgearbeitet</h3><p>Die Dateigeschichte über Outlook, Explorer und SharePoint gibt es bisher für «Leadership Forum 2027» und «Kundenportal bis März». Hier zeigt die Bibliothek nichts Erfundenes.</p>' +
-      '<p><a href="' + route('leadership-forum', 'eigenes-team', 'szene', tool) + '">' + esc(t.label) + ' im Leadership Forum ansehen</a> · <a href="' + route(vm.id, vm.variant && vm.variant.id, 'szene', 'posts') + '">Teams-Ansicht dieser Situation</a></p></div>';
+    var alt = LIB.situations.filter(function (s) { return A.available(vmFor(s.id), tool); })[0];
+    return '<div class="unavail" role="note"><h3>' + esc(t.label) + ' ist für diese Situation nicht ausgearbeitet</h3><p>' + esc(WHY_OFF[tool] || 'Diese Kombination gibt es noch nicht.') + ' Die Bibliothek zeigt hier nichts Erfundenes.</p>' +
+      '<p>' + (alt ? '<a href="' + route(alt.id, null, 'szene', tool === 'teams' ? 'posts' : tool) + '">' + esc(t.label) + ' in «' + esc(alt.title) + '» ansehen</a> · ' : '') + '<a href="' + route(vm.id, vm.variant && vm.variant.id, 'szene', defaultSub(vm)) + '">Verfügbare Ansicht dieser Situation</a></p></div>';
   }
-  function contentForm(vm) {
-    if (!vm.story) return '';
-    var c = state.content[vm.id] || {}, st = vm.story, post = vm.scene.posts.filter(function (q) { return q.canonical; })[0];
-    var f = function (name, label, val, ph, area) {
-      return '<label>' + label + (area ? '<textarea name="' + name + '" rows="4" placeholder="' + esc(ph) + '">' + esc(val || '') + '</textarea>' : '<input name="' + name + '" value="' + esc(val || '') + '" placeholder="' + esc(ph) + '" autocomplete="off">') + '</label>';
+  function screenPicker(vm, p) {
+    var cur = subOf(vm, p), vid = vm.variant && vm.variant.id;
+    return '<nav class="screens" aria-label="Anwendung und Ansicht wählen">' + SCREENS.map(function (g) {
+      return '<div class="sg"><span class="sg-h">' + g[0] + '</span>' + g[1].map(function (x) {
+        var ok = A.available(vm, A.toolOf(x[0]));
+        return ok ? '<a href="' + route(vm.id, vid, 'szene', x[0]) + '"' + (p.mode !== 'prinzip' && x[0] === cur ? ' aria-current="page"' : '') + '>' + esc(x[1]) + '</a>'
+          : '<span class="tp-off" title="' + esc(WHY_OFF[A.toolOf(x[0])] || '') + '">' + esc(x[1]) + ' <small>nicht verfügbar</small></span>';
+      }).join('') + '</div>';
+    }).join('') + '</nav>';
+  }
+
+  /* ---------- Customisation: names + focused content per screen, persisted locally ---------- */
+  function customState(sid) {
+    var out = [], c = state.content[sid] || {};
+    if (hasCustom(sid)) out.push('Namen');
+    var has = function (v) { return v && (typeof v === 'string' ? v.trim() : Object.keys(v).some(function (k) { return has(v[k]); })); };
+    if (['docName', 'subject', 'body', 'postTitle', 'postText', 'posts'].some(function (k) { return has(c[k]); })) out.push('Texte');
+    if (has(c.tasks)) out.push('Aufgaben');
+    if (has(c.chat)) out.push('Chat');
+    return out;
+  }
+  function getPath(o, path) { return path.split('.').reduce(function (a, k) { return a && a[k]; }, o); }
+  function setPath(o, path, v) {
+    var ks = path.split('.'), last = ks.pop();
+    ks.forEach(function (k) { o = o[k] = (o[k] && typeof o[k] === 'object') ? o[k] : {}; });
+    o[last] = v;
+  }
+  function contentForm(vm, p) {
+    var sub = subOf(vm, p), tool = A.toolOf(sub), c = state.content[vm.id] || {}, sit = LIB.situations.filter(function (s) { return s.id === vm.id; })[0];
+    var orig = M.build(vm.id, { variant: vm.variant && vm.variant.id });
+    var f = function (name, label, ph, area) {
+      var val = getPath(c, name) || '';
+      return '<label>' + esc(label) + (area ? '<textarea name="' + name + '" rows="3" placeholder="' + esc(ph) + '">' + esc(val) + '</textarea>' : '<input name="' + name + '" value="' + esc(val) + '" placeholder="' + esc(ph) + '" autocomplete="off">') + '</label>';
     };
-    return '<form class="names contentf" data-sid="' + vm.id + '" data-kind="content" aria-label="Inhalte anpassen"><h3>Inhalte für die Folie</h3>' +
-      '<p class="hint">Gilt in Outlook, Teams, SharePoint und im Prinzip. Kopien im Explorer behalten ihre Namen.</p>' +
-      f('docName', 'Gemeinsame Datei', c.docName, st.doc.original) +
-      f('subject', 'Betreff der Mail', c.subject, LIB.stories[vm.id].mails[0].subject) +
-      f('body', 'Text der Mail', c.body, vm.fill(LIB.stories[vm.id].mails[0].body), true) +
-      (post ? f('postTitle', 'Betreff des Teams-Beitrags', c.postTitle, LIB.situations.filter(function (s) { return s.id === vm.id; })[0].scene.posts.filter(function (q) { return q.id === post.id; })[0].title) +
-        f('postText', 'Text des Teams-Beitrags', c.postText, vm.fill(LIB.situations.filter(function (s) { return s.id === vm.id; })[0].scene.posts.filter(function (q) { return q.id === post.id; })[0].text), true) : '') +
-      (state.content[vm.id] && Object.keys(state.content[vm.id]).some(function (k) { return state.content[vm.id][k]; }) ? '<button class="btn btn-q" type="button" data-act="restore-content">Originaltexte wiederherstellen</button>' : '') + '</form>';
+    var fields = '';
+    if (p.mode === 'prinzip') fields = '<p class="hint">Das Prinzip übernimmt Namen, Dateinamen und Aufgaben aus den Szenen dieser Situation.</p>';
+    else if (tool === 'outlook') fields = f('docName', 'Gemeinsame Datei', vm.story.doc.original) + f('subject', 'Betreff der Mail', LIB.stories[vm.id].mails[0].subject) + f('body', 'Text der Mail', orig.story.mails[0].body, true);
+    else if (sub === 'posts') fields = (vm.story ? f('docName', 'Gemeinsame Datei', vm.story.doc.original) : '') + orig.scene.posts.map(function (q, i) {
+        return q.canonical ? f('postTitle', 'Beitrag ' + (i + 1) + ': Betreff', q.title) + f('postText', 'Beitrag ' + (i + 1) + ': Text', orig.fill(q.text), true)
+          : f('posts.' + i + '.title', 'Beitrag ' + (i + 1) + ': Betreff', q.title) + f('posts.' + i + '.text', 'Beitrag ' + (i + 1) + ': Text', orig.fill(q.text), true);
+      }).join('');
+    else if (sub === 'files' || tool === 'sharepoint') fields = vm.story ? f('docName', 'Gemeinsame Datei', vm.story.doc.original) : '<p class="hint">Dateinamen dieser Situation sind kuratiert; anpassbar sind Namen der Personen.</p>';
+    else if (tool === 'chat' && orig.chat) fields = orig.chat.messages.map(function (m, i) { return f('chat.' + i, 'Nachricht ' + (i + 1) + ' (' + V.short(vm.person(m.by).name) + ')', m.text, true); }).join('');
+    else if (sub === 'tasks' || tool === 'planner' || (tool === 'todo' && !vm.personal)) fields = orig.scene.tasks.map(function (t, i) { return f('tasks.' + i, 'Aufgabe ' + (i + 1) + ' (' + V.short(vm.person(t.owner).name) + ')', t.title); }).join('');
+    else fields = '<p class="hint">In dieser Ansicht sind die Namen der Personen anpassbar; Inhalte stammen aus der kuratierten Situation.</p>';
+    var custom = state.content[vm.id] && customState(vm.id).some(function (x) { return x !== 'Namen'; });
+    return '<form class="names contentf" data-sid="' + vm.id + '" data-kind="content" aria-label="Inhalte anpassen"><h3>Inhalte: ' + esc(p.mode === 'prinzip' ? 'Prinzip' : screenLabel(sub)) + '</h3>' +
+      '<p class="hint">Leere Felder zeigen den Originaltext. Änderungen gelten in allen Ansichten dieser Situation.</p>' + fields +
+      (custom ? '<button class="btn btn-q" type="button" data-act="restore-content">Originaltexte wiederherstellen</button>' : '') + '</form>';
   }
+  function savePanel() {
+    return '<details class="savep"><summary>Anpassungen sichern</summary><p class="hint">Anpassungen bleiben in diesem Browser gespeichert. Als Datei könnt ihr sie weitergeben oder später wieder laden.</p>' +
+      '<p class="savebtns"><button class="btn" type="button" data-act="json-export">JSON herunterladen</button>' +
+      '<label class="btn">JSON importieren<input type="file" accept="application/json,.json" data-act="json-import" class="sr-only"></label>' +
+      '<button class="btn btn-q" type="button" data-act="reset-all">Alle Anpassungen zurücksetzen</button></p><p class="hint" id="json-status" role="status"></p></details>';
+  }
+  function flow(step, p, vm) {
+    var vid = vm.variant && vm.variant.id, pres = p.seq ? seqRoute(p.seq.id, p.step, true) : route(vm.id, vid, p.mode, p.mode === 'prinzip' ? p.sub || 'chat' : subOf(vm, p), true);
+    var items = [['Situation wählen', '#/'], ['Szene anpassen', p.seq ? seqRoute(p.seq.id, p.step) : route(vm.id, vid, p.mode, p.sub)], ['Bildausschnitt prüfen', pres], ['Exportieren', pres]];
+    return '<ol class="flow" aria-label="Arbeitsschritte">' + items.map(function (x, i) {
+      var n = i + 1, cls = n < step ? 'done' : n === step ? 'on' : '';
+      return '<li class="' + cls + '"><a href="' + x[1] + '"' + (n === step ? ' aria-current="step"' : '') + '><b>' + n + '</b>' + x[0] + '</a></li>';
+    }).join('') + '</ol>';
+  }
+
+  /* ---------- Sequences ---------- */
+  function seqById(id) { return (LIB.sequences || []).filter(function (s) { return s.id === id; })[0]; }
+  function seqRoute(id, n, present, comp) { return '#/' + (present ? 'ap' : 'a') + '/' + id + '/' + n + (comp ? '/' + comp : ''); }
+  function stepParams(seq, n, comp) {
+    var st = seq.steps[n - 1];
+    return { sid: seq.situation, variant: seq.variant, mode: st.mode, sub: st.sub, comp: comp, seq: seq, step: n };
+  }
+  function seqBar(p, present) {
+    var seq = p.seq, n = p.step;
+    return '<nav class="seqbar' + (present ? ' seqbar-dark' : '') + '" aria-label="Abfolge: ' + esc(seq.title) + '"><span class="seq-t">Abfolge · ' + esc(seq.title) + '</span><ol>' + seq.steps.map(function (s, i) {
+      return '<li><a href="' + seqRoute(seq.id, i + 1, present, present ? p.comp : null) + '"' + (i + 1 === n ? ' aria-current="step"' : '') + '><b>' + (i + 1) + '</b>' + esc(s.label) + '</a></li>';
+    }).join('') + '</ol>' +
+      '<span class="seq-nav">' + (n > 1 ? '<a class="btn' + (present ? ' btn-dark' : '') + '" href="' + seqRoute(seq.id, n - 1, present, present ? p.comp : null) + '" data-act="seq-prev">← Zurück</a>' : '') +
+      (n < seq.steps.length ? '<a class="btn btn-p" href="' + seqRoute(seq.id, n + 1, present, present ? p.comp : null) + '" data-act="seq-next">Weiter →</a>' : '') + '</span></nav>';
+  }
+  function sequences() {
+    return crumbs([['Bibliothek', '#/'], ['Abfolgen']]) +
+      '<section class="block"><div class="block-h"><h1>Abfolgen für Schulungen</h1><p class="lead">Drei bis fünf Ansichten in Erzählreihenfolge, mit Lernziel, Prinzip und Grenze. Jede Ansicht lässt sich anpassen und als PNG exportieren, auch die ganze Abfolge auf einmal.</p></div>' +
+      '<ul class="seqlist">' + LIB.sequences.map(function (s) {
+        var vm = vmFor(s.situation, s.variant);
+        return '<li><a href="' + seqRoute(s.id, 1) + '"><span class="sit-top">' + collBadge(vm.collection) + (s.ai ? '<span class="badge b-plan">KI-Simulation</span>' : '') + '<span class="wl">' + s.steps.length + ' Ansichten</span></span>' +
+          '<strong>' + esc(s.title) + '</strong><span class="sit-w">' + esc(vm.title) + ' · ' + esc(vm.world.name) + '</span><span class="sit-f">' + esc(s.objective) + '</span>' +
+          '<span class="seq-steps">' + s.steps.map(function (x, i) { return '<i>' + (i + 1) + ' ' + esc(x.label) + '</i>'; }).join('') + '</span></a></li>';
+      }).join('') + '</ul></section>';
+  }
+
+  /* ---------- Workspace ---------- */
   function situation(p) {
     var vm = vmFor(p.sid, p.variant);
     if (!vm) return notFound();
     var isP = p.mode === 'prinzip';
     var pid = isP ? (principleMeta(p.sub) ? p.sub : 'chat') : null;
     var vid = vm.variant && vm.variant.id;
-    var tool = isP ? null : A.toolOf(p.sub);
-    var teamsTab = !isP && tool === 'teams' && /^(posts|files|tasks)$/.test(p.sub || '') ? p.sub : 'posts';
-    var toolNav = isP || vm.personal ? '' : '<nav class="toolpick" aria-label="Tool wählen">' + TOOLS.map(function (t) {
-      var ok = t[0] === 'teams' || (vm.tools || []).indexOf(t[0]) >= 0, on = t[0] === tool;
-      if (t[0] === 'onedrive') return '<span class="tp-off" title="Geplant">OneDrive <small>geplant</small></span>';
-      return ok ? '<a href="' + route(p.sid, vid, 'szene', t[0] === 'teams' ? teamsTab : t[2]) + '"' + (on ? ' aria-current="page"' : '') + '>' + t[1] + '</a>' : '<span class="tp-off" title="Für diese Situation nicht ausgearbeitet">' + t[1] + ' <small>nicht verfügbar</small></span>';
-    }).join('') + '</nav>';
-    var presentHref = route(p.sid, vid, p.mode, isP ? pid : p.sub, true);
+    var sub = isP ? null : subOf(vm, p), tool = isP ? null : A.toolOf(sub);
+    var presentHref = p.seq ? seqRoute(p.seq.id, p.step, true) : route(p.sid, vid, p.mode, isP ? pid : sub, true);
+    var cs = customState(vm.id);
     return crumbs([['Bibliothek', '#/'], [vm.world.name, '#/personas/' + vm.world.id], [vm.title]]) +
-      '<section class="sp"><div class="sp-h"><div>' + collBadge(vm.collection) + '<h1>' + esc(vm.title) + '</h1><p class="lead">' + esc(vm.scenario.trigger) + '</p></div>' +
-        '<a class="btn btn-p" href="' + presentHref + '">' + ic('i-laptop') + 'Präsentieren / PNG exportieren</a></div>' +
-      '<div class="ctxbar" aria-label="Kontext"><span><small>Situation</small>' + esc(vm.title) + '</span><span><small>Tool</small>' + (isP ? '–' : vm.personal ? 'Persönliche Ablage' : esc((LIB.tools.filter(function (t) { return t.id === tool; })[0] || {}).label)) + '</span><span><small>Darstellung</small>' + (isP ? 'Prinzip' : 'Szene') + '</span></div>' +
-      (vm.variants.length > 1 ? '<fieldset class="variants"><legend>Aufbau</legend>' + vm.variants.map(function (v) {
-        return '<a class="var' + (v.id === vid ? ' on' : '') + '" href="' + route(p.sid, v.id, p.mode, p.sub) + '"' + (v.id === vid ? ' aria-current="true"' : '') + '><strong>' + esc(v.label) + (v === vm.variants[0] ? ' <small>unsere Wahl</small>' : ' <small>Alternative</small>') + '</strong><span>' + esc(vm.fill(v.why)) + '</span></a>';
-      }).join('') + '</fieldset>' : '') +
+      flow(2, p, vm) +
+      (p.seq ? seqBar(p, false) + '<p class="seq-obj"><strong>Lernziel:</strong> ' + esc(p.seq.objective) + ' <strong>Grenze:</strong> ' + esc(p.seq.boundary) + '</p>' : '') +
+      '<section class="sp sp-ws"><div class="sp-h"><div>' + collBadge(vm.collection) + '<h1>' + esc(vm.title) + '</h1><p class="lead">' + esc(vm.scenario.trigger) + '</p></div>' +
+        '<a class="btn btn-p" href="' + presentHref + '">' + ic('i-laptop') + 'Bildausschnitt prüfen und exportieren</a></div>' +
+      '<div class="ctxbar" aria-label="Kontext"><span><small>Situation</small>' + esc(vm.title) + '</span><span><small>Ansicht</small>' + (isP ? 'Prinzip: ' + esc(principleMeta(pid).title) : esc(screenLabel(sub))) + '</span>' +
+        '<span class="cstate' + (cs.length ? ' on' : '') + '"><small>Anpassungen</small>' + (cs.length ? 'angepasst: ' + cs.join(', ') : 'Original') + '</span></div>' +
+      (vm.variants.length > 1 ? '<fieldset class="variants variants-c"><legend>Aufbau</legend>' + vm.variants.map(function (v) {
+        return '<a class="var' + (v.id === vid ? ' on' : '') + '" href="' + (p.seq ? route(p.sid, v.id, p.mode, p.sub) : route(p.sid, v.id, p.mode, p.sub)) + '"' + (v.id === vid ? ' aria-current="true"' : '') + ' title="' + esc(vm.fill(v.why)) + '"><strong>' + esc(v.label) + (v === vm.variants[0] ? ' <small>unsere Wahl</small>' : ' <small>Alternative</small>') + '</strong></a>';
+      }).join('') + '<p class="var-why">' + esc(vm.fill(vm.variant.why)) + '</p></fieldset>' : '') +
       '<div class="sp-bar"><nav class="modes" aria-label="Darstellung">' +
-          '<a href="' + route(p.sid, vid, 'szene', tool && tool !== 'teams' ? tool : null) + '"' + (!isP ? ' aria-current="page"' : '') + '>Szene</a>' +
+          '<a href="' + route(p.sid, vid, 'szene', tool && tool !== 'teams' ? sub : null) + '"' + (!isP ? ' aria-current="page"' : '') + '>Szene</a>' +
           '<a href="' + route(p.sid, vid, 'prinzip', 'chat') + '"' + (isP ? ' aria-current="page"' : '') + '>Prinzip</a></nav>' +
-        toolNav +
         (isP ? '<nav class="prs" aria-label="Prinzip wählen">' + LIB.principles.map(function (x) {
           return '<a href="' + route(p.sid, vid, 'prinzip', x.id) + '"' + (x.id === pid ? ' aria-current="page"' : '') + '>' + esc(x.title) + '</a>';
         }).join('') + '</nav>' : '') +
         '<label class="tgl"><input type="checkbox" data-act="annot"' + (state.annot ? ' checked' : '') + '> Hinweise</label></div>' +
+      (isP ? '' : screenPicker(vm, p)) +
       '<div class="sp-grid"><div class="sp-vis" id="visual">' + visualHtml(vm, p, pid) + '</div>' +
-        '<aside class="sp-side"><details open><summary>Namen anpassen</summary>' + nameForm(vm) + '</details>' +
-        (vm.story ? '<details' + (state.content[vm.id] ? ' open' : '') + '><summary>Inhalte anpassen</summary>' + contentForm(vm) + '</details>' : '') +
+        '<aside class="sp-side" aria-label="Anpassen"><p class="side-h">Anpassen</p>' +
+        '<details open><summary>Inhalte dieser Ansicht</summary>' + contentForm(vm, p) + '</details>' +
+        '<details' + (hasCustom(vm.id) ? ' open' : '') + '><summary>Namen</summary>' + nameForm(vm) + '</details>' +
+        savePanel() +
         '<div class="sp-ctx"><h3>Kontext</h3><p>' + esc(vm.scenario.description) + '</p>' +
-          (isP ? '<p><a href="' + route(p.sid, vid, 'szene') + '">Zur Szene dieser Situation</a></p>' : '<p><a href="' + route(p.sid, vid, 'prinzip', tool === 'teams' ? 'chat' : 'doc') + '">Als Prinzip erklären</a></p>') +
           (vm.legacyHref ? '<p><a href="' + vm.legacyHref + '">Details im Legacy-Atlas</a></p>' : '<p class="hint">Fiktive Synthese, noch nicht durch Recherche validiert.</p>') +
-          (!vm.complete ? '<p class="hint">Diese Szene ist aus dem bestehenden Atlas übernommen und noch nicht voll ausgearbeitet.</p>' : '') +
+          ((LIB.sequences || []).filter(function (s) { return s.situation === vm.id; }).map(function (s) { return '<p><a href="' + seqRoute(s.id, 1) + '">Abfolge: ' + esc(s.title) + '</a></p>'; }).join('')) +
         '</div></aside></div></section>';
   }
 
@@ -303,29 +402,37 @@
   var lastNonPresent = '#/';
   function compKinds(vm, p) {
     if (p.mode === 'prinzip') return [['prinzip', 'Prinzip-Folie']];
-    if (vm.personal) return [['app', 'Szene']];
-    var k = [['app', 'Nur Anwendung'], ['folie', 'Folie mit Hinweisen']];
+    var k = [['app', 'Nur Anwendung'], ['folie', 'Folie mit Hinweisen'], ['fokus', 'Fokus-Ausschnitt']];
     if (vm.story) k.push(['vergleich', 'Vorher / Nachher']);
     return k;
+  }
+  function compose(vm, p, kind) {
+    var isP = p.mode === 'prinzip', pid = isP ? (principleMeta(p.sub) ? p.sub : 'chat') : null;
+    return X.compose(vm, { mode: p.mode, sub: isP ? pid : subOf(vm, p), annot: state.annot }, kind, isP ? principleMeta(pid) : null);
+  }
+  function kindFor(vm, p) {
+    var kinds = compKinds(vm, p);
+    return p.mode === 'prinzip' ? 'prinzip' : (kinds.some(function (k) { return k[0] === p.comp; }) ? p.comp : (state.annot ? 'folie' : 'app'));
   }
   function present(p) {
     var vm = vmFor(p.sid, p.variant);
     if (!vm) return notFound();
     var isP = p.mode === 'prinzip', pid = isP ? (principleMeta(p.sub) ? p.sub : 'chat') : null;
-    var kinds = compKinds(vm, p);
-    var kind = isP ? 'prinzip' : (kinds.some(function (k) { return k[0] === p.comp; }) ? p.comp : (state.annot && !vm.personal ? 'folie' : 'app'));
-    var slide = X.compose(vm, { mode: p.mode, sub: isP ? pid : p.sub, annot: state.annot }, kind, isP ? principleMeta(pid) : null) ||
-      '<div class="slide" style="width:1920px;height:1080px">' + unavailable(vm, A.toolOf(p.sub)) + '</div>';
-    var back = route(p.sid, vm.variant && vm.variant.id, p.mode, p.sub);
-    var base = route(p.sid, vm.variant && vm.variant.id, p.mode, isP ? pid : (p.sub || (vm.personal ? '-' : 'posts')), true);
+    var kinds = compKinds(vm, p), kind = kindFor(vm, p);
+    var slide = compose(vm, p, kind) || '<div class="slide" style="width:1920px;height:1080px">' + unavailable(vm, A.toolOf(subOf(vm, p))) + '</div>';
+    var back = p.seq ? seqRoute(p.seq.id, p.step) : route(p.sid, vm.variant && vm.variant.id, p.mode, p.sub);
+    var base = function (k) { return p.seq ? seqRoute(p.seq.id, p.step, true, k) : route(p.sid, vm.variant && vm.variant.id, p.mode, isP ? pid : subOf(vm, p), true) + '/' + k; };
     return '<div class="stage-wrap" role="dialog" aria-modal="true" aria-label="Präsentation: ' + esc(vm.title) + '">' +
-      '<div class="stage-ctl"><a class="btn btn-dark" href="' + back + '" data-act="exit">' + ic('i-back') + 'Beenden <kbd>Esc</kbd></a>' +
+      '<div class="stage-ctl"><a class="btn btn-dark" href="' + back + '" data-act="exit">' + ic('i-back') + 'Zurück zum Anpassen <kbd>Esc</kbd></a>' +
         (kinds.length > 1 ? '<nav class="comps" aria-label="Ausgabe">' + kinds.map(function (k) {
-          return '<a href="' + base + '/' + k[0] + '"' + (k[0] === kind ? ' aria-current="true"' : '') + '>' + k[1] + '</a>';
+          return '<a href="' + base(k[0]) + '"' + (k[0] === kind ? ' aria-current="true"' : '') + '>' + k[1] + '</a>';
         }).join('') + '</nav>' : '') +
         '<label class="tgl tgl-dark"><input type="checkbox" data-act="annot"' + (state.annot ? ' checked' : '') + '> Hinweise <kbd>H</kbd></label>' +
-        '<button class="btn btn-p" type="button" data-act="png" data-kind="' + kind + '">' + ic('i-copy') + 'PNG herunterladen <small>1920 × 1080</small></button>' +
+        '<label class="tgl tgl-dark"><input type="checkbox" data-act="hires"' + (state.hires ? ' checked' : '') + '> 2× (3840 × 2160)</label>' +
+        '<button class="btn btn-p" type="button" data-act="png" data-kind="' + kind + '">' + ic('i-copy') + 'PNG herunterladen</button>' +
+        (p.seq ? '<button class="btn btn-dark" type="button" data-act="png-seq">Ganze Abfolge (' + p.seq.steps.length + ' PNG)</button>' : '') +
         '<span class="stage-note" id="png-status" role="status"></span></div>' +
+      (p.seq ? seqBar(p, true) : '') +
       '<div class="stage" id="visual"><div class="stage-in stage-slide" style="width:1920px;height:1080px">' + slide + '</div></div></div>';
   }
 
@@ -336,19 +443,27 @@
     var h = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
     return h;
   }
+  /* Route -> workspace params; sequences resolve to the same params plus their context. */
+  function routeParams(h) {
+    if (h[0] === 's' || h[0] === 'p') return { sid: h[1], variant: h[2] === '-' ? null : h[2], mode: h[3] === 'prinzip' ? 'prinzip' : 'szene', sub: h[4] === '-' ? null : h[4], comp: h[5], present: h[0] === 'p' };
+    if (h[0] === 'a' || h[0] === 'ap') {
+      var seq = seqById(h[1]); if (!seq) return null;
+      var n = Math.max(1, Math.min(seq.steps.length, parseInt(h[2], 10) || 1));
+      var p = stepParams(seq, n, h[3]); p.present = h[0] === 'ap'; return p;
+    }
+    return null;
+  }
   function render() {
-    var h = parse(), html, presenting = false, p;
+    var h = parse(), html, presenting = false, p = routeParams(h);
     document.body.classList.remove('presenting');
     if (!h.length) html = landing();
     else if (h[0] === 'personas') html = personas(h[1]);
     else if (h[0] === 'usecases') html = usecases(h[1]);
     else if (h[0] === 'tools') html = tools(h[1]);
+    else if (h[0] === 'abfolgen') html = sequences();
     else if (h[0] === 'konfigurator') html = configurator(h[1] || '1');
-    else if (h[0] === 's' || h[0] === 'p') {
-      p = { sid: h[1], variant: h[2] === '-' ? null : h[2], mode: h[3] === 'prinzip' ? 'prinzip' : 'szene', sub: h[4] === '-' ? null : h[4], comp: h[5] };
-      presenting = h[0] === 'p';
-      html = presenting ? present(p) : situation(p);
-    } else html = notFound();
+    else if (p) { presenting = p.present; html = presenting ? present(p) : situation(p); }
+    else html = notFound();
     if (presenting) document.body.classList.add('presenting'); else lastNonPresent = location.hash || '#/';
     app.innerHTML = html;
     document.title = (presenting ? 'Präsentation · ' : '') + (document.querySelector('h1') ? document.querySelector('h1').textContent + ' · ' : '') + 'msteams-personas';
@@ -358,63 +473,124 @@
     render.keepFocus = false;
   }
 
-  /* Re-render only the visual (keeps form focus while typing names). */
+  /* Re-render only the visual (keeps form focus while typing). */
   function rerenderVisual() {
-    var h = parse(), vis = document.getElementById('visual'), prev = document.getElementById('preview');
+    var h = parse(), vis = document.getElementById('visual'), prev = document.getElementById('preview'), p = routeParams(h);
     if (prev) {
       var r = C.suggest(state.draft.answers);
       prev.innerHTML = sceneHtml(vmFor(r.best.situation, r.best.variant));
       fitFrames();
     }
-    if (vis && (h[0] === 's' || h[0] === 'p')) {
+    if (vis && p && !p.present) {
       var tmp = document.createElement('div');
       var keep = render.keepFocus;
       render.keepFocus = true;
-      tmp.innerHTML = situation({ sid: h[1], variant: h[2] === '-' ? null : h[2], mode: h[3] === 'prinzip' ? 'prinzip' : 'szene', sub: h[4] });
+      tmp.innerHTML = situation(p);
       var nv = tmp.querySelector('#visual');
       if (nv) vis.innerHTML = nv.innerHTML;
+      var cs = tmp.querySelector('.cstate'), ocs = app.querySelector('.cstate');
+      if (cs && ocs) ocs.outerHTML = cs.outerHTML;
       fitFrames();
       render.keepFocus = keep;
     }
   }
 
-  /* App frames: the application renders at 1600 x 900 and is scaled to its container. */
+  /* App frames: the application renders at its design size and is scaled to its container. */
   function fitFrames() {
     Array.prototype.forEach.call(app.querySelectorAll('.appframe'), function (f) {
       var inner = f.querySelector('.m3'); if (!inner) return;
       inner.style.transform = 'scale(' + (f.clientWidth / A.W) + ')';
     });
     var vis = document.getElementById('visual'), warn = vis && vis.querySelector('.fit-warn');
-    if (warn) { var iss = X.fitIssues(vis.querySelector('.appframe')); warn.hidden = !iss.length; warn.textContent = iss.length ? 'Passt nicht vollständig in die Ansicht: ' + iss.join(', ') + '. Texte kürzen oder einen anderen Reiter wählen.' : ''; }
+    if (warn) { var iss = X.fitIssues(vis.querySelector('.appframe')); warn.hidden = !iss.length; warn.textContent = iss.length ? 'Passt nicht vollständig in die Ansicht: ' + iss.join(', ') + '. Texte kürzen oder den Fokus-Ausschnitt wählen.' : ''; }
   }
   /* Stage: the 1920 x 1080 slide composition, scaled to fit the window. */
   function fitStage() {
     var st = app.querySelector('.stage'), inner = app.querySelector('.stage-in');
     if (!st || !inner) return;
-    var W = X.W, H = X.H, ctl = app.querySelector('.stage-ctl');
-    var availW = window.innerWidth - 24, availH = window.innerHeight - (ctl ? ctl.offsetHeight : 0) - 36;
-    var s = Math.min(availW / W, availH / H);
+    var W = X.W, H = X.H, ctl = app.querySelector('.stage-ctl'), sb = app.querySelector('.seqbar');
+    var availW = window.innerWidth - 24, availH = window.innerHeight - (ctl ? ctl.offsetHeight : 0) - (sb ? sb.offsetHeight + 10 : 0) - 36;
+    var s = Math.max(0.05, Math.min(availW / W, availH / H));
     inner.style.transform = 'scale(' + s + ')';
     st.style.width = W * s + 'px'; st.style.height = H * s + 'px';
     var sl = inner.querySelector('.slide'); if (sl) X.densify(sl);
     var issues = X.fitIssues(inner), note = document.getElementById('png-status');
     if (note && issues.length) note.textContent = 'Hinweis: ' + issues.join(', ');
   }
+  function renderSlide(slide, name) {
+    var scale = state.hires ? 2 : 1;
+    return (document.fonts ? document.fonts.ready : Promise.resolve()).then(function () { return X.toPNG(slide, scale); }).then(function (blob) {
+      var nm = scale === 2 ? name.replace(/\.png$/, '@2x.png') : name;
+      X.download(blob, nm);
+      return { name: nm, blob: blob, size: blob.size, scale: scale };
+    });
+  }
   function exportPng() {
-    var h = parse(), slide = app.querySelector('.stage-in .slide'), status = document.getElementById('png-status');
-    if (!slide) return Promise.resolve(null);
-    var vm = vmFor(h[1], h[2] === '-' ? null : h[2]), btn = app.querySelector('[data-act="png"]');
-    var p = { mode: h[3] === 'prinzip' ? 'prinzip' : 'szene', sub: h[4] };
-    var name = X.fileName(vm, p, btn.getAttribute('data-kind'));
+    var p = routeParams(parse()), slide = app.querySelector('.stage-in .slide'), status = document.getElementById('png-status');
+    if (!slide || !p) return Promise.resolve(null);
+    var vm = vmFor(p.sid, p.variant), btn = app.querySelector('[data-act="png"]');
+    var name = (p.seq ? ('0' + p.step).slice(-2) + '-' : '') + X.fileName(vm, { mode: p.mode, sub: p.mode === 'prinzip' ? p.sub : subOf(vm, p) }, btn.getAttribute('data-kind'));
     if (status) status.textContent = 'PNG wird erzeugt …';
-    return (document.fonts ? document.fonts.ready : Promise.resolve()).then(function () { return X.toPNG(slide); }).then(function (blob) {
-      window.__lastPng = { name: name, blob: blob, size: blob.size };
-      X.download(blob, name);
-      if (status) status.textContent = 'Gespeichert: ' + name + ' (' + Math.round(blob.size / 1024) + ' KB)';
-      announce('PNG gespeichert'); return blob;
+    return renderSlide(slide, name).then(function (r) {
+      window.__lastPng = r;
+      if (status) status.textContent = 'Gespeichert: ' + r.name + ' (' + Math.round(r.size / 1024) + ' KB)';
+      announce('PNG gespeichert'); return r.blob;
     }).catch(function (e) { if (status) status.textContent = 'Export fehlgeschlagen: ' + e.message; });
   }
+  /* Whole sequence: each step rendered offscreen with the current output choice, then saved. */
+  function exportSequence() {
+    var p = routeParams(parse()); if (!p || !p.seq) return Promise.resolve([]);
+    var status = document.getElementById('png-status'), host = document.createElement('div'), out = [];
+    host.className = 'export-host'; document.body.appendChild(host);
+    var chain = Promise.resolve();
+    p.seq.steps.forEach(function (st, i) {
+      chain = chain.then(function () {
+        var sp = stepParams(p.seq, i + 1, p.comp), vm = vmFor(sp.sid, sp.variant), kind = kindFor(vm, sp);
+        host.innerHTML = compose(vm, sp, kind) || '';
+        var sl = host.querySelector('.slide'); if (!sl) return;
+        X.densify(sl);
+        if (status) status.textContent = 'Abfolge: PNG ' + (i + 1) + ' von ' + p.seq.steps.length + ' …';
+        return renderSlide(sl, ('0' + (i + 1)).slice(-2) + '-' + X.fileName(vm, { mode: sp.mode, sub: sp.sub }, kind)).then(function (r) { out.push({ name: r.name, size: r.size, kind: kind }); });
+      });
+    });
+    return chain.then(function () {
+      host.remove(); window.__lastSeq = out;
+      if (status) status.textContent = out.length + ' PNG gespeichert (' + p.seq.title + ')';
+      announce('Abfolge exportiert'); return out;
+    });
+  }
   window.__exportPng = exportPng;
+  window.__exportSeq = exportSequence;
+
+  /* ---------- JSON export / import of customisations (versioned, local only) ---------- */
+  var SCHEMA = 'msteams-personas.customisations';
+  function exportJson() {
+    var data = { schema: SCHEMA, version: 1, exported: new Date().toISOString(), names: state.names, content: state.content };
+    var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    X.download(blob, 'msteams-personas-anpassungen.json');
+    window.__lastJson = data;
+    return data;
+  }
+  function validText(v, depth) {
+    if (typeof v === 'string') return v.length <= 4000;
+    if (!v || typeof v !== 'object' || Array.isArray(v) || depth > 4) return false;
+    return Object.keys(v).every(function (k) { return k.length <= 80 && validText(v[k], depth + 1); });
+  }
+  function importJson(text) {
+    var d;
+    try { d = JSON.parse(text); } catch (e) { return 'Keine gültige JSON-Datei.'; }
+    if (!d || d.schema !== SCHEMA) return 'Unbekanntes Format: erwartet «' + SCHEMA + '».';
+    if (d.version !== 1) return 'Version ' + d.version + ' wird nicht unterstützt (erwartet 1).';
+    var known = LIB.situations.map(function (s) { return s.id; });
+    var names = d.names || {}, content = d.content || {};
+    if (!validText(names, 0) || !validText(content, 0)) return 'Die Datei enthält ungültige Werte.';
+    var keys = Object.keys(names).concat(Object.keys(content));
+    if (keys.some(function (k) { return known.indexOf(k) < 0; })) return 'Die Datei verweist auf unbekannte Situationen.';
+    state.names = names; state.content = content; save();
+    return null;
+  }
+  window.__importJson = function (t) { var e = importJson(t); if (!e) render(); return e; };
+
 
   /* ---------- Events ---------- */
   app.addEventListener('submit', function (e) {
@@ -430,6 +606,16 @@
     var t = e.target;
     if (t.matches('#cfg-form input[type=radio]')) { state.draft.answers[t.name] = t.value; state.draft.touched = true; save(); }
     if (t.matches('[data-act="annot"]')) { state.annot = t.checked; save(); rerender(); announce(state.annot ? 'Hinweise eingeblendet' : 'Hinweise ausgeblendet'); }
+    if (t.matches('[data-act="hires"]')) { state.hires = t.checked; save(); announce(state.hires ? 'Export in doppelter Auflösung' : 'Export in 1920 × 1080'); }
+    if (t.matches('[data-act="json-import"]') && t.files && t.files[0]) {
+      var rd = new FileReader();
+      rd.onload = function () {
+        var err = importJson(String(rd.result));
+        if (err) { var st = document.getElementById('json-status'); if (st) st.textContent = err; announce(err); return; }
+        render.keepFocus = true; render(); var st2 = document.getElementById('json-status'); if (st2) st2.textContent = 'Anpassungen importiert.'; announce('Anpassungen importiert');
+      };
+      rd.readAsText(t.files[0]);
+    }
   });
   app.addEventListener('input', function (e) {
     var f = e.target.closest('form.names');
@@ -437,7 +623,7 @@
     var sid = f.getAttribute('data-sid');
     if (f.getAttribute('data-kind') === 'content') {
       var c = state.content[sid] = state.content[sid] || {};
-      c[e.target.name] = e.target.value;
+      setPath(c, e.target.name, e.target.value);
       save(); rerenderVisual(); return;
     }
     var n = state.names[sid] = state.names[sid] || { team: '', people: {} };
@@ -450,7 +636,8 @@
     if (!b) return;
     if (b.hasAttribute('data-tab')) {
       var h = parse();
-      if (h[0] === 's' || h[0] === 'p') { location.hash = route(h[1], h[2] === '-' ? null : h[2], 'szene', b.getAttribute('data-tab'), h[0] === 'p'); render.keepFocus = true; pendingFocusTab = b.getAttribute('data-tab'); }
+      var tp = routeParams(h);
+      if (tp) { location.hash = route(tp.sid, tp.variant, 'szene', b.getAttribute('data-tab'), tp.present); render.keepFocus = true; pendingFocusTab = b.getAttribute('data-tab'); }
       return;
     }
     var act = b.getAttribute('data-act');
@@ -462,6 +649,12 @@
       location.hash = '#/konfigurator/1'; announce('Entwurf zurückgesetzt'); render();
     }
     if (act === 'png') { exportPng(); return; }
+    if (act === 'png-seq') { exportSequence(); return; }
+    if (act === 'json-export') { exportJson(); var js = document.getElementById('json-status'); if (js) js.textContent = 'Datei «msteams-personas-anpassungen.json» gespeichert.'; return; }
+    if (act === 'reset-all') {
+      if (!confirm('Alle gespeicherten Anpassungen (Namen und Texte aller Situationen) in diesem Browser löschen?')) return;
+      state.names = {}; state.content = {}; save(); render.keepFocus = true; render(); announce('Alle Anpassungen zurückgesetzt'); return;
+    }
     if (act === 'restore-content') {
       var cs = b.closest('form').getAttribute('data-sid');
       if (!confirm('Angepasste Texte verwerfen und Originaltexte anzeigen?')) return;
@@ -487,6 +680,11 @@
   document.addEventListener('keydown', function (e) {
     if (!document.body.classList.contains('presenting')) return;
     if (e.key === 'Escape') { var x = app.querySelector('[data-act="exit"]'); if (x) location.hash = x.getAttribute('href'); }
+    var tag = (e.target && e.target.tagName) || '';
+    if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft') && !/INPUT|TEXTAREA|SELECT/.test(tag)) {
+      var sn = app.querySelector(e.key === 'ArrowRight' ? '[data-act="seq-next"]' : '[data-act="seq-prev"]');
+      if (sn) { location.hash = sn.getAttribute('href'); e.preventDefault(); }
+    }
     if ((e.key === 'h' || e.key === 'H') && !e.ctrlKey && !e.metaKey) { state.annot = !state.annot; save(); rerender(); announce(state.annot ? 'Hinweise eingeblendet' : 'Hinweise ausgeblendet'); }
   });
   function rerender() { render.keepFocus = true; var a = document.activeElement && document.activeElement.getAttribute('data-act'); render(); if (a) { var el = app.querySelector('[data-act="' + a + '"]'); if (el) el.focus(); } }

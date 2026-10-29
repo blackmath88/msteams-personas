@@ -4,7 +4,7 @@
 import { launch } from './cdp.mjs';
 import { mkdirSync } from 'node:fs';
 
-const BASE = process.argv[2] || 'http://127.0.0.1:8765/index.html';
+const BASE = process.argv[2] || "http://127.0.0.1:8766/index.html";
 const OUT = new URL('../docs/screenshots/', import.meta.url).pathname;
 mkdirSync(OUT, { recursive: true });
 const results = [];

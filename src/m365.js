@@ -65,7 +65,17 @@
     waffle: 'M4 4h2v2H4zM9 4h2v2H9zM14 4h2v2h-2zM4 9h2v2H4zM9 9h2v2H9zM14 9h2v2h-2zM4 14h2v2H4zM9 14h2v2H9zM14 14h2v2h-2z',
     gear: 'M10 7.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM10 3v2M10 15v2M3 10h2M15 10h2M5 5l1.4 1.4M13.6 13.6L15 15M5 15l1.4-1.4M13.6 6.4L15 5',
     bell: 'M10 3a4.5 4.5 0 0 0-4.5 4.5v3.2L4 13.5h12l-1.5-2.8V7.5A4.5 4.5 0 0 0 10 3zM8 15.5a2 2 0 0 0 4 0',
-    window: 'M4 10h12', max: 'M5 5h10v10H5z', close: 'M5 5l10 10M15 5L5 15'
+    window: 'M4 10h12', max: 'M5 5h10v10H5z', close: 'M5 5l10 10M15 5L5 15',
+    lock: 'M6 9V7a4 4 0 0 1 8 0v2M5 9h10v8H5z',
+    sun: 'M10 6.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zM10 2.5v1.5M10 16v1.5M2.5 10H4M16 10h1.5M4.7 4.7l1 1M14.3 14.3l1 1M4.7 15.3l1-1M14.3 5.7l1-1',
+    flag: 'M5 17V3.5M5 4h9l-2 3.5 2 3.5H5',
+    sparkle: 'M10 2.5l1.6 4.4 4.4 1.6-4.4 1.6L10 14.5l-1.6-4.4L4 8.5l4.4-1.6zM15.5 13l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z',
+    listcheck: 'M3.5 5.5l1.5 1.5 2.5-2.5M3.5 11.5l1.5 1.5 2.5-2.5M10 6h6.5M10 12h6.5M10 16.5h6.5',
+    board: 'M3.5 4h4v12h-4zM8.5 4h4v8h-4zM13.5 4h3v10h-3z',
+    clock: 'M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM10 6v4l3 2',
+    comment: 'M4 4.5h12v8.5H9l-4 3v-3H4z',
+    attach: 'M14 9.5l-4.6 4.6a3 3 0 0 1-4.2-4.2L10.4 4.7a2 2 0 0 1 2.8 2.8L8.3 12.4a1 1 0 0 1-1.4-1.4L11 7',
+    x: 'M6 6l8 8M14 6l-8 8'
   };
   function fi(n, cls) {
     return '<svg class="fi' + (cls ? ' ' + cls : '') + '" viewBox="0 0 20 20" aria-hidden="true"><path d="' + P[n] + '" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -99,7 +109,7 @@
     var members = sc.members.map(vm.person);
     /* Member pane only when the teaching point is about who belongs (guests/externals). */
     var showMembers = members.some(function (p) { return p.external; });
-    var rail = [['activity', 'Aktivität'], ['chat', 'Chat'], ['teams', 'Teams', 1], ['calendar', 'Kalender'], ['calls', 'Anrufe'], ['onedrive', 'OneDrive']];
+    var rail = teamsRail('teams');
     var body = tab === 'files' ? teamsFiles(vm, o) : tab === 'tasks' ? teamsTasks(vm, o) : teamsPosts(vm, o);
     var tile = '<span class="t-tile t-tile-' + (vm.world.id.length % 5) + '" aria-hidden="true">' + esc(initials(vm.team)) + '</span>';
     return frame('m3-teams' + (o.annot ? ' annot' : ''), 'Microsoft Teams, nachgebildet: ' + vm.team + ', Kanal ' + sc.active,
@@ -135,6 +145,18 @@
           }).join('') + '</ul></aside>' : '') +
         '</div>' +
       '</section>');
+  }
+
+  function teamsRail(on) {
+    return [['activity', 'Aktivität'], ['chat', 'Chat'], ['teams', 'Teams'], ['calendar', 'Kalender'], ['calls', 'Anrufe'], ['onedrive', 'OneDrive']].map(function (r) { return [r[0], r[1], r[0] === on ? 1 : 0]; });
+  }
+  /* Shared Teams chrome (title bar + rail) for chat and meeting screens. */
+  function teamsChrome(me, on) {
+    return '<div class="t-title"><span class="t-nav">' + fi('back') + fi('fwd') + '</span><span class="t-search">' + fi('search') + '<span>Suchen</span></span>' +
+      '<span class="t-acct">' + fi('more') + '<span class="t-me">' + avatar(me, 28) + '<i class="t-pres"></i></span></span></div>' +
+      '<nav class="t-rail" aria-hidden="true">' + teamsRail(on).map(function (r) {
+        return '<span class="t-ri' + (r[2] ? ' on' : '') + '">' + fi(r[0]) + '<small>' + r[1] + '</small></span>';
+      }).join('') + '<span class="t-ri">' + fi('more') + '</span><span class="t-ri t-ri-b">' + fi('apps') + '<small>Apps</small></span></nav>';
   }
 
   function teamsPosts(vm, o) {
@@ -277,18 +299,23 @@
   }
 
   var APPS = { teams: teams, outlook: outlook, explorer: explorer, sharepoint: sharepoint };
-  /* Tool for a scene sub-route: old Teams tab routes stay valid. */
+  var NOTES = {};
+  /* Tool for a scene sub-route: the old Teams tab routes (posts/files/tasks) stay valid. */
   function toolOf(sub) { return APPS[sub] && sub !== 'teams' ? sub : 'teams'; }
+  function available(vm, tool) { return (vm.tools || []).indexOf(tool) >= 0; }
   function app(vm, sub, o) {
     o = o || {};
     var tool = toolOf(sub);
-    if (tool !== 'teams' && !(vm.tools || []).some(function (t) { return t === tool; })) return null;
+    if (!available(vm, tool)) return null;
     return tool === 'teams' ? teams(vm, Object.assign({}, o, { tab: sub })) : APPS[tool](vm, o);
   }
+  /* Further renderers (src/m365-more.js) register here. */
+  function register(id, fn, notesFn) { APPS[id] = fn; if (notesFn) NOTES[id] = notesFn; }
 
   /* Teaching notes per tool, shown outside the application (slide column / workspace). */
   function notes(vm, sub) {
     var tool = toolOf(sub), st = vm.story;
+    if (NOTES[tool]) return NOTES[tool](vm);
     if (tool === 'teams') {
       var sc = vm.scene, tab = sub === 'files' || sub === 'tasks' ? sub : 'posts';
       var items = tab === 'files' ? sc.files : tab === 'tasks' ? sc.tasks : sc.posts, marks = [];
@@ -301,5 +328,5 @@
     return [[1, '«' + doc + '» liegt einmal in der Bibliothek des Teams. Teams-Kanal und SharePoint zeigen dieselbe Datei.']];
   }
 
-  root.M365 = { app: app, teams: teams, outlook: outlook, explorer: explorer, sharepoint: sharepoint, toolOf: toolOf, notes: notes, W: W, H: H, fi: fi };
+  root.M365 = { app: app, register: register, teamsChrome: teamsChrome, fileTable: fileTable, available: available, avatar: avatar, ftype: ftype, frame: frame, mk: mk, cmdbar: cmdbar, nl2br: nl2br, teams: teams, outlook: outlook, explorer: explorer, sharepoint: sharepoint, toolOf: toolOf, notes: notes, W: W, H: H, fi: fi };
 })(window);

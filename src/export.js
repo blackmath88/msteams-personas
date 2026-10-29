@@ -12,12 +12,19 @@
 (function (root) {
   var V = root.Views, A = root.M365, esc = V.esc;
   var SW = 1920, SH = 1080;
-  var TOOL_LABEL = { teams: 'Microsoft Teams', outlook: 'Outlook', explorer: 'Windows Explorer', sharepoint: 'SharePoint' };
+  var TOOL_LABEL = { teams: 'Microsoft Teams', chat: 'Microsoft Teams · Chat', recap: 'Microsoft Teams · Besprechung (KI-Simulation)', outlook: 'Outlook', explorer: 'Windows Explorer', sharepoint: 'SharePoint', onedrive: 'OneDrive', planner: 'Planner', todo: 'Microsoft To Do' };
+  /* Focus crops per tool in app coordinates [x, y, w, h]: the part that carries the lesson. */
+  var CROP = {
+    teams: [358, 48, 1082, 762], chat: [358, 48, 1082, 762], recap: [358, 48, 1082, 762],
+    outlook: [258, 136, 1182, 674], explorer: [0, 0, 1440, 470], sharepoint: [48, 48, 1392, 520],
+    onedrive: [232, 48, 1208, 470], planner: [232, 48, 1208, 600], todo: [260, 48, 1180, 520]
+  };
 
   function scaled(html, s, cls, w, h) {
     w = w || A.W; h = h || A.H;
     return '<div class="sl-app ' + (cls || '') + '" style="width:' + Math.round(w * s) + 'px;height:' + Math.round(h * s) + 'px"><div class="sl-in' + (cls === 'sl-pr' ? ' stage-in' : '') + '" style="width:' + w + 'px;height:' + h + 'px;transform:scale(' + s + ')">' + html + '</div></div>';
   }
+  function aiNote(vm, tool) { return vm.ai && (tool === 'recap' || tool === 'planner') ? vm.ai.short : ''; }
   function foot(vm, extra) {
     var a = vm.variant && vm.variant.assumption ? 'Annahme: ' + vm.fill(vm.variant.assumption) : '';
     return '<p class="sl-foot"><span>Fiktives Beispiel · nachgebildete Oberfläche, kein Produkt von Microsoft · ' + esc(vm.title) + '</span>' +
@@ -42,19 +49,28 @@
         '<p class="sl-chain">' + st.copies.map(function (c) { return '<span>' + esc(c.name) + '</span>'; }).join('') + '<b>→</b><strong>' + esc(st.doc.name) + '</strong></p>' +
         foot(vm) + '</div>';
     }
-    var html = vm.scene.personal ? '<div class="sl-legacy" style="width:' + A.W + 'px;height:' + A.H + 'px">' + V.scene(vm, { annot: kind === 'folie', stage: true }) + '</div>' : A.app(vm, p.sub, { annot: kind === 'folie' });
+    var html = A.app(vm, p.sub, { annot: kind !== 'app' && p.annot !== false });
     if (!html) return null;
-    if (kind === 'app' || vm.scene.personal) {
-      return '<div class="slide slide-app" data-kind="app" style="width:' + SW + 'px;height:' + SH + 'px">' + scaled(html, 1.2) + foot(vm) + '</div>';
+    var extra = aiNote(vm, tool);
+    if (kind === 'app') {
+      return '<div class="slide slide-app" data-kind="app" style="width:' + SW + 'px;height:' + SH + 'px">' + scaled(html, 1.2) + foot(vm, extra) + '</div>';
     }
-    var notes = A.notes(vm, p.sub);
+    if (kind === 'fokus') {
+      var c = CROP[tool] || [0, 0, A.W, A.H], s = Math.min(1808 / c[2], 830 / c[3]);
+      var w = Math.round(c[2] * s), h = Math.round(c[3] * s);
+      return '<div class="slide slide-fokus" data-kind="fokus" style="width:' + SW + 'px;height:' + SH + 'px">' +
+        '<header class="sl-h sl-h-s"><p class="sl-k">' + esc(TOOL_LABEL[tool]) + ' · Ausschnitt</p><h2>' + esc(vm.title) + '</h2></header>' +
+        '<div class="sl-app sl-crop" style="width:' + w + 'px;height:' + h + 'px;left:' + Math.round((SW - w) / 2) + 'px"><div class="sl-in" style="width:' + A.W + 'px;height:' + A.H + 'px;transform:scale(' + s + ') translate(' + (-c[0]) + 'px,' + (-c[1]) + 'px)">' + html + '</div></div>' +
+        foot(vm, extra) + '</div>';
+    }
+    var notes = p.annot === false ? [] : A.notes(vm, p.sub);
     return '<div class="slide slide-folie" data-kind="folie" style="width:' + SW + 'px;height:' + SH + 'px">' +
       '<header class="sl-h"><p class="sl-k">' + esc(TOOL_LABEL[tool]) + ' · ' + esc(vm.team) + '</p><h2>' + esc(vm.title) + '</h2></header>' +
       '<div class="sl-row">' + scaled(html, 0.93) +
         '<aside class="sl-notes"><p class="sl-nh">Was hier zu sehen ist</p><ol>' + notes.map(function (n) {
           return '<li><span class="m-mk">' + n[0] + '</span><span>' + esc(n[1]) + '</span></li>';
         }).join('') + '</ol>' + (vm.scene.outside && vm.scene.outside.length && tool === 'teams' ? '<p class="sl-out"><strong>Bleibt ausserhalb</strong>' + vm.scene.outside.map(esc).join(' · ') + '</p>' : '') + '</aside></div>' +
-      foot(vm) + '</div>';
+      foot(vm, extra) + '</div>';
   }
 
   /* Fit check: reports content that does not fit instead of silently cutting it. */
