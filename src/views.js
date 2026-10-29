@@ -173,11 +173,13 @@
       '<div class="pd-keepdoc" aria-label="Anderes Beispiel: bleibt persönlich"><p class="pd-tag">Anderes Beispiel · bleibt persönlich</p><p><strong>' + esc(vm.fill(b.draft)) + '</strong><small>bei ' + esc(short(dr.name)) + ', wird nicht geteilt, solange niemand mitarbeitet</small></p></div></div>';
   }
 
+  /* Curated principles echo the first shared task in its owner's list; portable projects set
+   * exactBefore so the left side shows exactly their «before» snapshot. */
   function diagramTasks(vm, b) {
     var lists = b.personal.map(function (x) {
       var p = vm.person(x.who);
       return '<li class="pd-list">' + '<p class="pd-boxh">' + av(p, 's') + 'Liste von ' + esc(short(p.name)) + '</p><ul>' + x.items.map(function (i) { return '<li>' + esc(i) + '</li>'; }).join('') +
-        (b.shared[0] && b.shared[0].who === x.who ? '<li>' + esc(b.shared[0].t) + '</li>' : '') + '</ul><p class="pd-small">nur für diese Person sichtbar</p></li>';
+        (!b.exactBefore && b.shared[0] && b.shared[0].who === x.who ? '<li>' + esc(b.shared[0].t) + '</li>' : '') + '</ul><p class="pd-small">nur für diese Person sichtbar</p></li>';
     }).join('');
     var left = '<ul class="pd-lists">' + lists + '</ul><p class="pd-q">Wer erledigt was bis wann?</p>';
     var right = b.shared.length ? '<div class="pd-box pd-plan"><p class="pd-boxh">' + ic('i-list') + esc(b.sharedLabel || 'Gemeinsamer Plan') + '</p><ul class="pd-rows">' + b.shared.map(function (t) {

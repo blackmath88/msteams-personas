@@ -7,6 +7,7 @@
  *   #/s/<situation>/<variant|->/<szene|prinzip>/<screen|principle>
  *        screen: posts|files|tasks (Teams), outlook, explorer, sharepoint
  *   #/p/<same params>[/<app|folie|vergleich>]   presentation + PNG export
+ *   #/projekt[/bearbeiten|ki|import]  portable projects (src/project-ui.js)
  */
 (function () {
   var V = window.Views, M = window.Model, C = window.Configurator, LIB = window.LIB, A = window.M365, X = window.Export;
@@ -79,6 +80,7 @@
           '<li><a class="entry" href="#/usecases"><span class="entry-n">' + ic('i-alert') + '</span><strong>Use Cases</strong><span>Welches Problem wollt ihr erklären? Welche Datei gilt? Wer findet den Entscheid?</span></a></li>' +
         '</ul>' +
         '<p class="own"><a class="btn" href="#/konfigurator/1">' + ic('i-repeat') + 'Eigene Situation beschreiben</a><span>Sechs Fragen, ein begründeter Vorschlag zum Anpassen.</span></p>' +
+        '<p class="own"><a class="btn" href="#/projekt">' + ic('i-list') + 'Eigene Abfolge erstellen</a><span>Teams → Planner → Prinzip: von Hand oder mit deinem KI-Assistenten vorbereitet.</span></p>' +
       '</div>' +
       '<div class="hero-v" aria-label="Beispiel: dieselbe Situation als Szene und als Prinzip">' +
         '<div class="hero-scene">' + frameHtml(A.teams(vm, { annot: false }), 'Beispiel: Teams-Kanal Leadership Forum 2027') + '<a class="hero-open" href="' + route('leadership-forum', 'eigenes-team', 'szene', 'posts') + '">Szene öffnen</a></div>' +
@@ -464,12 +466,14 @@
     else if (h[0] === 'tools') html = tools(h[1]);
     else if (h[0] === 'abfolgen') html = sequences();
     else if (h[0] === 'konfigurator') html = configurator(h[1] || '1');
+    else if (h[0] === 'projekt') html = window.ProjectUI.render(h);
     else if (p) { presenting = p.present; html = presenting ? present(p) : situation(p); }
     else html = notFound();
     if (presenting) document.body.classList.add('presenting'); else lastNonPresent = location.hash || '#/';
     app.innerHTML = html;
     document.title = (presenting ? 'Präsentation · ' : '') + (document.querySelector('h1') ? document.querySelector('h1').textContent + ' · ' : '') + 'msteams-personas';
     fitFrames();
+    if (h[0] === 'projekt') window.ProjectUI.mount(app);
     if (presenting) { var x = app.querySelector('[data-act="exit"]'); if (x) x.focus(); fitStage(); }
     else if (!render.keepFocus) { var m = document.getElementById('main'); m.focus({ preventScroll: true }); window.scrollTo(0, 0); }
     render.keepFocus = false;

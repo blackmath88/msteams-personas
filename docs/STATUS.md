@@ -23,7 +23,11 @@ See [V3 handoff](V3-BUILD-HANDOFF.md) for screen availability, evidence and know
 
 Existing JSON files are curated-situation override backups. They must not be advertised as arbitrary portable projects.
 
-## Active next attempt
+## Built on branch feat/bridge-authoring (not merged)
+
+First increment of portable projects, built 2026-10-29: shared core `src/project-core.js` (format v1, capabilities v1: teams-posts, planner, prinzip-tasks), manual editor, assistant bridge with authoring pack, import review with person repair, save/reopen and PNG export at `#/projekt`. Evidence and limits: [bridge handoff](BRIDGE-BUILD-HANDOFF.md). No real cross-assistant test has been run yet.
+
+## Earlier planning note: active next attempt
 
 The user requests a larger 30-minute Claude/Orca build combining manual website project authoring and the external-assistant bridge on one shared project contract. See [executable task](ORCA-NUC-BRIDGE-30MIN.md). Core target: new-project Teams + Planner + Prinzip, editable teaching text, safe import/save/reopen, local reference repair and real exports. No runtime has been launched from this planning session.
 
