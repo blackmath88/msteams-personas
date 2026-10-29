@@ -114,7 +114,38 @@
   }
 
   /*
-   * build(situationId, {variant, names:{team, people:{id:name}}})
+   * Story: canonical shared document plus its travelling copies (names from principles.doc.copies),
+   * so Outlook, Explorer, Teams, SharePoint and Prinzip refer to the same file identities.
+   */
+  function storyFor(s, scene, principles, content, ctx) {
+    var st = LIB.stories && LIB.stories[s.id];
+    if (!st || scene.personal) return null;
+    var canonFile = scene.files.filter(function (f) { return f.name === st.canonical; })[0];
+    if (!canonFile) return null;
+    var docName = (content.docName || '').trim() || st.canonical;
+    var copies = (principles.doc.copies || []).map(function (c, i) {
+      var name = typeof c === 'string' ? c : c.n, m = st.mails[i] || st.mails[0];
+      return { id: 'copy-' + (i + 1), name: name, copyOf: 'canonical', by: m.by, time: m.time, size: m.size, mail: i };
+    });
+    var mails = st.mails.map(function (m, i) {
+      var first = i === 0;
+      return {
+        id: 'mail-' + (i + 1), by: m.by, to: m.to, time: m.time,
+        subject: first && content.subject ? content.subject : m.subject,
+        body: fill(first && content.body ? content.body : m.body, ctx),
+        attachment: copies[i] || null
+      };
+    });
+    return {
+      viewer: st.viewer,
+      doc: { id: 'canonical', original: st.canonical, name: docName, by: canonFile.by, when: canonFile.when },
+      copies: copies, mails: mails, redownload: st.redownload,
+      otherMail: st.otherMail
+    };
+  }
+
+  /*
+   * build(situationId, {variant, names:{team, people:{id:name}}, content:{docName, subject, body, postTitle, postText}})
    * Returns everything the renderers need, with names resolved.
    */
   function build(id, opts) {
@@ -156,6 +187,20 @@
     people.forEach(function (p) { byId[p.id] = p; });
     var team = names.team || scene.team;
     var ctx = { name: function (pid) { return byId[pid] ? byId[pid].name : pid; }, team: team, active: scene.active };
+    var content = opts.content || {};
+    var story = storyFor(s, scene, principles, content, ctx);
+    if (story) {
+      /* Apply targeted slide-content overrides to copies, never to the curated originals. */
+      var canon = story.doc.original, docName = story.doc.name;
+      scene = Object.assign({}, scene, {
+        files: scene.files.map(function (f) { return f.name === canon ? Object.assign({}, f, { name: docName, canonical: true }) : f; }),
+        posts: scene.posts.map(function (q) {
+          if (q.file !== canon) return q;
+          return Object.assign({}, q, { file: docName, title: content.postTitle || q.title, text: content.postText || q.text, canonical: true });
+        })
+      });
+      if (content.docName && principles.doc) principles = Object.assign({}, principles, { doc: Object.assign({}, principles.doc, { artefact: docName.replace(/\.[a-z0-9]+$/i, '') }) });
+    }
 
     return {
       id: s.id, complete: !!s.complete, personal: !!s.personal || scene.personal,
@@ -166,7 +211,8 @@
       variant: variant, variants: s.variants || [],
       people: people, person: function (pid) { return byId[pid] || { id: pid, name: pid, role: '' }; },
       team: team, teamOriginal: scene.team,
-      scene: scene, principles: principles,
+      scene: scene, principles: principles, story: story,
+      tools: story ? ['teams', 'outlook', 'explorer', 'sharepoint'] : (scene.personal ? [] : ['teams']),
       fill: function (t) { return fill(t, ctx); },
       legacyHref: s.world === LIB.business.id ? null : 'atlas.html#/w/' + s.world
     };

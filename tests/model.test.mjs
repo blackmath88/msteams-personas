@@ -7,7 +7,7 @@ import vm from 'node:vm';
 const ctx = { window: {} };
 ctx.globalThis = ctx;
 vm.createContext(ctx);
-for (const f of ['worlds.js', 'src/library.js', 'src/library-he.js', 'src/model.js', 'src/configurator.js']) vm.runInContext(readFileSync(new URL('../' + f, import.meta.url), 'utf8'), ctx);
+for (const f of ['worlds.js', 'src/library.js', 'src/library-he.js', 'src/story.js', 'src/model.js', 'src/configurator.js']) vm.runInContext(readFileSync(new URL('../' + f, import.meta.url), 'utf8'), ctx);
 // model.js / configurator.js attach to window
 const { Model, Configurator, LIB, HE_WORLDS } = ctx.window;
 
@@ -112,4 +112,38 @@ test('configurator flags examples borrowed from the other collection', () => {
 test('setups with access or restriction assumptions carry them explicitly', () => {
   for (const [sid, vid] of [['sitzungszyklus', 'gastzugang'], ['sitzungszyklus', 'link'], ['semesterstart', 'mit-bewertung'], ['kundenportal', 'eigenes-team']])
     assert.ok(Model.build(sid, { variant: vid }).variant.assumption, `${sid}/${vid} needs an assumption`);
+});
+
+test('story: copies come from Prinzip copies, canonical file is a scene file', () => {
+  for (const sid of ['leadership-forum', 'kundenportal']) {
+    for (const variant of ['eigenes-team', 'kanal']) {
+      const v = Model.build(sid, { variant });
+      assert.ok(v.story, sid);
+      assert.deepEqual(v.story.copies.map(c => c.name), v.principles.doc.copies.map(c => typeof c === 'string' ? c : c.n));
+      assert.ok(v.scene.files.some(f => f.canonical && f.name === v.story.doc.name), `${sid}: canonical in files`);
+      assert.ok(v.scene.posts.some(q => q.canonical && q.file === v.story.doc.name), `${sid}: canonical in post`);
+      assert.ok(v.story.mails.every(m => !m.attachment || v.story.copies.some(c => c === m.attachment)), `${sid}: mail attachments are copies`);
+      assert.ok(!v.story.copies.some(c => c.name === v.story.doc.name), `${sid}: copies distinct from canonical`);
+      assert.ok(v.people.some(p => p.id === v.story.viewer));
+      assert.deepEqual([...v.tools], ['teams', 'outlook', 'explorer', 'sharepoint']);
+    }
+  }
+});
+
+test('story: content overrides rename the canonical file everywhere but leave originals intact', () => {
+  const orig = JSON.stringify(LIB.situations.find(s => s.id === 'leadership-forum'));
+  const v = Model.build('leadership-forum', { content: { docName: 'Plan.xlsx', subject: 'Neu', postTitle: 'T' } });
+  assert.equal(v.story.doc.name, 'Plan.xlsx');
+  assert.equal(v.principles.doc.artefact, 'Plan');
+  assert.ok(v.scene.files.some(f => f.name === 'Plan.xlsx'));
+  assert.equal(v.scene.posts.find(q => q.canonical).title, 'T');
+  assert.equal(v.story.mails[0].subject, 'Neu');
+  assert.equal(JSON.stringify(LIB.situations.find(s => s.id === 'leadership-forum')), orig);
+  assert.equal(Model.build('leadership-forum').story.doc.name, 'Veranstaltungsplan.xlsx');
+});
+
+test('situations without a story only offer Teams (or nothing for personal work)', () => {
+  assert.equal(Model.build('heat-health').story, null);
+  assert.deepEqual([...Model.build('heat-health').tools], ['teams']);
+  assert.deepEqual([...Model.build('nora-reihe').tools], []);
 });
