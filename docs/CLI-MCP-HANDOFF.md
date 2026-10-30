@@ -223,4 +223,4 @@ The handler is already stateless per request, so nothing else in the protocol la
 - `0280a8cf8deca5cc61157332bce3f20ea8d87f2a`: implementation, tests, evidence and docs.
 - The next commit only fills in these hashes.
 
-Run on 2026-10-30 from 09:21 to about 10:00 CET, within the 60-minute limit.
+Run on 2026-10-30 from 09:21 to 09:48 CET, within the 60-minute limit.
