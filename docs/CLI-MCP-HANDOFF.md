@@ -6,7 +6,7 @@ Date: 2026-10-30. Builder: Claude (Opus 5.5) in Claude Code on the NUC, working 
 
 - **Branch:** `feat/cli-mcp-render`, pushed and not merged. No PR, nothing deployed.
 - **Baseline:** `origin/main` at `7d5f330041c423b3b2e8ae9dc7ed027f81f32597`, the merged authoring branch.
-- **Commits:** see the "Commits" section at the end of this file.
+- **Commits:** implementation `0280a8cf8deca5cc61157332bce3f20ea8d87f2a`, followed by a docs-only commit that records the hashes.
 
 ## What a trainer and an agent can do now
 
@@ -220,4 +220,7 @@ The handler is already stateless per request, so nothing else in the protocol la
 
 ## Commits
 
-(filled in at the end of the run)
+- `0280a8cf8deca5cc61157332bce3f20ea8d87f2a`: implementation, tests, evidence and docs.
+- The next commit only fills in these hashes.
+
+Run on 2026-10-30 from 09:21 to about 10:00 CET, within the 60-minute limit.
