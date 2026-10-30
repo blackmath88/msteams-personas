@@ -76,11 +76,20 @@ try {
   await p.shot(SHOTS + '02-editor-1440.png', true);
 
   // 8 export ordered PNGs (same compose/densify/toPNG path as the library)
-  const out = await p.eval(`ProjectUI.exportAll({download:false,dataUrl:true}).then(o=>o)`);
+  const res = await p.eval(`ProjectUI.exportAll({download:false,dataUrl:true}).then(r=>({ok:r.ok,slides:r.slides.map(s=>({name:s.fileName,size:s.bytes,dataUrl:s.dataUrl}))}))`);
+  const out = res.slides;
+  check('8 export: shared render operation reports ok', res.ok === true);
   for (const o of out) writeFileSync(PNGS + o.name, Buffer.from(o.dataUrl.split(',')[1], 'base64'));
   check('8 export: three ordered PNGs', out.map(o => o.name).join() === '01-velotech-werkstatt-uebergabe-teams-posts.png,02-velotech-werkstatt-uebergabe-planner.png,03-velotech-werkstatt-uebergabe-prinzip-tasks.png', out.map(o => o.name + ' ' + o.size).join(', '));
   const dims = out.map(o => { const b = Buffer.from(o.dataUrl.split(',')[1], 'base64'); return [b.readUInt32BE(16), b.readUInt32BE(20)]; });
   check('8 export: PNGs are 1920x1080 and not blank', dims.every(d => d[0] === 1920 && d[1] === 1080) && out.every(o => o.size > 40000), J(dims));
+
+  // export refuses a structurally invalid project and says so; no slide is announced
+  const keepTitle = (await cur()).meta.title;
+  await setVal('[data-path="meta.title"]', '');
+  const bad = await p.eval(`ProjectUI.exportAll({download:false,dataUrl:true}).then(r=>({ok:r.ok,n:r.slides.length,stage:r.stage}))`);
+  check('export: invalid project refused, nothing produced', !bad.ok && bad.n === 0 && bad.stage === 'validate' && /Export abgebrochen, keine Datei/.test(await $('#pj-status')), J(bad));
+  await setVal('[data-path="meta.title"]', keepTitle);
 
   // 2 save and reopen the whole project (file input path)
   const saved = await cur();
@@ -132,6 +141,38 @@ try {
   await paste(REPLY.replace('"profile": "planner"', '"profile": "excel"'));
   check('unknown profile: blocked in review', /Ansicht «excel» wird nicht unterstützt/.test(await $('.pj', 'innerText')) && (await count('[data-op="accept"]')) === 0);
   await click('[data-op="cancel"]');
+
+  // storage failure is shown, work continues in memory
+  await p.eval(`ProjectUI.state().current=0;location.hash='#/projekt/bearbeiten'`); await p.sleep(500);
+  await p.eval(`window.__set=Storage.prototype.setItem;Storage.prototype.setItem=function(){throw new DOMException('full','QuotaExceededError')}`);
+  await setVal('[data-path="meta.goal"]', 'Ziel ohne Speicher');
+  check('storage failure: visible warning, edit kept in memory', /nicht gespeichert[\s\S]*Projekt sichern/.test(await $('#pj-storage')) && !(await p.eval(`document.getElementById('pj-storage').hidden`)) && (await cur()).meta.goal === 'Ziel ohne Speicher');
+  await p.eval(`Storage.prototype.setItem=window.__set`);
+
+  // draft limit: nothing is deleted automatically
+  await p.eval(`location.hash='#/projekt'`); await p.sleep(300);
+  for (let i = await drafts(); i < 8; i++) { await click('[data-op="adapt"]'); await p.eval(`location.hash='#/projekt'`); await p.sleep(250); }
+  const eight = J(await p.eval('ProjectUI.state().drafts.map(d=>d.project.meta.id)'));
+  await click('[data-op="adapt"]');
+  check('draft limit: no silent deletion, user told what to do', (await drafts()) === 8 && J(await p.eval('ProjectUI.state().drafts.map(d=>d.project.meta.id)')) === eight && /bereits 8 Entwürfe/.test(await $('#pj-storage')));
+  await click('[data-op="del-draft"][data-i="7"]');
+  check('draft limit: removing one is explicit', (await drafts()) === 7);
+
+  // the project file used by the CLI and MCP proof reopens in the website and exports the same slides
+  const lib = readFileSync(new URL('../examples/bibliothek-tannwil.project.json', import.meta.url), 'utf8');
+  await p.eval(`location.hash='#/projekt'`); await p.sleep(300);
+  await p.eval(`(()=>{const dt=new DataTransfer();dt.items.add(new File([${J(lib)}],'bibliothek-tannwil.project.json',{type:'application/json'}));const i=document.getElementById('pj-file');i.files=dt.files;i.dispatchEvent(new Event('change',{bubbles:true}))})()`);
+  await p.sleep(600);
+  check('cli/mcp project: import review without errors', /Keine Fehler/.test(await $('.pj', 'innerText')) && /Ausleihe-Rückstände/.test(await $('.pj-sum', 'innerText')));
+  await click('[data-op="accept"]'); await p.sleep(400);
+  check('cli/mcp project: order Teams → Planner → Prinzip in the editor', /Teams[\s\S]*Planner[\s\S]*Prinzip/.test(await p.eval(`[...document.querySelectorAll('.pj-slide h3')].map(h=>h.textContent).join(' ')`)));
+  check('cli/mcp project: before-plan task shown as shared in the preview', /Schon im gemeinsamen Plan[\s\S]*Bücherkiste/.test(await prevText(2)) && !/Liste von Renate/.test(await prevText(2)));
+  const web = await p.eval(`ProjectUI.exportAll({download:false,dataUrl:true}).then(r=>r.slides.map(s=>({name:s.fileName,data:s.dataUrl.split(',')[1]})))`);
+  const { createHash } = await import('node:crypto');
+  let cliM = null; try { cliM = JSON.parse(readFileSync(new URL('../docs/evidence-cli-mcp/cli/manifest.json', import.meta.url), 'utf8')); } catch { /* run tests/mcp-e2e.mjs first */ }
+  const webHashes = web.map(w => createHash('sha256').update(Buffer.from(w.data, 'base64')).digest('hex'));
+  check('cli/mcp project: website export = CLI files (names, order, bytes)', cliM && web.map(w => w.name).join() === cliM.slides.map(s => s.file).join() && webHashes.join() === cliM.slides.map(s => s.sha256).join(), cliM ? '' : 'no CLI manifest');
+  await p.shot(SHOTS + '07-cli-mcp-project-editor.png', true);
 
   // 390 px
   await p.size(390, 844);

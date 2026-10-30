@@ -12,28 +12,37 @@ The complete V3 trainer library is on `main` (merged at `300e006`). Open `index.
 - Targeted editing, browser-local saves, customisation-backup JSON import/export.
 - Presentation, focus crops and individual/sequence PNG export at Full HD and 2x.
 
-See [V3 handoff](docs/V3-BUILD-HANDOFF.md) for evidence, supported coverage and limitations. Independent model review passed 17/17; the builder reports 110/110 Chromium checks. No general new-project authoring, CLI or MCP service exists yet.
+See [V3 handoff](docs/V3-BUILD-HANDOFF.md) for evidence, supported coverage and limitations. Independent model review passed 17/17; the builder reports 110/110 Chromium checks. New-project authoring, CLI and MCP are described below.
 
-## Next direction: Slides as Code
+## Portable projects, CLI and MCP
 
-A shared portable project format will connect manual website editing, a guided bridge to the user's own AI assistant, CLI and remote MCP/HTTP. WebMCP will add browser-agent assistance. These are planned capabilities.
+`#/projekt` («Eigene Abfolge») authors a new Teams → Planner → Prinzip sequence by hand or with the user's own chat assistant. The same project JSON can be validated and rendered without the website:
 
-- [Refined concept](docs/SLIDES-AS-CODE-CONCEPT.md)
+```sh
+npm install                                    # only for CLI/MCP; the website needs no install
+node tools/cli.mjs example --out project.json
+node tools/cli.mjs validate project.json
+node tools/cli.mjs render project.json --out ./slides   # needs Chromium
+node tools/mcp-server.mjs                      # MCP over stdio
+node tools/mcp-server.mjs --http               # MCP over Streamable HTTP, http://127.0.0.1:8787/mcp
+```
+
+Website, CLI and MCP share one validator (`src/project-core.js`) and one render operation (`src/project-render.js`). Commands, client configuration, evidence and limits: [CLI/MCP handoff](docs/CLI-MCP-HANDOFF.md). Concept: [Slides as Code](docs/SLIDES-AS-CODE-CONCEPT.md). WebMCP and hosting are not built.
+
 - [Active build plan](docs/BUILD-PLAN.md)
-- [Claude/Orca: 30-minute manual + assistant-bridge build](docs/ORCA-NUC-BRIDGE-30MIN.md)
-- [Architecture and UX research prompt](docs/research/PERPLEXITY-ARCHITECTURE-UX-SPARRING.md)
 - [Product brief](docs/PRODUCT.md)
 - [Current status](docs/STATUS.md)
 
-Earlier UX/fidelity briefs and the Orca V2 task are historical build references. Do not restart from their older prototype baseline.
-
 ## Run and checks
 
-Open `index.html` for the library or `atlas.html` for the original atlas. Assets remain local and offline-capable. Existing JSON exports are customisation backups, not complete portable projects.
+Open `index.html` for the library or `atlas.html` for the original atlas. Assets remain local and offline-capable. Customisation-backup JSON exports are a separate format from portable projects.
 
 ```sh
 node check-worlds.mjs
-node --test tests/model.test.mjs
+node --test tests/
+python3 -m http.server 8766 --bind 127.0.0.1 &   # for the browser journeys
+node tests/journey.mjs && node tests/project-journey.mjs
+node tests/mcp-e2e.mjs                           # MCP SDK client over stdio + HTTP, and CLI
 ```
 
 Browser journey instructions and runtime requirements: [V3 handoff](docs/V3-BUILD-HANDOFF.md).

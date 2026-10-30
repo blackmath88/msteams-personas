@@ -1,0 +1,220 @@
+{
+  "format": "msteams-personas/project",
+  "projectVersion": 1,
+  "capabilityVersion": 1,
+  "meta": {
+    "id": "bibliothek-tannwil-ausleihe",
+    "title": "Zu viele Beiträge für eine Folie",
+    "organisation": "Gemeindebibliothek Tannwil (fiktiv)",
+    "audience": "Bibliotheksteam mit Teilzeitpensen",
+    "goal": "Zeigen, wie Mahnungen und Reservationen über Wochenenden hinweg bei jemandem bleiben",
+    "locale": "de-CH",
+    "fictional": true,
+    "source": {
+      "kind": "agent",
+      "note": "Über MCP erstellt, fiktiver Inhalt"
+    },
+    "assumptions": [
+      "Das Team hat einen Teams-Kanal «Ausleihe» und einen Planner-Plan im selben Team."
+    ],
+    "notes": ""
+  },
+  "people": [
+    {
+      "id": "p-renate",
+      "name": "Renate Zürcher",
+      "role": "Leitung Bibliothek"
+    },
+    {
+      "id": "p-samuel",
+      "name": "Samuel Okafor",
+      "role": "Ausleihe, Dienstag und Mittwoch"
+    },
+    {
+      "id": "p-mia",
+      "name": "Mia Gerber",
+      "role": "Ausleihe, Freitag und Samstag"
+    }
+  ],
+  "documents": [
+    {
+      "id": "d-mahnliste",
+      "name": "Mahnliste Oktober.xlsx"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t-mahnung",
+      "title": "Zweite Mahnung Klasse 4b versenden"
+    },
+    {
+      "id": "t-reserv",
+      "title": "Reservation Fernleihe abholen lassen"
+    },
+    {
+      "id": "t-kiste",
+      "title": "Bücherkiste Altersheim zusammenstellen"
+    },
+    {
+      "id": "t-etiketten",
+      "title": "Neue Etiketten bestellen"
+    }
+  ],
+  "states": [
+    {
+      "id": "before",
+      "label": "Heute",
+      "tasks": {
+        "t-mahnung": {
+          "owner": "p-samuel",
+          "list": "personal"
+        },
+        "t-reserv": {
+          "owner": "p-mia",
+          "list": "personal"
+        },
+        "t-kiste": {
+          "owner": "p-renate",
+          "list": "plan",
+          "bucket": "Diese Woche",
+          "due": "Fr 8.11."
+        },
+        "t-etiketten": {
+          "owner": "p-samuel",
+          "list": "personal"
+        }
+      }
+    },
+    {
+      "id": "after",
+      "label": "Mit gemeinsamem Plan",
+      "tasks": {
+        "t-mahnung": {
+          "owner": "p-mia",
+          "list": "plan",
+          "bucket": "Diese Woche",
+          "due": "Sa 9.11."
+        },
+        "t-reserv": {
+          "owner": "p-mia",
+          "list": "plan",
+          "bucket": "Diese Woche",
+          "due": "Fr 8.11."
+        },
+        "t-kiste": {
+          "owner": "p-renate",
+          "list": "plan",
+          "bucket": "Diese Woche",
+          "due": "Fr 8.11."
+        },
+        "t-etiketten": {
+          "owner": "p-samuel",
+          "list": "personal"
+        }
+      }
+    }
+  ],
+  "scenes": [
+    {
+      "id": "sc-kanal",
+      "profile": "teams-posts",
+      "team": "Bibliothek Tannwil",
+      "channel": "Ausleihe",
+      "posts": [
+        {
+          "id": "q1",
+          "by": "p-samuel",
+          "time": "10:00",
+          "title": "Übergabe Teil 1",
+          "text": "Ich habe heute die Rückgaben sortiert, die Liste der offenen Mahnungen ergänzt und die Reservationen geprüft. Morgen fehlt mir die Zeit, bitte übernehmt die restlichen Punkte und meldet euch, falls etwas unklar ist."
+        },
+        {
+          "id": "q2",
+          "by": "p-mia",
+          "time": "11:00",
+          "title": "Übergabe Teil 2",
+          "text": "Ich habe heute die Rückgaben sortiert, die Liste der offenen Mahnungen ergänzt und die Reservationen geprüft. Morgen fehlt mir die Zeit, bitte übernehmt die restlichen Punkte und meldet euch, falls etwas unklar ist."
+        },
+        {
+          "id": "q3",
+          "by": "p-renate",
+          "time": "12:00",
+          "title": "Übergabe Teil 3",
+          "text": "Ich habe heute die Rückgaben sortiert, die Liste der offenen Mahnungen ergänzt und die Reservationen geprüft. Morgen fehlt mir die Zeit, bitte übernehmt die restlichen Punkte und meldet euch, falls etwas unklar ist."
+        },
+        {
+          "id": "q4",
+          "by": "p-samuel",
+          "time": "13:00",
+          "title": "Übergabe Teil 4",
+          "text": "Ich habe heute die Rückgaben sortiert, die Liste der offenen Mahnungen ergänzt und die Reservationen geprüft. Morgen fehlt mir die Zeit, bitte übernehmt die restlichen Punkte und meldet euch, falls etwas unklar ist."
+        },
+        {
+          "id": "q5",
+          "by": "p-mia",
+          "time": "14:00",
+          "title": "Übergabe Teil 5",
+          "text": "Ich habe heute die Rückgaben sortiert, die Liste der offenen Mahnungen ergänzt und die Reservationen geprüft. Morgen fehlt mir die Zeit, bitte übernehmt die restlichen Punkte und meldet euch, falls etwas unklar ist."
+        },
+        {
+          "id": "q6",
+          "by": "p-renate",
+          "time": "15:00",
+          "title": "Übergabe Teil 6",
+          "text": "Ich habe heute die Rückgaben sortiert, die Liste der offenen Mahnungen ergänzt und die Reservationen geprüft. Morgen fehlt mir die Zeit, bitte übernehmt die restlichen Punkte und meldet euch, falls etwas unklar ist."
+        },
+        {
+          "id": "q7",
+          "by": "p-samuel",
+          "time": "16:00",
+          "title": "Übergabe Teil 7",
+          "text": "Ich habe heute die Rückgaben sortiert, die Liste der offenen Mahnungen ergänzt und die Reservationen geprüft. Morgen fehlt mir die Zeit, bitte übernehmt die restlichen Punkte und meldet euch, falls etwas unklar ist."
+        },
+        {
+          "id": "q8",
+          "by": "p-mia",
+          "time": "17:00",
+          "title": "Übergabe Teil 8",
+          "text": "Ich habe heute die Rückgaben sortiert, die Liste der offenen Mahnungen ergänzt und die Reservationen geprüft. Morgen fehlt mir die Zeit, bitte übernehmt die restlichen Punkte und meldet euch, falls etwas unklar ist."
+        }
+      ]
+    },
+    {
+      "id": "sc-plan",
+      "profile": "planner",
+      "team": "Bibliothek Tannwil",
+      "state": "after"
+    },
+    {
+      "id": "sc-prinzip",
+      "profile": "prinzip-tasks",
+      "team": "Bibliothek Tannwil",
+      "before": "before",
+      "after": "after"
+    }
+  ],
+  "slides": [
+    {
+      "id": "s-kanal",
+      "scene": "sc-kanal",
+      "presenterNotes": "Fragen: Wer merkt am Samstag, dass die Mahnung noch offen ist?"
+    },
+    {
+      "id": "s-plan",
+      "scene": "sc-plan",
+      "presenterNotes": "Mahnung und Reservation haben jetzt eine Person und einen Termin."
+    },
+    {
+      "id": "s-prinzip",
+      "scene": "sc-prinzip",
+      "presenterNotes": "Die Bücherkiste stand schon vorher im Plan: sie bleibt dort.",
+      "teaching": {
+        "title": "Was andere übernehmen, gehört in den Plan",
+        "question": "Wer erledigt was, auch wenn jemand vier Tage frei hat?",
+        "problem": "Mahnungen und Reservationen stehen in persönlichen Listen. Bei Teilzeit bleibt etwas liegen.",
+        "recommendation": "Aufgaben mit Termin, die eine andere Person übernehmen kann, kommen mit Person und Datum in den gemeinsamen Plan.",
+        "boundary": "Kleine eigene Erinnerungen wie Etiketten bestellen bleiben in der persönlichen Liste."
+      }
+    }
+  ]
+}

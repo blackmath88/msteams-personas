@@ -103,3 +103,60 @@ test('authoring pack is built from the live capabilities and its example validat
   const parsed = PC.parseInput(pack);
   assert.equal(PC.validate(parsed.project).ok, true, 'the embedded example is a valid project');
 });
+
+/* ---------- regressions for the blockers found at the authoring baseline ---------- */
+test('null and non-object entries are located errors, never a crash', () => {
+  const cases = [
+    p => { p.people = [null]; }, p => { p.people.push('Anna'); }, p => { p.scenes[0].posts = [null, 3]; },
+    p => { p.scenes.push(null); }, p => { p.slides = [null]; }, p => { p.states[0].tasks['t-kunde'] = null; },
+    p => { p.meta = null; }, p => { p.slides[2].teaching = null; }, p => { p.people = 'x'; }, p => { p.states = {}; }
+  ];
+  for (const f of cases) {
+    const p = T(); f(p);
+    const v = PC.validate(p);
+    assert.equal(v.ok, false);
+    assert.ok(v.errors.every(e => typeof e.path === 'string' && e.message), JSON.stringify(v.errors));
+    assert.doesNotThrow(() => PC.summary(p));
+  }
+  for (const x of [null, 1, 'x', [], [null], { meta: 5 }]) { assert.equal(PC.validate(x).ok, false); assert.doesNotThrow(() => PC.summary(x)); }
+});
+
+test('incorrectly typed metadata and fields are rejected', () => {
+  const p = T();
+  Object.assign(p.meta, { organisation: 42, assumptions: 'eine', fictional: 'ja', source: 'chat' });
+  p.people[0].role = 7; p.scenes[0].posts[0].time = 1352; p.slides[0].presenterNotes = ['a'];
+  p.states[1].tasks['t-bremsen'].due = 14; p.slides[2].teaching.question = {};
+  const paths = PC.validate(p).errors.filter(e => e.code === 'type').map(e => e.path).sort();
+  assert.deepEqual(paths, ['meta.assumptions', 'meta.fictional', 'meta.organisation', 'meta.source', 'people[0].role', 'scenes[0].posts[0].time', 'slides[0].presenterNotes', 'slides[2].teaching.question', 'states[1].tasks.t-bremsen.due'].sort());
+  const q = T(); q.meta.title = 5;
+  assert.ok(PC.validate(q).errors.some(e => e.path === 'meta.title' && e.code === 'type'));
+});
+
+test('only the before/after states the editor supports are accepted', () => {
+  const p = T();
+  p.states[1].id = 'spaeter'; p.scenes[1].state = 'spaeter'; p.scenes[2].after = 'spaeter';
+  const codes = PC.validate(p).errors.map(e => e.code);
+  assert.ok(codes.includes('state-ids') && codes.includes('prinzip-states'), codes.join());
+  const q = T(); q.states.push({ id: 'zwischen', tasks: {} });
+  assert.ok(PC.validate(q).errors.some(e => e.code === 'too-many-states' || e.code === 'state-ids'));
+  const r = T(); r.scenes[2].before = 'after'; r.scenes[2].after = 'before';
+  assert.ok(PC.validate(r).errors.some(e => e.code === 'prinzip-states'));
+  assert.deepEqual(PC.STATE_IDS, ['before', 'after']);
+});
+
+test('a task already in the shared plan before is shown as shared, not as a personal list item', () => {
+  const p = T();
+  p.states[0].tasks['t-kunde'] = { owner: 'p-jonas', list: 'plan', bucket: 'Heute', due: 'Mi 13.11.' };
+  const b = PC.compile(p, 2).principles.tasks;
+  assert.ok(!b.personal.some(r => r.items.includes('Kundin Rossi zurückrufen')), 'not in anyone\'s personal list');
+  assert.deepEqual(b.beforeShared.map(t => [t.t, t.who]), [['Kundin Rossi zurückrufen', 'p-jonas']]);
+  assert.equal(b.exactBefore, true);
+});
+
+test('more personal lists than the diagram holds is reported, not dropped silently', () => {
+  const p = T();
+  p.people.push({ id: 'p-eva', name: 'Eva Roth', role: '' });
+  p.states[0].tasks['t-lager'] = { owner: 'p-eva', list: 'personal' };
+  p.states[0].tasks['t-ersatz'] = { owner: 'p-aylin', list: 'personal' }; // Marco, Jonas, Aylin, Eva
+  assert.ok(PC.validate(p).warnings.some(w => w.code === 'prinzip-lists'));
+});

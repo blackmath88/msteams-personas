@@ -6,8 +6,9 @@
  *   #/projekt/ki           guided brief → authoring pack → paste result
  *   #/projekt/import       import review: summary, person repair, repair prompt
  * All checks and transformations go through ProjectCore; this file only handles the page.
- * Drafts live in this browser (localStorage). Imported text is never executed: every value
- * is escaped, source URLs are not fetched.
+ * Drafts live in this browser (localStorage). Storage failures are shown, never swallowed, and
+ * a draft is only removed when the user removes it. Imported text is never executed: every
+ * value is escaped, source URLs are not fetched.
  */
 (function (root) {
   var PC = root.ProjectCore, V = root.Views, X = root.Export, A = root.M365;
@@ -15,13 +16,34 @@
   var KEY = 'mtp.projects';
 
   /* ---------- storage: several drafts, one current; an import never overwrites a draft ---------- */
-  function load() { try { return JSON.parse(localStorage.getItem(KEY)) || { drafts: [], current: -1, brief: {}, pending: null }; } catch (e) { return { drafts: [], current: -1, brief: {}, pending: null }; } }
+  var MAX_DRAFTS = 8, storageProblem = '';
+  function empty() { return { drafts: [], current: -1, brief: {}, pending: null }; }
+  function load() {
+    var raw;
+    try { raw = localStorage.getItem(KEY); } catch (e) { storageProblem = 'Der Browser erlaubt hier keine Speicherung. Entwürfe gehen beim Schliessen verloren: bitte «Projekt sichern».'; return empty(); }
+    if (!raw) return empty();
+    try { var o = JSON.parse(raw); if (o && Array.isArray(o.drafts)) return o; } catch (e) { /* handled below */ }
+    /* Unreadable data is kept under a second key instead of being overwritten. */
+    try { localStorage.setItem(KEY + '.unlesbar', raw); } catch (e) { /* reported below */ }
+    storageProblem = 'Gespeicherte Entwürfe waren nicht lesbar. Sie wurden unter «' + KEY + '.unlesbar» aufbewahrt und nicht gelöscht.';
+    return empty();
+  }
   var st = load();
-  function persist() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { /* storage full or blocked: work continues in memory */ } }
+  function persist() {
+    try { localStorage.setItem(KEY, JSON.stringify(st)); if (/nicht gespeichert/.test(storageProblem)) storageProblem = ''; return true; }
+    catch (e) { storageProblem = 'Entwurf konnte in diesem Browser nicht gespeichert werden (' + (e && e.name || 'Fehler') + '). Die Änderungen bleiben nur bis zum Schliessen der Seite: bitte «Projekt sichern».'; showStorage(); return false; }
+  }
+  function showStorage() { var el = document.getElementById('pj-storage'); if (el) { el.textContent = storageProblem; el.hidden = !storageProblem; } }
+  function storageBox() { return '<p class="pj-errbox" id="pj-storage" role="alert"' + (storageProblem ? '' : ' hidden') + '>' + esc(storageProblem) + '</p>'; }
   function cur() { return st.drafts[st.current] ? st.drafts[st.current].project : null; }
+  /* Never drops an older draft to make room: at the limit the user decides what to remove. */
   function addDraft(p, origin) {
+    if (st.drafts.length >= MAX_DRAFTS) {
+      storageProblem = 'Es sind bereits ' + MAX_DRAFTS + ' Entwürfe gespeichert. Bitte zuerst einen Entwurf sichern und entfernen; es wird nichts automatisch gelöscht.';
+      showStorage(); announce(storageProblem); return false;
+    }
     st.drafts.unshift({ project: p, origin: origin, savedAt: new Date().toISOString() });
-    st.drafts = st.drafts.slice(0, 8); st.current = 0; persist();
+    st.current = 0; persist(); return true;
   }
   function touch() { if (st.drafts[st.current]) st.drafts[st.current].savedAt = new Date().toISOString(); persist(); }
 
@@ -56,21 +78,22 @@
   function start() {
     var drafts = st.drafts.map(function (d, i) {
       var p = d.project;
-      return '<li><button type="button" class="linkish" data-op="open-draft" data-i="' + i + '">' + esc(p.meta && p.meta.title || 'Ohne Titel') + '</button> <small>' + esc(p.meta && p.meta.organisation || '') + ' · ' + esc(originLabel(d.origin)) + ' · ' + esc(new Date(d.savedAt).toLocaleString('de-CH')) + '</small></li>';
+      var title = p && p.meta && typeof p.meta.title === 'string' && p.meta.title || 'Ohne Titel';
+      return '<li><button type="button" class="linkish" data-op="open-draft" data-i="' + i + '">' + esc(title) + '</button> <small>' + esc(p && p.meta && typeof p.meta.organisation === 'string' ? p.meta.organisation : '') + ' · ' + esc(originLabel(d.origin)) + ' · ' + esc(new Date(d.savedAt).toLocaleString('de-CH')) + '</small> <button type="button" class="linkish" data-op="del-draft" data-i="' + i + '" aria-label="Entwurf «' + esc(title) + '» entfernen">entfernen</button></li>';
     }).join('');
     return '<section class="block pj"><nav class="pj-crumbs" aria-label="Pfad"><a href="#/">Bibliothek</a> › Eigene Abfolge</nav>' +
-      '<h1>Eigene Abfolge erstellen</h1>' +
+      '<h1>Eigene Abfolge erstellen</h1>' + storageBox() +
       '<p class="lead">Eine kurze Folgenreihe für die Schulung: Teams-Beiträge → Planner → Prinzip. Von Hand im Formular oder mit deinem KI-Assistenten vorbereitet. Beide Wege ergeben dieselbe Projektdatei, die du sichern, wieder öffnen und als PNG exportieren kannst.</p>' +
       '<div class="pj-routes">' +
         '<div class="pj-route"><h2>Von Hand</h2><p>Mit beschrifteten Feldern. Kein JSON nötig.</p>' +
           '<p class="pj-acts"><button type="button" class="btn btn-p" data-op="adapt">Beispiel anpassen</button> <button type="button" class="btn" data-op="new">Neue Abfolge</button></p></div>' +
-        '<div class="pj-route"><h2>Mit deinem KI-Assistenten vorbereiten</h2><p>Kurz beschreiben, Auftrag kopieren, Ergebnis hier einfügen. Funktioniert mit jedem Chat-Assistenten, ohne Konto oder Schlüssel.</p>' +
+        '<div class="pj-route"><h2>Mit deinem KI-Assistenten vorbereiten</h2><p>Kurz beschreiben, Auftrag kopieren, Ergebnis hier einfügen. Gedacht für Chat-Assistenten, die einen längeren Auftrag annehmen; kein Konto oder Schlüssel nötig. Ob ein bestimmter Assistent gültige Projekte liefert, ist nicht garantiert: die Website prüft jedes Ergebnis.</p>' +
           '<p class="pj-acts"><a class="btn btn-p" href="#/projekt/ki">Mit deinem KI-Assistenten vorbereiten</a></p></div>' +
         '<div class="pj-route"><h2>Projekt öffnen</h2><p>Eine gesicherte Projektdatei (.json) oder ein eingefügtes Ergebnis.</p>' +
           '<p class="pj-acts"><label class="btn" for="pj-file">Projekt öffnen</label><input type="file" id="pj-file" accept=".json,application/json,text/plain" class="sr-only" data-op="file"></p>' +
           importBox() + '</div>' +
       '</div>' +
-      (drafts ? '<h2>Entwürfe in diesem Browser</h2><ul class="pj-drafts">' + drafts + '</ul>' : '') +
+      (drafts ? '<h2>Entwürfe in diesem Browser (' + st.drafts.length + ' von ' + MAX_DRAFTS + ')</h2><ul class="pj-drafts">' + drafts + '</ul>' : '') +
       '<p class="pj-small">Die gesicherten Anpassungen der Bibliothek (Namen, Folientexte) sind ein eigenes Format und funktionieren weiter wie bisher.</p></section>';
   }
   function originLabel(o) { return { template: 'aus Beispiel', manual: 'neu', import: 'importiert', assistant: 'vom KI-Assistenten' }[o] || o || ''; }
@@ -124,7 +147,7 @@
       (other.length ? '<ul class="pj-errs">' + other.map(function (e) { return '<li>' + esc(e.message) + '</li>'; }).join('') + '</ul>' : '') +
       (s.warnings.length ? '<h2>Hinweise (blockieren nicht)</h2><ul class="pj-warns">' + s.warnings.map(function (e) { return '<li>' + esc(e.message) + '</li>'; }).join('') + '</ul>' : '') +
       (!s.ok ? '<details class="pj-repair"><summary>Korrektur-Auftrag für den KI-Assistenten</summary><p>Dieser Text wird kopiert. Er enthält die Fehler und das ganze Projekt:</p><textarea id="pj-repair" rows="10" readonly spellcheck="false">' + esc(PC.repairPrompt(p, s.errors)) + '</textarea><p><button type="button" class="btn" data-op="copy" data-src="pj-repair">Korrektur-Auftrag kopieren</button> <span class="pj-small" id="pj-copied" role="status"></span></p></details>' : '') +
-      '<p class="pj-acts">' + (s.ok ? '<button type="button" class="btn btn-p" data-op="accept">Als neuen Entwurf öffnen</button>' : '<button type="button" class="btn" data-op="accept-anyway"' + (canPeople && Array.isArray(p.slides) && Array.isArray(p.scenes) && Array.isArray(p.states) && Array.isArray(p.tasks) ? '' : ' disabled') + '>Trotzdem öffnen und von Hand korrigieren</button>') +
+      '<p class="pj-acts">' + (s.ok ? '<button type="button" class="btn btn-p" data-op="accept">Als neuen Entwurf öffnen</button>' : (editable(s) ? '<button type="button" class="btn" data-op="accept-anyway">Trotzdem öffnen und von Hand korrigieren</button>' : '<span class="pj-small">Diese Fehler kann der Editor nicht anzeigen. Bitte mit dem Korrektur-Auftrag oder in der Datei beheben.</span>')) +
       ' <button type="button" class="btn" data-op="cancel">Abbrechen</button></p>' +
       importBox() + '</section>';
   }
@@ -133,6 +156,9 @@
     var p = cur();
     if (!p) return start();
     var v = PC.validate(p), prof = profiles();
+    if (!editable(v)) return '<section class="block pj"><nav class="pj-crumbs" aria-label="Pfad"><a href="#/">Bibliothek</a> › <a href="#/projekt">Eigene Abfolge</a> › Bearbeiten</nav><h1>Dieser Entwurf kann nicht bearbeitet werden</h1>' +
+      '<p>Er hat Strukturfehler, die der Editor nicht anzeigen kann:</p>' + validity(v) +
+      '<p class="pj-acts"><button type="button" class="btn" data-op="save">Projekt sichern</button> <a class="btn" href="#/projekt">Zurück</a></p><p class="pj-small" id="pj-status" role="status"></p></section>';
     var after = p.states.filter(function (s) { return s.id === 'after'; })[0], before = p.states.filter(function (s) { return s.id === 'before'; })[0];
     var bi = p.states.indexOf(before), ai = p.states.indexOf(after);
     function stateSel(si, tid) {
@@ -140,7 +166,7 @@
       return '<select data-state="' + si + '" data-task="' + esc(tid) + '" aria-label="' + esc(p.states[si].label) + ': wo steht die Aufgabe?">' +
         [['personal', 'Persönliche Liste'], ['plan', 'Gemeinsamer Plan'], ['none', 'Nicht gezeigt']].map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === val ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select>';
     }
-    var html = '<section class="block pj pj-ed"><nav class="pj-crumbs" aria-label="Pfad"><a href="#/">Bibliothek</a> › <a href="#/projekt">Eigene Abfolge</a> › Bearbeiten</nav>' +
+    var html = '<section class="block pj pj-ed"><nav class="pj-crumbs" aria-label="Pfad"><a href="#/">Bibliothek</a> › <a href="#/projekt">Eigene Abfolge</a> › Bearbeiten</nav>' + storageBox() +
       '<header class="pj-head"><h1>' + esc(p.meta.title) + '</h1>' +
       '<p class="pj-acts"><button type="button" class="btn btn-p" data-op="save">Projekt sichern</button> <button type="button" class="btn" data-op="export">Alle Folien als PNG</button> <a class="btn" href="#/projekt">Andere Abfolge</a></p>' +
       '<p class="pj-small" id="pj-status" role="status">Entwurf wird in diesem Browser laufend gespeichert. «Projekt sichern» lädt die Datei herunter.</p></header>' +
@@ -177,7 +203,7 @@
                 '<button type="button" class="btn sm" data-op="del-post" data-s="' + si + '" data-i="' + j + '">Beitrag entfernen</button></li>';
             }).join('') + '</ol><p><button type="button" class="btn sm" data-op="add-post" data-s="' + si + '">Beitrag hinzufügen</button></p>';
         } else if (sc && sc.profile === 'planner') {
-          body = field('Plan / Team', 'scenes.' + si + '.team', sc.team) + '<p class="pj-small">Zeigt alle Aufgaben, die «' + esc(after.label) + '» im gemeinsamen Plan stehen.</p>';
+          body = field('Plan / Team', 'scenes.' + si + '.team', sc.team) + '<p class="pj-small">Zeigt alle Aufgaben, die «' + esc((sc.state === 'before' ? before : after).label) + '» im gemeinsamen Plan stehen.</p>';
         } else if (sc && sc.profile === 'prinzip-tasks') {
           var t = 'slides.' + i + '.teaching.', tc = sl.teaching || {};
           body = field('Titel', t + 'title', tc.title, { max: 60 }) + field('Frage', t + 'question', tc.question, { max: 90 }) + field('Situation', t + 'problem', tc.problem, { area: true, rows: 2, max: 200 }) +
@@ -192,6 +218,9 @@
       '</div><div class="pj-prev" id="pj-prev" aria-label="Vorschau der Folien">' + previews(p) + '</div></div></section>';
     return html;
   }
+  /* Errors the form can show and fix; anything structural must be repaired before editing. */
+  var EDITABLE = ['unknown-person', 'person-name', 'task-title', 'post-text', 'scene-team', 'scene-channel', 'teaching-title', 'teaching-recommendation', 'teaching-boundary', 'meta-title', 'long'];
+  function editable(v) { return v.errors.every(function (e) { return EDITABLE.indexOf(e.code) >= 0; }); }
   function validity(v) {
     if (v.ok && !v.warnings.length) return '<p class="pj-ok">' + V.ic('i-check') + 'Alles passt.</p>';
     return (v.errors.length ? '<div class="pj-errbox"><p><strong>' + v.errors.length + ' Fehler</strong></p><ul>' + v.errors.map(function (e) { return '<li>' + esc(e.message) + '</li>'; }).join('') + '</ul></div>' : '') +
@@ -220,30 +249,24 @@
     });
   }
 
-  /* ---------- export: same compose/densify/tighten/toPNG path as the library ---------- */
+  /* ---------- export: the shared ProjectRender operation (also used by CLI and MCP) ---------- */
   function exportAll(opts) {
     opts = opts || {};
-    var p = cur(); if (!p) return Promise.resolve([]);
-    var host = document.createElement('div'), out = [], status = document.getElementById('pj-status');
-    host.className = 'export-host'; document.body.appendChild(host);
-    var chain = (document.fonts ? document.fonts.ready : Promise.resolve());
-    p.slides.forEach(function (sl, i) {
-      chain = chain.then(function () {
-        host.innerHTML = slideHtml(p, i);
-        var el = host.querySelector('.slide'); if (!el) return;
-        X.densify(el); X.tighten(el);
-        if (status) status.textContent = 'PNG ' + (i + 1) + ' von ' + p.slides.length + ' …';
-        return X.toPNG(el, opts.scale || 1).then(function (blob) {
-          var name = PC.fileName(p, i);
-          if (opts.download !== false) X.download(blob, name);
-          return (opts.dataUrl ? blobUrl(blob) : Promise.resolve(null)).then(function (d) { out.push({ name: name, size: blob.size, dataUrl: d }); });
-        });
-      });
+    var p = cur(); if (!p) return Promise.resolve({ ok: false, slides: [], diagnostics: [] });
+    var status = document.getElementById('pj-status');
+    return root.ProjectRender.renderAll(p, { scale: opts.scale || 1, dataUrl: !!opts.dataUrl, onProgress: function (i, n) { if (status) status.textContent = 'PNG ' + (i + 1) + ' von ' + n + ' …'; } }).then(function (r) {
+      if (!r.ok) {
+        var errs = r.diagnostics.filter(function (d) { return d.severity === 'error'; });
+        if (status) status.innerHTML = '<strong>Export abgebrochen, keine Datei erzeugt.</strong> ' + errs.map(function (d) { return esc(d.message); }).join(' ');
+        announce('Export abgebrochen: ' + errs.length + ' Problem' + (errs.length === 1 ? '' : 'e'));
+        return r;
+      }
+      if (opts.download !== false) r.slides.forEach(function (s) { X.download(s.blob, s.fileName); });
+      if (status) status.textContent = r.slides.length + ' PNG erzeugt: ' + r.slides.map(function (s) { return s.fileName; }).join(', ');
+      announce(r.slides.length + ' PNG erzeugt');
+      return r;
     });
-    return chain.then(function () { host.remove(); if (status) status.textContent = out.length + ' PNG erzeugt: ' + out.map(function (o) { return o.name; }).join(', '); announce(out.length + ' PNG erzeugt'); return out; },
-      function (e) { host.remove(); if (status) status.textContent = 'Export fehlgeschlagen: ' + e.message; throw e; });
   }
-  function blobUrl(b) { return new Promise(function (r) { var f = new FileReader(); f.onload = function () { r(f.result); }; f.readAsDataURL(b); }); }
 
   /* ---------- import ---------- */
   function receive(text, origin) {
@@ -306,9 +329,10 @@
   function onClick(e) {
     var b = e.target.closest('[data-op]'); if (!b || b.tagName === 'INPUT') return;
     var op = b.getAttribute('data-op'), p = cur(), i = +b.getAttribute('data-i');
-    if (op === 'adapt') { addDraft(PC.template(), 'template'); go('bearbeiten'); }
-    else if (op === 'new') { addDraft(PC.blank(), 'manual'); go('bearbeiten'); }
+    if (op === 'adapt') { if (addDraft(PC.template(), 'template')) go('bearbeiten'); }
+    else if (op === 'new') { if (addDraft(PC.blank(), 'manual')) go('bearbeiten'); }
     else if (op === 'open-draft') { st.current = i; persist(); go('bearbeiten'); }
+    else if (op === 'del-draft') { st.drafts.splice(i, 1); st.current = st.drafts.length ? 0 : -1; if (/Entwürfe gespeichert/.test(storageProblem)) storageProblem = ''; persist(); render.keep(); announce('Entwurf entfernt'); }
     else if (op === 'paste') { var err = receive(document.getElementById('pj-paste').value, location.hash.indexOf('/ki') >= 0 ? 'assistant' : 'import'); if (err) alertBox(err.message); }
     else if (op === 'copy') copyFrom(b.getAttribute('data-src'));
     else if (op === 'fix-person') {
@@ -317,8 +341,9 @@
       st.pending.project = PC.replacePersonRef(st.pending.project, ref, sel.value); persist(); render.keep(); announce('Ersetzt. Erneut geprüft.');
     }
     else if (op === 'accept' || op === 'accept-anyway') {
-      var pd = st.pending; st.pending = null;
-      addDraft(pd.project, pd.origin); go('bearbeiten'); announce('Als neuer Entwurf geöffnet.');
+      var pd = st.pending;
+      if (!addDraft(pd.project, pd.origin)) return;
+      st.pending = null; persist(); go('bearbeiten'); announce('Als neuer Entwurf geöffnet.');
     }
     else if (op === 'cancel') { st.pending = null; persist(); location.hash = '#/projekt'; }
     else if (!p) return;

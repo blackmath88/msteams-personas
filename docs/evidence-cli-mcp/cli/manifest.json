@@ -1,0 +1,53 @@
+{
+  "format": "msteams-personas/render-manifest",
+  "manifestVersion": 1,
+  "rendererVersion": "v3",
+  "projectVersion": 1,
+  "capabilityVersion": 1,
+  "project": {
+    "id": "bibliothek-tannwil-ausleihe",
+    "title": "Ausleihe-Rückstände gemeinsam abbauen"
+  },
+  "ok": true,
+  "stage": "done",
+  "width": 1920,
+  "height": 1080,
+  "durationMs": 1958,
+  "slides": [
+    {
+      "index": 0,
+      "id": "s-kanal",
+      "profile": "teams-posts",
+      "file": "01-bibliothek-tannwil-ausleihe-teams-posts.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 187517,
+      "fit": [],
+      "sha256": "70c8ee3b7b07886fe43e0c170224941b61578d9e0a50bcb17cdec4ddda1e70fc"
+    },
+    {
+      "index": 1,
+      "id": "s-plan",
+      "profile": "planner",
+      "file": "02-bibliothek-tannwil-ausleihe-planner.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 172849,
+      "fit": [],
+      "sha256": "6f30071d4271779a24ba6ef6ff56819f90f8b53f27d1304ea9581079dd4157d1"
+    },
+    {
+      "index": 2,
+      "id": "s-prinzip",
+      "profile": "prinzip-tasks",
+      "file": "03-bibliothek-tannwil-ausleihe-prinzip-tasks.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 256948,
+      "fit": [],
+      "sha256": "4e2fc4b66f4a7b84254ae9410bdb56f995f0bb3cb46e6af0a172ffaa71bcf089"
+    }
+  ],
+  "diagnostics": [],
+  "renderedAt": "2026-10-30T08:46:37.508Z"
+}

@@ -1,0 +1,181 @@
+{
+  "format": "msteams-personas/project",
+  "projectVersion": 1,
+  "capabilityVersion": 1,
+  "meta": {
+    "id": "bibliothek-tannwil-ausleihe",
+    "title": "Ausleihe-Rückstände gemeinsam abbauen",
+    "organisation": "Gemeindebibliothek Tannwil (fiktiv)",
+    "audience": "Bibliotheksteam mit Teilzeitpensen",
+    "goal": "Zeigen, wie Mahnungen und Reservationen über Wochenenden hinweg bei jemandem bleiben",
+    "locale": "de-CH",
+    "fictional": true,
+    "source": {
+      "kind": "agent",
+      "note": "Über MCP erstellt, fiktiver Inhalt"
+    },
+    "assumptions": [
+      "Das Team hat einen Teams-Kanal «Ausleihe» und einen Planner-Plan im selben Team."
+    ],
+    "notes": ""
+  },
+  "people": [
+    {
+      "id": "p-renate",
+      "name": "Renate Zürcher",
+      "role": "Leitung Bibliothek"
+    },
+    {
+      "id": "p-samuel",
+      "name": "Samuel Okafor",
+      "role": "Ausleihe, Dienstag und Mittwoch"
+    },
+    {
+      "id": "p-mia",
+      "name": "Mia Gerber",
+      "role": "Ausleihe, Freitag und Samstag"
+    }
+  ],
+  "documents": [
+    {
+      "id": "d-mahnliste",
+      "name": "Mahnliste Oktober.xlsx"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t-mahnung",
+      "title": "Zweite Mahnung Klasse 4b versenden"
+    },
+    {
+      "id": "t-reserv",
+      "title": "Reservation Fernleihe abholen lassen"
+    },
+    {
+      "id": "t-kiste",
+      "title": "Bücherkiste Altersheim zusammenstellen"
+    },
+    {
+      "id": "t-etiketten",
+      "title": "Neue Etiketten bestellen"
+    }
+  ],
+  "states": [
+    {
+      "id": "before",
+      "label": "Heute",
+      "tasks": {
+        "t-mahnung": {
+          "owner": "p-samuel",
+          "list": "personal"
+        },
+        "t-reserv": {
+          "owner": "p-mia",
+          "list": "personal"
+        },
+        "t-kiste": {
+          "owner": "p-renate",
+          "list": "plan",
+          "bucket": "Diese Woche",
+          "due": "Fr 8.11."
+        },
+        "t-etiketten": {
+          "owner": "p-samuel",
+          "list": "personal"
+        }
+      }
+    },
+    {
+      "id": "after",
+      "label": "Mit gemeinsamem Plan",
+      "tasks": {
+        "t-mahnung": {
+          "owner": "p-mia",
+          "list": "plan",
+          "bucket": "Diese Woche",
+          "due": "Sa 9.11."
+        },
+        "t-reserv": {
+          "owner": "p-mia",
+          "list": "plan",
+          "bucket": "Diese Woche",
+          "due": "Fr 8.11."
+        },
+        "t-kiste": {
+          "owner": "p-renate",
+          "list": "plan",
+          "bucket": "Diese Woche",
+          "due": "Fr 8.11."
+        },
+        "t-etiketten": {
+          "owner": "p-samuel",
+          "list": "personal"
+        }
+      }
+    }
+  ],
+  "scenes": [
+    {
+      "id": "sc-kanal",
+      "profile": "teams-posts",
+      "team": "Bibliothek Tannwil",
+      "channel": "Ausleihe",
+      "posts": [
+        {
+          "id": "q1",
+          "by": "p-samuel",
+          "time": "17:48",
+          "title": "Übergabe Mittwoch",
+          "text": "Die zweite Mahnung für die 4b ist noch offen, Liste liegt im Anhang. Ich bin erst am Dienstag wieder da.",
+          "document": "d-mahnliste",
+          "hint": "Die Mahnung hängt an einer Person, die vier Tage weg ist."
+        },
+        {
+          "id": "q2",
+          "by": "p-mia",
+          "time": "09:12",
+          "title": "",
+          "text": "Kann ich am Samstag machen. Wo sehe ich, was sonst noch liegen bleibt?",
+          "hint": "Was offen ist, steht nur verstreut in Beiträgen."
+        }
+      ]
+    },
+    {
+      "id": "sc-plan",
+      "profile": "planner",
+      "team": "Bibliothek Tannwil",
+      "state": "after"
+    },
+    {
+      "id": "sc-prinzip",
+      "profile": "prinzip-tasks",
+      "team": "Bibliothek Tannwil",
+      "before": "before",
+      "after": "after"
+    }
+  ],
+  "slides": [
+    {
+      "id": "s-kanal",
+      "scene": "sc-kanal",
+      "presenterNotes": "Fragen: Wer merkt am Samstag, dass die Mahnung noch offen ist?"
+    },
+    {
+      "id": "s-plan",
+      "scene": "sc-plan",
+      "presenterNotes": "Mahnung und Reservation haben jetzt eine Person und einen Termin."
+    },
+    {
+      "id": "s-prinzip",
+      "scene": "sc-prinzip",
+      "presenterNotes": "Die Bücherkiste stand schon vorher im Plan: sie bleibt dort.",
+      "teaching": {
+        "title": "Was andere übernehmen, gehört in den Plan",
+        "question": "Wer erledigt was, auch wenn jemand vier Tage frei hat?",
+        "problem": "Mahnungen und Reservationen stehen in persönlichen Listen. Bei Teilzeit bleibt etwas liegen.",
+        "recommendation": "Aufgaben mit Termin, die eine andere Person übernehmen kann, kommen mit Person und Datum in den gemeinsamen Plan.",
+        "boundary": "Kleine eigene Erinnerungen wie Etiketten bestellen bleiben in der persönlichen Liste."
+      }
+    }
+  ]
+}

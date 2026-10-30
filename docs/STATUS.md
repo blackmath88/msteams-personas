@@ -23,7 +23,11 @@ See [V3 handoff](V3-BUILD-HANDOFF.md) for screen availability, evidence and know
 
 Existing JSON files are curated-situation override backups. They must not be advertised as arbitrary portable projects.
 
-## Built on branch feat/bridge-authoring (not merged)
+## Built on branch feat/cli-mcp-render (not merged)
+
+Built 2026-10-30 on main `7d5f330`: validator hardening (null entries, typed fields, before/after-only states, shared-before meaning), all-or-nothing export with fit/render diagnostics, honest storage and draft-limit handling, one render operation for website/CLI/MCP, `tools/cli.mjs`, and an MCP server (official SDK v2, stdio + Streamable HTTP on localhost). Proved with the SDK client; no assistant host was tested. Evidence: [CLI/MCP handoff](CLI-MCP-HANDOFF.md).
+
+## Merged to main: portable project authoring (`7d5f330`)
 
 First increment of portable projects, built 2026-10-29: shared core `src/project-core.js` (format v1, capabilities v1: teams-posts, planner, prinzip-tasks), manual editor, assistant bridge with authoring pack, import review with person repair, save/reopen and PNG export at `#/projekt`. Evidence and limits: [bridge handoff](BRIDGE-BUILD-HANDOFF.md). No real cross-assistant test has been run yet.
 
