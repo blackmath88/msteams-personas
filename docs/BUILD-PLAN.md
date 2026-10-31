@@ -1,24 +1,18 @@
 # Active build plan — Slides as Code and the AI-assistant bridge
 
-Updated: 2026-10-29. Planning only; no new runtime functionality is claimed.
+Updated: 2026-10-31. Slices 1–3 are built and merged on main; slice 4 is built on `feat/cli-mcp-render`, pending PR; slice 5 is partial and slice 6 is not built.
 
-## Active next attempt — larger 30-minute product build
+## Completed attempt: manual authoring and assistant bridge
 
-The user requests faster delivery of manual website authoring and AI-assistant integration together. Use [the 30-minute Claude/Orca task](ORCA-NUC-BRIDGE-30MIN.md) as the executable scope. It combines the project contract, manual editor/import/save and external-assistant bridge in one bounded attempt; the numbered slices below are architecture/dependency guidance, not a requirement for separate sequential release cycles.
+The [30-minute Claude/Orca task](ORCA-NUC-BRIDGE-30MIN.md) delivered portable-project authoring and the assistant bridge, merged at `7d5f330`. See the [bridge handoff](BRIDGE-BUILD-HANDOFF.md) for implementation, evidence and limits. The follow-up shared render operation, CLI and local MCP server are built on `feat/cli-mcp-render`; see the [CLI/MCP handoff](CLI-MCP-HANDOFF.md).
 
-Implement a coherent Teams + Planner + Prinzip subset with genuinely new project content. Make recommendations, boundaries and facilitator notes editable. Template adaptation stays the default; the bridge is a secondary route for new situations. Three-slide sequences are the default, with optional storyboard approval and sensible defaults.
+Completion of these builds does not establish every acceptance claim below. The two-assistant bridge trial, five observed trainer tasks and full keyboard/screen-reader pass remain open. The MCP server passed a [Claude Code host test](HOST-TEST-CLAUDE-CODE.md) over stdio; other hosts are untested. Portable projects support only `teams-posts`, `planner` and `prinzip-tasks`; fit checks do not flag wrapping Planner titles.
 
-Share identities where consistency matters, keep messages scene-local, use explicit state snapshots and avoid snapshot inheritance. Add a separate project-to-renderer adapter instead of modifying curated global catalogues.
-
-The same capabilities must serve all planned routes, but interface maturity can differ: deliver website and bridge now, keep a headless/CLI seam, add WebMCP only if the core is verified, and defer hosted HTTP/remote MCP deployment. Local correction of unknown person references is part of the core, not merely an external repair loop.
-
-If supported, two isolated implementation workers may build core and UX concurrently after the coordinator fixes their contract. The total attempt is 30 minutes including integration and proof. Otherwise execute both paths directly. Preparing this task has not launched Claude.
-
-Research disposition: the supplied external review supports complete portable projects and incremental adapters, while treating handoff friction as unproven. It recommends manual-first UX and measuring teaching usefulness separately from valid JSON. Pricing/protocol claims are not adopted as verified implementation dependencies. See [decision note](research/BRIDGE-RESEARCH-DECISIONS.md).
+Research disposition: see the [decision note](research/BRIDGE-RESEARCH-DECISIONS.md). The numbered slices below retain their intended scope and acceptance criteria; their state lines distinguish delivered implementation from remaining work.
 
 ## Baseline and precedence
 
-main includes the complete V3 trainer library, merged at 300e00601606d295c6b0dd23933dc70452db654c. Fetch and inspect current main before implementing; do not restart from the earlier atlas or prototype branches.
+main includes the complete V3 trainer library, merged at `300e006`, and portable-project authoring plus the assistant bridge at `7d5f330`. Fetch and inspect current main before implementing; do not restart from the earlier atlas or prototype branches.
 
 Read [concept and architecture](SLIDES-AS-CODE-CONCEPT.md), [current status](STATUS.md), [V3 evidence](V3-BUILD-HANDOFF.md), the existing UX/fidelity references and repository instructions.
 
@@ -26,7 +20,7 @@ This plan supersedes the old instruction to build V2 from a separate prototype. 
 
 ## Outcome
 
-A nontechnical trainer discusses a course with their usual AI assistant, imports a new project into the website, edits it visually and exports a coherent slide sequence. The same portable project is usable through the website, CLI and future MCP interfaces.
+A nontechnical trainer discusses a course with their usual AI assistant, imports a new project into the website, edits it visually and exports a coherent slide sequence. The same portable project is usable through the website, CLI and local MCP interfaces, with hosted MCP deferred.
 
 Preserve V3's library, all existing routes/content/variants, local saves, JSON customisation backups, scenarios and exports.
 
@@ -39,6 +33,8 @@ Deliver a short decision record: chosen first vertical slice, alternatives rejec
 Gate: architecture decisions identify evidence versus hypotheses. No unnecessary backend, framework migration or schema platform.
 
 ## Slice 1 — portable projects and a new-scenario proof
+
+State: Built and merged on main (`e660d44`, `7d5f330`), with the three-profile subset.
 
 - Define a versioned JSON schema, supported-capability catalogue and structured diagnostics.
 - Separate entity IDs, state snapshots, scene projections and slide composition.
@@ -53,6 +49,8 @@ A new fictional organisation, people and artefacts render at least three connect
 
 ## Slice 2 — website project lifecycle and import UX
 
+State: Built and merged on main (`7d5f330`); full keyboard/screen-reader verification remains open.
+
 - New draft, open/paste/import, summary/preview, edit, save project and reopen.
 - Keep curated originals immutable; never replace active unsaved work without an explicit user choice.
 - Human-readable diagnostics linked to scene/slide and field, not raw schema traces alone.
@@ -64,6 +62,8 @@ Acceptance:
 A trainer imports an unseen example, reviews its scope, changes a person and a task, exports it and reopens the saved project with order, notes and identities intact. Invalid import leaves existing work intact. Keyboard, narrow screens and 200% zoom remain usable.
 
 ## Slice 3 — assistant bridge, first public-facing milestone
+
+State: Built and merged on main (`7d5f330`); real cross-assistant and observed trainer trials remain open.
 
 - Add “Mit deinem KI-Assistenten vorbereiten” as a secondary action beside manual authoring.
 - A short brief captures audience, goal, duration, context and applications using useful defaults.
@@ -81,6 +81,8 @@ Conduct at least five observed trainer tasks before claiming low friction. Initi
 
 ## Slice 4 — headless render runner and CLI
 
+State: Built on `feat/cli-mcp-render` (`0280a8c`, with handoff updates `7fbd75f` and `952640f`), pushed and pending PR; see the [CLI/MCP handoff](CLI-MCP-HANDOFF.md) for delivered commands, outputs and proof.
+
 - Expose shared domain operations independently of UI events.
 - Add catalogue, validate, preview and render commands with structured output and documented exit codes.
 - Headless Chromium uses a controlled internal render entry point, not click automation of the authoring UI.
@@ -93,6 +95,8 @@ Acceptance:
 A clean checkout can validate and render a new-project fixture noninteractively. Compare website and CLI outputs in the same environment. Verify downloaded image bytes/dimensions and inspect exports. Test malformed content, long names, missing assets and timeout cleanup.
 
 ## Slice 5 — hosted job service, HTTP and remote MCP
+
+State: Partial: local Streamable HTTP on `127.0.0.1` exists on the CLI/MCP branch; hosting, authentication and a job service are not built.
 
 This is a planned integration, not approval to buy services or publish infrastructure.
 
@@ -110,6 +114,8 @@ Acceptance:
 An external test client submits a custom project, retrieves previews and ordered assets, receives useful failure diagnostics and cannot access another job's artifacts. An MCP client and an HTTP client produce equivalent results. Production exposure waits for explicit deployment authorization.
 
 ## Slice 6 — WebMCP browser adapter
+
+State: Not built.
 
 Can proceed after shared domain operations stabilize; it does not depend on hosted rendering.
 

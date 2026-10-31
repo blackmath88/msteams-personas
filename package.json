@@ -1,0 +1,22 @@
+{
+  "name": "msteams-personas",
+  "private": true,
+  "description": "Fictional M365 training slides. The website needs no install; these dependencies are only for the local CLI and MCP server.",
+  "bin": {
+    "mtp": "tools/cli.mjs"
+  },
+  "scripts": {
+    "test": "node --test tests/",
+    "mcp": "node tools/mcp-server.mjs",
+    "mcp:http": "node tools/mcp-server.mjs --http"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/client": "^2.4.0",
+    "@modelcontextprotocol/node": "^2.1.2",
+    "@modelcontextprotocol/server": "^2.4.0",
+    "zod": "^4.6.7"
+  }
+}

@@ -4,12 +4,16 @@ Current detail: [active build plan](BUILD-PLAN.md).
 
 | Stage | Deliverable | State |
 | --- | --- | --- |
-| Original foundation | University atlas | On main |
-| Visual-library prototype | Six worlds, eight situations, configurator, Szene/Prinzip and stage | On prototype/visual-library-v1; latest inspected e9220ff |
-| V2 P0 | Three-entry UX, faithful Teams shell and actual PNG output | Planned |
-| V2 P1 | Coherent Outlook/Explorer/Teams/SharePoint teaching story | Planned |
-| V2 P2 | OneDrive personal scene and wider renderer coverage | Planned |
-| Later | Full authoring, portable collections, more templates, editable PPTX | Deferred |
+| Original foundation | University atlas | Merged on main |
+| Visual-library prototype | Worlds, situations, configurator, Szene/Prinzip and stage | Incorporated into V2 and V3 on main |
+| V2 P0 | Three-entry UX, faithful Teams shell and actual PNG output | Merged on main, included in V3 at `300e006` |
+| V2 P1 | Coherent Outlook/Explorer/Teams/SharePoint teaching story | Merged on main, included in V3 at `300e006` |
+| V2 P2 / V3 | OneDrive personal scene, wider renderer coverage and trainer sequences | Merged on main at `300e006`; scenario-dependent coverage |
+| Portable projects, slices 1–3 | Project contract, manual authoring/import/save and assistant bridge | Merged on main at `7d5f330`; three capability profiles, real-assistant and trainer trials open |
+| CLI/MCP, slice 4 | Shared render operation, CLI, local MCP over stdio and Streamable HTTP | Built and pushed on `feat/cli-mcp-render`, pending PR; [handoff](CLI-MCP-HANDOFF.md) |
+| Hosting, slice 5 | Hosted rendering, authentication and job service | Not built; only local Streamable HTTP exists on branch |
+| WebMCP, slice 6 | Browser-agent adapter | Not built |
+| Later | Broader authoring/templates and editable PPTX | Deferred; editable PPTX not built |
 
 - [UX plan](UX-LIBRARY-PLAN.md)
 - [M365 fidelity/output plan](M365-UI-FIDELITY-PLAN.md)

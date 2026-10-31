@@ -1,6 +1,6 @@
 # Current status
 
-Updated: 2026-10-29.
+Updated: 2026-10-31.
 
 ## Implemented and merged
 
@@ -14,25 +14,31 @@ See [V3 handoff](V3-BUILD-HANDOFF.md) for screen availability, evidence and know
 
 ## Planned, not implemented
 
-[Slides as Code concept](SLIDES-AS-CODE-CONCEPT.md) and [active build plan](BUILD-PLAN.md) define:
-- a portable, complete project format and shared domain operations;
-- manual website authoring/import/review;
-- a guided prompt/authoring-pack bridge to the user's existing AI assistant;
-- optional CLI and hosted HTTP/remote MCP;
-- progressive WebMCP browser assistance.
+[Slides as Code concept](SLIDES-AS-CODE-CONCEPT.md) and [active build plan](BUILD-PLAN.md) retain hosting, authentication, a job service and remote deployment, plus a WebMCP browser adapter. Editable PPTX remains deferred. Local Streamable HTTP is built on the branch below; it is not a hosted service.
 
-Existing JSON files are curated-situation override backups. They must not be advertised as arbitrary portable projects.
+Customisation-backup JSON and portable-project JSON are separate formats with separate import paths.
 
-## Built on branch feat/bridge-authoring (not merged)
+## Built on branch feat/cli-mcp-render (not merged)
+
+Built 2026-10-30 on main `7d5f330`, pushed as `0280a8c`, `7fbd75f` and `952640f`, pending PR and review: validator hardening (null entries, typed fields, before/after-only states, shared-before meaning), all-or-nothing export with fit/render diagnostics, honest storage and draft-limit handling, one render operation for website/CLI/MCP, `tools/cli.mjs`, and an MCP server (official SDK v2, stdio + Streamable HTTP on `127.0.0.1`). This implements slice 4 and only the local HTTP transport part of slice 5. Proved with the SDK client, then in Claude Code over stdio ([host test](HOST-TEST-CLAUDE-CODE.md)). Evidence: [CLI/MCP handoff](CLI-MCP-HANDOFF.md).
+
+## Merged to main: portable project authoring (`7d5f330`)
 
 First increment of portable projects, built 2026-10-29: shared core `src/project-core.js` (format v1, capabilities v1: teams-posts, planner, prinzip-tasks), manual editor, assistant bridge with authoring pack, import review with person repair, save/reopen and PNG export at `#/projekt`. Evidence and limits: [bridge handoff](BRIDGE-BUILD-HANDOFF.md). No real cross-assistant test has been run yet.
 
-## Earlier planning note: active next attempt
+## Open verification and limits
 
-The user requests a larger 30-minute Claude/Orca build combining manual website project authoring and the external-assistant bridge on one shared project contract. See [executable task](ORCA-NUC-BRIDGE-30MIN.md). Core target: new-project Teams + Planner + Prinzip, editable teaching text, safe import/save/reopen, local reference repair and real exports. No runtime has been launched from this planning session.
+- The MCP server passed a real [Claude Code host test](HOST-TEST-CLAUDE-CODE.md) over stdio on 2026-10-31. Other hosts and HTTP in a host remain untested.
+- The bridge trial with two real assistants and five observed trainer tasks remain open.
+- A full keyboard and screen-reader pass on `#/projekt` remains open.
+- Portable-project capabilities remain limited to `teams-posts`, `planner` and `prinzip-tasks`.
+- Fit checks do not flag long Planner titles that wrap.
 
-## Next action
+## Next actions
 
-Use the supplied research disposition and start the 30-minute task from current main. Build manual and assistant routes together; prove one genuinely new scenario and preserve the existing library. Return the implementation branch and evidence for review.
+1. Review the pending CLI/MCP PR and merge after review.
+2. Run the cross-assistant bridge trial with two real assistants.
+3. Optionally apply the small MCP polish points from the [host test](HOST-TEST-CLAUDE-CODE.md).
+4. Add the next capability profile, Teams chat or Outlook, through the existing project contract.
 
-The former V2 Orca task is historical. No builder was launched, runtime code changed or service deployed by this documentation update. The previous Weavr Mission remains archived; no Weavr action is requested here.
+The former V2 Orca task is historical. The previous Weavr Mission remains archived; no Weavr action is requested here.

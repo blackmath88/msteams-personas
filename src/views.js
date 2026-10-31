@@ -181,7 +181,11 @@
       return '<li class="pd-list">' + '<p class="pd-boxh">' + av(p, 's') + 'Liste von ' + esc(short(p.name)) + '</p><ul>' + x.items.map(function (i) { return '<li>' + esc(i) + '</li>'; }).join('') +
         (!b.exactBefore && b.shared[0] && b.shared[0].who === x.who ? '<li>' + esc(b.shared[0].t) + '</li>' : '') + '</ul><p class="pd-small">nur für diese Person sichtbar</p></li>';
     }).join('');
-    var left = '<ul class="pd-lists">' + lists + '</ul><p class="pd-q">Wer erledigt was bis wann?</p>';
+    /* Compiled projects: tasks that were already in a shared plan before stay shared, never personal. */
+    var already = b.beforeShared && b.beforeShared.length ? '<div class="pd-box pd-plan pd-before-plan"><p class="pd-boxh">' + ic('i-list') + 'Schon im gemeinsamen Plan</p><ul class="pd-rows">' + b.beforeShared.map(function (t) {
+      return '<li><span>' + esc(t.t) + '</span><span class="pd-own">' + (t.who ? av(vm.person(t.who), 's') + esc(short(vm.person(t.who).name)) : esc(t.whoLabel)) + '</span></li>';
+    }).join('') + '</ul></div>' : '';
+    var left = '<ul class="pd-lists">' + lists + '</ul>' + already + '<p class="pd-q">Wer erledigt was bis wann?</p>';
     var right = b.shared.length ? '<div class="pd-box pd-plan"><p class="pd-boxh">' + ic('i-list') + esc(b.sharedLabel || 'Gemeinsamer Plan') + '</p><ul class="pd-rows">' + b.shared.map(function (t) {
       var own = t.who ? av(vm.person(t.who), 's') + esc(short(vm.person(t.who).name)) : '<span class="av av-s av-ghost" aria-hidden="true">?</span>' + esc(t.whoLabel);
       return '<li><span>' + esc(t.t) + '</span><span class="pd-own">' + own + '</span>' + (t.due ? '<span class="pd-due">' + esc(t.due) + '</span>' : '') + '</li>';

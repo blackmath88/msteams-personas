@@ -24,6 +24,7 @@
   var RENDERER_VERSION = 'v3';
   var MAX_INPUT = 200 * 1024;
   var ID = /^[a-z][a-z0-9-]{0,39}$/;
+  var PRINZIP_LISTS = 3; /* personal lists the «Aufgaben» diagram has room for */
 
   /* Supported profiles. Budgets are character limits that keep a 1920x1080 slide legible. */
   var CAPABILITIES = {
@@ -153,111 +154,150 @@
     catch (e) { return { error: { code: 'bad-json', message: 'Das JSON ist unvollständig oder fehlerhaft (' + e.message + '). Oft fehlt das Ende der Antwort.' } }; }
   }
 
-  /* ---------- Validation: structured diagnostics, never mutates ---------- */
+  /* ---------- Validation: structured diagnostics, never mutates, never throws ---------- */
+  /* The editor and the bridge support exactly these two snapshots (see STATE_IDS). */
+  var STATE_IDS = ['before', 'after'];
+  function isObj(x) { return !!x && typeof x === 'object' && !Array.isArray(x); }
   function validate(p) {
     var errors = [], warnings = [];
     function err(code, path, message, extra) { errors.push(Object.assign({ code: code, path: path, message: message, severity: 'error' }, extra || {})); }
     function warn(code, path, message, extra) { warnings.push(Object.assign({ code: code, path: path, message: message, severity: 'warning' }, extra || {})); }
-    if (!p || typeof p !== 'object' || Array.isArray(p)) { err('not-object', '', 'Das Projekt ist kein JSON-Objekt.'); return { ok: false, errors: errors, warnings: warnings }; }
+    /* Optional text: absent/null is fine, anything else must be a string. */
+    function optStr(o, k, path, label) { if (o[k] != null && !str(o[k])) err('type', path + '.' + k, label + ': «' + k + '» muss Text sein.', { expected: 'string' }); }
+    function reqStr(o, k, path, code, message) {
+      if (o[k] != null && !str(o[k])) err('type', path + '.' + k, message.replace(/ (hat|braucht) .*$/, '') + ': «' + k + '» muss Text sein.', { expected: 'string' });
+      else if (!str(o[k]) || !o[k].trim()) err(code, path + '.' + k, message);
+    }
+    if (!isObj(p)) { err('not-object', '', 'Das Projekt ist kein JSON-Objekt.'); return { ok: false, errors: errors, warnings: warnings }; }
     if (p.format !== FORMAT) err('format', 'format', 'Unbekanntes Format. Erwartet: «' + FORMAT + '».');
     if (p.projectVersion !== PROJECT_VERSION) err('project-version', 'projectVersion', 'Projektversion ' + JSON.stringify(p.projectVersion) + ' wird nicht unterstützt (erwartet ' + PROJECT_VERSION + ').');
     if (p.capabilityVersion !== CAPABILITY_VERSION) err('capability-version', 'capabilityVersion', 'Fähigkeitsversion ' + JSON.stringify(p.capabilityVersion) + ' wird nicht unterstützt (erwartet ' + CAPABILITY_VERSION + ').');
-    var meta = p.meta || {};
-    if (!str(meta.title) || !meta.title.trim()) err('meta-title', 'meta.title', 'Die Abfolge braucht einen Titel.');
-    if (meta.fictional !== true) warn('not-fictional', 'meta.fictional', 'Das Projekt ist nicht als fiktiv markiert. Bitte keine echten Personen oder Daten verwenden.');
+    var meta = p.meta;
+    if (!isObj(meta)) { err('meta', 'meta', 'Angaben zur Abfolge («meta») fehlen oder sind kein Objekt.'); meta = {}; }
+    reqStr(meta, 'title', 'meta', 'meta-title', 'Die Abfolge braucht einen Titel.');
+    ['organisation', 'audience', 'goal', 'notes', 'locale'].forEach(function (k) { optStr(meta, k, 'meta', 'Angaben zur Abfolge'); });
+    if (meta.id != null && (!str(meta.id) || !ID.test(meta.id))) err('bad-id', 'meta.id', 'Die Projekt-ID ist ungültig. Erlaubt: Kleinbuchstaben, Ziffern, Bindestrich.');
+    if (meta.fictional != null && typeof meta.fictional !== 'boolean') err('type', 'meta.fictional', '«fictional» muss true oder false sein.', { expected: 'boolean' });
+    else if (meta.fictional !== true) warn('not-fictional', 'meta.fictional', 'Das Projekt ist nicht als fiktiv markiert. Bitte keine echten Personen oder Daten verwenden.');
+    if (meta.assumptions != null && (!Array.isArray(meta.assumptions) || !meta.assumptions.every(str))) err('type', 'meta.assumptions', '«assumptions» muss eine Liste von Texten sein.', { expected: 'string[]' });
+    if (meta.source != null) {
+      if (!isObj(meta.source)) err('type', 'meta.source', '«source» muss ein Objekt mit «kind» und «note» sein.', { expected: 'object' });
+      else { optStr(meta.source, 'kind', 'meta.source', 'Quelle'); optStr(meta.source, 'note', 'meta.source', 'Quelle'); }
+    }
     var L = CAPABILITIES.limits;
+    /* Returns only the well-formed object entries, so later checks never touch null or text. */
     function list(key, max) {
       var a = p[key];
-      if (!Array.isArray(a)) { err('missing-' + key, key, 'Liste «' + key + '» fehlt.'); return []; }
+      if (!Array.isArray(a)) { err('missing-' + key, key, 'Liste «' + key + '» fehlt oder ist keine Liste.'); return []; }
       if (a.length > max) err('too-many-' + key, key, 'Zu viele Einträge in «' + key + '» (' + a.length + ', höchstens ' + max + ').');
-      var seen = {};
+      var seen = {}, ok = [];
       a.forEach(function (x, i) {
-        if (!x || !str(x.id) || !ID.test(x.id)) err('bad-id', key + '[' + i + '].id', 'Ungültige ID in «' + key + '» an Position ' + (i + 1) + '. Erlaubt: Kleinbuchstaben, Ziffern, Bindestrich.');
+        if (!isObj(x)) { err('bad-entry', key + '[' + i + ']', 'Eintrag ' + (i + 1) + ' in «' + key + '» ist kein Objekt.'); return; }
+        ok.push({ x: x, i: i });
+        if (!str(x.id) || !ID.test(x.id)) err('bad-id', key + '[' + i + '].id', 'Ungültige ID in «' + key + '» an Position ' + (i + 1) + '. Erlaubt: Kleinbuchstaben, Ziffern, Bindestrich.');
         else if (seen[x.id]) err('dup-id', key + '[' + i + '].id', 'Die ID «' + x.id + '» kommt doppelt vor.');
         else seen[x.id] = true;
       });
-      return a;
+      return ok;
     }
     var people = list('people', L.people), docs = list('documents', L.documents), tasks = list('tasks', L.tasks);
-    var states = list('states', 4), scenes = list('scenes', 8), slides = list('slides', L.slides);
-    var P = idx(people), D = idx(docs), T = idx(tasks), S = idx(states), SC = idx(scenes);
-    people.forEach(function (x, i) { if (!str(x.name) || !x.name.trim()) err('person-name', 'people[' + i + '].name', 'Person ' + (i + 1) + ' hat keinen Namen.'); });
-    tasks.forEach(function (x, i) { if (!str(x.title) || !x.title.trim()) err('task-title', 'tasks[' + i + '].title', 'Aufgabe ' + (i + 1) + ' hat keinen Titel.'); });
+    var states = list('states', STATE_IDS.length), scenes = list('scenes', 8), slides = list('slides', L.slides);
+    function ix(a) { var m = {}; a.forEach(function (e) { if (str(e.x.id)) m[e.x.id] = e.x; }); return m; }
+    var P = ix(people), D = ix(docs), T = ix(tasks), S = ix(states), SC = ix(scenes);
+    people.forEach(function (e) { reqStr(e.x, 'name', 'people[' + e.i + ']', 'person-name', 'Person ' + (e.i + 1) + ' hat keinen Namen.'); optStr(e.x, 'role', 'people[' + e.i + ']', 'Person ' + (e.i + 1)); });
+    tasks.forEach(function (e) { reqStr(e.x, 'title', 'tasks[' + e.i + ']', 'task-title', 'Aufgabe ' + (e.i + 1) + ' hat keinen Titel.'); });
+    docs.forEach(function (e) { reqStr(e.x, 'name', 'documents[' + e.i + ']', 'document-name', 'Dokument ' + (e.i + 1) + ' hat keinen Namen.'); });
     function personRef(id, path, where) {
-      if (!P[id]) err('unknown-person', path, where + ': Die Person «' + id + '» gibt es in diesem Projekt nicht.', { ref: id, where: where });
+      if (!str(id)) err('type', path, where + ': Die Person muss als ID (Text) angegeben sein.', { expected: 'string' });
+      else if (!P[id]) err('unknown-person', path, where + ': Die Person «' + id + '» gibt es in diesem Projekt nicht.', { ref: id, where: where });
     }
-    states.forEach(function (st, si) {
-      var tk = st.tasks || {};
-      if (typeof tk !== 'object' || Array.isArray(tk)) { err('state-tasks', 'states[' + si + '].tasks', 'Zustand «' + st.id + '»: Aufgaben fehlen.'); return; }
+    var ids = states.map(function (e) { return e.x.id; });
+    if (Array.isArray(p.states) && (ids.length !== STATE_IDS.length || STATE_IDS.some(function (k) { return ids.indexOf(k) < 0; })))
+      err('state-ids', 'states', 'Es braucht genau zwei Zustände mit den IDs «before» und «after» (gefunden: ' + (ids.map(function (x) { return '«' + x + '»'; }).join(', ') || 'keine') + '). Andere Zustände kann der Editor nicht bearbeiten.');
+    states.forEach(function (e) {
+      var st = e.x, si = e.i, tk = st.tasks;
+      optStr(st, 'label', 'states[' + si + ']', 'Zustand «' + st.id + '»');
+      if (!isObj(tk)) { err('state-tasks', 'states[' + si + '].tasks', 'Zustand «' + st.id + '»: Aufgaben fehlen.'); return; }
       Object.keys(tk).forEach(function (tid) {
-        var e = tk[tid] || {}, path = 'states[' + si + '].tasks.' + tid;
-        var where = 'Zustand «' + (st.label || st.id) + '», Aufgabe «' + (T[tid] ? T[tid].title : tid) + '»';
+        var t = tk[tid], path = 'states[' + si + '].tasks.' + tid;
+        var where = 'Zustand «' + (str(st.label) && st.label || st.id) + '», Aufgabe «' + (T[tid] && str(T[tid].title) ? T[tid].title : tid) + '»';
         if (!T[tid]) err('unknown-task', path, where + ': Diese Aufgabe gibt es nicht.', { ref: tid });
-        if (e.owner != null) personRef(e.owner, path + '.owner', where);
-        if (e.list !== 'personal' && e.list !== 'plan') err('task-list', path + '.list', where + ': «list» muss «personal» oder «plan» sein.');
-        if (e.list === 'personal' && e.owner == null) err('personal-owner', path + '.owner', where + ': Eine persönliche Aufgabe braucht eine Person.');
-        if (len(e.bucket) > CAPABILITIES.profiles.planner.budgets.bucket) warn('long', path + '.bucket', where + ': Bucket-Name ist lang und wird eventuell gekürzt.');
+        if (!isObj(t)) { err('bad-entry', path, where + ': Eintrag ist kein Objekt.'); return; }
+        if (t.owner != null) personRef(t.owner, path + '.owner', where);
+        if (t.list !== 'personal' && t.list !== 'plan') err('task-list', path + '.list', where + ': «list» muss «personal» oder «plan» sein.');
+        if (t.list === 'personal' && t.owner == null) err('personal-owner', path + '.owner', where + ': Eine persönliche Aufgabe braucht eine Person.');
+        optStr(t, 'bucket', path, where); optStr(t, 'due', path, where);
+        if (t.done != null && typeof t.done !== 'boolean') err('type', path + '.done', where + ': «done» muss true oder false sein.', { expected: 'boolean' });
+        if (len(t.bucket) > CAPABILITIES.profiles.planner.budgets.bucket) warn('long', path + '.bucket', where + ': Bucket-Name ist lang und wird eventuell gekürzt.');
       });
     });
-    scenes.forEach(function (sc, i) {
-      var path = 'scenes[' + i + ']', prof = CAPABILITIES.profiles[sc.profile];
+    scenes.forEach(function (e) {
+      var sc = e.x, path = 'scenes[' + e.i + ']', prof = str(sc.profile) && Object.prototype.hasOwnProperty.call(CAPABILITIES.profiles, sc.profile) ? CAPABILITIES.profiles[sc.profile] : null;
       if (!prof) { err('unknown-profile', path + '.profile', 'Szene «' + sc.id + '»: Ansicht «' + sc.profile + '» wird nicht unterstützt. Möglich: ' + Object.keys(CAPABILITIES.profiles).join(', ') + '.'); return; }
       var B = prof.budgets;
-      if (!str(sc.team) || !sc.team.trim()) err('scene-team', path + '.team', 'Szene «' + sc.id + '» braucht einen Teamnamen.');
-      else if (sc.team.length > B.team) warn('long', path + '.team', 'Teamname ist länger als ' + B.team + ' Zeichen.');
+      reqStr(sc, 'team', path, 'scene-team', 'Szene «' + sc.id + '» braucht einen Teamnamen.');
+      if (len(sc.team) > B.team) warn('long', path + '.team', 'Teamname ist länger als ' + B.team + ' Zeichen.');
       if (sc.profile === 'teams-posts') {
-        if (!str(sc.channel) || !sc.channel.trim()) err('scene-channel', path + '.channel', 'Szene «' + sc.id + '» braucht einen Kanal.');
+        reqStr(sc, 'channel', path, 'scene-channel', 'Szene «' + sc.id + '» braucht einen Kanal.');
         if (!Array.isArray(sc.posts) || !sc.posts.length) err('scene-posts', path + '.posts', 'Szene «' + sc.id + '» braucht mindestens einen Beitrag.');
         else {
           if (sc.posts.length > B.posts) warn('many-posts', path + '.posts', 'Mehr als ' + B.posts + ' Beiträge passen nicht gut auf eine Folie.');
           sc.posts.forEach(function (q, j) {
             var qp = path + '.posts[' + j + ']', where = 'Teams-Beitrag ' + (j + 1);
+            if (!isObj(q)) { err('bad-entry', qp, where + ' ist kein Objekt.'); return; }
             personRef(q.by, qp + '.by', where);
-            if (!str(q.text) || !q.text.trim()) err('post-text', qp + '.text', where + ' hat keinen Text.');
+            reqStr(q, 'text', qp, 'post-text', where + ' hat keinen Text.');
+            ['id', 'time', 'title', 'hint'].forEach(function (k) { optStr(q, k, qp, where); });
             if (len(q.text) > B.postText) warn('long', qp + '.text', where + ': Text ist länger als ' + B.postText + ' Zeichen.');
             if (len(q.title) > B.postTitle) warn('long', qp + '.title', where + ': Betreff ist länger als ' + B.postTitle + ' Zeichen.');
-            if (q.document != null && !D[q.document]) err('unknown-document', qp + '.document', where + ': Das Dokument «' + q.document + '» gibt es nicht.', { ref: q.document });
+            if (q.document != null && !(str(q.document) && D[q.document])) err('unknown-document', qp + '.document', where + ': Das Dokument «' + q.document + '» gibt es nicht.', { ref: q.document });
           });
         }
       }
       if (sc.profile === 'planner') {
-        if (!S[sc.state]) err('unknown-state', path + '.state', 'Planner-Szene «' + sc.id + '»: Zustand «' + sc.state + '» fehlt.');
+        if (STATE_IDS.indexOf(sc.state) < 0 || !S[sc.state]) err('unknown-state', path + '.state', 'Planner-Szene «' + sc.id + '»: Zustand «' + sc.state + '» fehlt. Möglich: «before» oder «after».');
         else if (!planTasks(p, sc.state).length) warn('empty-plan', path + '.state', 'Im Zustand «' + sc.state + '» steht keine Aufgabe im gemeinsamen Plan.');
       }
       if (sc.profile === 'prinzip-tasks') {
-        if (!S[sc.before]) err('unknown-state', path + '.before', 'Prinzip-Szene: Vorher-Zustand «' + sc.before + '» fehlt.');
-        if (!S[sc.after]) err('unknown-state', path + '.after', 'Prinzip-Szene: Nachher-Zustand «' + sc.after + '» fehlt.');
+        if (sc.before !== 'before' || sc.after !== 'after') err('prinzip-states', path, 'Prinzip-Szene «' + sc.id + '»: «before» muss «before» und «after» muss «after» sein.');
+        var b = S.before, rows = {};
+        if (b && isObj(b.tasks)) Object.keys(b.tasks).forEach(function (k) { var t = b.tasks[k]; if (isObj(t) && t.list === 'personal' && str(t.owner)) rows[t.owner] = 1; });
+        if (Object.keys(rows).length > PRINZIP_LISTS) warn('prinzip-lists', path, 'Prinzip-Folie: ' + Object.keys(rows).length + ' Personen haben vorher eine persönliche Liste; nur ' + PRINZIP_LISTS + ' passen auf die Folie, weitere werden nicht gezeigt.');
       }
     });
-    slides.forEach(function (sl, i) {
-      var path = 'slides[' + i + ']', sc = SC[sl.scene];
+    slides.forEach(function (e) {
+      var sl = e.x, i = e.i, path = 'slides[' + i + ']', sc = str(sl.scene) ? SC[sl.scene] : null;
       if (!sc) { err('unknown-scene', path + '.scene', 'Folie ' + (i + 1) + ': Szene «' + sl.scene + '» fehlt.'); return; }
+      optStr(sl, 'presenterNotes', path, 'Folie ' + (i + 1));
       if (len(sl.presenterNotes) > L.presenterNotes) warn('long', path + '.presenterNotes', 'Folie ' + (i + 1) + ': Notizen sind sehr lang.');
       if (sc.profile === 'prinzip-tasks') {
-        var t = sl.teaching || {}, B = CAPABILITIES.profiles['prinzip-tasks'].budgets;
-        ['title', 'recommendation', 'boundary'].forEach(function (k) {
-          if (!str(t[k]) || !t[k].trim()) err('teaching-' + k, path + '.teaching.' + k, 'Prinzip-Folie ' + (i + 1) + ': «' + k + '» fehlt.');
-        });
+        var t = sl.teaching, B = CAPABILITIES.profiles['prinzip-tasks'].budgets;
+        if (!isObj(t)) { err('teaching', path + '.teaching', 'Prinzip-Folie ' + (i + 1) + ': Lehrtext («teaching») fehlt.'); return; }
+        ['title', 'recommendation', 'boundary'].forEach(function (k) { reqStr(t, k, path + '.teaching', 'teaching-' + k, 'Prinzip-Folie ' + (i + 1) + ': «' + k + '» fehlt.'); });
+        ['question', 'problem'].forEach(function (k) { optStr(t, k, path + '.teaching', 'Prinzip-Folie ' + (i + 1)); });
         Object.keys(B).forEach(function (k) { if (len(t[k]) > B[k]) warn('long', path + '.teaching.' + k, 'Prinzip-Folie ' + (i + 1) + ': «' + k + '» ist länger als ' + B[k] + ' Zeichen.'); });
       }
     });
-    if (!slides.length) err('no-slides', 'slides', 'Die Abfolge hat keine Folien.');
+    if (Array.isArray(p.slides) && !p.slides.length) err('no-slides', 'slides', 'Die Abfolge hat keine Folien.');
     return { ok: !errors.length, errors: errors, warnings: warnings };
   }
   function idx(a) { var m = {}; a.forEach(function (x) { if (x && str(x.id)) m[x.id] = x; }); return m; }
-  function stateOf(p, id) { return (p.states || []).filter(function (s) { return s.id === id; })[0] || null; }
+  function stateOf(p, id) { return (Array.isArray(p.states) ? p.states : []).filter(function (s) { return isObj(s) && s.id === id; })[0] || null; }
   function planTasks(p, stateId) {
-    var st = stateOf(p, stateId); if (!st) return [];
-    return (p.tasks || []).filter(function (t) { return st.tasks[t.id] && st.tasks[t.id].list === 'plan'; }).map(function (t) { return Object.assign({ id: t.id, title: t.title }, st.tasks[t.id]); });
+    var st = stateOf(p, stateId); if (!st || !isObj(st.tasks)) return [];
+    return (Array.isArray(p.tasks) ? p.tasks : []).filter(function (t) { return isObj(t) && isObj(st.tasks[t.id]) && st.tasks[t.id].list === 'plan'; }).map(function (t) { return Object.assign({ id: t.id, title: t.title }, st.tasks[t.id]); });
   }
 
+  /* Import review summary: safe for any parsed JSON, including malformed projects. */
   function summary(p) {
-    var v = validate(p);
+    var v = validate(p), o = isObj(p) ? p : {}, meta = isObj(o.meta) ? o.meta : {};
+    function arr(x) { return Array.isArray(x) ? x : []; }
+    var SC = idx(arr(o.scenes));
     return {
-      title: p && p.meta && p.meta.title, organisation: p && p.meta && p.meta.organisation,
-      people: (p.people || []).length, tasks: (p.tasks || []).length,
-      slides: (p.slides || []).map(function (s, i) { var sc = idx(p.scenes || [])[s.scene]; return (i + 1) + '. ' + (sc && CAPABILITIES.profiles[sc.profile] ? CAPABILITIES.profiles[sc.profile].label : 'unbekannt'); }),
-      source: p && p.meta && p.meta.source, assumptions: (p && p.meta && p.meta.assumptions) || [],
+      title: str(meta.title) ? meta.title : '', organisation: str(meta.organisation) ? meta.organisation : '',
+      people: arr(o.people).length, tasks: arr(o.tasks).length,
+      slides: arr(o.slides).map(function (s, i) { var sc = isObj(s) && str(s.scene) ? SC[s.scene] : null, pr = sc && str(sc.profile) && Object.prototype.hasOwnProperty.call(CAPABILITIES.profiles, sc.profile) ? CAPABILITIES.profiles[sc.profile] : null; return (i + 1) + '. ' + (pr ? pr.label : 'unbekannt'); }),
+      source: isObj(meta.source) ? meta.source : null, assumptions: arr(meta.assumptions).filter(str),
       errors: v.errors, warnings: v.warnings, ok: v.ok
     };
   }
@@ -278,16 +318,20 @@
     var tasks = planTasks(p, after).map(function (t) { return { title: t.title, owner: t.owner, due: t.due || '', bucket: t.bucket || 'Aufgaben', done: !!t.done }; });
     var principles = {};
     if (sc.profile === 'prinzip-tasks') {
-      var t = sl.teaching || {}, before = stateOf(p, sc.before), personal = [];
+      /* Before side keeps the meaning of each entry: personal lists hold only list:'personal';
+         tasks already in the shared plan before are shown as such, never as someone's list. */
+      var t = sl.teaching || {}, before = stateOf(p, sc.before), personal = [], beforeShared = [];
       p.tasks.forEach(function (task) {
-        var e = before && before.tasks[task.id]; if (!e || !e.owner) return;
+        var e = before && before.tasks[task.id]; if (!e) return;
+        if (e.list === 'plan') { beforeShared.push({ t: task.title, who: e.owner || null, whoLabel: e.owner ? '' : 'offen', due: e.due || '' }); return; }
+        if (!e.owner) return;
         var row = personal.filter(function (r) { return r.who === e.owner; })[0];
         if (!row) personal.push(row = { who: e.owner, items: [] });
         row.items.push(task.title);
       });
       principles.tasks = {
         problem: t.problem || '', recommend: t.recommendation || '', boundary: t.boundary || '',
-        personal: personal.slice(0, 3),
+        personal: personal.slice(0, PRINZIP_LISTS), beforeShared: beforeShared,
         shared: planTasks(p, sc.after).map(function (x) { return { t: x.title, who: x.owner || null, whoLabel: x.owner ? '' : 'offen', due: x.due || '' }; }),
         sharedLabel: 'Plan ' + sc.team, exactBefore: true
       };
@@ -392,7 +436,7 @@
   function serialise(p) { return JSON.stringify(p, null, 2); }
 
   return {
-    FORMAT: FORMAT, PROJECT_VERSION: PROJECT_VERSION, CAPABILITY_VERSION: CAPABILITY_VERSION, RENDERER_VERSION: RENDERER_VERSION, MAX_INPUT: MAX_INPUT,
+    FORMAT: FORMAT, STATE_IDS: STATE_IDS.slice(), PROJECT_VERSION: PROJECT_VERSION, CAPABILITY_VERSION: CAPABILITY_VERSION, RENDERER_VERSION: RENDERER_VERSION, MAX_INPUT: MAX_INPUT,
     capabilities: function () { return copy(CAPABILITIES); },
     template: template, blank: blank, parseInput: parseInput, validate: validate, summary: summary,
     compile: compile, slidePlan: slidePlan, fileName: fileName, planTasks: planTasks,
