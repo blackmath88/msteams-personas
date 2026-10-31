@@ -1,0 +1,60 @@
+{
+  "format": "msteams-personas/render-manifest",
+  "manifestVersion": 1,
+  "rendererVersion": "v3",
+  "projectVersion": 1,
+  "capabilityVersion": 1,
+  "project": {
+    "id": "treuhand-aarebruecke-teamsitzung",
+    "title": "Aufgaben aus der Teamsitzung nicht verlieren"
+  },
+  "ok": true,
+  "stage": "done",
+  "width": 1920,
+  "height": 1080,
+  "durationMs": 3591,
+  "slides": [
+    {
+      "index": 0,
+      "id": "s-1",
+      "profile": "teams-posts",
+      "file": "01-treuhand-aarebruecke-teamsitzung-teams-posts.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 257653,
+      "fit": [],
+      "sha256": "c1e1b88ee9798064460e441e8be9fa92d3e4105d4ede3f2b9fbd8304938f5bed"
+    },
+    {
+      "index": 1,
+      "id": "s-2",
+      "profile": "planner",
+      "file": "02-treuhand-aarebruecke-teamsitzung-planner.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 199699,
+      "fit": [],
+      "sha256": "ecf7e508f418047c14422897db1ee8c21c41c527898491722dbe168e82b638f3"
+    },
+    {
+      "index": 2,
+      "id": "s-3",
+      "profile": "prinzip-tasks",
+      "file": "03-treuhand-aarebruecke-teamsitzung-prinzip-tasks.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 303803,
+      "fit": [],
+      "sha256": "ef66bbcfd2640b8ca942db25f6bddfc18a9bb9f87b033ddb08a5422f973d1ffa"
+    }
+  ],
+  "diagnostics": [
+    {
+      "code": "prinzip-lists",
+      "path": "scenes[2]",
+      "message": "Prinzip-Folie: 4 Personen haben vorher eine persönliche Liste; nur 3 passen auf die Folie, weitere werden nicht gezeigt.",
+      "severity": "warning"
+    }
+  ],
+  "renderedAt": "2026-10-31T15:47:24.195Z"
+}

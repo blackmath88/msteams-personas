@@ -1,0 +1,14 @@
+{
+  "checked": "2026-10-31",
+  "reviewer": "AI worker after generation; not supplied to assistants",
+  "sources": [
+    {
+      "url": "https://support.microsoft.com/en-us/planner/stay-updated-with-notifications-in-planner",
+      "finding": "Planner and Teams notification behaviour has configuration conditions."
+    },
+    {
+      "url": "https://support.microsoft.com/en-us/todo/share-a-task-list",
+      "finding": "To Do supports shared lists; private-list claims need a not-shared condition."
+    }
+  ]
+}

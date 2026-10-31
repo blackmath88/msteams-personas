@@ -1,0 +1,208 @@
+```json
+{
+  "format": "msteams-personas/project",
+  "projectVersion": 1,
+  "capabilityVersion": 1,
+  "meta": {
+    "id": "spitex-abendtal-dienstuebergabe",
+    "title": "Dienstübergaben verbindlich im gemeinsamen Plan",
+    "organisation": "Spitex Abendtal (fiktiv)",
+    "audience": "Teamleitungen einer Spitex-Organisation",
+    "goal": "Offene Aufgaben zwischen Früh- und Spätdienst mit verantwortlicher Person und Termin verbindlich im gemeinsamen Plan festhalten.",
+    "locale": "de-CH",
+    "fictional": true,
+    "source": {
+      "kind": "assistant",
+      "note": "Fiktive Schulungsabfolge gemäss Auftrag; drei Folien für 20 Minuten."
+    },
+    "assumptions": [
+      "Das Team hat Zugriff auf einen Teams-Kanal und einen gemeinsamen Planner-Plan.",
+      "Im gemeinsamen Planner-Plan können Aufgaben einer Person zugewiesen, mit einem Fälligkeitstermin versehen und in Buckets eingeordnet werden.",
+      "Ein Teams-Beitrag erzeugt in diesem Schulungsbeispiel nicht automatisch eine Planner-Aufgabe; die Mitarbeitenden erfassen diese bewusst im Plan.",
+      "Die Uhrzeit einer Übergabefrist steht hier im Aufgabentitel; das Feld due zeigt den Fälligkeitstag.",
+      "Die persönlichen Listen im Vorher-Zustand veranschaulichen individuelle Erinnerungen. Eine automatische Übernahme von Papiernotizen oder persönlichen Listen in Planner wird nicht vorausgesetzt."
+    ],
+    "notes": "Alle Personen, Organisationen und Situationen sind fiktiv. Der gemeinsame Plan enthält hier ausschliesslich organisatorische Aufgaben ohne Angaben zu betreuten Personen. Die Teamregel für die Übergabe wird in der Schulung vereinbart."
+  },
+  "people": [
+    {
+      "id": "p-nora",
+      "name": "Nora Tanner",
+      "role": "Teamleiterin Pflege"
+    },
+    {
+      "id": "p-mila",
+      "name": "Mila Wenger",
+      "role": "Pflegefachperson Frühdienst, Teilzeit"
+    },
+    {
+      "id": "p-luan",
+      "name": "Luan Frei",
+      "role": "Pflegefachperson Spätdienst, Teilzeit"
+    },
+    {
+      "id": "p-elina",
+      "name": "Elina Marti",
+      "role": "Einsatzplanerin, Teilzeit"
+    }
+  ],
+  "documents": [
+    {
+      "id": "d-uebergaberegel",
+      "name": "Teamregel Dienstübergabe.docx"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t-material",
+      "title": "Materialtaschen für Spätdienst bis 14:30 ergänzen"
+    },
+    {
+      "id": "t-schluessel",
+      "title": "Fahrzeugschlüssel bis 14:15 am Stützpunkt bereitstellen"
+    },
+    {
+      "id": "t-dienstluecke",
+      "title": "Offene Dienste für morgen bis 15:00 klären"
+    },
+    {
+      "id": "t-plancheck",
+      "title": "Übernahme offener Planaufgaben bis 14:15 bestätigen"
+    },
+    {
+      "id": "t-lernnotiz",
+      "title": "Eigene Frage für die nächste Teamsitzung notieren"
+    }
+  ],
+  "states": [
+    {
+      "id": "before",
+      "label": "Bisher: Zettel und persönliche Erinnerungen",
+      "tasks": {
+        "t-material": {
+          "owner": "p-mila",
+          "list": "personal"
+        },
+        "t-schluessel": {
+          "owner": "p-mila",
+          "list": "personal"
+        },
+        "t-dienstluecke": {
+          "owner": "p-elina",
+          "list": "personal"
+        },
+        "t-lernnotiz": {
+          "owner": "p-luan",
+          "list": "personal"
+        }
+      }
+    },
+    {
+      "id": "after",
+      "label": "Neu: gemeinsame Aufgaben verbindlich übergeben",
+      "tasks": {
+        "t-material": {
+          "owner": "p-luan",
+          "list": "plan",
+          "bucket": "Spätdienst",
+          "due": "Mo 16.11."
+        },
+        "t-schluessel": {
+          "owner": "p-mila",
+          "list": "plan",
+          "bucket": "Frühdienst",
+          "due": "Mo 16.11."
+        },
+        "t-dienstluecke": {
+          "owner": "p-elina",
+          "list": "plan",
+          "bucket": "Einsatzplanung",
+          "due": "Mo 16.11."
+        },
+        "t-plancheck": {
+          "owner": "p-luan",
+          "list": "plan",
+          "bucket": "Spätdienst",
+          "due": "Mo 16.11."
+        },
+        "t-lernnotiz": {
+          "owner": "p-luan",
+          "list": "personal"
+        }
+      }
+    }
+  ],
+  "scenes": [
+    {
+      "id": "sc-kanal",
+      "profile": "teams-posts",
+      "team": "Spitex Abendtal",
+      "channel": "Dienstübergabe",
+      "posts": [
+        {
+          "id": "q-fruehdienst",
+          "by": "p-mila",
+          "time": "13:40",
+          "title": "Übergabe Frühdienst",
+          "text": "Die Materialtaschen sind noch nicht vollständig. Ein Zettel liegt im Materialraum. Wer ergänzt sie für den Spätdienst? Ich bin morgen nicht im Dienst.",
+          "hint": "Die Information ist sichtbar, aber Verantwortung und Frist sind noch offen."
+        },
+        {
+          "id": "q-uebernahme",
+          "by": "p-luan",
+          "time": "13:45",
+          "title": "Übernahme im Plan festgehalten",
+          "text": "Ich ergänze die Materialtaschen bis 14:30. Die Aufgabe ist im gemeinsamen Plan mir zugewiesen und auf heute terminiert. Die offenen Planaufgaben bestätige ich bis 14:15.",
+          "hint": "Die Zusage im Beitrag wird durch eine Aufgabe im gemeinsamen Plan verbindlich."
+        },
+        {
+          "id": "q-teamregel",
+          "by": "p-nora",
+          "time": "13:50",
+          "title": "Unsere Regel beim Dienstwechsel",
+          "text": "Vor Dienstende offene Teamaufgaben im Plan erfassen: eine verantwortliche Person, Termin und Bucket. Der Folgedienst bestätigt die Übernahme. Bei Unklarheiten sprechen wir direkt miteinander.",
+          "document": "d-uebergaberegel",
+          "hint": "Die Teamregel gilt auch dann, wenn sich Teilzeitmitarbeitende beim Wechsel nicht persönlich treffen."
+        }
+      ]
+    },
+    {
+      "id": "sc-plan",
+      "profile": "planner",
+      "team": "Spitex Abendtal",
+      "state": "after"
+    },
+    {
+      "id": "sc-prinzip",
+      "profile": "prinzip-tasks",
+      "team": "Spitex Abendtal",
+      "before": "before",
+      "after": "after"
+    }
+  ],
+  "slides": [
+    {
+      "id": "s-1",
+      "scene": "sc-kanal",
+      "presenterNotes": "0–6 Minuten. Einstieg: Viele Teilzeitpensen bedeuten, dass sich Früh- und Spätdienst nicht immer treffen. Die drei Beiträge lesen lassen. Fragen: Was bleibt nach dem ersten Beitrag unklar? Was ist nach dem zweiten verbindlich? Herausarbeiten: Ein Beitrag informiert; die offene Aufgabe braucht zusätzlich einen Eintrag im gemeinsamen Plan. Die Teamregel ist eine Vereinbarung für diese Schulung."
+    },
+    {
+      "id": "s-2",
+      "scene": "sc-plan",
+      "presenterNotes": "6–14 Minuten. Am Board die Materialtaschen verfolgen: Luan ist verantwortlich, der Termin ist heute, die Uhrzeit steht im Titel und der Bucket lautet Spätdienst. Danach Schlüssel und Dienstlücke vergleichen. Zweierübung: Eine Person übernimmt den Frühdienst, die andere den Spätdienst. Beide beantworten für jede Aufgabe: Wer erledigt was bis wann? Die Übernahme wird ausdrücklich bestätigt. Bei fehlender Bestätigung klärt die abgebende Person dies vor Dienstende mit der Teamleitung; bei dringenden Fragen erfolgt die Klärung direkt."
+    },
+    {
+      "id": "s-3",
+      "scene": "sc-prinzip",
+      "presenterNotes": "14–20 Minuten. Vorher und nachher vergleichen: Drei organisatorische Aufgaben wechseln aus persönlichen Erinnerungen in den gemeinsamen Plan. Die Bestätigung der Übernahme kommt als neue Aufgabe hinzu. Die eigene Frage für die Teamsitzung bleibt persönlich. Zwei Minuten Austausch: Welche offene Aufgabe aus einer fiktiven Übergabe gehört wohin? Abschluss: Jede Teamleitung formuliert die Regel mit Person, Termin und bestätigter Übernahme. Der Plan ersetzt weder Pflegedokumentation noch die direkte Klärung dringender Anliegen.",
+      "teaching": {
+        "title": "Offene Teamaufgaben vor Dienstende in den Plan",
+        "question": "Wer übernimmt was bis wann, wenn sich die Dienste nicht persönlich treffen?",
+        "problem": "Mündliche Übergaben, Zettel und persönliche Listen sind für den Folgedienst nicht zuverlässig sichtbar. Bei vielen Teilzeitpensen bleiben Zuständigkeit und Frist leicht offen.",
+        "recommendation": "Offene Teamaufgaben vor Dienstende im gemeinsamen Plan erfassen: eine verantwortliche Person, Termin und Bucket. Der Folgedienst bestätigt die Übernahme; Unklarheiten direkt klären.",
+        "boundary": "Eigene Erinnerungen bleiben persönlich. Keine Angaben zu betreuten Personen in diesem Plan. Er ersetzt weder Pflegedokumentation noch die direkte Übergabe dringender Anliegen."
+      }
+    }
+  ]
+}
+```

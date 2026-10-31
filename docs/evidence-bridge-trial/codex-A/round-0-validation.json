@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "summary": {
+    "title": "Dienstübergaben verbindlich im gemeinsamen Plan",
+    "slides": [
+      {
+        "index": 0,
+        "id": "s-1",
+        "file": "01-spitex-abendtal-dienstuebergabe-teams-posts.png"
+      },
+      {
+        "index": 1,
+        "id": "s-2",
+        "file": "02-spitex-abendtal-dienstuebergabe-planner.png"
+      },
+      {
+        "index": 2,
+        "id": "s-3",
+        "file": "03-spitex-abendtal-dienstuebergabe-prinzip-tasks.png"
+      }
+    ]
+  }
+}
