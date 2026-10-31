@@ -1,0 +1,32 @@
+{
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    {
+      "code": "prinzip-lists",
+      "path": "scenes[2]",
+      "message": "Prinzip-Folie: 4 Personen haben vorher eine persönliche Liste; nur 3 passen auf die Folie, weitere werden nicht gezeigt.",
+      "severity": "warning"
+    }
+  ],
+  "summary": {
+    "title": "Aufgaben aus der Teamsitzung nicht verlieren",
+    "slides": [
+      {
+        "index": 0,
+        "id": "s-1",
+        "file": "01-treuhand-aarebruecke-teamsitzung-teams-posts.png"
+      },
+      {
+        "index": 1,
+        "id": "s-2",
+        "file": "02-treuhand-aarebruecke-teamsitzung-planner.png"
+      },
+      {
+        "index": 2,
+        "id": "s-3",
+        "file": "03-treuhand-aarebruecke-teamsitzung-prinzip-tasks.png"
+      }
+    ]
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "format": "msteams-personas/render-manifest",
+  "manifestVersion": 1,
+  "rendererVersion": "v3",
+  "projectVersion": 1,
+  "capabilityVersion": 1,
+  "project": {
+    "id": "spitex-seetal-dienstuebergabe",
+    "title": "Dienstübergabe ohne Zettel: Früh- und Spätdienst im gemeinsamen Plan"
+  },
+  "ok": true,
+  "stage": "done",
+  "width": 1920,
+  "height": 1080,
+  "durationMs": 2493,
+  "slides": [
+    {
+      "index": 0,
+      "id": "s-1",
+      "profile": "teams-posts",
+      "file": "01-spitex-seetal-dienstuebergabe-teams-posts.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 286908,
+      "fit": [],
+      "sha256": "2a9144bc8f22e4efa4e3b9e952714d4c9d3547bbf4ec9c7aa24db49faacce5fe"
+    },
+    {
+      "index": 1,
+      "id": "s-2",
+      "profile": "planner",
+      "file": "02-spitex-seetal-dienstuebergabe-planner.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 206495,
+      "fit": [],
+      "sha256": "c68e93fc8c830faac122fe03115131f9a6ed07cef50c84fbeb5f930f28cebccf"
+    },
+    {
+      "index": 2,
+      "id": "s-3",
+      "profile": "prinzip-tasks",
+      "file": "03-spitex-seetal-dienstuebergabe-prinzip-tasks.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 298462,
+      "fit": [],
+      "sha256": "bca613cc82dfc0736e9046ece6f6374b26632f711f386150138276e80241c264"
+    }
+  ],
+  "diagnostics": [],
+  "renderedAt": "2026-10-31T15:47:36.801Z"
+}

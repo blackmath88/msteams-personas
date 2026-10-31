@@ -1,0 +1,12 @@
+{
+  "baseline": "5a6ece61947b43d7dd54c2063c16faa29734d94f",
+  "claudeCLI": "2.1.303 (Claude Code)",
+  "codexCLI": "codex-cli 0.163.0",
+  "packFormat": "msteams-personas/project",
+  "projectVersion": 1,
+  "capabilityVersion": 1,
+  "chromium": "/usr/bin/chromium",
+  "storyboardDialogue": "skipped by appended trainer reply",
+  "dependencies": "npm ci: 17 packages, audit 0 vulnerabilities",
+  "isolationLimit": "Fresh empty working directories are context separation, not filesystem read confinement for Codex."
+}
