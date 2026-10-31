@@ -1,0 +1,51 @@
+ok   stdio: initialize — {"name":"msteams-personas","version":"0.1.0"} protocol 2025-11-25 era legacy
+ok   stdio: tools discovered — get_capabilities, get_example, render_project, retrieve_artifact, validate_project
+ok   stdio: capabilities
+ok   stdio: example project
+ok   stdio: new project validates — 0 warnings
+ok   stdio: malformed project → located diagnostics — type,bad-entry,state-ids,unknown-state
+ok   stdio: malformed project → render refused
+ok   stdio: render ok — 5364 ms
+ok   stdio: slide order and ids
+ok   stdio: manifest fields
+ok   stdio: resource links, no inline base64 — 3082 bytes
+ok   stdio: resources listed
+ok   stdio: read 01-bibliothek-tannwil-ausleihe-teams-posts.png
+ok   stdio: read 02-bibliothek-tannwil-ausleihe-planner.png
+ok   stdio: read 03-bibliothek-tannwil-ausleihe-prinzip-tasks.png
+ok   stdio: retrieve_artifact returns one image
+ok   stdio: traversal and unknown ids refused
+ok   stdio: render failure reported (fit) — Folie 1: Inhalt passt nicht (Beiträge oben abgeschnitten). Bitte Text kürzen oder Einträge entfernen.
+ok   stdio: failed renders leave no artifact dir
+ok   stdio: input size limit
+ok   http: bound to 127.0.0.1 — msteams-personas MCP (Streamable HTTP) on http://127.0.0.1:19729/mcp · artifacts in /tmp/mtp-mcp-art-HJUD7r
+ok   http: foreign Host header rejected — 403
+ok   http: initialize — protocol 2025-11-25 era legacy
+ok   http: tools discovered — get_capabilities, get_example, render_project, retrieve_artifact, validate_project
+ok   http: capabilities
+ok   http: example project
+ok   http: new project validates — 0 warnings
+ok   http: malformed project → located diagnostics — type,bad-entry,state-ids,unknown-state
+ok   http: malformed project → render refused
+ok   http: render ok — 4677 ms
+ok   http: slide order and ids
+ok   http: manifest fields
+ok   http: resource links, no inline base64 — 3082 bytes
+ok   http: resources listed
+ok   http: read 01-bibliothek-tannwil-ausleihe-teams-posts.png
+ok   http: read 02-bibliothek-tannwil-ausleihe-planner.png
+ok   http: read 03-bibliothek-tannwil-ausleihe-prinzip-tasks.png
+ok   http: retrieve_artifact returns one image
+ok   http: traversal and unknown ids refused
+ok   http: render failure reported (fit) — Folie 1: Inhalt passt nicht (Beiträge oben abgeschnitten). Bitte Text kürzen oder Einträge entfernen.
+ok   http: failed renders leave no artifact dir
+ok   http: input size limit
+ok   cli: render exit 0 and JSON-only stdout
+ok   all routes: same files in the same order
+ok   all routes: byte-identical PNGs (stdio = http = cli)
+ok   cli: render failure exit 3, nothing written
+ok   timeout: reported, nothing written
+ok   cleanup: no browser process left
+ok   cleanup: no browser profile dirs left — 1010 vs 1010
+
+49 passed, 0 failed

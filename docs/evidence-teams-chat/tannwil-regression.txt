@@ -1,0 +1,3 @@
+cmp exit 0 (byte-identical to HEAD evidence): docs/evidence-cli-mcp/cli/01-bibliothek-tannwil-ausleihe-teams-posts.png
+cmp exit 0 (byte-identical to HEAD evidence): docs/evidence-cli-mcp/cli/02-bibliothek-tannwil-ausleihe-planner.png
+cmp exit 0 (byte-identical to HEAD evidence): docs/evidence-cli-mcp/cli/03-bibliothek-tannwil-ausleihe-prinzip-tasks.png

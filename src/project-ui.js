@@ -202,6 +202,20 @@
                 field('Betreff', b + 'title', q.title, { max: 60 }) + field('Text', b + 'text', q.text, { area: true, max: 220 }) + field('Hinweis auf der Folie', b + 'hint', q.hint, { max: 140 }) +
                 '<button type="button" class="btn sm" data-op="del-post" data-s="' + si + '" data-i="' + j + '">Beitrag entfernen</button></li>';
             }).join('') + '</ol><p><button type="button" class="btn sm" data-op="add-post" data-s="' + si + '">Beitrag hinzufügen</button></p>';
+        } else if (sc && sc.profile === 'teams-chat') {
+          var base = 'scenes.' + si + '.', participants = p.people.filter(function (x) { return x.id === sc.viewer || x.id === sc.partner; });
+          body = field('Team', base + 'team', sc.team, { max: 40 }) +
+            select('Ansicht von', base + 'viewer', personOptions(p, sc.viewer)) + select('Chat mit', base + 'partner', personOptions(p, sc.partner)) +
+            '<ol class="pj-posts">' + sc.messages.map(function (q, j) {
+              var b = base + 'messages.' + j + '.';
+              return '<li>' + select('Von', b + 'by', participants.map(function (x) { return '<option value="' + esc(x.id) + '"' + (x.id === q.by ? ' selected' : '') + '>' + esc(x.name) + '</option>'; }).join('')) +
+                field('Zeit', b + 'time', q.time) + field('Text', b + 'text', q.text, { area: true, max: 220 }) + field('Hinweis auf der Folie', b + 'hint', q.hint, { max: 140 }) +
+                '<p><label><input type="checkbox" data-bool="' + b + 'decision"' + (q.decision ? ' checked' : '') + '> Entscheid</label></p>' +
+                '<button type="button" class="btn sm" data-op="del-message" data-s="' + si + '" data-i="' + j + '">Nachricht entfernen</button></li>';
+            }).join('') + '</ol><p><button type="button" class="btn sm" data-op="add-message" data-s="' + si + '"' + (sc.messages.length >= 6 ? ' disabled' : '') + '>Nachricht hinzufügen</button></p>' +
+            '<p class="pj-lab">Sehen diesen Chat nicht</p>' + p.people.map(function (x) {
+              return '<p><label><input type="checkbox" data-not-seen="' + si + '" value="' + esc(x.id) + '"' + ((sc.notSeenBy || []).indexOf(x.id) >= 0 ? ' checked' : '') + '> ' + esc(x.name) + '</label></p>';
+            }).join('');
         } else if (sc && sc.profile === 'planner') {
           body = field('Plan / Team', 'scenes.' + si + '.team', sc.team) + '<p class="pj-small">Zeigt alle Aufgaben, die «' + esc((sc.state === 'before' ? before : after).label) + '» im gemeinsamen Plan stehen.</p>';
         } else if (sc && sc.profile === 'prinzip-tasks') {
@@ -214,12 +228,12 @@
           body + field('Notizen für die Moderation', 'slides.' + i + '.presenterNotes', sl.presenterNotes, { area: true, rows: 2 }) + '</li>';
       }).join('') + '</ol>' +
       '<p class="pj-f"><label for="pj-addp">Folie hinzufügen</label><select id="pj-addp">' + Object.keys(prof).map(function (k) { return '<option value="' + k + '">' + esc(prof[k].label) + '</option>'; }).join('') + '</select> <button type="button" class="btn sm" data-op="add-slide">Hinzufügen</button></p>' +
-      '<p class="pj-small">Noch nicht unterstützt: weitere Ansichten (Chat, Outlook, Dateien), Antworten auf Beiträge, Bilder und eigene Layouts.</p></fieldset>' +
+      '<p class="pj-small">Noch nicht unterstützt: weitere Ansichten (Outlook, Dateien), Antworten auf Beiträge, Bilder und eigene Layouts.</p></fieldset>' +
       '</div><div class="pj-prev" id="pj-prev" aria-label="Vorschau der Folien">' + previews(p) + '</div></div></section>';
     return html;
   }
   /* Errors the form can show and fix; anything structural must be repaired before editing. */
-  var EDITABLE = ['unknown-person', 'person-name', 'task-title', 'post-text', 'scene-team', 'scene-channel', 'teaching-title', 'teaching-recommendation', 'teaching-boundary', 'meta-title', 'long'];
+  var EDITABLE = ['unknown-person', 'person-name', 'task-title', 'post-text', 'message-text', 'chat-author', 'chat-participants', 'scene-team', 'scene-channel', 'teaching-title', 'teaching-recommendation', 'teaching-boundary', 'meta-title', 'long'];
   function editable(v) { return v.errors.every(function (e) { return EDITABLE.indexOf(e.code) >= 0; }); }
   function validity(v) {
     if (v.ok && !v.warnings.length) return '<p class="pj-ok">' + V.ic('i-check') + 'Alles passt.</p>';
@@ -291,6 +305,7 @@
     var t = e.target;
     if (t.hasAttribute('data-brief')) { st.brief[t.getAttribute('data-brief')] = t.value; persist(); var pk = document.getElementById('pj-pack'); if (pk) pk.value = PC.authoringPack(st.brief); return; }
     var p = cur(); if (!p) return;
+    if (t.tagName === 'SELECT') return;
     if (t.hasAttribute('data-path')) setPath(p, t.getAttribute('data-path'), t.value);
     else if (t.hasAttribute('data-lines')) setPath(p, t.getAttribute('data-lines'), t.value.split('\n').map(function (x) { return x.trim(); }).filter(Boolean));
     else return;
@@ -303,6 +318,19 @@
       if (f.size > PC.MAX_INPUT) { alertBox('Die Datei ist zu gross.'); return; }
       f.text().then(function (txt) { var err = receive(txt, 'import'); if (err) alertBox(err.message); });
       return;
+    }
+    if (p && t.hasAttribute('data-bool')) { setPath(p, t.getAttribute('data-bool'), t.checked); touch(); refresh(); return; }
+    if (p && t.hasAttribute('data-not-seen')) {
+      var chat = p.scenes[+t.getAttribute('data-not-seen')], ids = chat.notSeenBy || [];
+      chat.notSeenBy = ids.filter(function (id) { return id !== t.value; });
+      if (t.checked) chat.notSeenBy.push(t.value);
+      touch(); refresh(); return;
+    }
+    if (p && t.hasAttribute('data-path') && /^scenes\.\d+\.(viewer|partner)$/.test(t.getAttribute('data-path'))) {
+      var bits = t.getAttribute('data-path').split('.'), chat = p.scenes[+bits[1]], old = chat[bits[2]];
+      chat[bits[2]] = t.value;
+      chat.messages.forEach(function (m) { if (m.by === old) m.by = t.value; });
+      touch(); render.keep(); return;
     }
     if (t.hasAttribute('data-state') && p) {
       var s = p.states[+t.getAttribute('data-state')], tid = t.getAttribute('data-task'), v = t.value, e0 = s.tasks[tid];
@@ -323,7 +351,7 @@
     X.download(blob, (p.meta.id || 'projekt') + '.msteams-personas.json');
   }
   function referenced(p, pid) {
-    return p.scenes.some(function (sc) { return (sc.posts || []).some(function (q) { return q.by === pid; }); }) ||
+    return p.scenes.some(function (sc) { return sc.viewer === pid || sc.partner === pid || (sc.notSeenBy || []).indexOf(pid) >= 0 || (sc.posts || []).concat(sc.messages || []).some(function (q) { return q.by === pid; }); }) ||
       p.states.some(function (s) { return Object.keys(s.tasks).some(function (k) { return s.tasks[k].owner === pid; }); });
   }
   function onClick(e) {
@@ -353,7 +381,7 @@
       if (op === 'add-person') p.people.push({ id: PC.newId('p-', p.people), name: 'Neue Person', role: '' });
       else if (op === 'del-person') {
         if (p.people.length < 2) { announce('Mindestens eine Person bleibt.'); return; }
-        if (referenced(p, p.people[i].id)) { var st2 = document.getElementById('pj-status'); if (st2) st2.textContent = '«' + p.people[i].name + '» ist noch Beiträgen oder Aufgaben zugeordnet. Zuerst dort eine andere Person wählen.'; return; }
+        if (referenced(p, p.people[i].id)) { var st2 = document.getElementById('pj-status'); if (st2) st2.textContent = '«' + p.people[i].name + '» ist noch Beiträgen, Chats oder Aufgaben zugeordnet. Zuerst dort eine andere Person wählen.'; return; }
         p.people.splice(i, 1);
       }
       else if (op === 'add-task') {
@@ -361,6 +389,8 @@
         p.states.forEach(function (s) { s.tasks[id] = s.id === 'after' ? { owner: p.people[0].id, list: 'plan', bucket: 'Offen', due: '' } : { owner: p.people[0].id, list: 'personal' }; });
       }
       else if (op === 'del-task') { var tid = p.tasks[i].id; p.tasks.splice(i, 1); p.states.forEach(function (s) { delete s.tasks[tid]; }); }
+      else if (op === 'add-message') { var chat = p.scenes[+b.getAttribute('data-s')]; if (chat.messages.length < 6) chat.messages.push({ id: PC.newId('m', chat.messages), by: chat.viewer, time: '', text: 'Neue Nachricht' }); }
+      else if (op === 'del-message') { var chat = p.scenes[+b.getAttribute('data-s')]; if (chat.messages.length > 1) chat.messages.splice(i, 1); }
       else if (op === 'add-post') { var sc = p.scenes[+b.getAttribute('data-s')]; sc.posts.push({ id: PC.newId('q', sc.posts), by: p.people[0].id, time: '', title: '', text: 'Neuer Beitrag' }); }
       else if (op === 'del-post') { var sc2 = p.scenes[+b.getAttribute('data-s')]; if (sc2.posts.length > 1) sc2.posts.splice(i, 1); }
       else if (op === 'up' && i > 0) p.slides.splice(i - 1, 0, p.slides.splice(i, 1)[0]);
@@ -369,7 +399,9 @@
       else if (op === 'add-slide') {
         var kind = document.getElementById('pj-addp').value, scId = PC.newId('sc-', p.scenes), team = (p.scenes[0] && p.scenes[0].team) || 'Mein Team';
         var scn = kind === 'teams-posts' ? { id: scId, profile: kind, team: team, channel: 'Allgemein', posts: [{ id: 'q1', by: p.people[0].id, time: '', title: '', text: 'Neuer Beitrag' }] }
+          : kind === 'teams-chat' ? { id: scId, profile: kind, team: team, viewer: p.people[0].id, partner: (p.people[1] || p.people[0]).id, messages: [{ id: 'm1', by: p.people[0].id, time: '', text: 'Neue Nachricht' }], notSeenBy: [] }
           : kind === 'planner' ? { id: scId, profile: kind, team: team, state: 'after' } : { id: scId, profile: kind, team: team, before: 'before', after: 'after' };
+        if (kind === 'teams-chat') p.capabilityVersion = 2;
         p.scenes.push(scn);
         p.slides.push(Object.assign({ id: PC.newId('s-', p.slides), scene: scId, presenterNotes: '' }, kind === 'prinzip-tasks' ? { teaching: { title: 'Prinzip', question: '', problem: '', recommendation: 'Empfehlung', boundary: 'Grenze' } } : {}));
       }
