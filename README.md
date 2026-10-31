@@ -16,6 +16,8 @@ See [V3 handoff](docs/V3-BUILD-HANDOFF.md) for evidence, supported coverage and 
 
 ## Portable projects, CLI and MCP
 
+Portable-project authoring is merged on `main` at `7d5f330`. The shared render operation, CLI and local MCP server below are built on the pushed `feat/cli-mcp-render` branch, pending PR and review.
+
 `#/projekt` («Eigene Abfolge») authors a new Teams → Planner → Prinzip sequence by hand or with the user's own chat assistant. The same project JSON can be validated and rendered without the website:
 
 ```sh
