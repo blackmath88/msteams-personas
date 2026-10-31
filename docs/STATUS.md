@@ -20,7 +20,7 @@ Customisation-backup JSON and portable-project JSON are separate formats with se
 
 ## Built on branch feat/cli-mcp-render (not merged)
 
-Built 2026-10-30 on main `7d5f330`, pushed as `0280a8c`, `7fbd75f` and `952640f`, pending PR and review: validator hardening (null entries, typed fields, before/after-only states, shared-before meaning), all-or-nothing export with fit/render diagnostics, honest storage and draft-limit handling, one render operation for website/CLI/MCP, `tools/cli.mjs`, and an MCP server (official SDK v2, stdio + Streamable HTTP on `127.0.0.1`). This implements slice 4 and only the local HTTP transport part of slice 5. Proved with the SDK client; assistant-host compatibility was not established by that run. Evidence: [CLI/MCP handoff](CLI-MCP-HANDOFF.md).
+Built 2026-10-30 on main `7d5f330`, pushed as `0280a8c`, `7fbd75f` and `952640f`, pending PR and review: validator hardening (null entries, typed fields, before/after-only states, shared-before meaning), all-or-nothing export with fit/render diagnostics, honest storage and draft-limit handling, one render operation for website/CLI/MCP, `tools/cli.mjs`, and an MCP server (official SDK v2, stdio + Streamable HTTP on `127.0.0.1`). This implements slice 4 and only the local HTTP transport part of slice 5. Proved with the SDK client, then in Claude Code over stdio ([host test](HOST-TEST-CLAUDE-CODE.md)). Evidence: [CLI/MCP handoff](CLI-MCP-HANDOFF.md).
 
 ## Merged to main: portable project authoring (`7d5f330`)
 
@@ -28,7 +28,7 @@ First increment of portable projects, built 2026-10-29: shared core `src/project
 
 ## Open verification and limits
 
-- The real [Claude Code host test](HOST-TEST-CLAUDE-CODE.md) is in progress.
+- The MCP server passed a real [Claude Code host test](HOST-TEST-CLAUDE-CODE.md) over stdio on 2026-10-31. Other hosts and HTTP in a host remain untested.
 - The bridge trial with two real assistants and five observed trainer tasks remain open.
 - A full keyboard and screen-reader pass on `#/projekt` remains open.
 - Portable-project capabilities remain limited to `teams-posts`, `planner` and `prinzip-tasks`.
@@ -37,8 +37,8 @@ First increment of portable projects, built 2026-10-29: shared core `src/project
 ## Next actions
 
 1. Review the pending CLI/MCP PR and merge after review.
-2. Complete and review the [Claude Code host test](HOST-TEST-CLAUDE-CODE.md), in progress.
-3. Run the cross-assistant bridge trial with two real assistants.
+2. Run the cross-assistant bridge trial with two real assistants.
+3. Optionally apply the small MCP polish points from the [host test](HOST-TEST-CLAUDE-CODE.md).
 4. Add the next capability profile, Teams chat or Outlook, through the existing project contract.
 
 The former V2 Orca task is historical. The previous Weavr Mission remains archived; no Weavr action is requested here.

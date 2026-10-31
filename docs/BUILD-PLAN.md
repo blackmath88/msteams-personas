@@ -6,7 +6,7 @@ Updated: 2026-10-31. Slices 1–3 are built and merged on main; slice 4 is built
 
 The [30-minute Claude/Orca task](ORCA-NUC-BRIDGE-30MIN.md) delivered portable-project authoring and the assistant bridge, merged at `7d5f330`. See the [bridge handoff](BRIDGE-BUILD-HANDOFF.md) for implementation, evidence and limits. The follow-up shared render operation, CLI and local MCP server are built on `feat/cli-mcp-render`; see the [CLI/MCP handoff](CLI-MCP-HANDOFF.md).
 
-Completion of these builds does not establish every acceptance claim below. The two-assistant bridge trial, five observed trainer tasks and full keyboard/screen-reader pass remain open. The [Claude Code host test](HOST-TEST-CLAUDE-CODE.md) is in progress. Portable projects support only `teams-posts`, `planner` and `prinzip-tasks`; fit checks do not flag wrapping Planner titles.
+Completion of these builds does not establish every acceptance claim below. The two-assistant bridge trial, five observed trainer tasks and full keyboard/screen-reader pass remain open. The MCP server passed a [Claude Code host test](HOST-TEST-CLAUDE-CODE.md) over stdio; other hosts are untested. Portable projects support only `teams-posts`, `planner` and `prinzip-tasks`; fit checks do not flag wrapping Planner titles.
 
 Research disposition: see the [decision note](research/BRIDGE-RESEARCH-DECISIONS.md). The numbered slices below retain their intended scope and acceptance criteria; their state lines distinguish delivered implementation from remaining work.
 
