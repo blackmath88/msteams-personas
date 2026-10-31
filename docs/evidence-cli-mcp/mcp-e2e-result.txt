@@ -1,6 +1,6 @@
 MCP client: @modelcontextprotocol/client 2.4.0 (Client, StdioClientTransport, StreamableHTTPClientTransport)
 Server SDK: @modelcontextprotocol/server 2.4.0
-Node v26.8.1 · 2026-10-30T08:46:41.476Z
+Node v26.8.1 · 2026-10-31T21:22:10.993Z
 
 ok   stdio: initialize — {"name":"msteams-personas","version":"0.1.0"} protocol 2025-11-25 era legacy
 ok   stdio: tools discovered — get_capabilities, get_example, render_project, retrieve_artifact, validate_project
@@ -9,7 +9,7 @@ ok   stdio: example project
 ok   stdio: new project validates — 0 warnings
 ok   stdio: malformed project → located diagnostics — type,bad-entry,state-ids,unknown-state
 ok   stdio: malformed project → render refused
-ok   stdio: render ok — 2107 ms
+ok   stdio: render ok — 3743 ms
 ok   stdio: slide order and ids
 ok   stdio: manifest fields
 ok   stdio: resource links, no inline base64 — 3082 bytes
@@ -22,7 +22,7 @@ ok   stdio: traversal and unknown ids refused
 ok   stdio: render failure reported (fit) — Folie 1: Inhalt passt nicht (Beiträge oben abgeschnitten). Bitte Text kürzen oder Einträge entfernen.
 ok   stdio: failed renders leave no artifact dir
 ok   stdio: input size limit
-ok   http: bound to 127.0.0.1 — msteams-personas MCP (Streamable HTTP) on http://127.0.0.1:19615/mcp · artifacts in /home/nuc/projects/msteams-personas/.claude/tmp/mtp-mcp-art-BiIJLD
+ok   http: bound to 127.0.0.1 — msteams-personas MCP (Streamable HTTP) on http://127.0.0.1:18861/mcp · artifacts in /tmp/mtp-mcp-art-eIGaUJ
 ok   http: foreign Host header rejected — 403
 ok   http: initialize — protocol 2025-11-25 era legacy
 ok   http: tools discovered — get_capabilities, get_example, render_project, retrieve_artifact, validate_project
@@ -31,7 +31,7 @@ ok   http: example project
 ok   http: new project validates — 0 warnings
 ok   http: malformed project → located diagnostics — type,bad-entry,state-ids,unknown-state
 ok   http: malformed project → render refused
-ok   http: render ok — 2039 ms
+ok   http: render ok — 2229 ms
 ok   http: slide order and ids
 ok   http: manifest fields
 ok   http: resource links, no inline base64 — 3082 bytes
@@ -50,6 +50,6 @@ ok   all routes: byte-identical PNGs (stdio = http = cli)
 ok   cli: render failure exit 3, nothing written
 ok   timeout: reported, nothing written
 ok   cleanup: no browser process left
-ok   cleanup: no browser profile dirs left — 0 vs 0
+ok   cleanup: no browser profile dirs left — 1069 vs 1069
 
 49 passed, 0 failed

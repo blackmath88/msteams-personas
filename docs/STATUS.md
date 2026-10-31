@@ -37,13 +37,13 @@ First increment of portable projects, built 2026-10-29: shared core `src/project
 - Five observed trainer tasks and a test in consumer chat UIs remain open. The repair path was not triggered in the bridge trial.
 - A full keyboard and screen-reader pass on `#/projekt` remains open.
 - Portable-project capabilities are `teams-posts`, `planner` and `prinzip-tasks` on main, plus `teams-chat` on the pending branch. No Outlook or files profile yet.
-- More than three personal lists before only produce a warning, and the Prinzip slide drops the extra lists.
+- More than three personal lists before is now a located error (`prinzip-lists`) instead of a silent drop; the authoring pack states the limit and the trial's wording rules. Two of the four trial answers are refused by this rule and would need one repair round, which is untested.
 - Fit checks do not flag long Planner titles that wrap.
 
 ## Next actions
 
 1. Review and merge the bridge-trial PR and the Teams chat PR.
-2. Close the Prinzip gap the trial found: refuse or visibly handle more than three personal lists, and add the trial's pack wording fixes.
+2. Rerun the bridge trial with the updated pack to see whether the Prinzip limit is respected and whether the repair prompt works.
 3. Run the five observed trainer tasks.
 4. Optionally apply the small MCP polish points from the [host test](HOST-TEST-CLAUDE-CODE.md).
 
