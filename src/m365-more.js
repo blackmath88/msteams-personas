@@ -44,6 +44,10 @@
       '</section>');
   }
   function chatNotes(vm) {
+    if (vm.project) {
+      var hints = Object.keys(vm.scene.notes).map(function (m) { return [+m, vm.scene.notes[m]]; });
+      if (hints.length || !vm.chat.later.length) return hints;
+    }
     var c = vm.chat, later = c.later.map(function (id) { return first(vm.person(id).name); });
     var who = later.length ? later.join(', ') : '';
     return [[1, 'Der Entscheid fällt zu zweit im Chat. ' + (who ? who + (c.laterLabel ? ' und ' + c.laterLabel : '') : (c.laterLabel || 'Weitere Beteiligte')) + ' sehen ihn hier nicht.']];

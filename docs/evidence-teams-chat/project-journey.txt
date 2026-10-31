@@ -1,0 +1,53 @@
+PASS landing links to Eigene Abfolge
+PASS start: four routes visible
+PASS keyboard: Beispiel anpassen focusable
+PASS 1 adapt: editor opens with three slide previews
+PASS 1 adapt: previews are Teams, Planner, Prinzip
+PASS 1 adapt: title edit reaches heading and preview
+PASS 4 rename: Teams post shows new name
+PASS 4 rename: Planner initials and Prinzip names follow
+PASS 5 after owner changed, before unchanged
+PASS 5 Prinzip: Marco still lists the task before; plan shows Lina — Folie 3 |  | PRINZIP · WERKSTATT VELOTECH |  | Gemeinsame Aufgaben gehören in einen Plan |  | Wer erledigt was bis wann, auch nach dem Schichtwechsel? |  | HEUTE |  | Verpflichtung
+PASS 6 recommendation, boundary and notes update
+PASS editing controls stay outside the slide
+PASS reorder: first slide is now Planner
+PASS 8 export: shared render operation reports ok
+PASS 8 export: three ordered PNGs — 01-velotech-werkstatt-uebergabe-teams-posts.png 190318, 02-velotech-werkstatt-uebergabe-planner.png 163841, 03-velotech-werkstatt-uebergabe-prinzip-tasks.png 234613
+PASS 8 export: PNGs are 1920x1080 and not blank — [[1920,1080],[1920,1080],[1920,1080]]
+PASS export: invalid project refused, nothing produced — {"ok":false,"n":0,"stage":"validate"}
+PASS chat: fourth slide added with current capability version
+PASS chat: participant controls rewrite author choices
+PASS chat: fields and decision appear in live preview
+PASS chat: add message
+PASS chat: remove message
+PASS chat: four-slide PNG export succeeds — []
+PASS chat: overflow aborts export with located fit error
+PASS chat: import review lists the new profile
+PASS 2 reopen: file goes to import review
+PASS 2 reopen: opened as a new draft, identical content
+PASS 3 bridge: pack reflects the brief and capabilities
+PASS 3 bridge: three steps shown
+PASS 3 import: summary of the unseen project
+PASS 3 import: opens as new draft, previous drafts kept
+PASS 7 broken ref: explained in plain language with location
+PASS 7 broken ref: no automatic guess, open is blocked
+PASS 7 repair prompt previews the copied text
+PASS 7 repair: revalidated without errors
+PASS 7 repair: existing drafts untouched by the import
+PASS markup renders as inert text
+PASS truncated JSON: clear error, no navigation
+PASS unknown profile: blocked in review
+PASS storage failure: visible warning, edit kept in memory
+PASS draft limit: no silent deletion, user told what to do
+PASS draft limit: removing one is explicit
+PASS cli/mcp project: import review without errors
+PASS cli/mcp project: order Teams → Planner → Prinzip in the editor
+PASS cli/mcp project: before-plan task shown as shared in the preview
+PASS cli/mcp project: website export = CLI files (names, order, bytes)
+PASS 390: editor without horizontal scroll
+PASS 390: assistant page without horizontal scroll
+PASS 9 library: Abfolgen still lists sequences
+PASS 9 library: curated principle presentation renders
+PASS no script errors
+
+51/51 passed

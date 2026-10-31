@@ -33,9 +33,9 @@ async function flow(client, label, outDir) {
   const tools = (await client.listTools()).tools.map(t => t.name).sort();
   check(`${label}: tools discovered`, ['get_capabilities', 'get_example', 'render_project', 'retrieve_artifact', 'validate_project'].every(t => tools.includes(t)), tools.join(', '));
   const caps = (await client.callTool({ name: 'get_capabilities', arguments: {} })).structuredContent;
-  check(`${label}: capabilities`, caps.projectVersion === 1 && Object.keys(caps.profiles).join() === 'teams-posts,planner,prinzip-tasks' && caps.stateIds.join() === 'before,after');
+  check(`${label}: capabilities`, caps.projectVersion === 1 && caps.capabilityVersion === 2 && Object.keys(caps.profiles).join() === 'teams-posts,teams-chat,planner,prinzip-tasks' && caps.stateIds.join() === 'before,after');
   const ex = (await client.callTool({ name: 'get_example', arguments: {} })).structuredContent;
-  check(`${label}: example project`, ex.format === 'msteams-personas/project' && ex.slides.length === 3);
+  check(`${label}: example project`, ex.format === 'msteams-personas/project' && ex.capabilityVersion === 2 && ex.slides.length === 3);
 
   const v = (await client.callTool({ name: 'validate_project', arguments: { project } })).structuredContent;
   check(`${label}: new project validates`, v.ok === true && v.errors.length === 0, `${v.warnings.length} warnings`);

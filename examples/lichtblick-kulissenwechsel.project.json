@@ -1,0 +1,196 @@
+{
+  "format": "msteams-personas/project",
+  "projectVersion": 1,
+  "capabilityVersion": 2,
+  "meta": {
+    "id": "lichtblick-kulissenwechsel",
+    "title": "Kulissenwechsel: Entscheide für alle sichtbar",
+    "organisation": "Theaterwerkstatt Lichtblick (fiktiv)",
+    "audience": "Bühnencrew und Produktionsleitung",
+    "goal": "Zusagen aus dem Chat in gemeinsame Aufgaben überführen",
+    "locale": "de-CH",
+    "fictional": true,
+    "source": {
+      "kind": "manual",
+      "note": "Fiktives Beispiel für das optionale Chat-Profil"
+    },
+    "assumptions": [
+      "Die Crew nutzt Teams für Absprachen und Planner für gemeinsame Aufgaben."
+    ],
+    "notes": "Der private Entscheid wird erst im Plan für die nächste Schicht sichtbar."
+  },
+  "people": [
+    {
+      "id": "p-nela",
+      "name": "Nela Frei",
+      "role": "Bühnenbau Frühschicht"
+    },
+    {
+      "id": "p-luca",
+      "name": "Luca Merz",
+      "role": "Bühnenbau Spätschicht"
+    },
+    {
+      "id": "p-samira",
+      "name": "Samira Blum",
+      "role": "Produktionsleitung"
+    }
+  ],
+  "documents": [],
+  "tasks": [
+    {
+      "id": "t-rampe",
+      "title": "Rampe für die Abendprobe sichern"
+    },
+    {
+      "id": "t-licht",
+      "title": "Lichtzeichen mit Regie prüfen"
+    },
+    {
+      "id": "t-notiz",
+      "title": "Eigene Werkzeugliste ergänzen"
+    }
+  ],
+  "states": [
+    {
+      "id": "before",
+      "label": "Vor der Übergabe",
+      "tasks": {
+        "t-rampe": {
+          "owner": "p-nela",
+          "list": "personal"
+        },
+        "t-licht": {
+          "owner": "p-samira",
+          "list": "personal"
+        },
+        "t-notiz": {
+          "owner": "p-luca",
+          "list": "personal"
+        }
+      }
+    },
+    {
+      "id": "after",
+      "label": "Für die ganze Crew sichtbar",
+      "tasks": {
+        "t-rampe": {
+          "owner": "p-luca",
+          "list": "plan",
+          "bucket": "Abendprobe",
+          "due": "Fr 15.11."
+        },
+        "t-licht": {
+          "owner": "p-samira",
+          "list": "plan",
+          "bucket": "Abendprobe",
+          "due": "Fr 15.11."
+        },
+        "t-notiz": {
+          "owner": "p-luca",
+          "list": "personal"
+        }
+      }
+    }
+  ],
+  "scenes": [
+    {
+      "id": "sc-kanal",
+      "profile": "teams-posts",
+      "team": "Crew Lichtblick",
+      "channel": "Abendprobe",
+      "posts": [
+        {
+          "id": "q1",
+          "by": "p-samira",
+          "time": "13:40",
+          "title": "Rampe noch offen",
+          "text": "Für die Abendprobe muss die Rampe gesichert sein. Wer übernimmt nach dem Schichtwechsel?",
+          "hint": "Die Frage ist für die Crew sichtbar, eine Zuständigkeit fehlt noch."
+        },
+        {
+          "id": "q2",
+          "by": "p-nela",
+          "time": "13:44",
+          "text": "Ich kläre die Übergabe kurz mit Luca.",
+          "hint": "Die Klärung wandert in einen Chat zu zweit."
+        }
+      ]
+    },
+    {
+      "id": "sc-chat",
+      "profile": "teams-chat",
+      "team": "Crew Lichtblick",
+      "viewer": "p-nela",
+      "partner": "p-luca",
+      "notSeenBy": [
+        "p-samira"
+      ],
+      "messages": [
+        {
+          "id": "m1",
+          "by": "p-nela",
+          "time": "13:46",
+          "text": "Kannst du die Rampe vor der Abendprobe sichern?"
+        },
+        {
+          "id": "m2",
+          "by": "p-luca",
+          "time": "13:47",
+          "text": "Ja, ich übernehme die Rampe heute bis 17 Uhr.",
+          "hint": "Der Entscheid fällt zu zweit. Samira sieht diese Zusage nicht.",
+          "decision": true
+        },
+        {
+          "id": "m3",
+          "by": "p-nela",
+          "time": "13:48",
+          "text": "Danke. Ich trage dich mit Termin im gemeinsamen Plan ein.",
+          "hint": "Die Zusage bekommt einen sichtbaren Ort für die nächste Schicht."
+        }
+      ]
+    },
+    {
+      "id": "sc-plan",
+      "profile": "planner",
+      "team": "Crew Lichtblick",
+      "state": "after"
+    },
+    {
+      "id": "sc-prinzip",
+      "profile": "prinzip-tasks",
+      "team": "Crew Lichtblick",
+      "before": "before",
+      "after": "after"
+    }
+  ],
+  "slides": [
+    {
+      "id": "s-kanal",
+      "scene": "sc-kanal",
+      "presenterNotes": "Welche Information fehlt für die nächste Schicht?"
+    },
+    {
+      "id": "s-chat",
+      "scene": "sc-chat",
+      "presenterNotes": "Luca sagt zu, aber die Produktionsleitung sieht diesen Chat nicht."
+    },
+    {
+      "id": "s-plan",
+      "scene": "sc-plan",
+      "presenterNotes": "Die Zusage steht jetzt mit Person und Termin im gemeinsamen Plan."
+    },
+    {
+      "id": "s-prinzip",
+      "scene": "sc-prinzip",
+      "presenterNotes": "Persönliche Werkzeugnotizen bleiben persönlich.",
+      "teaching": {
+        "title": "Aus einer Zusage wird gemeinsame Arbeit",
+        "question": "Wo findet die nächste Schicht den Entscheid?",
+        "problem": "Zwei Personen einigen sich im Chat. Die Produktionsleitung sieht die Zusage nicht.",
+        "recommendation": "Gemeinsame Arbeit mit Person und Termin in den Plan eintragen. Der Kanal verweist auf diesen Stand.",
+        "boundary": "Der Chat bleibt für kurze Absprachen sinnvoll. Eigene Werkzeugnotizen bleiben in der persönlichen Liste."
+      }
+    }
+  ]
+}

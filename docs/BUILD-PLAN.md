@@ -1,12 +1,12 @@
 # Active build plan — Slides as Code and the AI-assistant bridge
 
-Updated: 2026-10-31. Slices 1–3 are built and merged on main; slice 4 is built on `feat/cli-mcp-render`, pending PR; slice 5 is partial and slice 6 is not built.
+Updated: 2026-10-31. Slices 1–4 are built and merged on main (`5a6ece6`); slice 5 is partial and slice 6 is not built. A fourth profile (`teams-chat`) and the first bridge trial are on branches pending review.
 
 ## Completed attempt: manual authoring and assistant bridge
 
-The [30-minute Claude/Orca task](ORCA-NUC-BRIDGE-30MIN.md) delivered portable-project authoring and the assistant bridge, merged at `7d5f330`. See the [bridge handoff](BRIDGE-BUILD-HANDOFF.md) for implementation, evidence and limits. The follow-up shared render operation, CLI and local MCP server are built on `feat/cli-mcp-render`; see the [CLI/MCP handoff](CLI-MCP-HANDOFF.md).
+The [30-minute Claude/Orca task](ORCA-NUC-BRIDGE-30MIN.md) delivered portable-project authoring and the assistant bridge, merged at `7d5f330`. See the [bridge handoff](BRIDGE-BUILD-HANDOFF.md) for implementation, evidence and limits. The follow-up shared render operation, CLI and local MCP server are merged at `5a6ece6`; see the [CLI/MCP handoff](CLI-MCP-HANDOFF.md).
 
-Completion of these builds does not establish every acceptance claim below. The two-assistant bridge trial, five observed trainer tasks and full keyboard/screen-reader pass remain open. The MCP server passed a [Claude Code host test](HOST-TEST-CLAUDE-CODE.md) over stdio; other hosts are untested. Portable projects support only `teams-posts`, `planner` and `prinzip-tasks`; fit checks do not flag wrapping Planner titles.
+Completion of these builds does not establish every acceptance claim below. Consumer chat UI tests, five observed trainer tasks and full keyboard/screen-reader pass remain open. The MCP server passed a [Claude Code host test](HOST-TEST-CLAUDE-CODE.md) over stdio; other hosts are untested. Portable projects support only `teams-posts`, `planner` and `prinzip-tasks`; fit checks do not flag wrapping Planner titles.
 
 Research disposition: see the [decision note](research/BRIDGE-RESEARCH-DECISIONS.md). The numbered slices below retain their intended scope and acceptance criteria; their state lines distinguish delivered implementation from remaining work.
 
@@ -34,7 +34,7 @@ Gate: architecture decisions identify evidence versus hypotheses. No unnecessary
 
 ## Slice 1 — portable projects and a new-scenario proof
 
-State: Built and merged on main (`e660d44`, `7d5f330`), with the three-profile subset.
+State: Built and merged on main (`e660d44`, `7d5f330`), with three profiles. The `teams-chat` profile (capabilityVersion 2) is on a branch pending review.
 
 - Define a versioned JSON schema, supported-capability catalogue and structured diagnostics.
 - Separate entity IDs, state snapshots, scene projections and slide composition.
@@ -63,7 +63,7 @@ A trainer imports an unseen example, reviews its scope, changes a person and a t
 
 ## Slice 3 — assistant bridge, first public-facing milestone
 
-State: Built and merged on main (`7d5f330`); real cross-assistant and observed trainer trials remain open.
+State: Built and merged on main (`7d5f330`). A first two-assistant CLI trial passed technically 4/4 (PR #4); consumer chat UIs, the repair path and the five observed trainer tasks remain open.
 
 - Add “Mit deinem KI-Assistenten vorbereiten” as a secondary action beside manual authoring.
 - A short brief captures audience, goal, duration, context and applications using useful defaults.
@@ -81,7 +81,7 @@ Conduct at least five observed trainer tasks before claiming low friction. Initi
 
 ## Slice 4 — headless render runner and CLI
 
-State: Built on `feat/cli-mcp-render` (`0280a8c`, with handoff updates `7fbd75f` and `952640f`), pushed and pending PR; see the [CLI/MCP handoff](CLI-MCP-HANDOFF.md) for delivered commands, outputs and proof.
+State: Built and merged on main via PR #3 (`5a6ece6`); see the [CLI/MCP handoff](CLI-MCP-HANDOFF.md) for delivered commands, outputs and proof.
 
 - Expose shared domain operations independently of UI events.
 - Add catalogue, validate, preview and render commands with structured output and documented exit codes.
@@ -96,7 +96,7 @@ A clean checkout can validate and render a new-project fixture noninteractively.
 
 ## Slice 5 — hosted job service, HTTP and remote MCP
 
-State: Partial: local Streamable HTTP on `127.0.0.1` exists on the CLI/MCP branch; hosting, authentication and a job service are not built.
+State: Partial: local Streamable HTTP on `127.0.0.1` exists on main; hosting, authentication and a job service are not built.
 
 This is a planned integration, not approval to buy services or publish infrastructure.
 

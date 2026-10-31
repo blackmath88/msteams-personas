@@ -79,6 +79,10 @@
     Array.prototype.forEach.call(el.querySelectorAll('.t-posts'), function (c) {
       var f = c.firstElementChild; if (f && f.getBoundingClientRect().top < c.getBoundingClientRect().top - 1) out.push('Beiträge oben abgeschnitten');
     });
+    Array.prototype.forEach.call(el.querySelectorAll('.c-msgs'), function (c) {
+      var r = c.getBoundingClientRect(), f = c.firstElementChild, l = c.lastElementChild;
+      if ((f && f.getBoundingClientRect().top < r.top - 1) || (l && l.getBoundingClientRect().bottom > r.bottom + 1) || c.scrollHeight > c.clientHeight + 2) out.push('Chat-Nachrichten abgeschnitten');
+    });
     Array.prototype.forEach.call(el.querySelectorAll('.p-board, .x-tbl, .m-ft'), function (c) {
       if (c.scrollWidth > c.clientWidth + 2) out.push(c.className.split(' ')[0] + ' rechts abgeschnitten');
     });

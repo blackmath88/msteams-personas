@@ -1,0 +1,64 @@
+{
+  "format": "msteams-personas/render-manifest",
+  "manifestVersion": 1,
+  "rendererVersion": "v3",
+  "projectVersion": 1,
+  "capabilityVersion": 2,
+  "project": {
+    "id": "lichtblick-kulissenwechsel",
+    "title": "Kulissenwechsel: Entscheide für alle sichtbar"
+  },
+  "ok": true,
+  "stage": "done",
+  "width": 1920,
+  "height": 1080,
+  "durationMs": 2418,
+  "slides": [
+    {
+      "index": 0,
+      "id": "s-kanal",
+      "profile": "teams-posts",
+      "file": "01-lichtblick-kulissenwechsel-teams-posts.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 178387,
+      "fit": [],
+      "sha256": "b90aa3c4dcac11f1f92ea68c63ae998619de9a6a658c49dcdcd2c99807d03ad9"
+    },
+    {
+      "index": 1,
+      "id": "s-chat",
+      "profile": "teams-chat",
+      "file": "02-lichtblick-kulissenwechsel-teams-chat.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 180290,
+      "fit": [],
+      "sha256": "5eded9795a7769fa12fc3a5fe9fdfe8613e4f57c28df7353bce6c114d71e30b6"
+    },
+    {
+      "index": 2,
+      "id": "s-plan",
+      "profile": "planner",
+      "file": "03-lichtblick-kulissenwechsel-planner.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 160525,
+      "fit": [],
+      "sha256": "29c68357325e345ff0110035fe019ef2888c1c67a368255149e00a8e30307fbf"
+    },
+    {
+      "index": 3,
+      "id": "s-prinzip",
+      "profile": "prinzip-tasks",
+      "file": "04-lichtblick-kulissenwechsel-prinzip-tasks.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 234668,
+      "fit": [],
+      "sha256": "f400e0d34685081d86ab8b5f4b4aaea278b5e5b564937eab10ce486f92a83e18"
+    }
+  ],
+  "diagnostics": [],
+  "renderedAt": "2026-10-31T15:48:22.603Z"
+}
