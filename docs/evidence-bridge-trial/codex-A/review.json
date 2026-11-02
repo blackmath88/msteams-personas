@@ -1,0 +1,24 @@
+{
+  "reviewer": "AI worker, not a trainer",
+  "criteria": [
+    "fictional and plausible",
+    "Swiss spelling, no sharp s",
+    "coherent three-slide story",
+    "meaningful before/after difference",
+    "assumptions declared",
+    "no false or overgeneralised M365 claims"
+  ],
+  "scores": [
+    2,
+    2,
+    2,
+    2,
+    2,
+    2
+  ],
+  "sharpSCount": 0,
+  "repairs": 0,
+  "manualJSONInterventions": 0,
+  "technicalPass": true,
+  "visualInspection": "All three original scale 1 PNGs opened and inspected by AI worker. No visible clipping; see report for omissions and content concerns."
+}

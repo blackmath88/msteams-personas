@@ -1,0 +1,216 @@
+# Auftrag: Schulungsabfolge für msteams-personas vorbereiten
+Pack: msteams-personas/project · projectVersion 1 · capabilityVersion 1
+
+## Kurzbriefing
+- Publikum: Teamleitungen einer Spitex-Organisation
+- Ziel: Übergaben zwischen Früh- und Spätdienst verbindlich im gemeinsamen Plan festhalten
+- Kontext: Pflegeteam mit vielen Teilzeitpensen, Übergaben bisher mündlich und auf Zetteln
+- Dauer: 20 Minuten
+- Standard: drei Folien in dieser Reihenfolge: Teams-Beiträge → Planner-Board → Prinzip (Aufgaben vorher/nachher).
+
+## Vorgehen
+Du darfst zuerst kurz ein Storyboard (3 Zeilen) vorschlagen und Rückfragen stellen. Wenn keine Antwort kommt, arbeite mit den Standards weiter.
+Gib am Ende GENAU EIN vollständiges JSON-Projekt zurück, als Datei oder in einem einzigen ```json-Block. Kein weiterer JSON-Block in der Antwort.
+
+## Regeln
+- Alle Personen, Organisationen und Inhalte sind fiktiv. Keine echten Namen oder Firmendaten.
+- Deutsch mit Schweizer Rechtschreibung (ss statt ß).
+- IDs: Kleinbuchstaben, Ziffern, Bindestrich, mit Buchstaben beginnen (z. B. p-anna, t-bericht). Jede Referenz (by, owner, document, scene) muss auf eine vorhandene ID zeigen.
+- states: «before» und «after» sind vollständige Momentaufnahmen. Eine Aufgabe, die in einem Zustand fehlt, wird dort nicht gezeigt. list = "personal" (persönliche Liste, owner nötig) oder "plan" (gemeinsamer Plan, mit bucket und due).
+- Nur diese Ansichten (profile) sind möglich:
+  - teams-posts: Teams: Beiträge im Kanal. Höchstlängen: team 40, channel 30, postTitle 60, postText 220, posts 4.
+  - planner: Planner: gemeinsames Board. Höchstlängen: team 40, taskTitle 60, bucket 24, tasks 8.
+  - prinzip-tasks: Prinzip: Aufgaben, vorher und nachher. Höchstlängen: title 60, question 90, problem 200, recommendation 200, boundary 200.
+- Grenzen: höchstens 8 Personen, 12 Aufgaben, 6 Folien.
+- Annahmen über das Verhalten von Microsoft 365, die du triffst, schreibe in meta.assumptions.
+- Behaupte nicht, du hättest die Folien gerendert oder das JSON geprüft. Die Prüfung macht die Website beim Import.
+- Kein HTML, kein CSS, kein Script, keine Bild-URLs. Texte sind reiner Text.
+
+## Vollständiges Beispiel (Inhalt ersetzen, Struktur beibehalten)
+```json
+{
+ "format": "msteams-personas/project",
+ "projectVersion": 1,
+ "capabilityVersion": 1,
+ "meta": {
+  "id": "velotech-werkstatt-uebergabe",
+  "title": "Werkstatt-Übergabe ohne verlorene Aufträge",
+  "organisation": "Velotech Werkstätten (fiktiv)",
+  "audience": "Teamleitungen in Werkstatt und Verkauf",
+  "goal": "Zeigen, wie offene Aufträge bei Schichtwechseln sichtbar bleiben",
+  "locale": "de-CH",
+  "fictional": true,
+  "source": {
+   "kind": "assistant",
+   "note": "Beispiel aus dem Auftrag"
+  },
+  "assumptions": [
+   "Das Team nutzt einen Teams-Kanal und einen gemeinsamen Planner-Plan."
+  ],
+  "notes": ""
+ },
+ "people": [
+  {
+   "id": "p-lina",
+   "name": "Lina Huber",
+   "role": "Leitung Werkstatt"
+  },
+  {
+   "id": "p-marco",
+   "name": "Marco Bianchi",
+   "role": "Mechaniker Frühschicht"
+  },
+  {
+   "id": "p-aylin",
+   "name": "Aylin Demir",
+   "role": "Mechanikerin Spätschicht"
+  },
+  {
+   "id": "p-jonas",
+   "name": "Jonas Keller",
+   "role": "Verkauf und Annahme"
+  }
+ ],
+ "documents": [
+  {
+   "id": "d-uebergabe",
+   "name": "Schichtübergabe Werkstatt.docx"
+  }
+ ],
+ "tasks": [
+  {
+   "id": "t-bremsen",
+   "title": "E-Bike Meier: Bremsen entlüften"
+  },
+  {
+   "id": "t-ersatz",
+   "title": "Ersatzteil Akku bestellen"
+  },
+  {
+   "id": "t-kunde",
+   "title": "Kundin Rossi zurückrufen"
+  },
+  {
+   "id": "t-lager",
+   "title": "Lagerliste Schläuche prüfen"
+  }
+ ],
+ "states": [
+  {
+   "id": "before",
+   "label": "Heute",
+   "tasks": {
+    "t-bremsen": {
+     "owner": "p-marco",
+     "list": "personal"
+    },
+    "t-ersatz": {
+     "owner": "p-marco",
+     "list": "personal"
+    },
+    "t-kunde": {
+     "owner": "p-jonas",
+     "list": "personal"
+    },
+    "t-lager": {
+     "owner": "p-aylin",
+     "list": "personal"
+    }
+   }
+  },
+  {
+   "id": "after",
+   "label": "Mit gemeinsamem Plan",
+   "tasks": {
+    "t-bremsen": {
+     "owner": "p-aylin",
+     "list": "plan",
+     "bucket": "Heute",
+     "due": "Do 14.11."
+    },
+    "t-ersatz": {
+     "owner": "p-marco",
+     "list": "plan",
+     "bucket": "Bestellungen",
+     "due": "Fr 15.11."
+    },
+    "t-kunde": {
+     "owner": "p-jonas",
+     "list": "plan",
+     "bucket": "Heute",
+     "due": "Do 14.11."
+    },
+    "t-lager": {
+     "owner": "p-aylin",
+     "list": "personal"
+    }
+   }
+  }
+ ],
+ "scenes": [
+  {
+   "id": "sc-kanal",
+   "profile": "teams-posts",
+   "team": "Werkstatt Velotech",
+   "channel": "Schichtwechsel",
+   "posts": [
+    {
+     "id": "q1",
+     "by": "p-marco",
+     "time": "13:52",
+     "title": "Übergabe Frühschicht",
+     "text": "E-Bike Meier steht auf Platz 3, Bremsen noch nicht entlüftet. Akku ist bestellt? Weiss ich nicht sicher.",
+     "hint": "Offene Arbeit steht nur im Beitrag, ohne verantwortliche Person."
+    },
+    {
+     "id": "q2",
+     "by": "p-aylin",
+     "time": "14:05",
+     "title": "",
+     "text": "Übernehme Platz 3. Ich trage es im Plan ein, damit Jonas der Kundin Bescheid geben kann.",
+     "document": "d-uebergabe",
+     "hint": "Die Übergabe verweist auf eine gemeinsame Datei und den Plan."
+    }
+   ]
+  },
+  {
+   "id": "sc-plan",
+   "profile": "planner",
+   "team": "Werkstatt Velotech",
+   "state": "after"
+  },
+  {
+   "id": "sc-prinzip",
+   "profile": "prinzip-tasks",
+   "team": "Werkstatt Velotech",
+   "before": "before",
+   "after": "after"
+  }
+ ],
+ "slides": [
+  {
+   "id": "s-1",
+   "scene": "sc-kanal",
+   "presenterNotes": "Fragen: Woran merkt die Spätschicht, was noch offen ist?"
+  },
+  {
+   "id": "s-2",
+   "scene": "sc-plan",
+   "presenterNotes": "Jede offene Arbeit hat eine Person, einen Termin und einen Bucket."
+  },
+  {
+   "id": "s-3",
+   "scene": "sc-prinzip",
+   "presenterNotes": "Persönliche Notizen bleiben persönlich. Nur, was jemand anderes betrifft, kommt in den Plan.",
+   "teaching": {
+    "title": "Gemeinsame Aufgaben gehören in einen Plan",
+    "question": "Wer erledigt was bis wann, auch nach dem Schichtwechsel?",
+    "problem": "Offene Arbeiten stehen in Beiträgen und persönlichen Listen. Bei der Übergabe geht etwas verloren.",
+    "recommendation": "Aufgaben, die eine andere Person übernehmen kann, in den gemeinsamen Plan: mit Person, Termin und Bucket.",
+    "boundary": "Kurze persönliche Erinnerungen gehören nicht in den Plan. Der Plan ersetzt kein Gespräch bei der Übergabe."
+   }
+  }
+ ]
+}
+```
+Bitte nutze die Standards und gib direkt das fertige JSON-Projekt zurück.

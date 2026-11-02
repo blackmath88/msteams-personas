@@ -1,0 +1,253 @@
+Ich erstelle das Projekt direkt mit den Standards: Folge Teams-Beiträge → Planner-Board → Prinzip, fiktive Spitex-Organisation, Übergabe Früh- zu Spätdienst.
+
+Storyboard (3 Zeilen):
+1. Der Frühdienst meldet drei offene Punkte im Kanal, Rückfragen folgen, eine Teilzeitkollegin liest es erst später.
+2. Die gleichen Punkte stehen im Planner-Board mit Person, Termin und Bucket.
+3. Prinzip: Was den nächsten Dienst betrifft, kommt in den Plan. Persönliches bleibt persönlich, Pflegedetails bleiben im Übergabeblatt.
+
+```json
+{
+ "format": "msteams-personas/project",
+ "projectVersion": 1,
+ "capabilityVersion": 1,
+ "meta": {
+  "id": "spitex-seetal-dienstuebergabe",
+  "title": "Dienstübergabe ohne Zettel: Früh- und Spätdienst im gemeinsamen Plan",
+  "organisation": "Spitex Seetal (fiktiv)",
+  "audience": "Teamleitungen einer Spitex-Organisation",
+  "goal": "Zeigen, wie Übergaben zwischen Früh- und Spätdienst verbindlich im gemeinsamen Plan festgehalten werden",
+  "locale": "de-CH",
+  "fictional": true,
+  "source": {
+   "kind": "assistant",
+   "note": "Erstellt nach Kurzbriefing, Standardabfolge mit drei Folien, Dauer 20 Minuten"
+  },
+  "assumptions": [
+   "Das Pflegeteam hat ein Microsoft Teams-Team mit einem Kanal für die Dienstübergabe und einen gemeinsamen Planner-Plan als Registerkarte im Kanal.",
+   "Alle Teammitglieder sehen Kanalbeiträge und Planner-Aufgaben, auch wenn sie erst später am Tag Dienst haben und sich dann einloggen.",
+   "Persönliche Aufgaben in Microsoft To Do sind nur für die eigene Person sichtbar und erscheinen nicht im gemeinsamen Plan.",
+   "Planner-Aufgaben können einer Person zugewiesen, einem Bucket zugeordnet und mit Fälligkeitsdatum versehen werden.",
+   "Vertrauliche Angaben zum Pflegeverlauf stehen in einem Dokument mit eingeschränktem Zugriff, nicht im Aufgabentitel."
+  ],
+  "notes": "Alle Personen, Klientinnen und Klienten sowie die Organisation sind fiktiv."
+ },
+ "people": [
+  {
+   "id": "p-rahel",
+   "name": "Rahel Brunner",
+   "role": "Teamleitung Pflege"
+  },
+  {
+   "id": "p-samuel",
+   "name": "Samuel Odermatt",
+   "role": "Pflegefachmann Frühdienst, 60 Prozent"
+  },
+  {
+   "id": "p-nadia",
+   "name": "Nadia Steiner",
+   "role": "Pflegefachfrau Spätdienst, 50 Prozent"
+  },
+  {
+   "id": "p-tobias",
+   "name": "Tobias Frei",
+   "role": "Fachmann Gesundheit Frühdienst"
+  },
+  {
+   "id": "p-elena",
+   "name": "Elena Marti",
+   "role": "Pflegefachfrau Spätdienst, 40 Prozent"
+  },
+  {
+   "id": "p-karin",
+   "name": "Karin Zbinden",
+   "role": "Einsatzplanung und Administration"
+  }
+ ],
+ "documents": [
+  {
+   "id": "d-uebergabe",
+   "name": "Übergabeblatt Spätdienst.docx"
+  }
+ ],
+ "tasks": [
+  {
+   "id": "t-verband",
+   "title": "Herr Baumann: Verbandwechsel Unterschenkel"
+  },
+  {
+   "id": "t-medibox",
+   "title": "Frau Keller: Medikamentenbox neu befüllen"
+  },
+  {
+   "id": "t-rueckruf",
+   "title": "Hausarztpraxis wegen Frau Keller zurückrufen"
+  },
+  {
+   "id": "t-sturz",
+   "title": "Frau Lüthi: Kontrollbesuch nach Sturz am Abend"
+  },
+  {
+   "id": "t-insulin",
+   "title": "Herr Rossi: Insulin in der Apotheke nachbestellen"
+  },
+  {
+   "id": "t-parkkarte",
+   "title": "Eigene Parkkarte verlängern"
+  }
+ ],
+ "states": [
+  {
+   "id": "before",
+   "label": "Heute: mündlich und auf Zetteln",
+   "tasks": {
+    "t-verband": {
+     "owner": "p-samuel",
+     "list": "personal"
+    },
+    "t-medibox": {
+     "owner": "p-samuel",
+     "list": "personal"
+    },
+    "t-rueckruf": {
+     "owner": "p-tobias",
+     "list": "personal"
+    },
+    "t-sturz": {
+     "owner": "p-samuel",
+     "list": "personal"
+    },
+    "t-insulin": {
+     "owner": "p-samuel",
+     "list": "personal"
+    },
+    "t-parkkarte": {
+     "owner": "p-tobias",
+     "list": "personal"
+    }
+   }
+  },
+  {
+   "id": "after",
+   "label": "Mit gemeinsamem Plan",
+   "tasks": {
+    "t-verband": {
+     "owner": "p-nadia",
+     "list": "plan",
+     "bucket": "Spätdienst heute",
+     "due": "Do 5.11."
+    },
+    "t-medibox": {
+     "owner": "p-elena",
+     "list": "plan",
+     "bucket": "Spätdienst heute",
+     "due": "Do 5.11."
+    },
+    "t-rueckruf": {
+     "owner": "p-karin",
+     "list": "plan",
+     "bucket": "Rückrufe",
+     "due": "Fr 6.11."
+    },
+    "t-sturz": {
+     "owner": "p-nadia",
+     "list": "plan",
+     "bucket": "Spätdienst heute",
+     "due": "Do 5.11."
+    },
+    "t-insulin": {
+     "owner": "p-samuel",
+     "list": "plan",
+     "bucket": "Bestellungen",
+     "due": "Fr 6.11."
+    },
+    "t-parkkarte": {
+     "owner": "p-tobias",
+     "list": "personal"
+    }
+   }
+  }
+ ],
+ "scenes": [
+  {
+   "id": "sc-kanal",
+   "profile": "teams-posts",
+   "team": "Spitex Seetal Team Ost",
+   "channel": "Dienstübergabe",
+   "posts": [
+    {
+     "id": "q1",
+     "by": "p-samuel",
+     "time": "13:40",
+     "title": "Übergabe Frühdienst",
+     "text": "Herr Baumann: Verband am Unterschenkel heute nicht gewechselt, Material liegt bereit. Frau Keller braucht eine neue Medi-Box, der Hausarzt hat noch nicht zurückgerufen. Zettel zu Frau Lüthi liegt im Büro.",
+     "hint": "Drei offene Punkte in einem Beitrag, ohne zuständige Person und ohne Termin."
+    },
+    {
+     "id": "q2",
+     "by": "p-nadia",
+     "time": "14:12",
+     "title": "",
+     "text": "Bin erst ab 15 Uhr im Dienst. Welchen Zettel meinst du? Elena ist heute auch im Spätdienst, übernimmt sie Frau Keller oder ich?",
+     "hint": "Rückfrage statt Klarheit. Die Teilzeitkollegin liest den Beitrag erst nach Dienstbeginn."
+    },
+    {
+     "id": "q3",
+     "by": "p-rahel",
+     "time": "14:20",
+     "title": "Ab heute: offene Punkte in den Plan",
+     "text": "Bitte alle offenen Punkte für den Spätdienst im Planner eintragen: Person, Termin, Bucket. Der Beitrag hier bleibt für den Kontext, Details zum Pflegeverlauf gehören ins Übergabeblatt.",
+     "document": "d-uebergabe",
+     "hint": "Die Teamleitung legt die Regel fest und trennt Plan, Kanal und Dokument."
+    },
+    {
+     "id": "q4",
+     "by": "p-nadia",
+     "time": "15:05",
+     "title": "",
+     "text": "Danke. Herr Baumann und Frau Lüthi sind bei mir im Plan, Frau Keller bei Elena. Karin hat den Rückruf an die Praxis übernommen.",
+     "hint": "Die Übernahme ist jetzt für alle sichtbar, auch für die Einsatzplanung."
+    }
+   ]
+  },
+  {
+   "id": "sc-plan",
+   "profile": "planner",
+   "team": "Spitex Seetal Team Ost",
+   "state": "after"
+  },
+  {
+   "id": "sc-prinzip",
+   "profile": "prinzip-tasks",
+   "team": "Spitex Seetal Team Ost",
+   "before": "before",
+   "after": "after"
+  }
+ ],
+ "slides": [
+  {
+   "id": "s-1",
+   "scene": "sc-kanal",
+   "presenterNotes": "Einstieg, etwa 6 Minuten. Fragen ans Publikum: Woran erkennt der Spätdienst, wer was übernimmt? Was passiert, wenn Nadia erst um 15 Uhr liest? Wo liegt der Zettel zu Frau Lüthi? Bezug zur eigenen Praxis: Wo stehen bei euch heute die offenen Punkte?"
+  },
+  {
+   "id": "s-2",
+   "scene": "sc-plan",
+   "presenterNotes": "Etwa 8 Minuten. Jede offene Aufgabe hat eine Person, einen Termin und einen Bucket. Buckets zeigen: Spätdienst heute, Rückrufe, Bestellungen. Hinweis auf Datenschutz: Aufgabentitel knapp, keine Diagnosen. Details stehen im Übergabeblatt."
+  },
+  {
+   "id": "s-3",
+   "scene": "sc-prinzip",
+   "presenterNotes": "Etwa 6 Minuten. Die Parkkarte von Tobias bleibt persönlich, sie betrifft niemanden sonst. Alles, was der nächste Dienst übernehmen muss, kommt in den Plan. Abschluss: Welche Regel vereinbart jedes Team bis nächste Woche?",
+   "teaching": {
+    "title": "Übergaben gehören in den gemeinsamen Plan",
+    "question": "Wer übernimmt was bis wann, auch wenn die Person erst später Dienst hat?",
+    "problem": "Übergaben stehen in Beiträgen, auf Zetteln und in persönlichen Listen. Bei Teilzeit und wechselnden Diensten liest nicht jede Person alles rechtzeitig. Punkte gehen verloren.",
+    "recommendation": "Jede offene Aufgabe für den nächsten Dienst kommt in den Plan: mit Person, Termin und Bucket. Der Kanalbeitrag verweist auf den Plan, statt die Liste zu wiederholen.",
+    "boundary": "Persönliche Erinnerungen bleiben persönlich. Vertrauliche Details zum Pflegeverlauf gehören ins Übergabeblatt, nicht in Aufgabentitel. Der Plan ersetzt das kurze Gespräch nicht."
+   }
+  }
+ ]
+}
+```
+
+Das Projekt enthält sechs fiktive Personen, sechs Aufgaben, zwei Zustände und drei Folien in der Standardreihenfolge. Die Prüfung der Längen und Referenzen übernimmt die Website beim Import.

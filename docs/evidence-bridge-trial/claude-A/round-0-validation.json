@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "summary": {
+    "title": "Dienstübergabe ohne Zettel: Früh- und Spätdienst im gemeinsamen Plan",
+    "slides": [
+      {
+        "index": 0,
+        "id": "s-1",
+        "file": "01-spitex-seetal-dienstuebergabe-teams-posts.png"
+      },
+      {
+        "index": 1,
+        "id": "s-2",
+        "file": "02-spitex-seetal-dienstuebergabe-planner.png"
+      },
+      {
+        "index": 2,
+        "id": "s-3",
+        "file": "03-spitex-seetal-dienstuebergabe-prinzip-tasks.png"
+      }
+    ]
+  }
+}

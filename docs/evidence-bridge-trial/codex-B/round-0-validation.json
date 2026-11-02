@@ -1,0 +1,32 @@
+{
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    {
+      "code": "prinzip-lists",
+      "path": "scenes[2]",
+      "message": "Prinzip-Folie: 4 Personen haben vorher eine persönliche Liste; nur 3 passen auf die Folie, weitere werden nicht gezeigt.",
+      "severity": "warning"
+    }
+  ],
+  "summary": {
+    "title": "Von der Teamsitzung zur sichtbaren Aufgabe",
+    "slides": [
+      {
+        "index": 0,
+        "id": "s-beitraege",
+        "file": "01-treuhand-sitzungsaufgaben-teams-posts.png"
+      },
+      {
+        "index": 1,
+        "id": "s-board",
+        "file": "02-treuhand-sitzungsaufgaben-planner.png"
+      },
+      {
+        "index": 2,
+        "id": "s-prinzip",
+        "file": "03-treuhand-sitzungsaufgaben-prinzip-tasks.png"
+      }
+    ]
+  }
+}

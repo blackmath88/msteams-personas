@@ -1,0 +1,13 @@
+{
+  "command": [
+    "claude",
+    "-p",
+    "--tools",
+    "",
+    "--strict-mcp-config"
+  ],
+  "cwd": "/tmp/bridge-claude-B-y2z76_75",
+  "initialDirectoryEntries": [],
+  "seconds": 83.822,
+  "exitCode": 0
+}

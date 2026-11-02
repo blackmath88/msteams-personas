@@ -1,0 +1,60 @@
+{
+  "format": "msteams-personas/render-manifest",
+  "manifestVersion": 1,
+  "rendererVersion": "v3",
+  "projectVersion": 1,
+  "capabilityVersion": 1,
+  "project": {
+    "id": "treuhand-sitzungsaufgaben",
+    "title": "Von der Teamsitzung zur sichtbaren Aufgabe"
+  },
+  "ok": true,
+  "stage": "done",
+  "width": 1920,
+  "height": 1080,
+  "durationMs": 3589,
+  "slides": [
+    {
+      "index": 0,
+      "id": "s-beitraege",
+      "profile": "teams-posts",
+      "file": "01-treuhand-sitzungsaufgaben-teams-posts.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 295126,
+      "fit": [],
+      "sha256": "8a20ab8f4c5df75fc9569f1030d71016c1939609c30c532c39a4cf78a46c7771"
+    },
+    {
+      "index": 1,
+      "id": "s-board",
+      "profile": "planner",
+      "file": "02-treuhand-sitzungsaufgaben-planner.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 185953,
+      "fit": [],
+      "sha256": "8aaf2b882e644e20630ab98fbe93ce177f564f82f0e2037ca461936c26b1f8ea"
+    },
+    {
+      "index": 2,
+      "id": "s-prinzip",
+      "profile": "prinzip-tasks",
+      "file": "03-treuhand-sitzungsaufgaben-prinzip-tasks.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 311789,
+      "fit": [],
+      "sha256": "c12242d0eb05b6f3eff27d47e827fd8cf4c6a6d20596418edb3089b44f586f58"
+    }
+  ],
+  "diagnostics": [
+    {
+      "code": "prinzip-lists",
+      "path": "scenes[2]",
+      "message": "Prinzip-Folie: 4 Personen haben vorher eine persönliche Liste; nur 3 passen auf die Folie, weitere werden nicht gezeigt.",
+      "severity": "warning"
+    }
+  ],
+  "renderedAt": "2026-10-31T15:46:59.336Z"
+}

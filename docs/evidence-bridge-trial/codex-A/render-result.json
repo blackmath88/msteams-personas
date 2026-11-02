@@ -1,0 +1,53 @@
+{
+  "format": "msteams-personas/render-manifest",
+  "manifestVersion": 1,
+  "rendererVersion": "v3",
+  "projectVersion": 1,
+  "capabilityVersion": 1,
+  "project": {
+    "id": "spitex-abendtal-dienstuebergabe",
+    "title": "Dienstübergaben verbindlich im gemeinsamen Plan"
+  },
+  "ok": true,
+  "stage": "done",
+  "width": 1920,
+  "height": 1080,
+  "durationMs": 2717,
+  "slides": [
+    {
+      "index": 0,
+      "id": "s-1",
+      "profile": "teams-posts",
+      "file": "01-spitex-abendtal-dienstuebergabe-teams-posts.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 259330,
+      "fit": [],
+      "sha256": "d1f2427f8f1f6dedbc63425f8145b5af0ce1c3d23eba4695dff60c7ce87e460a"
+    },
+    {
+      "index": 1,
+      "id": "s-2",
+      "profile": "planner",
+      "file": "02-spitex-abendtal-dienstuebergabe-planner.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 187951,
+      "fit": [],
+      "sha256": "739f70f61b16d82931b441fda302a3750cf16a7fa16f3d82520f59c994649874"
+    },
+    {
+      "index": 2,
+      "id": "s-3",
+      "profile": "prinzip-tasks",
+      "file": "03-spitex-abendtal-dienstuebergabe-prinzip-tasks.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 299381,
+      "fit": [],
+      "sha256": "7f62daaf083bd23bd971e52951ec3cd15ee67a1335da504152b3d2b7093333a7"
+    }
+  ],
+  "diagnostics": [],
+  "renderedAt": "2026-10-31T15:46:52.391Z"
+}

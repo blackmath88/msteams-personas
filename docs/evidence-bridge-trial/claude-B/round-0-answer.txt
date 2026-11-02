@@ -1,0 +1,260 @@
+Ich erstelle das Projekt direkt nach den Standards: drei Folien, Treuhandbüro, Lernende im ersten Lehrjahr.
+
+```json
+{
+ "format": "msteams-personas/project",
+ "projectVersion": 1,
+ "capabilityVersion": 1,
+ "meta": {
+  "id": "treuhand-aarebruecke-teamsitzung",
+  "title": "Aufgaben aus der Teamsitzung nicht verlieren",
+  "organisation": "Treuhand Aarebrücke AG (fiktiv)",
+  "audience": "Lernende im ersten Lehrjahr in einem Treuhandbüro",
+  "goal": "Zeigen, wie Aufgaben aus der Teamsitzung im gemeinsamen Planner landen statt in persönlichen Notizen",
+  "locale": "de-CH",
+  "fictional": true,
+  "source": {
+   "kind": "assistant",
+   "note": "Erstellt nach Kurzbriefing mit Standardabfolge: Teams-Beiträge, Planner-Board, Prinzip. Dauer 15 Minuten."
+  },
+  "assumptions": [
+   "Das Büro nutzt ein Team mit einem Kanal für die Teamsitzung und hat dort einen Planner-Plan als Registerkarte eingebunden.",
+   "Alle 12 Mitarbeitenden, auch die Lernenden, dürfen im gemeinsamen Plan Aufgaben erstellen, zuweisen und verschieben.",
+   "Wer einer Aufgabe im Planner zugewiesen wird, erhält eine Benachrichtigung in Teams.",
+   "Persönliche Listen in To Do sind nur für die eigene Person sichtbar, auch wenn sie dieselbe Microsoft-365-Umgebung nutzen."
+  ],
+  "notes": "Storyboard: 1. Montagssitzung im Kanal, Aufgaben stehen im Protokoll und in Notizbüchern. 2. Dieselben Aufgaben im Planner mit Person, Termin und Bucket. 3. Prinzip: Was andere betrifft, kommt in den Plan."
+ },
+ "people": [
+  {
+   "id": "p-sandra",
+   "name": "Sandra Vogel",
+   "role": "Geschäftsleitung und Berufsbildnerin"
+  },
+  {
+   "id": "p-lea",
+   "name": "Lea Brunner",
+   "role": "Lernende Kauffrau, 1. Lehrjahr"
+  },
+  {
+   "id": "p-noah",
+   "name": "Noah Steiner",
+   "role": "Lernender Kaufmann, 1. Lehrjahr"
+  },
+  {
+   "id": "p-reto",
+   "name": "Reto Baumgartner",
+   "role": "Sachbearbeiter Buchhaltung"
+  },
+  {
+   "id": "p-mira",
+   "name": "Mira Keller",
+   "role": "Treuhänderin, Steuern und Abschlüsse"
+  }
+ ],
+ "documents": [
+  {
+   "id": "d-protokoll",
+   "name": "Protokoll Teamsitzung 02.11.2026.docx"
+  }
+ ],
+ "tasks": [
+  {
+   "id": "t-mwst",
+   "title": "MWST-Abrechnung Q3 Bäckerei Furrer vorbereiten"
+  },
+  {
+   "id": "t-belege",
+   "title": "Fehlende Belege Garage Moser einfordern"
+  },
+  {
+   "id": "t-steuer",
+   "title": "Steuererklärung Familie Roth: Unterlagen prüfen"
+  },
+  {
+   "id": "t-lohn",
+   "title": "Lohnabrechnung Oktober Coiffeur Lux erstellen"
+  },
+  {
+   "id": "t-bank",
+   "title": "Bankauszüge Praxis Dr. Egli ablegen"
+  },
+  {
+   "id": "t-rueckruf",
+   "title": "Herrn Moser zu den Belegen anrufen"
+  },
+  {
+   "id": "t-schule",
+   "title": "Berufsschule: Rechnungswesen repetieren"
+  },
+  {
+   "id": "t-journal",
+   "title": "Lerndokumentation Woche 44 nachführen"
+  }
+ ],
+ "states": [
+  {
+   "id": "before",
+   "label": "Nach der Sitzung",
+   "tasks": {
+    "t-mwst": {
+     "owner": "p-reto",
+     "list": "personal"
+    },
+    "t-belege": {
+     "owner": "p-lea",
+     "list": "personal"
+    },
+    "t-steuer": {
+     "owner": "p-mira",
+     "list": "personal"
+    },
+    "t-bank": {
+     "owner": "p-noah",
+     "list": "personal"
+    },
+    "t-schule": {
+     "owner": "p-lea",
+     "list": "personal"
+    },
+    "t-journal": {
+     "owner": "p-noah",
+     "list": "personal"
+    }
+   }
+  },
+  {
+   "id": "after",
+   "label": "Im gemeinsamen Plan",
+   "tasks": {
+    "t-mwst": {
+     "owner": "p-reto",
+     "list": "plan",
+     "bucket": "Nächste Woche",
+     "due": "Do 12.11."
+    },
+    "t-belege": {
+     "owner": "p-noah",
+     "list": "plan",
+     "bucket": "Mandantenkontakt",
+     "due": "Mi 4.11."
+    },
+    "t-steuer": {
+     "owner": "p-mira",
+     "list": "plan",
+     "bucket": "Nächste Woche",
+     "due": "Fr 13.11."
+    },
+    "t-lohn": {
+     "owner": "p-lea",
+     "list": "plan",
+     "bucket": "Diese Woche",
+     "due": "Fr 6.11."
+    },
+    "t-bank": {
+     "owner": "p-noah",
+     "list": "plan",
+     "bucket": "Diese Woche",
+     "due": "Do 5.11."
+    },
+    "t-rueckruf": {
+     "owner": "p-sandra",
+     "list": "plan",
+     "bucket": "Mandantenkontakt",
+     "due": "Di 3.11."
+    },
+    "t-schule": {
+     "owner": "p-lea",
+     "list": "personal"
+    },
+    "t-journal": {
+     "owner": "p-noah",
+     "list": "personal"
+    }
+   }
+  }
+ ],
+ "scenes": [
+  {
+   "id": "sc-kanal",
+   "profile": "teams-posts",
+   "team": "Treuhand Aarebrücke",
+   "channel": "Teamsitzung",
+   "posts": [
+    {
+     "id": "q1",
+     "by": "p-sandra",
+     "time": "09:40",
+     "title": "Protokoll Teamsitzung 2. November",
+     "text": "Danke für die Sitzung. Offen: MWST Q3 Bäckerei Furrer, Belege Garage Moser, Steuererklärung Roth prüfen. Wer was macht, haben wir mündlich besprochen. Protokoll ist angehängt.",
+     "document": "d-protokoll",
+     "hint": "Die Aufgaben stehen im Protokoll, aber ohne Person und ohne Termin."
+    },
+    {
+     "id": "q2",
+     "by": "p-lea",
+     "time": "09:52",
+     "title": "",
+     "text": "Habe mir die Belege Moser notiert. Oder war das Noah?",
+     "hint": "Die Aufgabe steht in Leas Notizbuch. Das Team sieht das nicht."
+    },
+    {
+     "id": "q3",
+     "by": "p-noah",
+     "time": "10:03",
+     "title": "",
+     "text": "Ich dachte, ich mache die Belege Moser. Und wer hat die Lohnabrechnung Coiffeur Lux? Das war am Schluss noch Thema.",
+     "hint": "Eine Aufgabe doppelt, eine Aufgabe fehlt ganz."
+    },
+    {
+     "id": "q4",
+     "by": "p-reto",
+     "time": "10:15",
+     "title": "",
+     "text": "Bevor zwei das Gleiche machen: Ich öffne den Planner-Tab. Jede Aufgabe aus dem Protokoll bekommt eine Person und einen Termin. Lea und Noah, tragt eure selbst ein.",
+     "hint": "Der Wechsel vom Beitrag in den gemeinsamen Plan."
+    }
+   ]
+  },
+  {
+   "id": "sc-plan",
+   "profile": "planner",
+   "team": "Treuhand Aarebrücke",
+   "state": "after"
+  },
+  {
+   "id": "sc-prinzip",
+   "profile": "prinzip-tasks",
+   "team": "Treuhand Aarebrücke",
+   "before": "before",
+   "after": "after"
+  }
+ ],
+ "slides": [
+  {
+   "id": "s-1",
+   "scene": "sc-kanal",
+   "presenterNotes": "Einstieg, 5 Minuten. Fragen an die Lernenden: Wer macht die Belege Moser? Woher wisst ihr das? Was passiert mit der Lohnabrechnung Coiffeur Lux, die nur Noah im Kopf hat? Ziel: Die Lernenden merken, dass Notizbuch und Protokoll allein nicht reichen."
+  },
+  {
+   "id": "s-2",
+   "scene": "sc-plan",
+   "presenterNotes": "Hauptteil, 6 Minuten. Dieselben Aufgaben, jetzt mit Person, Termin und Bucket. Zeigen: Belege Moser hat nur noch eine Person. Lohnabrechnung Lux ist nicht mehr verloren. Lea und Noah tragen ihre Aufgaben selbst ein, direkt in der Sitzung. Kurz zeigen, wie eine Aufgabe erstellt und zugewiesen wird."
+  },
+  {
+   "id": "s-3",
+   "scene": "sc-prinzip",
+   "presenterNotes": "Abschluss, 4 Minuten. Berufsschule und Lerndokumentation bleiben persönlich, das ist richtig so. Faustregel für die nächste Sitzung: Betrifft die Aufgabe jemand anderes oder hat sie eine Frist beim Mandanten, kommt sie in den Plan. Im Zweifel die Berufsbildnerin fragen.",
+   "teaching": {
+    "title": "Aufgaben aus der Sitzung gehören in den Plan",
+    "question": "Wer erledigt welche Aufgabe aus der Sitzung bis wann, und wer sieht das?",
+    "problem": "Nach der Teamsitzung stehen Aufgaben im Protokoll und in persönlichen Notizen. Niemand sieht, ob eine Aufgabe schon jemand übernommen hat. Fristen bei Mandanten gehen vergessen.",
+    "recommendation": "Jede Aufgabe, die jemand anderes betrifft oder eine Frist hat, direkt in der Sitzung im Planner erfassen: mit Person, Termin und Bucket. Die Lernenden tragen ihre eigenen Aufgaben selbst ein.",
+    "boundary": "Eigene Erinnerungen wie Berufsschule oder Lerndokumentation bleiben in der persönlichen Liste. Der Plan ersetzt weder das Protokoll noch die Rückfrage bei der Berufsbildnerin."
+   }
+  }
+ ]
+}
+```
+
+Das Projekt enthält fünf fiktive Personen, acht Aufgaben und die drei Standardfolien. Die Aufgabe «Lohnabrechnung Coiffeur Lux» fehlt bewusst im Zustand «Nach der Sitzung» und zeigt so, wie eine Aufgabe ohne Plan verloren geht. Die Prüfung der Struktur erfolgt beim Import auf der Website.

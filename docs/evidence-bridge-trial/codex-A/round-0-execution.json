@@ -1,0 +1,18 @@
+{
+  "command": [
+    "codex",
+    "exec",
+    "--sandbox",
+    "read-only",
+    "--skip-git-repo-check",
+    "-C",
+    "/tmp/bridge-codex-A-z7a6uoxl",
+    "-o",
+    "/home/nuc/orca/workspaces/msteams-personas/bridge-trial/docs/evidence-bridge-trial/codex-A/round-0-answer.txt",
+    "-"
+  ],
+  "cwd": "/tmp/bridge-codex-A-z7a6uoxl",
+  "initialDirectoryEntries": [],
+  "seconds": 52.959,
+  "exitCode": 0
+}
