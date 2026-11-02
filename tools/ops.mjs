@@ -1,6 +1,6 @@
 // The operations every non-browser route calls. The CLI and the MCP server are thin adapters
 // over these functions; the website calls the same ProjectCore and ProjectRender directly.
-import { PC, renderProject, LIMITS } from './render.mjs';
+import { PC, renderProject, renderComponents, LIMITS } from './render.mjs';
 
 export const INPUT_LIMIT_BYTES = PC.MAX_INPUT;
 
@@ -9,6 +9,7 @@ export function getCapabilities() {
     format: PC.FORMAT, projectVersion: PC.PROJECT_VERSION, capabilityVersion: PC.CAPABILITY_VERSION, rendererVersion: PC.RENDERER_VERSION,
     stateIds: PC.STATE_IDS, ...PC.capabilities(),
     output: { width: 1920, height: 1080, format: 'image/png', scales: LIMITS.scales },
+    components: PC.components(),
     inputLimitBytes: INPUT_LIMIT_BYTES,
     semantics: 'states are complete snapshots: a task missing from a state is not shown there; list "personal" = a person\'s own list (owner required), list "plan" = the shared plan.'
   };
@@ -38,4 +39,11 @@ export async function renderToDir(input, outDir, opts = {}) {
   const r = parseProject(input);
   if (r.error) return { format: 'msteams-personas/render-manifest', ok: false, stage: 'parse', slides: [], diagnostics: [r.error] };
   return renderProject(r.project, { ...opts, outDir });
+}
+
+/* Components: M365 screens or excerpts without slide chrome, with anchors (see ProjectCore.components). */
+export async function renderComponentsToDir(input, specs, outDir, opts = {}) {
+  const r = parseProject(input);
+  if (r.error) return { format: 'msteams-personas/component-manifest', ok: false, stage: 'parse', components: [], diagnostics: [r.error] };
+  return renderComponents(r.project, specs, { ...opts, outDir });
 }

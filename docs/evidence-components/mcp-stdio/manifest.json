@@ -1,0 +1,280 @@
+{
+  "format": "msteams-personas/component-manifest",
+  "manifestVersion": 1,
+  "rendererVersion": "v3",
+  "projectVersion": 1,
+  "capabilityVersion": 2,
+  "project": {
+    "id": "lichtblick-kulissenwechsel",
+    "title": "Kulissenwechsel: Entscheide für alle sichtbar"
+  },
+  "componentVersion": 1,
+  "ok": true,
+  "stage": "done",
+  "scale": 2,
+  "durationMs": 1681,
+  "components": [
+    {
+      "index": 0,
+      "type": "teams.channel",
+      "scene": "sc-kanal",
+      "view": "posts",
+      "select": null,
+      "marks": false,
+      "reflowWidth": 640,
+      "file": "c01-lichtblick-kulissenwechsel-sc-kanal-posts.png",
+      "width": 1344,
+      "height": 542,
+      "bytes": 69617,
+      "excerpt": true,
+      "crop": [
+        342,
+        495,
+        672,
+        271
+      ],
+      "anchors": [
+        {
+          "entity": "q1",
+          "kind": "post",
+          "box": [
+            0.0595,
+            0.0601,
+            0.8333,
+            0.5148
+          ]
+        },
+        {
+          "entity": "q2",
+          "kind": "post",
+          "box": [
+            0.0595,
+            0.6118,
+            0.8333,
+            0.3291
+          ]
+        }
+      ],
+      "markers": [],
+      "text": {
+        "essentialPx": 14,
+        "minTextPt": 12,
+        "minPlacedWidthIn": 8
+      },
+      "context": "Microsoft Teams · Crew Lichtblick › Abendprobe",
+      "attribution": "Fiktives Beispiel · nachgebildete Oberfläche, kein Produkt von Microsoft",
+      "sha256": "c22d50628b820f9d5dbd37412abf84f413730cde4fafcc307bb699e0afee4384"
+    },
+    {
+      "index": 1,
+      "type": "teams.channel",
+      "scene": "sc-kanal",
+      "view": "posts",
+      "select": [
+        "q2"
+      ],
+      "marks": false,
+      "reflowWidth": 640,
+      "file": "c02-lichtblick-kulissenwechsel-sc-kanal-posts.png",
+      "width": 1344,
+      "height": 244,
+      "bytes": 25868,
+      "excerpt": true,
+      "crop": [
+        342,
+        644,
+        672,
+        122
+      ],
+      "anchors": [
+        {
+          "entity": "q2",
+          "kind": "post",
+          "box": [
+            0.0595,
+            0.1377,
+            0.8333,
+            0.731
+          ]
+        }
+      ],
+      "markers": [],
+      "text": {
+        "essentialPx": 14,
+        "minTextPt": 12,
+        "minPlacedWidthIn": 8
+      },
+      "context": "Microsoft Teams · Crew Lichtblick › Abendprobe",
+      "attribution": "Fiktives Beispiel · nachgebildete Oberfläche, kein Produkt von Microsoft",
+      "sha256": "05b936cf21f608e4cef18be45374b042b6319cba7d14c61253e1177d7c6d322e"
+    },
+    {
+      "index": 2,
+      "type": "teams.chat",
+      "scene": "sc-chat",
+      "view": "messages",
+      "select": [
+        "m1",
+        "m2"
+      ],
+      "marks": false,
+      "reflowWidth": 640,
+      "file": "c03-lichtblick-kulissenwechsel-sc-chat-messages.png",
+      "width": 1344,
+      "height": 328,
+      "bytes": 43603,
+      "excerpt": true,
+      "crop": [
+        342,
+        584,
+        672,
+        164
+      ],
+      "anchors": [
+        {
+          "entity": "m1",
+          "kind": "message",
+          "box": [
+            0.3098,
+            0.1033,
+            0.583,
+            0.3538
+          ]
+        },
+        {
+          "entity": "m2",
+          "kind": "message",
+          "box": [
+            0.0714,
+            0.5303,
+            0.8214,
+            0.3721
+          ]
+        }
+      ],
+      "markers": [],
+      "text": {
+        "essentialPx": 16,
+        "minTextPt": 12,
+        "minPlacedWidthIn": 7
+      },
+      "context": "Microsoft Teams · Chat",
+      "attribution": "Fiktives Beispiel · nachgebildete Oberfläche, kein Produkt von Microsoft",
+      "sha256": "aa64c83435fdd32df526da75d9a1ef5ff5eece8de2b3b54fde8f69f1a080610b"
+    },
+    {
+      "index": 3,
+      "type": "planner.board",
+      "scene": "sc-plan",
+      "view": "bucket",
+      "select": "Abendprobe",
+      "marks": false,
+      "reflowWidth": null,
+      "file": "c04-lichtblick-kulissenwechsel-sc-plan-bucket.png",
+      "width": 592,
+      "height": 598,
+      "bytes": 51078,
+      "excerpt": true,
+      "crop": [
+        248,
+        137,
+        296,
+        299
+      ],
+      "anchors": [
+        {
+          "entity": "t-rampe",
+          "kind": "task",
+          "box": [
+            0.027,
+            0.2749,
+            0.9459,
+            0.3344
+          ]
+        },
+        {
+          "entity": "t-licht",
+          "kind": "task",
+          "box": [
+            0.027,
+            0.6361,
+            0.9459,
+            0.3344
+          ]
+        },
+        {
+          "entity": "Abendprobe",
+          "kind": "bucket",
+          "box": [
+            0.027,
+            0.0293,
+            0.9459,
+            0.9413
+          ]
+        }
+      ],
+      "markers": [],
+      "text": {
+        "essentialPx": 14.5,
+        "minTextPt": 12,
+        "minPlacedWidthIn": 3.4
+      },
+      "context": "Planner · Crew Lichtblick › Abendprobe",
+      "attribution": "Fiktives Beispiel · nachgebildete Oberfläche, kein Produkt von Microsoft",
+      "sha256": "5c3b7f3335d529c621b6a21a564fc50efe8cc0b7078bec35cad637b5dcdcbda2"
+    },
+    {
+      "index": 4,
+      "type": "teams.channel",
+      "scene": "sc-kanal",
+      "view": "window",
+      "select": null,
+      "marks": false,
+      "reflowWidth": null,
+      "file": "c05-lichtblick-kulissenwechsel-sc-kanal-window.png",
+      "width": 2880,
+      "height": 1620,
+      "bytes": 236182,
+      "excerpt": false,
+      "crop": [
+        0,
+        0,
+        1440,
+        810
+      ],
+      "anchors": [
+        {
+          "entity": "q1",
+          "kind": "post",
+          "box": [
+            0.2653,
+            0.6559,
+            0.6958,
+            0.1475
+          ]
+        },
+        {
+          "entity": "q2",
+          "kind": "post",
+          "box": [
+            0.2653,
+            0.8158,
+            0.6958,
+            0.1101
+          ]
+        }
+      ],
+      "markers": [],
+      "text": {
+        "essentialPx": 14,
+        "minTextPt": 12,
+        "minPlacedWidthIn": 17.14
+      },
+      "context": "Microsoft Teams · Crew Lichtblick › Abendprobe",
+      "attribution": "Fiktives Beispiel · nachgebildete Oberfläche, kein Produkt von Microsoft",
+      "sha256": "28299df387e28e8ed45ebbb17ed21b402eebfa624a498d3e7741655b9948ba10"
+    }
+  ],
+  "diagnostics": [],
+  "renderedAt": "2026-11-02T13:19:16.268Z"
+}

@@ -1,6 +1,6 @@
 # Deck components plan — M365 screens as parts of training slides
 
-Updated: 2026-11-02. State: planned, nothing in this document is built yet. Baseline: main at `e324156` (CLI and local MCP, Teams chat profile, bridge trial and ChatGPT tunnel setup notes merged).
+Updated: 2026-11-02. State: D0 done; D1 built on `feat/deck-components-d1`, pending review ([handoff](COMPONENTS-D1-HANDOFF.md)); D2–D6 planned. Baseline: main at `e324156` (CLI and local MCP, Teams chat profile, bridge trial and ChatGPT tunnel setup notes merged).
 
 This plan extends the [active build plan](BUILD-PLAN.md). It follows from a demo on 2026-11-02 and a Perplexity architecture review of the same day (disposition below). It does not authorise a release, hosting or a Mission.
 
@@ -112,6 +112,8 @@ ChatGPT needs to reach the MCP server for either route. The private tunnel in [C
 - This document is the decision record.
 
 ### D1 — component export
+
+State: built, pending review. See the [D1 handoff](COMPONENTS-D1-HANDOFF.md). Deviations: the MCP tool is `render_components` (batch of up to 8); slide-local badge numbering moved to D3; excerpts are reflowed lists (`width`) rather than a reuse of the library's focus crop, because the crop keeps the full window width and stays unreadable when placed.
 
 - Require unique IDs for anchorable entities in the component path: posts (today optional, `src/project-core.js` validation) and Planner tasks (today dropped during compilation, `planTasks` → board mapping).
 - Badge numbers become slide-local and derived, not counted from `hint` presence.

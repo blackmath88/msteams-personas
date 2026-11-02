@@ -16,7 +16,7 @@ See [V3 handoff](V3-BUILD-HANDOFF.md) for screen availability, evidence and know
 
 [Slides as Code concept](SLIDES-AS-CODE-CONCEPT.md) and [active build plan](BUILD-PLAN.md) retain hosting, authentication, a job service and remote deployment, plus a WebMCP browser adapter. Editable PPTX remains deferred. Local Streamable HTTP is built on the branch below; it is not a hosted service.
 
-Next planned initiative: [deck components](DECK-COMPONENTS-PLAN.md). M365 screens become components inside the trainer's own slides (company template), for chat-planned trainings, existing decks and persona scenarios. Not built.
+Next initiative: [deck components](DECK-COMPONENTS-PLAN.md). M365 screens become components inside the trainer's own slides (company template), for chat-planned trainings, existing decks and persona scenarios. Slice D1, component export with measured anchors via CLI and MCP (`render_components`), is built on `feat/deck-components-d1`, pending review ([handoff](COMPONENTS-D1-HANDOFF.md)). D2–D6 are not built.
 
 Customisation-backup JSON and portable-project JSON are separate formats with separate import paths.
 

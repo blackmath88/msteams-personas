@@ -337,7 +337,11 @@
   /* ---------- Compiler: project + slide -> view model the existing renderers accept ---------- */
   function compile(p, slideIndex) {
     var sl = p.slides[slideIndex]; if (!sl) return null;
-    var sc = idx(p.scenes)[sl.scene]; if (!sc) return null;
+    return compileScene(p, sl.scene, sl.teaching);
+  }
+  /* Scene → view model; slides add only their teaching text. Components compile scenes directly. */
+  function compileScene(p, sceneId, teaching) {
+    var sc = idx(p.scenes)[sceneId]; if (!sc) return null;
     var P = idx(p.people), D = idx(p.documents || []);
     var people = p.people.map(function (x, i) { return { id: x.id, idx: i, original: x.name, name: x.name, role: x.role || '', external: false, outside: false }; });
     var byId = idx(people);
@@ -350,16 +354,16 @@
       viewer: sc.viewer, partner: sc.partner, generated: false, others: [], later: sc.notSeenBy || [], laterLabel: null,
       messages: sc.messages.map(function (q) {
         var m = q.hint ? ++mark : null; if (m) notes[m] = q.hint;
-        return { by: q.by, time: q.time || '', text: q.text, mark: m, decision: !!q.decision };
+        return { id: q.id, by: q.by, time: q.time || '', text: q.text, mark: m, decision: !!q.decision };
       })
     } : null;
     var after = sc.profile === 'planner' ? sc.state : sc.after;
-    var tasks = planTasks(p, after).map(function (t) { return { title: t.title, owner: t.owner, due: t.due || '', bucket: t.bucket || 'Aufgaben', done: !!t.done }; });
+    var tasks = planTasks(p, after).map(function (t) { return { id: t.id, title: t.title, owner: t.owner, due: t.due || '', bucket: t.bucket || 'Aufgaben', done: !!t.done }; });
     var principles = {};
     if (sc.profile === 'prinzip-tasks') {
       /* Before side keeps the meaning of each entry: personal lists hold only list:'personal';
          tasks already in the shared plan before are shown as such, never as someone's list. */
-      var t = sl.teaching || {}, before = stateOf(p, sc.before), personal = [], beforeShared = [];
+      var t = teaching || {}, before = stateOf(p, sc.before), personal = [], beforeShared = [];
       p.tasks.forEach(function (task) {
         var e = before && before.tasks[task.id]; if (!e) return;
         if (e.list === 'plan') { beforeShared.push({ t: task.title, who: e.owner || null, whoLabel: e.owner ? '' : 'offen', due: e.due || '' }); return; }
@@ -401,6 +405,116 @@
     var sl = p.slides[slideIndex], sc = idx(p.scenes)[sl.scene];
     var base = ((p.meta.id || 'projekt') + '-' + sc.profile).toLowerCase().replace(/[äÄ]/g, 'ae').replace(/[öÖ]/g, 'oe').replace(/[üÜ]/g, 'ue').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     return ('0' + (slideIndex + 1)).slice(-2) + '-' + base + '.png';
+  }
+
+  /* ---------- Components: one M365 screen (or an excerpt) as a picture for the trainer's own slide ----------
+   * A component instance is { scene, type?, view, select?, marks? }. The type follows from the
+   * scene's profile; the view decides how much of the window is shown; select names the entities
+   * by ID. The renderer returns the PNG plus measured anchors, so callouts are placed by entity,
+   * never by authored pixels. Readability is checked where the picture is placed (see below).
+   */
+  var COMPONENT_VERSION = 1;
+  var COMPONENTS = {
+    'teams.channel': {
+      profile: 'teams-posts', label: 'Teams: Kanal mit Beiträgen',
+      teachingUses: ['Zeigen, wo eine Information heute steht', 'Ausgangslage oder Problem: Arbeit, die nur im Beitrag steht'],
+      avoidWhen: ['Mehr als zwei Beiträge auf einer kleinen Fläche', 'Wenn es um Verantwortung und Termine geht: dafür planner.board'],
+      views: {
+        window: { label: 'Ganzes Teams-Fenster mit Navigation', select: null },
+        posts: { label: 'Nur die Beiträge, ohne leeren Bereich', select: 'postIds', reflow: true }
+      }
+    },
+    'teams.chat': {
+      profile: 'teams-chat', label: 'Teams: Chat zu zweit',
+      teachingUses: ['Eine Absprache, die nur zwei Personen sehen', 'Entscheid im Chat, der ins Team gehört'],
+      avoidWhen: ['Wenn das ganze Team die Information braucht: dafür teams.channel'],
+      views: {
+        window: { label: 'Ganzes Chat-Fenster', select: null },
+        messages: { label: 'Nur die Nachrichten', select: 'messageIds', reflow: true }
+      }
+    },
+    'planner.board': {
+      profile: 'planner', label: 'Planner: gemeinsames Board',
+      teachingUses: ['Zielbild: jede Aufgabe mit Person, Termin und Bucket', 'Lösung nach einem Problem aus Teams'],
+      avoidWhen: ['Persönliche Erinnerungen: die gehören nicht in den Plan'],
+      views: {
+        board: { label: 'Ganzes Planner-Fenster', select: null },
+        bucket: { label: 'Ein Bucket mit seinen Aufgaben', select: 'bucket', required: true }
+      }
+    }
+  };
+  /* Effective text size on the slide = text px × 72 × placed width ÷ picture width (inches, pt). */
+  var READABILITY = { minTextPt: 12, note: 'Kleinster Fliesstext im Bild, in Punkt auf der Folie. Unter 12 pt ist er im Schulungsraum schwer lesbar.' };
+  var MAX_COMPONENTS = 8;
+  /* Reflowed excerpts: list width in app px. Narrower wraps the text like a narrow Teams window,
+     so the picture can be placed smaller at the same text size. */
+  var REFLOW = { min: 420, max: 1080, default: 640 };
+
+  function componentType(profile) {
+    return Object.keys(COMPONENTS).filter(function (k) { return COMPONENTS[k].profile === profile; })[0] || null;
+  }
+  /* Entities a scene shows, for selection and anchors. */
+  function sceneEntities(p, sc) {
+    if (sc.profile === 'teams-posts') return { ids: sc.posts.map(function (q) { return q.id; }), buckets: [] };
+    if (sc.profile === 'teams-chat') return { ids: sc.messages.map(function (q) { return q.id; }), buckets: [] };
+    if (sc.profile === 'planner') {
+      var t = planTasks(p, sc.state), b = [];
+      t.forEach(function (x) { var n = x.bucket || 'Aufgaben'; if (b.indexOf(n) < 0) b.push(n); });
+      return { ids: t.map(function (x) { return x.id; }), buckets: b };
+    }
+    return { ids: [], buckets: [] };
+  }
+  /* Validates the project and every component spec. Never throws. */
+  function validateComponents(p, specs) {
+    var v = validate(p), errors = v.errors.slice(), warnings = v.warnings.slice(), out = [];
+    function err(code, path, message, extra) { errors.push(Object.assign({ code: code, path: path, message: message, severity: 'error' }, extra || {})); }
+    function warn(code, path, message) { warnings.push({ code: code, path: path, message: message, severity: 'warning' }); }
+    if (!Array.isArray(specs) || !specs.length) { err('components', 'components', 'Mindestens eine Komponente angeben.'); return { ok: false, errors: errors, warnings: warnings, components: out }; }
+    if (specs.length > MAX_COMPONENTS) err('too-many-components', 'components', 'Höchstens ' + MAX_COMPONENTS + ' Komponenten pro Aufruf.');
+    if (!v.ok) return { ok: false, errors: errors, warnings: warnings, components: out };
+    var SC = idx(p.scenes);
+    specs.slice(0, MAX_COMPONENTS).forEach(function (s, i) {
+      var path = 'components[' + i + ']';
+      if (!isObj(s)) { err('bad-entry', path, 'Komponente ' + (i + 1) + ' ist kein Objekt.'); return; }
+      var sc = str(s.scene) ? SC[s.scene] : null;
+      if (!sc) { err('unknown-scene', path + '.scene', 'Komponente ' + (i + 1) + ': Szene «' + diagnosticText(s.scene) + '» fehlt.'); return; }
+      var type = componentType(sc.profile);
+      if (!type) { err('no-component', path + '.scene', 'Szene «' + sc.id + '» (' + sc.profile + ') gibt es noch nicht als Komponente. Möglich: ' + Object.keys(COMPONENTS).join(', ') + '.'); return; }
+      if (s.type != null && s.type !== type) { err('component-type', path + '.type', 'Szene «' + sc.id + '» ergibt «' + type + '», nicht «' + diagnosticText(s.type) + '».'); return; }
+      var C = COMPONENTS[type], view = s.view == null ? Object.keys(C.views)[0] : s.view, V = C.views[view];
+      if (!V) { err('component-view', path + '.view', '«' + type + '» kennt die Ansicht «' + diagnosticText(view) + '» nicht. Möglich: ' + Object.keys(C.views).join(', ') + '.'); return; }
+      if (s.width != null && (!V.reflow || typeof s.width !== 'number' || !isFinite(s.width) || s.width < REFLOW.min || s.width > REFLOW.max))
+        err('component-width', path + '.width', V.reflow ? '«width» ist eine Zahl von ' + REFLOW.min + ' bis ' + REFLOW.max + ' (Pixel der App).' : 'Ansicht «' + view + '» hat keine wählbare Breite.');
+      if (s.marks != null && typeof s.marks !== 'boolean') err('type', path + '.marks', '«marks» muss true oder false sein.', { expected: 'boolean' });
+      var E = sceneEntities(p, sc), dup = E.ids.filter(function (x, j) { return str(x) && E.ids.indexOf(x) !== j; });
+      if (dup.length) err('duplicate-entity', path + '.scene', 'Szene «' + sc.id + '»: die ID «' + dup[0] + '» kommt mehrfach vor.');
+      if (E.ids.some(function (x) { return !str(x); })) warn('no-entity-id', path + '.scene', 'Szene «' + sc.id + '»: Einträge ohne ID bekommen keinen Ankerpunkt.');
+      var sel = isObj(s.select) ? s.select : {}, picked = null;
+      if (s.select != null && !isObj(s.select)) err('type', path + '.select', '«select» muss ein Objekt sein.', { expected: 'object' });
+      Object.keys(sel).forEach(function (k) { if (k !== V.select) err('select-field', path + '.select.' + k, 'Ansicht «' + view + '» wählt ' + (V.select ? 'mit «' + V.select + '»' : 'nichts aus') + ', nicht mit «' + k + '».'); });
+      if (V.select === 'bucket') {
+        picked = sel.bucket;
+        if (!str(picked)) err('select-bucket', path + '.select.bucket', 'Ansicht «bucket» braucht einen Bucket. Möglich: ' + E.buckets.join(', ') + '.');
+        else if (E.buckets.indexOf(picked) < 0) err('unknown-bucket', path + '.select.bucket', 'Den Bucket «' + picked + '» gibt es im Plan nicht. Möglich: ' + E.buckets.join(', ') + '.');
+      } else if (V.select && sel[V.select] != null) {
+        picked = sel[V.select];
+        if (!Array.isArray(picked) || !picked.length || !picked.every(str)) err('type', path + '.select.' + V.select, '«' + V.select + '» muss eine nicht leere Liste von IDs sein.', { expected: 'string[]' });
+        else picked.forEach(function (id, j) {
+          if (E.ids.indexOf(id) < 0) err('unknown-entity', path + '.select.' + V.select + '[' + j + ']', 'Die ID «' + id + '» gibt es in Szene «' + sc.id + '» nicht.', { ref: id });
+          else if (picked.indexOf(id) !== j) err('duplicate-entity', path + '.select.' + V.select + '[' + j + ']', 'Die ID «' + id + '» ist doppelt gewählt.');
+        });
+      }
+      out.push({ index: i, type: type, scene: sc.id, profile: sc.profile, view: view, select: picked, marks: s.marks === true, width: V.reflow ? Math.round(s.width || REFLOW.default) : null });
+    });
+    return { ok: !errors.length, errors: errors, warnings: warnings, components: errors.length ? [] : out };
+  }
+  function componentFile(p, c) {
+    var base = ((p.meta.id || 'projekt') + '-' + c.scene + '-' + c.view).toLowerCase().replace(/[äÄ]/g, 'ae').replace(/[öÖ]/g, 'oe').replace(/[üÜ]/g, 'ue').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    return 'c' + ('0' + (c.index + 1)).slice(-2) + '-' + base + '.png';
+  }
+  function componentCatalogue() {
+    var c = copy(COMPONENTS);
+    return { componentVersion: COMPONENT_VERSION, readability: copy(READABILITY), reflowWidth: copy(REFLOW), maxPerCall: MAX_COMPONENTS, types: c };
   }
 
   /* ---------- Assistant bridge: authoring pack and repair prompt ---------- */
@@ -490,7 +604,8 @@
     FORMAT: FORMAT, STATE_IDS: STATE_IDS.slice(), PROJECT_VERSION: PROJECT_VERSION, CAPABILITY_VERSION: CAPABILITY_VERSION, RENDERER_VERSION: RENDERER_VERSION, MAX_INPUT: MAX_INPUT,
     capabilities: function () { return copy(CAPABILITIES); },
     template: template, blank: blank, parseInput: parseInput, validate: validate, summary: summary,
-    compile: compile, slidePlan: slidePlan, fileName: fileName, planTasks: planTasks,
+    compile: compile, compileScene: compileScene, slidePlan: slidePlan, fileName: fileName, planTasks: planTasks,
+    COMPONENT_VERSION: COMPONENT_VERSION, components: componentCatalogue, validateComponents: validateComponents, componentFile: componentFile,
     authoringPack: authoringPack, repairPrompt: repairPrompt, replacePersonRef: replacePersonRef, newId: newId, serialise: serialise, copy: copy
   };
 });

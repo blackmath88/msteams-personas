@@ -36,7 +36,7 @@
           '<span class="c-ha">' + fi('video') + fi('calls') + fi('people') + fi('more') + '</span></header>' +
         '<div class="c-body"><ol class="c-msgs">' + c.messages.map(function (m) {
           var p = vm.person(m.by), mine = m.by === c.viewer;
-          return '<li class="c-msg' + (mine ? ' me' : '') + (m.decision ? ' dec' : '') + '">' + (mine ? '' : avatar(p, 32)) +
+          return '<li class="c-msg' + (mine ? ' me' : '') + (m.decision ? ' dec' : '') + '"' + A.ent(m.id) + '>' + (mine ? '' : avatar(p, 32)) +
             '<div class="c-bub">' + mk(m.mark, o.annot) + (mine ? '<time>' + esc(m.time) + '</time>' : '<p class="c-meta"><b>' + esc(short(p.name)) + '</b><time>' + esc(m.time) + '</time></p>') +
             '<p>' + esc(m.text) + '</p></div></li>';
         }).join('') + '</ol>' +
@@ -88,7 +88,7 @@
     return '<div class="p-board" style="--bw:' + w + 'px">' + buckets.map(function (b, bi) {
           var bt = tasks.filter(function (t) { return t.bucket === b; });
           var openT = bt.filter(function (t) { return !t.done; }), done = bt.filter(function (t) { return t.done; });
-          return '<div class="p-bucket"><p class="p-bh"><strong>' + esc(b) + '</strong>' + fi('more') + '</p><p class="p-add">' + fi('plus') + 'Aufgabe hinzufügen</p>' +
+          return '<div class="p-bucket" data-bucket="' + esc(b) + '"><p class="p-bh"><strong>' + esc(b) + '</strong>' + fi('more') + '</p><p class="p-add">' + fi('plus') + 'Aufgabe hinzufügen</p>' +
             openT.map(function (t) { return card(vm, t, bi, o); }).join('') +
             (done.length ? '<p class="p-done">Erledigte Aufgaben anzeigen <b>' + done.length + '</b>' + fi('chevd') + '</p>' : '') + '</div>';
         }).join('') + '<div class="p-bucket p-newb"><p class="p-add">Neuen Bucket hinzufügen</p></div></div>';
@@ -105,7 +105,7 @@
   }
   function card(vm, t, bi, o) {
     var p = vm.person(t.owner), late = /^(Mo|Di)$/.test(t.due);
-    return '<div class="p-card' + (t.fromAi ? ' ai' : '') + '">' + mk(t.mark, o.annot) +
+    return '<div class="p-card' + (t.fromAi ? ' ai' : '') + '"' + A.ent(t.id) + '>' + mk(t.mark, o.annot) +
       (t.fromAi ? '<span class="p-lab" style="background:#e8ebfa;color:#444791">Besprechung</span>' : '<span class="p-lab" style="background:' + LABELS[bi % LABELS.length] + '22;color:' + LABELS[bi % LABELS.length] + '">' + esc(t.bucket) + '</span>') +
       '<p class="p-ct"><span class="p-circ"></span>' + esc(t.title) + '</p>' +
       '<p class="p-cf"><span class="p-due' + (late ? ' late' : '') + '">' + fi('calendar') + esc(t.due) + '</span>' + (t.fromAi ? '' : '<span class="p-chk">' + fi('listcheck') + '0/2</span>') + '<span class="p-own">' + avatar(p, 24) + '</span></p></div>';

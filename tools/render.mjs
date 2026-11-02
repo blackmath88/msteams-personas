@@ -1,4 +1,4 @@
-// Local render operation shared by the CLI and the MCP server.
+// Local render operation shared by the CLI and the MCP server (slides and components).
 //
 //   renderProject(project, { outDir }) → manifest
 //
@@ -62,15 +62,11 @@ function baseManifest(project, extra) {
 }
 
 /*
- * project: parsed JSON object. opts.outDir: directory for PNGs and manifest.json (created).
- * Returns the manifest; ok:false results write no files.
+ * Shared browser lifecycle: serve the internal page, open headless Chromium at 1920×1080, wait for
+ * the renderer scripts, run `expr` in the page, and always close page, browser and server.
+ * Resolves { r, pageErrors, durationMs } or throws (code 'timeout' on timeout).
  */
-export async function renderProject(project, opts = {}) {
-  const scale = opts.scale ?? 1, timeoutMs = Math.min(opts.timeoutMs ?? LIMITS.timeoutMs, LIMITS.maxTimeoutMs);
-  if (!LIMITS.scales.includes(scale)) return baseManifest(project, { ok: false, stage: 'options', slides: [], diagnostics: [{ code: 'scale', path: 'scale', severity: 'error', message: `Scale ${scale} is not supported (1 or 2).` }] });
-  const v = PC.validate(project);
-  if (!v.ok) return baseManifest(project, { ok: false, stage: 'validate', slides: [], diagnostics: [...v.errors, ...v.warnings] });
-
+async function inPage(expr, timeoutMs) {
   let page = null, launching = null, srv = null, timer = null;
   const started = Date.now();
   try {
@@ -80,43 +76,90 @@ export async function renderProject(project, opts = {}) {
       page = await launching;
       await page.size(1920, 1080, 1);
       await page.goto(srv.url);
-      for (let i = 0; i < 50 && !(await page.eval('!!(window.ProjectRender && document.readyState === "complete")')); i++) await page.sleep(100);
-      return page.eval(`ProjectRender.renderAll(${JSON.stringify(project)}, { dataUrl: true, scale: ${scale} })`);
+      for (let i = 0; i < 50 && !(await page.eval('!!(window.ProjectRender && window.ProjectComponents && document.readyState === "complete")')); i++) await page.sleep(100);
+      return page.eval(expr);
     })();
     const timeout = new Promise((_, rej) => { timer = setTimeout(() => rej(Object.assign(new Error(`Rendering took longer than ${timeoutMs} ms and was stopped.`), { code: 'timeout' })), timeoutMs); });
     const r = await Promise.race([work, timeout]);
     work.catch(() => { /* settled after a timeout; the browser is closed below */ });
-    const pageErrors = page.errors.filter(Boolean);
-    const diagnostics = r.diagnostics.map(d => ({ ...d }));
-    pageErrors.forEach(m => diagnostics.push({ code: 'page-error', path: '', severity: 'error', message: `Script error in the render page: ${m}` }));
-    const ok = r.ok && !pageErrors.length;
-    const slides = r.slides.map(s => ({ index: s.index, id: s.id, profile: s.profile, file: s.fileName, width: r.width, height: r.height, bytes: s.bytes, fit: s.fit, data: s.dataUrl }));
-    const manifest = baseManifest(project, { ok, stage: ok ? 'done' : r.stage, width: r.width, height: r.height, durationMs: Date.now() - started, slides: ok ? slides.map(({ data, ...s }) => s) : [], diagnostics });
-    if (ok && opts.outDir) {
-      const written = [];
-      try {
-        mkdirSync(opts.outDir, { recursive: true });
-        for (const s of slides) {
-          const buf = Buffer.from(s.data.slice(s.data.indexOf(',') + 1), 'base64');
-          const path = join(opts.outDir, s.file); writeFileSync(path, buf); written.push(path);
-          manifest.slides[s.index].sha256 = createHash('sha256').update(buf).digest('hex');
-        }
-        manifest.renderedAt = new Date().toISOString();
-        const mpath = join(opts.outDir, 'manifest.json'); writeFileSync(mpath, JSON.stringify(manifest, null, 2)); written.push(mpath);
-      } catch (e) {
-        written.forEach(p => rmSync(p, { force: true }));
-        return baseManifest(project, { ok: false, stage: 'write', slides: [], diagnostics: [{ code: 'write', path: '', severity: 'error', message: `Could not write output: ${e.message}` }] });
-      }
-    }
-    return manifest;
-  } catch (e) {
-    const code = e.code === 'timeout' ? 'timeout' : 'render';
-    return baseManifest(project, { ok: false, stage: 'render', slides: [], durationMs: Date.now() - started, diagnostics: [{ code, path: '', severity: 'error', message: code === 'timeout' ? e.message : `Rendering failed: ${e.message}` }] });
+    return { r, pageErrors: page.errors.filter(Boolean), durationMs: Date.now() - started };
   } finally {
     clearTimeout(timer);
     /* a timeout can fire while Chromium is still starting: wait for it, then close it */
     if (!page && launching) page = await launching.catch(() => null);
     if (page) await page.close();
     if (srv) await new Promise(r => { srv.server.closeAllConnections?.(); srv.server.close(() => r()); });
+  }
+}
+
+/* Writes data-URL files plus manifest.json; on any failure removes what was written. Returns an error diagnostic or null. */
+function writeAll(outDir, items, manifest, list) {
+  const written = [];
+  try {
+    mkdirSync(outDir, { recursive: true });
+    for (const s of items) {
+      const buf = Buffer.from(s.data.slice(s.data.indexOf(',') + 1), 'base64');
+      const path = join(outDir, s.file); writeFileSync(path, buf); written.push(path);
+      manifest[list][s.index].sha256 = createHash('sha256').update(buf).digest('hex');
+    }
+    manifest.renderedAt = new Date().toISOString();
+    const mpath = join(outDir, 'manifest.json'); writeFileSync(mpath, JSON.stringify(manifest, null, 2)); written.push(mpath);
+    return null;
+  } catch (e) {
+    written.forEach(p => rmSync(p, { force: true }));
+    return { code: 'write', path: '', severity: 'error', message: `Could not write output: ${e.message}` };
+  }
+}
+const pageDiagnostics = (r, pageErrors) => [...r.diagnostics.map(d => ({ ...d })), ...pageErrors.map(m => ({ code: 'page-error', path: '', severity: 'error', message: `Script error in the render page: ${m}` }))];
+const failure = e => ({ code: e.code === 'timeout' ? 'timeout' : 'render', path: '', severity: 'error', message: e.code === 'timeout' ? e.message : `Rendering failed: ${e.message}` });
+const timeoutOf = opts => Math.min(opts.timeoutMs ?? LIMITS.timeoutMs, LIMITS.maxTimeoutMs);
+
+/*
+ * project: parsed JSON object. opts.outDir: directory for PNGs and manifest.json (created).
+ * Returns the manifest; ok:false results write no files.
+ */
+export async function renderProject(project, opts = {}) {
+  const scale = opts.scale ?? 1;
+  if (!LIMITS.scales.includes(scale)) return baseManifest(project, { ok: false, stage: 'options', slides: [], diagnostics: [{ code: 'scale', path: 'scale', severity: 'error', message: `Scale ${scale} is not supported (1 or 2).` }] });
+  const v = PC.validate(project);
+  if (!v.ok) return baseManifest(project, { ok: false, stage: 'validate', slides: [], diagnostics: [...v.errors, ...v.warnings] });
+  const started = Date.now();
+  try {
+    const { r, pageErrors, durationMs } = await inPage(`ProjectRender.renderAll(${JSON.stringify(project)}, { dataUrl: true, scale: ${scale} })`, timeoutOf(opts));
+    const diagnostics = pageDiagnostics(r, pageErrors), ok = r.ok && !pageErrors.length;
+    const slides = r.slides.map(s => ({ index: s.index, id: s.id, profile: s.profile, file: s.fileName, width: r.width, height: r.height, bytes: s.bytes, fit: s.fit, data: s.dataUrl }));
+    const manifest = baseManifest(project, { ok, stage: ok ? 'done' : r.stage, width: r.width, height: r.height, durationMs, slides: ok ? slides.map(({ data, ...s }) => s) : [], diagnostics });
+    if (ok && opts.outDir) { const e = writeAll(opts.outDir, slides, manifest, 'slides'); if (e) return baseManifest(project, { ok: false, stage: 'write', slides: [], diagnostics: [e] }); }
+    return manifest;
+  } catch (e) {
+    return baseManifest(project, { ok: false, stage: 'render', slides: [], durationMs: Date.now() - started, diagnostics: [failure(e)] });
+  }
+}
+
+export const COMPONENT_MANIFEST_FORMAT = 'msteams-personas/component-manifest';
+function componentManifest(project, extra) {
+  const { slides, ...m } = baseManifest(project, {});
+  return { ...m, format: COMPONENT_MANIFEST_FORMAT, componentVersion: PC.COMPONENT_VERSION, ...extra };
+}
+
+/*
+ * Components: M365 screens or excerpts without slide chrome, with measured anchors.
+ * specs: [{ scene, type?, view?, select?, marks? }]. opts: { outDir, scale (default 2), timeoutMs }.
+ */
+export async function renderComponents(project, specs, opts = {}) {
+  const scale = opts.scale ?? 2;
+  if (!LIMITS.scales.includes(scale)) return componentManifest(project, { ok: false, stage: 'options', components: [], diagnostics: [{ code: 'scale', path: 'scale', severity: 'error', message: `Scale ${scale} is not supported (1 or 2).` }] });
+  const v = PC.validateComponents(project, specs);
+  if (!v.ok) return componentManifest(project, { ok: false, stage: 'validate', components: [], diagnostics: [...v.errors, ...v.warnings] });
+  const started = Date.now();
+  try {
+    const { r, pageErrors, durationMs } = await inPage(`ProjectComponents.render(${JSON.stringify(project)}, ${JSON.stringify(specs)}, { scale: ${scale} })`, timeoutOf(opts));
+    const diagnostics = pageDiagnostics(r, pageErrors), ok = r.ok && !pageErrors.length;
+    const items = r.components.map(({ dataUrl, fit, ...c }) => ({ ...c, data: dataUrl }));
+    const manifest = componentManifest(project, { ok, stage: ok ? 'done' : r.stage, scale, durationMs, components: ok ? items.map(({ data, ...c }) => c) : [], diagnostics });
+    if (ok && opts.outDir) { const e = writeAll(opts.outDir, items, manifest, 'components'); if (e) return componentManifest(project, { ok: false, stage: 'write', components: [], diagnostics: [e] }); }
+    return manifest;
+  } catch (e) {
+    return componentManifest(project, { ok: false, stage: 'render', components: [], durationMs: Date.now() - started, diagnostics: [failure(e)] });
   }
 }

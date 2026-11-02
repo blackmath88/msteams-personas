@@ -96,9 +96,9 @@ test('chat fields handle every JSON type without throwing', () => {
 test('compile produces renderer chat with hint marks, notes, unseen people and stable filename', () => {
   const p = project(), vm = PC.compile(p, 0);
   assert.deepEqual(vm.chat, { viewer: 'p-marco', partner: 'p-aylin', generated: false, others: [], later: ['p-jonas'], laterLabel: null, messages: [
-    { by: 'p-marco', time: '13:52', text: 'Übernimmst du?', mark: 1, decision: false },
-    { by: 'p-aylin', time: '', text: 'Ja.', mark: 2, decision: true },
-    { by: 'p-marco', time: '', text: 'Danke.', mark: null, decision: false }
+    { id: 'm1', by: 'p-marco', time: '13:52', text: 'Übernimmst du?', mark: 1, decision: false },
+    { id: 'm2', by: 'p-aylin', time: '', text: 'Ja.', mark: 2, decision: true },
+    { id: 'm3', by: 'p-marco', time: '', text: 'Danke.', mark: null, decision: false }
   ] });
   assert.deepEqual(vm.scene.notes, { 1: 'Auftrag nur im Chat.', 2: 'Jonas sieht den Entscheid nicht.' });
   assert.ok(vm.tools.includes('chat'));

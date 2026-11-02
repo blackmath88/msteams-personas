@@ -90,6 +90,8 @@
   function avatar(p, size) {
     return '<span class="m-av m-av-' + (typeof p.idx === 'number' ? p.idx % 6 : 0) + '" style="--s:' + (size || 32) + 'px" aria-hidden="true">' + esc(initials(p.name)) + '</span>';
   }
+  /* Stable entity id for component crops and anchors (portable projects); absent ids add nothing. */
+  function ent(id) { return id ? ' data-entity="' + esc(id) + '"' : ''; }
   function mk(n, on) { return n && on ? '<span class="m-mk" aria-label="Hinweis ' + n + '">' + n + '</span>' : ''; }
   function nl2br(t) { return esc(t).replace(/\n/g, '<br>'); }
   function frame(cls, label, inner) {
@@ -164,7 +166,7 @@
     return '<ol class="t-posts">' + list.map(function (q) {
       var p = vm.person(q.by), reps = q.replies || [];
       var names = reps.map(function (r) { return short(vm.person(r.by).name).split(' ')[0]; }).filter(function (n, i, a) { return a.indexOf(n) === i; });
-      return '<li class="t-post' + (q.canonical ? ' is-canon' : '') + '">' + avatar(p, 32) +
+      return '<li class="t-post' + (q.canonical ? ' is-canon' : '') + '"' + ent(q.id) + '>' + avatar(p, 32) +
         '<div class="t-card">' + mk(q.mark, o.annot) +
           '<p class="t-ph"><strong>' + esc(short(p.name)) + '</strong><time>' + esc(q.time) + '</time></p>' +
           (q.title ? '<p class="t-subj">' + esc(vm.fill(q.title)) + '</p>' : '') +
@@ -331,5 +333,5 @@
     return [[1, '«' + doc + '» liegt einmal in der Bibliothek des Teams. Teams-Kanal und SharePoint zeigen dieselbe Datei.']];
   }
 
-  root.M365 = { app: app, register: register, teamsChrome: teamsChrome, fileTable: fileTable, available: available, avatar: avatar, ftype: ftype, frame: frame, mk: mk, cmdbar: cmdbar, nl2br: nl2br, teams: teams, outlook: outlook, explorer: explorer, sharepoint: sharepoint, toolOf: toolOf, notes: notes, W: W, H: H, fi: fi };
+  root.M365 = { app: app, register: register, teamsChrome: teamsChrome, fileTable: fileTable, available: available, avatar: avatar, ftype: ftype, frame: frame, mk: mk, ent: ent, cmdbar: cmdbar, nl2br: nl2br, teams: teams, outlook: outlook, explorer: explorer, sharepoint: sharepoint, toolOf: toolOf, notes: notes, W: W, H: H, fi: fi };
 })(window);

@@ -137,9 +137,9 @@
     return (cssCache = t.join('\n'));
   }
 
-  /* Render a slide element (already in the DOM, unscaled size SW x SH) to a PNG blob. */
-  function toPNG(slideEl, scale) {
-    scale = scale || 1;
+  /* Render a slide element (already in the DOM, unscaled size SW x SH, or w x h for a component) to a PNG blob. */
+  function toPNG(slideEl, scale, w, h) {
+    scale = scale || 1; var SW = w || 1920, SH = h || 1080;
     var wrap = document.createElement('div');
     wrap.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
     wrap.className = 'export-root';

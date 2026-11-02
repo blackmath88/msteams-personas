@@ -31,6 +31,7 @@ npm install                                    # only for CLI/MCP; the website n
 node tools/cli.mjs example --out project.json
 node tools/cli.mjs validate project.json
 node tools/cli.mjs render project.json --out ./slides   # needs Chromium
+node tools/cli.mjs component project.json --scene sc-kanal --view posts --out ./parts   # M365 excerpt + anchors
 node tools/mcp-server.mjs                      # MCP over stdio
 node tools/mcp-server.mjs --http               # MCP over Streamable HTTP, http://127.0.0.1:8787/mcp
 ```
