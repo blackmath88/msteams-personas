@@ -48,7 +48,7 @@
         budgets: { title: 60, question: 90, problem: 200, recommendation: 200, boundary: 200 }
       }
     },
-    limits: { people: 8, tasks: 12, documents: 8, slides: 6, presenterNotes: 1200 }
+    limits: { people: 8, tasks: 12, documents: 8, slides: 6, presenterNotes: 1200, prinzipLists: PRINZIP_LISTS }
   };
 
   function copy(x) { return JSON.parse(JSON.stringify(x)); }
@@ -293,7 +293,8 @@
         if (sc.before !== 'before' || sc.after !== 'after') err('prinzip-states', path, 'Prinzip-Szene «' + diagnosticText(sc.id) + '»: «before» muss «before» und «after» muss «after» sein.');
         var b = S.before, rows = {};
         if (b && isObj(b.tasks)) Object.keys(b.tasks).forEach(function (k) { var t = b.tasks[k]; if (isObj(t) && t.list === 'personal' && str(t.owner)) rows[t.owner] = 1; });
-        if (Object.keys(rows).length > PRINZIP_LISTS) warn('prinzip-lists', path, 'Prinzip-Folie: ' + Object.keys(rows).length + ' Personen haben vorher eine persönliche Liste; nur ' + PRINZIP_LISTS + ' passen auf die Folie, weitere werden nicht gezeigt.');
+        /* An error, not a warning: the diagram would silently drop the extra lists while their tasks still appear in the plan (seen in the bridge trial). */
+        if (Object.keys(rows).length > PRINZIP_LISTS) err('prinzip-lists', path, 'Prinzip-Folie: ' + Object.keys(rows).length + ' Personen haben vorher eine persönliche Liste, die Folie zeigt höchstens ' + PRINZIP_LISTS + '. Bitte im Zustand «before» Aufgaben auf ' + PRINZIP_LISTS + ' Personen verteilen oder einzelne Aufgaben mit list "plan" als bereits geplant führen.', { ref: Object.keys(rows), limit: PRINZIP_LISTS });
       }
     });
     slides.forEach(function (e) {
@@ -437,6 +438,11 @@
       lines.push('  - ' + k + ': ' + prof[k].label + '. Höchstlängen: ' + Object.keys(b).map(function (x) { return x + ' ' + b[x]; }).join(', ') + '.');
     });
     lines.push('- Grenzen: höchstens ' + CAPABILITIES.limits.people + ' Personen, ' + CAPABILITIES.limits.tasks + ' Aufgaben, ' + CAPABILITIES.limits.slides + ' Folien.');
+    lines.push('- Prinzip-Folie: im Zustand «before» dürfen höchstens ' + PRINZIP_LISTS + ' Personen Aufgaben mit list "personal" haben; mehr ist ein Fehler. Alles, was die Erklärung braucht, muss auf der Folie sichtbar sein.');
+    lines.push('- Klein halten: drei bis vier gemeinsame Aufgaben, höchstens eine persönliche Erinnerung, kurze Titel. Die Obergrenzen sind Formatgrenzen, keine Zielwerte.');
+    lines.push('- Vor der Ausgabe prüfen: Uhrzeiten, Namen, Zuständigkeiten und Hinweise müssen zu den Beiträgen und zu beiden Zuständen passen. Jede erklärte Änderung muss in den Folien nachvollziehbar sein.');
+    lines.push('- Aussagen zu Berechtigungen, Benachrichtigungen und Sichtbarkeit als Bedingungen dieses Beispiels formulieren («persönlich» heisst hier: nicht geteilt). Keine garantierten Teams-Benachrichtigungen behaupten.');
+    lines.push('- Bei Pflege-, Schul- oder Mandatsbeispielen: organisatorische Aufgaben ohne Namen betreuter Personen und ohne Angaben zu Gesundheit oder Behandlung. Die Inhalte müssen die eigene Grenze («boundary») der Prinzip-Folie einhalten.');
     lines.push('- Annahmen über das Verhalten von Microsoft 365, die du triffst, schreibe in meta.assumptions.');
     lines.push('- Behaupte nicht, du hättest die Folien gerendert oder das JSON geprüft. Die Prüfung macht die Website beim Import.');
     lines.push('- Kein HTML, kein CSS, kein Script, keine Bild-URLs. Texte sind reiner Text.');

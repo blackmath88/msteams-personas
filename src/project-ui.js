@@ -233,7 +233,7 @@
     return html;
   }
   /* Errors the form can show and fix; anything structural must be repaired before editing. */
-  var EDITABLE = ['unknown-person', 'person-name', 'task-title', 'post-text', 'message-text', 'chat-author', 'chat-participants', 'scene-team', 'scene-channel', 'teaching-title', 'teaching-recommendation', 'teaching-boundary', 'meta-title', 'long'];
+  var EDITABLE = ['unknown-person', 'person-name', 'task-title', 'post-text', 'message-text', 'chat-author', 'chat-participants', 'scene-team', 'scene-channel', 'teaching-title', 'teaching-recommendation', 'teaching-boundary', 'meta-title', 'long', 'prinzip-lists'];
   function editable(v) { return v.errors.every(function (e) { return EDITABLE.indexOf(e.code) >= 0; }); }
   function validity(v) {
     if (v.ok && !v.warnings.length) return '<p class="pj-ok">' + V.ic('i-check') + 'Alles passt.</p>';

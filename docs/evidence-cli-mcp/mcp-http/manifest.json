@@ -3,7 +3,7 @@
   "manifestVersion": 1,
   "rendererVersion": "v3",
   "projectVersion": 1,
-  "capabilityVersion": 1,
+  "capabilityVersion": 2,
   "project": {
     "id": "bibliothek-tannwil-ausleihe",
     "title": "Ausleihe-Rückstände gemeinsam abbauen"
@@ -12,7 +12,7 @@
   "stage": "done",
   "width": 1920,
   "height": 1080,
-  "durationMs": 2039,
+  "durationMs": 2229,
   "slides": [
     {
       "index": 0,
@@ -49,5 +49,5 @@
     }
   ],
   "diagnostics": [],
-  "renderedAt": "2026-10-30T08:46:32.719Z"
+  "renderedAt": "2026-10-31T21:22:00.880Z"
 }

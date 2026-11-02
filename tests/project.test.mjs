@@ -153,10 +153,23 @@ test('a task already in the shared plan before is shown as shared, not as a pers
   assert.equal(b.exactBefore, true);
 });
 
-test('more personal lists than the diagram holds is reported, not dropped silently', () => {
+test('more personal lists than the diagram holds is an error, not a silent drop', () => {
   const p = T();
   p.people.push({ id: 'p-eva', name: 'Eva Roth', role: '' });
   p.states[0].tasks['t-lager'] = { owner: 'p-eva', list: 'personal' };
   p.states[0].tasks['t-ersatz'] = { owner: 'p-aylin', list: 'personal' }; // Marco, Jonas, Aylin, Eva
-  assert.ok(PC.validate(p).warnings.some(w => w.code === 'prinzip-lists'));
+  const v = PC.validate(p), e = v.errors.find(x => x.code === 'prinzip-lists');
+  assert.equal(v.ok, false);
+  assert.deepEqual(e.ref.sort(), ['p-aylin', 'p-eva', 'p-jonas', 'p-marco']);
+  assert.equal(e.limit, PC.capabilities().limits.prinzipLists);
+  assert.ok(!v.warnings.some(w => w.code === 'prinzip-lists'));
+  p.states[0].tasks['t-lager'].list = 'plan'; p.states[0].tasks['t-lager'].bucket = 'Heute'; p.states[0].tasks['t-lager'].due = 'Mo 4.11.';
+  assert.ok(PC.validate(p).ok, 'three lists plus one already-planned task is fine');
+});
+
+test('authoring pack states the Prinzip list limit and the trial wording rules', () => {
+  const pack = PC.authoringPack({});
+  assert.match(pack, /höchstens 3 Personen Aufgaben mit list "personal"/);
+  assert.match(pack, /nicht geteilt/);
+  assert.match(pack, /ohne Namen betreuter Personen/);
 });
