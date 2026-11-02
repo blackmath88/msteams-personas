@@ -76,6 +76,10 @@
   /* Fit check: reports content that does not fit instead of silently cutting it. */
   function fitIssues(el) {
     var out = [];
+    Array.prototype.forEach.call(el.querySelectorAll('.pt-dlg'), function (c) {
+      var r = c.getBoundingClientRect(), parent = c.parentElement.getBoundingClientRect();
+      if (r.bottom > parent.bottom + 1 || r.right > parent.right + 1) out.push('Aufgabendetails ausserhalb der Anwendung');
+    });
     Array.prototype.forEach.call(el.querySelectorAll('.t-posts'), function (c) {
       var f = c.firstElementChild; if (f && f.getBoundingClientRect().top < c.getBoundingClientRect().top - 1) out.push('Beiträge oben abgeschnitten');
     });
@@ -83,10 +87,10 @@
       var r = c.getBoundingClientRect(), f = c.firstElementChild, l = c.lastElementChild;
       if ((f && f.getBoundingClientRect().top < r.top - 1) || (l && l.getBoundingClientRect().bottom > r.bottom + 1) || c.scrollHeight > c.clientHeight + 2) out.push('Chat-Nachrichten abgeschnitten');
     });
-    Array.prototype.forEach.call(el.querySelectorAll('.p-board, .x-tbl, .m-ft'), function (c) {
+    Array.prototype.forEach.call(el.querySelectorAll('.p-board, .x-tbl, .m-ft, .pt-dlg, .d-main'), function (c) {
       if (c.scrollWidth > c.clientWidth + 2) out.push(c.className.split(' ')[0] + ' rechts abgeschnitten');
     });
-    Array.prototype.forEach.call(el.querySelectorAll('.o-read, .s-lib, .x-main, .t-files, .t-tasks, .t-content, .slide > .sl-app .pr, .sl-notes'), function (c) {
+    Array.prototype.forEach.call(el.querySelectorAll('.o-read, .s-lib, .x-main, .t-files, .t-tasks, .t-content, .slide > .sl-app .pr, .sl-notes, .pt-dlg, .d-main'), function (c) {
       if (c.scrollHeight > c.clientHeight + 2) out.push(c.className.split(' ')[0] + ' zu lang');
     });
     return out;

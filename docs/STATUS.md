@@ -1,5 +1,11 @@
 # Current status
 
+## Custom task profiles, 2026-11-02
+
+Built on `feat/custom-todo-task-detail`, pending review: capability version 3 adds `planner-task` and `todo` to the four profiles already on the current main baseline `e324156`. This update supersedes the older profile/branch-state statements below. Project format v1 and capability versions 1/2 remain compatible.
+
+The fictional six-slide Leadership Forum example has been validated, rendered and retrieved through a locally started MCP server. The connected Mac MCP still advertises version 2; it must load the reviewed code and restart before advertising the new profiles. No service, merge or deployment was performed. Contract, evidence and limits: [task-profile handoff](TASK-PROFILES-HANDOFF.md).
+
 Updated: 2026-10-31.
 
 ## Implemented and merged

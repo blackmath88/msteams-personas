@@ -1,5 +1,7 @@
 # Active build plan — Slides as Code and the AI-assistant bridge
 
+2026-11-02 increment: `feat/custom-todo-task-detail` extends the existing shared architecture with capability-v3 `planner-task` and `todo`, including authoring and six-slide MCP output. This branch is pending review. See [implementation handoff](TASK-PROFILES-HANDOFF.md); older statements below about three/four portable profiles are historical.
+
 Updated: 2026-10-31. Slices 1–4 are built and merged on main (`5a6ece6`); slice 5 is partial and slice 6 is not built. A fourth profile (`teams-chat`) and the first bridge trial are on branches pending review.
 
 ## Completed attempt: manual authoring and assistant bridge

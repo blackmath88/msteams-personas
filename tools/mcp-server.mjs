@@ -56,7 +56,7 @@ const ProjectArg = z.record(z.string(), z.unknown()).describe('The project as a 
 
 function build() {
   const server = new McpServer({ name: 'msteams-personas', version: VERSION }, {
-    instructions: 'Creates fictional Microsoft 365 training slides (Teams posts → Planner → task principle) from a JSON project. ' +
+    instructions: 'Creates fictional Microsoft 365 training slides (Teams chat → channel posts → Planner board → task detail → To Do → task principle) from a JSON project. ' +
       'Typical flow: get_capabilities, get_example, adapt the example, validate_project until ok, render_project, then read the returned resource links (or retrieve_artifact) to inspect the PNGs. ' +
       'All content must be fictional. States "before" and "after" are complete snapshots.'
   });

@@ -1,0 +1,267 @@
+{
+  "format": "msteams-personas/project",
+  "projectVersion": 1,
+  "capabilityVersion": 3,
+  "meta": {
+    "id": "unibas-leadership-forum-pendenzen",
+    "title": "Pendenzen aus der Teamsitzung sichtbar machen",
+    "organisation": "Campus & People Development (fiktiv)",
+    "audience": "Mitarbeitende der Universität Basel im M365 Deep Dive mit isolutions",
+    "goal": "Teamrelevante Aufgaben mit Verantwortung und Termin in Planner festhalten und persönliche Aufgaben unterscheiden.",
+    "locale": "de-CH",
+    "fictional": true,
+    "source": {
+      "kind": "template",
+      "note": "Adaptiertes Werkzeug-Beispiel mit den fiktiven Personas aus blackmath88/msteams-personas; UniBas_Modul_2.pptx, Folien 4–9 und 23–24."
+    },
+    "assumptions": [
+      "Fiktive Lehrsituation für das Leadership Forum 2027.",
+      "Ein Projektteam «Leadership Forum 2027» mit Kanal «Organisation» und gemeinsamem Plan besteht bereits.",
+      "Die Übertragung aus Chat und Kanal in Planner erfolgt in dieser Übung von Hand.",
+      "Die persönliche To-Do-Liste ist nicht geteilt.",
+      "Daniel nutzt dasselbe Arbeitskonto in Planner und To Do, die Planner-Verbindung ist aktiviert.",
+      "Daniel hat die gezeigten Aufgaben bewusst zu Mein Tag hinzugefügt. Die gemeinsame Aufgabe bleibt dieselbe Aufgabe im Plan."
+    ],
+    "notes": "Sechs Folien für ca. 8 Minuten im Planner-/To-Do-Modul. Anschliessend Live-Demo. Alle Personen und Inhalte sind fiktiv."
+  },
+  "people": [
+    {
+      "id": "p-sophie",
+      "name": "Sophie Frei",
+      "role": "Projektmanagerin"
+    },
+    {
+      "id": "p-mara",
+      "name": "Mara Conti",
+      "role": "Programmkoordination"
+    },
+    {
+      "id": "p-daniel",
+      "name": "Daniel Wyss",
+      "role": "Kommunikation & Administration"
+    }
+  ],
+  "documents": [],
+  "tasks": [
+    {
+      "id": "t-raum",
+      "title": "Raum für Auftakt bestätigen"
+    },
+    {
+      "id": "t-einladung",
+      "title": "Einladung für Auftakt versenden"
+    },
+    {
+      "id": "t-referierende",
+      "title": "Referierende für Auftakt bestätigen"
+    },
+    {
+      "id": "t-notizen",
+      "title": "Eigene Sitzungsnotizen ordnen"
+    }
+  ],
+  "states": [
+    {
+      "id": "before",
+      "label": "Nach der Sitzung: eigene Listen",
+      "tasks": {
+        "t-raum": {
+          "owner": "p-mara",
+          "list": "personal"
+        },
+        "t-einladung": {
+          "owner": "p-daniel",
+          "list": "personal"
+        },
+        "t-referierende": {
+          "owner": "p-sophie",
+          "list": "personal"
+        },
+        "t-notizen": {
+          "owner": "p-daniel",
+          "list": "personal"
+        }
+      }
+    },
+    {
+      "id": "after",
+      "label": "Gemeinsam im Plan",
+      "tasks": {
+        "t-raum": {
+          "owner": "p-mara",
+          "list": "plan",
+          "bucket": "Organisation",
+          "due": "06.11.2026"
+        },
+        "t-einladung": {
+          "owner": "p-daniel",
+          "list": "plan",
+          "bucket": "Kommunikation",
+          "due": "09.11.2026",
+          "notes": "Freigegebenen Text und Anmeldelink an den internen Verteiler senden.",
+          "progress": "in-progress",
+          "checklist": [
+            {
+              "text": "Einladungstext freigeben lassen",
+              "done": true
+            },
+            {
+              "text": "Anmeldelink und Verteiler prüfen",
+              "done": false
+            },
+            {
+              "text": "Einladung versenden",
+              "done": false
+            }
+          ],
+          "comment": {
+            "by": "p-sophie",
+            "text": "Text ist freigegeben. Bitte vor dem Versand den Anmeldelink prüfen."
+          }
+        },
+        "t-referierende": {
+          "owner": "p-sophie",
+          "list": "plan",
+          "bucket": "Inhalt",
+          "due": "06.11.2026"
+        },
+        "t-notizen": {
+          "owner": "p-daniel",
+          "list": "personal"
+        }
+      }
+    }
+  ],
+  "scenes": [
+    {
+      "id": "sc-chat",
+      "profile": "teams-chat",
+      "team": "Leadership Forum 2027",
+      "viewer": "p-sophie",
+      "partner": "p-mara",
+      "notSeenBy": [
+        "p-daniel"
+      ],
+      "messages": [
+        {
+          "id": "m1",
+          "by": "p-sophie",
+          "time": "Mo 10:05",
+          "text": "Aus der Teamsitzung: Kannst du den Raum bis 6. November bestätigen? Ich kläre die Referierenden bis dann."
+        },
+        {
+          "id": "m2",
+          "by": "p-mara",
+          "time": "Mo 10:06",
+          "text": "Ja, ich übernehme den Raum. Daniel soll die Einladung bis 9. November versenden.",
+          "decision": true,
+          "hint": "Daniel ist an diesem Chat nicht beteiligt."
+        },
+        {
+          "id": "m3",
+          "by": "p-sophie",
+          "time": "Mo 10:07",
+          "text": "Ich teile die Pendenzen im Projektkanal. Danach tragen wir sie von Hand in den gemeinsamen Plan ein."
+        }
+      ]
+    },
+    {
+      "id": "sc-kanal",
+      "profile": "teams-posts",
+      "team": "Leadership Forum 2027",
+      "channel": "Organisation",
+      "posts": [
+        {
+          "id": "q1",
+          "by": "p-sophie",
+          "time": "Mo 10:15",
+          "title": "Pendenzen aus der Teamsitzung",
+          "text": "Auftakt: Mara bestätigt den Raum bis 6. November. Ich bestätige die Referierenden bis 6. November. Daniel, übernimmst du den Versand der Einladung bis 9. November?",
+          "hint": "Die Pendenzen sind jetzt im gemeinsamen Arbeitskontext sichtbar."
+        },
+        {
+          "id": "q2",
+          "by": "p-daniel",
+          "time": "Mo 10:20",
+          "title": "Einladung: Ich übernehme",
+          "text": "Ja, ich versende die Einladung bis 9. November. Wir erfassen die drei Aufgaben jetzt von Hand in Planner und halten dort den Stand aktuell.",
+          "hint": "Die Zuständigkeit ist bestätigt. Ein Beitrag allein zeigt noch keinen Aufgabenstatus."
+        }
+      ]
+    },
+    {
+      "id": "sc-plan",
+      "profile": "planner",
+      "team": "Leadership Forum 2027",
+      "state": "after"
+    },
+    {
+      "id": "sc-detail",
+      "profile": "planner-task",
+      "team": "Leadership Forum 2027",
+      "state": "after",
+      "task": "t-einladung"
+    },
+    {
+      "id": "sc-todo",
+      "profile": "todo",
+      "team": "Leadership Forum 2027",
+      "state": "after",
+      "viewer": "p-daniel",
+      "taskIds": [
+        "t-notizen",
+        "t-einladung"
+      ],
+      "dateLabel": "Montag, 2. November 2026",
+      "personalListPrivate": true,
+      "myDaySelected": true,
+      "plannerConnected": true
+    },
+    {
+      "id": "sc-prinzip",
+      "profile": "prinzip-tasks",
+      "team": "Leadership Forum 2027",
+      "before": "before",
+      "after": "after"
+    }
+  ],
+  "slides": [
+    {
+      "id": "s-1",
+      "scene": "sc-chat",
+      "presenterNotes": "Einstieg, ca. 1 Minute. Campus & People Development organisiert das Leadership Forum. Frage: Wer weiss nach dieser Absprache, was Daniel tun soll? Daniel sieht diesen Chat nicht. Die Aufgaben existieren bisher nur in eigenen Listen. Kurze Absprachen im Chat sind sinnvoll. Eine Verpflichtung für andere muss jedoch im gemeinsamen Arbeitskontext sichtbar werden."
+    },
+    {
+      "id": "s-2",
+      "scene": "sc-kanal",
+      "presenterNotes": "Ca. 1 Minute. Sophie hält das Sitzungsergebnis im Projektkanal fest. Daniel bestätigt den Versandtermin. Frage: Können wir hier auf einen Blick sehen, ob der Raum schon bestätigt ist? Der Kanal erhält den Gesprächskontext. Die drei Aufgaben erfassen wir anschliessend manuell in Planner. Die Folie zeigt keine automatische Übertragung."
+    },
+    {
+      "id": "s-3",
+      "scene": "sc-plan",
+      "presenterNotes": "Ca. 1 Minute. Was, wer, bis wann und wo? Mara: Raum bis 6. November. Sophie: Referierende bis 6. November. Daniel: Einladung bis 9. November. Buckets folgen Arbeitsbereichen. Bei der Einladung zeigt die Karte dieselbe Checkliste wie die nächste Detailansicht."
+    },
+    {
+      "id": "s-detail",
+      "scene": "sc-detail",
+      "presenterNotes": "Ca. 1 Minute. Dieselbe Einladung wie auf dem Board. Daniel ist verantwortlich, Termin bleibt 9. November. Die Checkliste enthält Teilschritte. Ein abgehakter Punkt setzt den Fortschritt nicht automatisch. In dieser Momentaufnahme hat Daniel In Bearbeitung gewählt. Der Kommentar bewahrt die Freigabe bei der Aufgabe."
+    },
+    {
+      "id": "s-todo",
+      "scene": "sc-todo",
+      "presenterNotes": "Ca. 1 Minute. Daniel hat bewusst zwei Aufgaben zu Mein Tag hinzugefügt. Die Sitzungsnotizen sind persönlich und nicht geteilt. Die Einladung ist weiterhin dieselbe gemeinsame Planner-Aufgabe mit gleichem Termin, keine neue Kopie. Voraussetzungen: gleiches Arbeitskonto und aktivierte Planner-Verbindung. Mein Tag ist eine persönliche Auswahl. Hier keine universelle automatische Synchronisation beliebiger Plantypen versprechen."
+    },
+    {
+      "id": "s-4",
+      "scene": "sc-prinzip",
+      "presenterNotes": "Ca. 2 Minuten. Drei Pendenzen wechseln aus den persönlichen Listen in den gemeinsamen Plan. Daniels Sitzungsnotizen bleiben persönlich. Die Einladung erscheint in seinem Mein Tag als dieselbe zugewiesene Aufgabe. Frage: Bei welcher eigenen Aufgabe müssen andere den Stand kennen? Den Plan im Teammeeting gemeinsam durchgehen.",
+      "teaching": {
+        "title": "Teamrelevante Pendenzen werden sichtbar",
+        "question": "Müssen andere den Stand dieser Aufgabe kennen?",
+        "problem": "Pendenzen stehen in eigenen Listen. Eine Absprache im Chat erreicht Daniel nicht.",
+        "recommendation": "Gemeinsame Pendenzen in Planner festhalten. Jede Aufgabe erhält eine verantwortliche Person und einen Termin.",
+        "boundary": "Eigene Sitzungsnotizen bleiben persönlich. Den gemeinsamen Plan im Teammeeting regelmässig aktualisieren."
+      }
+    }
+  ]
+}

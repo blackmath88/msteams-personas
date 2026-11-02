@@ -189,6 +189,18 @@
             '<div class="pj-st"><p class="pj-f"><span class="pj-lab">' + esc(after.label) + '</span>' + stateSel(ai, t.id) + '</p>' +
               (ea ? select('Person', 'states.' + ai + '.tasks.' + t.id + '.owner', personOptions(p, ea.owner, ea.list === 'plan')) : '') +
               (ea && ea.list === 'plan' ? field('Bucket', 'states.' + ai + '.tasks.' + t.id + '.bucket', ea.bucket, { cls: 'pj-half' }) + field('Termin', 'states.' + ai + '.tasks.' + t.id + '.due', ea.due, { cls: 'pj-half' }) : '') + '</div>' +
+            [before, after].map(function (s) {
+              var e = s.tasks[t.id], si1 = p.states.indexOf(s), b = 'states.' + si1 + '.tasks.' + t.id + '.';
+              if (!e) return '';
+              return '<details><summary>Details: ' + esc(s.label) + '</summary>' +
+                field('Termin', b + 'due', e.due) +
+                select('Fortschritt', b + 'progress', [['not-started', 'Nicht begonnen'], ['in-progress', 'In Bearbeitung'], ['completed', 'Abgeschlossen']].map(function (v) { return '<option value="' + v[0] + '"' + ((e.progress || (e.done ? 'completed' : 'not-started')) === v[0] ? ' selected' : '') + '>' + v[1] + '</option>'; }).join('')) +
+                field('Notizen', b + 'notes', e.notes, { area: true, max: 240 }) +
+                (e.checklist || []).map(function (c, j) { return field('Checklistenpunkt ' + (j + 1), b + 'checklist.' + j + '.text', c.text, { max: 70 }) + '<p><label><input type="checkbox" data-bool="' + b + 'checklist.' + j + '.done"' + (c.done ? ' checked' : '') + '> Erledigt</label> <button type="button" class="btn sm" data-op="del-check" data-state="' + si1 + '" data-task="' + esc(t.id) + '" data-i="' + j + '">Punkt entfernen</button></p>'; }).join('') +
+                '<button type="button" class="btn sm" data-op="add-check" data-state="' + si1 + '" data-task="' + esc(t.id) + '"' + ((e.checklist || []).length >= 5 ? ' disabled' : '') + '>Checklistenpunkt hinzufügen</button>' +
+                (e.comment ? select('Kommentar von', b + 'comment.by', personOptions(p, e.comment.by)) + field('Kommentar', b + 'comment.text', e.comment.text, { area: true, max: 180 }) : '') +
+                '<button type="button" class="btn sm" data-op="' + (e.comment ? 'del-comment' : 'add-comment') + '" data-state="' + si1 + '" data-task="' + esc(t.id) + '">Kommentar ' + (e.comment ? 'entfernen' : 'hinzufügen') + '</button></details>';
+            }).join('') +
             '<button type="button" class="btn sm" data-op="del-task" data-i="' + i + '" aria-label="Aufgabe ' + (i + 1) + ' entfernen">Entfernen</button></li>';
         }).join('') + '</ul><p><button type="button" class="btn sm" data-op="add-task">Aufgabe hinzufügen</button></p></fieldset>' +
       '<fieldset><legend>Folien</legend><ol class="pj-slides">' + p.slides.map(function (sl, i) {
@@ -218,6 +230,18 @@
             }).join('');
         } else if (sc && sc.profile === 'planner') {
           body = field('Plan / Team', 'scenes.' + si + '.team', sc.team) + '<p class="pj-small">Zeigt alle Aufgaben, die «' + esc((sc.state === 'before' ? before : after).label) + '» im gemeinsamen Plan stehen.</p>';
+        } else if (sc && (sc.profile === 'planner-task' || sc.profile === 'todo')) {
+          var b = 'scenes.' + si + '.', state = p.states.filter(function (s) { return s.id === sc.state; })[0];
+          body = field('Plan / Team', b + 'team', sc.team) +
+            select('Zustand', b + 'state', p.states.map(function (s) { return '<option value="' + s.id + '"' + (s.id === sc.state ? ' selected' : '') + '>' + esc(s.label) + '</option>'; }).join(''));
+          if (sc.profile === 'planner-task') {
+            body += select('Aufgabe im Plan', b + 'task', '<option value="">Bitte wählen</option>' + p.tasks.map(function (t) { return '<option value="' + t.id + '"' + (t.id === sc.task ? ' selected' : '') + '>' + esc(t.title) + '</option>'; }).join('')) + '<p class="pj-small">Titel, Zuständigkeit und Details oben bei der Aufgabe bearbeiten. Diese Ansicht zeigt dieselbe Aufgabe.</p>';
+          } else {
+            body += select('Ansicht von', b + 'viewer', personOptions(p, sc.viewer)) + field('Datumszeile', b + 'dateLabel', sc.dateLabel, { max: 40 }) +
+              '<p>Aufgaben für Mein Tag bewusst auswählen. Nur Aufgaben dieser Person sind zulässig.</p>' +
+              p.tasks.concat((sc.taskIds || []).filter(function (id) { return !p.tasks.some(function (t) { return t.id === id; }); }).map(function (id) { return { id: id, title: 'Unbekannte Aufgabe: ' + id }; })).map(function (t) { var e = state && state.tasks[t.id]; return '<p><label><input type="checkbox" data-todo-task="' + si + '" value="' + esc(t.id) + '"' + ((sc.taskIds || []).indexOf(t.id) >= 0 ? ' checked' : '') + '> ' + esc(t.title) + ' (' + (e ? e.list === 'plan' ? 'gemeinsam zugewiesen' : 'persönlich' : 'nicht gezeigt') + ')</label></p>'; }).join('') +
+              [['personalListPrivate', 'Annahme: persönliche Liste ist nicht geteilt'], ['myDaySelected', 'Annahme: Aufgaben bewusst zu Mein Tag hinzugefügt'], ['plannerConnected', 'Annahme: gleiches Arbeitskonto und Planner-Verbindung aktiviert']].map(function (x) { return '<p><label><input type="checkbox" data-bool="' + b + x[0] + '"' + (sc[x[0]] ? ' checked' : '') + '> ' + x[1] + '</label></p>'; }).join('');
+          }
         } else if (sc && sc.profile === 'prinzip-tasks') {
           var t = 'slides.' + i + '.teaching.', tc = sl.teaching || {};
           body = field('Titel', t + 'title', tc.title, { max: 60 }) + field('Frage', t + 'question', tc.question, { max: 90 }) + field('Situation', t + 'problem', tc.problem, { area: true, rows: 2, max: 200 }) +
@@ -233,7 +257,7 @@
     return html;
   }
   /* Errors the form can show and fix; anything structural must be repaired before editing. */
-  var EDITABLE = ['unknown-person', 'person-name', 'task-title', 'post-text', 'message-text', 'chat-author', 'chat-participants', 'scene-team', 'scene-channel', 'teaching-title', 'teaching-recommendation', 'teaching-boundary', 'meta-title', 'long', 'prinzip-lists'];
+  var EDITABLE = ['unknown-person', 'person-name', 'task-title', 'post-text', 'message-text', 'chat-author', 'chat-participants', 'scene-team', 'scene-channel', 'teaching-title', 'teaching-recommendation', 'teaching-boundary', 'meta-title', 'long', 'prinzip-lists', 'unknown-task', 'detail-task-state', 'detail-task-owner', 'todo-task-state', 'todo-task-owner', 'todo-connection', 'todo-assumption', 'todo-tasks', 'checklist-text', 'comment-text'];
   function editable(v) { return v.errors.every(function (e) { return EDITABLE.indexOf(e.code) >= 0; }); }
   function validity(v) {
     if (v.ok && !v.warnings.length) return '<p class="pj-ok">' + V.ic('i-check') + 'Alles passt.</p>';
@@ -309,6 +333,7 @@
     if (t.hasAttribute('data-path')) setPath(p, t.getAttribute('data-path'), t.value);
     else if (t.hasAttribute('data-lines')) setPath(p, t.getAttribute('data-lines'), t.value.split('\n').map(function (x) { return x.trim(); }).filter(Boolean));
     else return;
+    if (/^states\.\d+\.tasks\..+\.(notes|checklist|comment)/.test(t.getAttribute('data-path') || '')) p.capabilityVersion = 3;
     touch(); clearTimeout(timer); timer = setTimeout(refresh, 120);
   }
   function onChange(e) {
@@ -320,6 +345,12 @@
       return;
     }
     if (p && t.hasAttribute('data-bool')) { setPath(p, t.getAttribute('data-bool'), t.checked); touch(); refresh(); return; }
+    if (p && t.hasAttribute('data-todo-task')) {
+      var todo = p.scenes[+t.getAttribute('data-todo-task')];
+      todo.taskIds = (todo.taskIds || []).filter(function (id) { return id !== t.value; });
+      if (t.checked) todo.taskIds.push(t.value);
+      touch(); refresh(); return;
+    }
     if (p && t.hasAttribute('data-not-seen')) {
       var chat = p.scenes[+t.getAttribute('data-not-seen')], ids = chat.notSeenBy || [];
       chat.notSeenBy = ids.filter(function (id) { return id !== t.value; });
@@ -329,7 +360,7 @@
     if (p && t.hasAttribute('data-path') && /^scenes\.\d+\.(viewer|partner)$/.test(t.getAttribute('data-path'))) {
       var bits = t.getAttribute('data-path').split('.'), chat = p.scenes[+bits[1]], old = chat[bits[2]];
       chat[bits[2]] = t.value;
-      chat.messages.forEach(function (m) { if (m.by === old) m.by = t.value; });
+      (chat.messages || []).forEach(function (m) { if (m.by === old) m.by = t.value; });
       touch(); render.keep(); return;
     }
     if (t.hasAttribute('data-state') && p) {
@@ -338,7 +369,15 @@
       else s.tasks[tid] = Object.assign({ owner: (e0 && e0.owner) || p.people[0].id }, e0 || {}, { list: v }, v === 'plan' ? { bucket: (e0 && e0.bucket) || 'Offen', due: (e0 && e0.due) || '' } : {});
       touch(); render.keep(); return;
     }
-    if (t.tagName === 'SELECT' && t.hasAttribute('data-path') && p) { setPath(p, t.getAttribute('data-path'), t.value || null); touch(); refresh(); }
+    if (t.tagName === 'SELECT' && t.hasAttribute('data-path') && p) {
+      var path = t.getAttribute('data-path');
+      setPath(p, path, t.value || null);
+      if (/^states\.\d+\.tasks\..+\.progress$/.test(path)) {
+        setPath(p, path.replace(/progress$/, 'done'), t.value === 'completed'); p.capabilityVersion = 3;
+      }
+      touch();
+      if (/^scenes\.\d+\.(state|task)$/.test(path)) render.keep(); else refresh();
+    }
   }
   function alertBox(msg) { var el = document.getElementById('pj-paste-err'); if (el) { el.textContent = msg; var d = el.closest('details'); if (d) d.open = true; } else announce(msg); }
   function copyFrom(id) {
@@ -352,7 +391,7 @@
   }
   function referenced(p, pid) {
     return p.scenes.some(function (sc) { return sc.viewer === pid || sc.partner === pid || (sc.notSeenBy || []).indexOf(pid) >= 0 || (sc.posts || []).concat(sc.messages || []).some(function (q) { return q.by === pid; }); }) ||
-      p.states.some(function (s) { return Object.keys(s.tasks).some(function (k) { return s.tasks[k].owner === pid; }); });
+      p.states.some(function (s) { return Object.keys(s.tasks).some(function (k) { return s.tasks[k].owner === pid || (s.tasks[k].comment && s.tasks[k].comment.by === pid); }); });
   }
   function onClick(e) {
     var b = e.target.closest('[data-op]'); if (!b || b.tagName === 'INPUT') return;
@@ -388,7 +427,19 @@
         var id = PC.newId('t-', p.tasks); p.tasks.push({ id: id, title: 'Neue Aufgabe' });
         p.states.forEach(function (s) { s.tasks[id] = s.id === 'after' ? { owner: p.people[0].id, list: 'plan', bucket: 'Offen', due: '' } : { owner: p.people[0].id, list: 'personal' }; });
       }
-      else if (op === 'del-task') { var tid = p.tasks[i].id; p.tasks.splice(i, 1); p.states.forEach(function (s) { delete s.tasks[tid]; }); }
+      else if (op === 'del-task') {
+        var tid = p.tasks[i].id;
+        if (p.scenes.some(function (sc) { return sc.task === tid || (sc.taskIds || []).indexOf(tid) >= 0; })) { announce('Diese Aufgabe ist in einer Detail- oder To-Do-Folie ausgewählt. Bitte zuerst dort die Auswahl ändern.'); return; }
+        p.tasks.splice(i, 1); p.states.forEach(function (s) { delete s.tasks[tid]; });
+      }
+      else if (['add-check', 'del-check', 'add-comment', 'del-comment'].indexOf(op) >= 0) {
+        var entry = p.states[+b.getAttribute('data-state')].tasks[b.getAttribute('data-task')];
+        if (op === 'add-check') { entry.checklist = entry.checklist || []; if (entry.checklist.length < 5) entry.checklist.push({ text: 'Neuer Teilschritt', done: false }); }
+        if (op === 'del-check') entry.checklist.splice(i, 1);
+        if (op === 'add-comment') entry.comment = { by: entry.owner || p.people[0].id, text: 'Neuer Kommentar' };
+        if (op === 'del-comment') delete entry.comment;
+        p.capabilityVersion = 3;
+      }
       else if (op === 'add-message') { var chat = p.scenes[+b.getAttribute('data-s')]; if (chat.messages.length < 6) chat.messages.push({ id: PC.newId('m', chat.messages), by: chat.viewer, time: '', text: 'Neue Nachricht' }); }
       else if (op === 'del-message') { var chat = p.scenes[+b.getAttribute('data-s')]; if (chat.messages.length > 1) chat.messages.splice(i, 1); }
       else if (op === 'add-post') { var sc = p.scenes[+b.getAttribute('data-s')]; sc.posts.push({ id: PC.newId('q', sc.posts), by: p.people[0].id, time: '', title: '', text: 'Neuer Beitrag' }); }
@@ -398,10 +449,17 @@
       else if (op === 'del-slide') { if (p.slides.length < 2) { announce('Mindestens eine Folie bleibt.'); return; } var gone = p.slides.splice(i, 1)[0]; if (!p.slides.some(function (s) { return s.scene === gone.scene; })) p.scenes = p.scenes.filter(function (s) { return s.id !== gone.scene; }); }
       else if (op === 'add-slide') {
         var kind = document.getElementById('pj-addp').value, scId = PC.newId('sc-', p.scenes), team = (p.scenes[0] && p.scenes[0].team) || 'Mein Team';
+        var afterTasks = p.states.filter(function (s) { return s.id === 'after'; })[0].tasks;
+        var firstOwned = p.tasks.filter(function (t) { return afterTasks[t.id] && afterTasks[t.id].owner; })[0];
+        var defaultViewer = firstOwned ? afterTasks[firstOwned.id].owner : p.people[0].id;
         var scn = kind === 'teams-posts' ? { id: scId, profile: kind, team: team, channel: 'Allgemein', posts: [{ id: 'q1', by: p.people[0].id, time: '', title: '', text: 'Neuer Beitrag' }] }
           : kind === 'teams-chat' ? { id: scId, profile: kind, team: team, viewer: p.people[0].id, partner: (p.people[1] || p.people[0]).id, messages: [{ id: 'm1', by: p.people[0].id, time: '', text: 'Neue Nachricht' }], notSeenBy: [] }
-          : kind === 'planner' ? { id: scId, profile: kind, team: team, state: 'after' } : { id: scId, profile: kind, team: team, before: 'before', after: 'after' };
-        if (kind === 'teams-chat') p.capabilityVersion = 2;
+          : kind === 'planner' ? { id: scId, profile: kind, team: team, state: 'after' }
+          : kind === 'planner-task' ? { id: scId, profile: kind, team: team, state: 'after', task: (PC.planTasks(p, 'after').filter(function (t) { return t.owner; })[0] || {}).id || '' }
+          : kind === 'todo' ? { id: scId, profile: kind, team: team, state: 'after', viewer: defaultViewer, taskIds: p.tasks.filter(function (t) { var e = afterTasks[t.id]; return e && e.owner === defaultViewer; }).slice(0, 6).map(function (t) { return t.id; }), personalListPrivate: true, myDaySelected: true, plannerConnected: true }
+          : { id: scId, profile: kind, team: team, before: 'before', after: 'after' };
+        if (kind === 'teams-chat') p.capabilityVersion = Math.max(p.capabilityVersion, 2);
+        if (kind === 'todo' || kind === 'planner-task') p.capabilityVersion = 3;
         p.scenes.push(scn);
         p.slides.push(Object.assign({ id: PC.newId('s-', p.slides), scene: scId, presenterNotes: '' }, kind === 'prinzip-tasks' ? { teaching: { title: 'Prinzip', question: '', problem: '', recommendation: 'Empfehlung', boundary: 'Grenze' } } : {}));
       }

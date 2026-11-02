@@ -10,7 +10,7 @@ export function getCapabilities() {
     stateIds: PC.STATE_IDS, ...PC.capabilities(),
     output: { width: 1920, height: 1080, format: 'image/png', scales: LIMITS.scales },
     inputLimitBytes: INPUT_LIMIT_BYTES,
-    semantics: 'states are complete snapshots: a task missing from a state is not shown there; list "personal" = a person\'s own list (owner required), list "plan" = the shared plan.'
+    semantics: 'states are complete snapshots: a task missing from a state is not shown there; list "personal" = a person\'s own list (owner required), list "plan" = the shared plan. planner-task selects task by ID; todo selects taskIds owned by viewer in that state. Mein Tag is an explicit personal selection, not a copy. Assigned Planner tasks require the same work account and an enabled Planner connection.'
   };
 }
 
