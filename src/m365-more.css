@@ -39,7 +39,7 @@
 .r-notes ul{list-style:disc;padding-left:20px;display:grid;gap:8px;font-size:14.5px}
 .r-att{margin-top:14px;font-size:13px;color:#616161}
 .r-s{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:start;padding:10px 0;border-top:1px solid #f0f0f0}
-.r-st{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;color:#fff}.r-st .fi{width:14px;height:14px;stroke-width:2.2}
+.r-st{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;color:#fff}.r-st .fi{width:14px;height:14px}
 .r-ok .r-st{background:#107c41}.r-ed .r-st{background:#5b5fc7}.r-no .r-st{background:#a19f9d}
 .r-tx p{font-size:14.5px}.r-tx b{font-weight:600}.r-tx s{color:#8a8886}
 .r-meta{display:flex;align-items:center;gap:6px;font-size:12.5px!important;color:#616161;margin-top:2px}

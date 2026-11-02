@@ -124,14 +124,14 @@
     var d = vm.taskDetail, t = d.task, p = vm.person(t.owner), done = d.checklist.filter(function (c) { return c[1]; }).length;
     var base = planner(vm, { annot: false }).replace('class="m3 m3-planner"', 'class="m3 m3-planner m3-plantask"');
     var cp = vm.person(d.comment.by);
-    var dlg = '<div class="pt-scrim"></div><section class="pt-dlg" aria-label="Aufgabendetails"><header class="pt-h"><span class="p-circ"></span><h3>' + esc(t.title) + '</h3>' + mk(1, o.annot) + '<span class="pt-x">' + fi('more') + fi('x') + '</span></header>' +
+    var dlg = '<div class="pt-scrim"></div><section class="pt-dlg" aria-label="Aufgabendetails"><header class="pt-h"><span class="p-circ"></span><h3>' + esc(t.title) + '</h3>' + mk(1, o.annot) + '<span class="pt-x">' + fi('more') + fi('x', null, true) + '</span></header>' +
       '<p class="pt-plan">' + esc(vm.team) + ' · Bucket <b>' + esc(t.bucket) + '</b></p>' +
       '<div class="pt-grid"><div><p class="s-k">Zugewiesen an</p><p class="pt-who">' + avatar(p, 28) + esc(short(p.name)) + '</p></div>' +
         '<div><p class="s-k">Fortschritt</p><p>' + (done ? 'In Bearbeitung' : 'Nicht begonnen') + '</p></div><div><p class="s-k">Priorität</p><p>Mittel</p></div>' +
         '<div><p class="s-k">Fälligkeitsdatum</p><p class="pt-due">' + fi('calendar') + esc(t.due) + '</p></div></div>' +
       '<p class="s-k">Notizen</p><p class="pt-notes">' + esc(d.notes) + '</p>' +
       '<p class="s-k">Checkliste ' + done + '/' + d.checklist.length + mk(2, o.annot) + '</p><ul class="pt-check">' + d.checklist.map(function (c) {
-        return '<li class="' + (c[1] ? 'done' : '') + '"><span class="d-circ">' + (c[1] ? fi('check') : '') + '</span>' + esc(c[0]) + '</li>';
+        return '<li class="' + (c[1] ? 'done' : '') + '"><span class="d-circ">' + (c[1] ? fi('check', null, true) : '') + '</span>' + esc(c[0]) + '</li>';
       }).join('') + '</ul>' +
       '<p class="s-k">Kommentare</p><div class="pt-com">' + avatar(cp, 28) + '<p><b>' + esc(short(cp.name)) + '</b><br>' + esc(d.comment.text) + '</p></div></section>';
     return base.replace(/<\/div>$/, dlg + '</div>');
@@ -155,7 +155,7 @@
       '<section class="d-main"><h3>Mein Tag</h3><p class="d-date">Dienstag, 4. November</p>' +
         '<p class="d-add">' + fi('plus') + 'Aufgabe hinzufügen</p>' +
         '<ul class="d-list">' + rows.map(function (r) {
-          return '<li class="' + (r.done ? 'done' : '') + '"><span class="d-circ">' + (r.done ? fi('check') : '') + '</span><span class="d-t"><b>' + esc(r.t) + mk(r.mark, o.annot) + '</b><small>' + (r.mine ? fi('sun') + 'Mein Tag · ' : '') + esc(r.sub) + (r.due ? ' · ' + fi('calendar') + esc(r.due) : '') + '</small></span>' + fi('star', 'd-star') + '</li>';
+          return '<li class="' + (r.done ? 'done' : '') + '"><span class="d-circ">' + (r.done ? fi('check', null, true) : '') + '</span><span class="d-t"><b>' + esc(r.t) + mk(r.mark, o.annot) + '</b><small>' + (r.mine ? fi('sun') + 'Mein Tag · ' : '') + esc(r.sub) + (r.due ? ' · ' + fi('calendar') + esc(r.due) : '') + '</small></span>' + fi('star', 'd-star') + '</li>';
         }).join('') + '</ul></section>');
   }
   function todoNotes(vm) {
@@ -182,7 +182,7 @@
         '<h3>Meine Dateien</h3><table class="m-ft od-ft"><thead><tr><th class="m-ck"></th><th>Name</th><th>Geändert</th><th>Dateigröße</th><th>Freigabe</th></tr></thead><tbody>' +
         files.map(function (f, i) {
           var sh = sharingOf(f), on = f === sel;
-          return '<tr class="' + (on ? 'sel' : '') + '"><td class="m-ck">' + (on ? '<span class="m-tick">' + fi('check') + '</span>' : '') + '</td>' +
+          return '<tr class="' + (on ? 'sel' : '') + '"><td class="m-ck">' + (on ? '<span class="m-tick">' + fi('check', null, true) + '</span>' : '') + '</td>' +
             '<td><span class="m-fn">' + ftype(f.name.replace(/\s*\/$/, ''), f.kind) + '<span>' + esc(f.name.replace(/\s*\/$/, '')) + '</span>' + mk(f.mark, o.annot) + '</span></td>' +
             '<td>' + ['Gestern', 'Mo', 'letzte Woche', '12. Sept.'][i % 4] + '</td><td>' + (f.kind === 'folder' ? (i + 3) + ' Elemente' : ['84 KB', '1,2 MB', '36 KB', '420 KB'][i % 4]) + '</td>' +
             '<td class="od-sh' + (sh.shared ? ' on' : '') + '">' + (sh.shared ? fi('people') : fi('lock')) + sh.label + '</td></tr>';
@@ -214,7 +214,7 @@
             '<p class="r-att">Teilnehmende: ' + a.attendees.map(function (id) { return esc(first(vm.person(id).name)); }).join(', ') + '</p></div>' +
           '<div class="r-tasks"><h4>' + fi('listcheck') + 'Vorgeschlagene Aufgaben' + mk(1, o.annot) + '</h4><ul>' + a.suggestions.map(function (s) {
             var p = vm.person(s.owner), state = st[s.status];
-            return '<li class="r-s r-' + state[1] + '"><div class="r-st">' + (s.status === 'rejected' ? fi('x') : fi('check')) + '</div><div class="r-tx">' +
+            return '<li class="r-s r-' + state[1] + '"><div class="r-st">' + (s.status === 'rejected' ? fi('x', null, true) : fi('check', null, true)) + '</div><div class="r-tx">' +
               (s.status === 'edited' ? '<p><s>' + esc(s.text) + '</s></p><p><b>' + esc(s.edited) + '</b></p>' : '<p>' + (s.status === 'rejected' ? '<s>' + esc(s.text) + '</s>' : '<b>' + esc(s.text) + '</b>') + '</p>') +
               '<p class="r-meta">' + avatar(p, 20) + esc(short(p.name)) + ' · fällig ' + esc(s.due) + '</p>' +
               (s.reason ? '<p class="r-why">' + esc(s.reason) + '</p>' : '') + '</div>' +

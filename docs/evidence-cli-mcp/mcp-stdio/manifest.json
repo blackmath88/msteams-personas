@@ -12,7 +12,7 @@
   "stage": "done",
   "width": 1920,
   "height": 1080,
-  "durationMs": 3743,
+  "durationMs": 1723,
   "slides": [
     {
       "index": 0,
@@ -21,9 +21,9 @@
       "file": "01-bibliothek-tannwil-ausleihe-teams-posts.png",
       "width": 1920,
       "height": 1080,
-      "bytes": 187517,
+      "bytes": 188818,
       "fit": [],
-      "sha256": "70c8ee3b7b07886fe43e0c170224941b61578d9e0a50bcb17cdec4ddda1e70fc"
+      "sha256": "fe271a7dde69d465dc8fe17d0a8da3f9c4449c9313bd79035a008cccd05b3c90"
     },
     {
       "index": 1,
@@ -32,9 +32,9 @@
       "file": "02-bibliothek-tannwil-ausleihe-planner.png",
       "width": 1920,
       "height": 1080,
-      "bytes": 172849,
+      "bytes": 173301,
       "fit": [],
-      "sha256": "6f30071d4271779a24ba6ef6ff56819f90f8b53f27d1304ea9581079dd4157d1"
+      "sha256": "524c4d58c7506e7367c95205df699d49f73960bc2c98f66f840835a4ba50a5c4"
     },
     {
       "index": 2,
@@ -49,5 +49,5 @@
     }
   ],
   "diagnostics": [],
-  "renderedAt": "2026-10-31T21:21:52.667Z"
+  "renderedAt": "2026-11-02T18:05:26.684Z"
 }

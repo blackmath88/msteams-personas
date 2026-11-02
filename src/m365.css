@@ -27,7 +27,7 @@
 .m-ft th:nth-child(2){width:46%}
 .m-ft .m-ck{width:44px;padding:0 0 0 12px}
 .m-ft tr.sel td{background:#ebf3fc}
-.m-tick{width:20px;height:20px;border-radius:50%;background:#0f6cbd;color:#fff;display:grid;place-items:center}.m-tick .fi{width:14px;height:14px;stroke-width:2}
+.m-tick{width:20px;height:20px;border-radius:50%;background:#0f6cbd;color:#fff;display:grid;place-items:center}.m-tick .fi{width:14px;height:14px}
 .m-fn{display:inline-flex;align-items:center;gap:12px;color:#242424;position:relative;max-width:100%}
 .m-fn>span:not(.ft):not(.m-mk){overflow:hidden;text-overflow:ellipsis}
 
@@ -45,7 +45,7 @@
 .t-ri small{font-size:10px;line-height:1.2}
 .t-ri.on{color:#5b5fc7}.t-ri.on small{font-weight:600}
 .t-ri.on::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:0 2px 2px 0;background:#5b5fc7}
-.t-ri.on .fi path{fill:rgba(91,95,199,.18)}
+
 .t-ri-b{margin-top:auto;margin-bottom:12px}
 .t-list{background:#f5f5f5;border-radius:8px 0 0 0;padding:0 8px;overflow:hidden}
 .t-lh{display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 8px 0 12px}
@@ -112,7 +112,7 @@
 .m-tasks li.m-th{height:36px;font-size:13px;color:#616161}
 .m-tasks li.done .m-tn{text-decoration:line-through;color:#616161}
 .m-circ{width:18px;height:18px;border-radius:50%;border:1.5px solid #616161;display:grid;place-items:center}
-.done .m-circ{background:#107c41;border-color:#107c41;color:#fff}.m-circ .fi{width:12px;height:12px;stroke-width:2.4}
+.done .m-circ{background:#107c41;border-color:#107c41;color:#fff}.m-circ .fi{width:12px;height:12px}
 .m-tn{color:#242424;font-weight:600;position:relative;display:flex;align-items:center}
 .m-own{display:flex;align-items:center;gap:8px}
 
