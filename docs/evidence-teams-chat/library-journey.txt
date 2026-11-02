@@ -1,0 +1,112 @@
+PASS landing: promise headline
+PASS landing: three entry points (Team-Personas, Tools, Use Cases)
+PASS landing: Eigene Situation as secondary action
+PASS landing: four-app story thumbnails
+PASS landing: seven world cards
+PASS landing: business card present
+PASS persona entry navigates
+PASS Nora world lists her three scenarios
+PASS Nora personal work opens in OneDrive (no Team)
+PASS browser Back returns to persona world
+PASS use-case entry lists seven use cases
+PASS use case converges on situations
+PASS use case opens matching principle
+PASS business scene: three posts
+PASS Teams profile: rail, search, channel list, tabs, composer
+PASS Teams: no permanent member roster by default
+PASS scene tab Dateien works
+PASS scene tab Aufgaben hosts the Planner board (incl. reviewed AI tasks)
+PASS arrow key moves between scene tabs
+PASS variant switch changes structure
+PASS business Prinzip chat: diagram + recommendation + boundary
+PASS business Prinzip doc: diagram + recommendation + boundary
+PASS business Prinzip tasks: diagram + recommendation + boundary
+PASS Leadership Prinzip shows alternative variant
+PASS name change updates Szene live
+PASS typing keeps focus in field
+PASS name change carried into Prinzip
+PASS presentation opens with custom names
+PASS stage is 16:9 and fits viewport
+PASS site chrome hidden in presentation
+PASS presentation content not clipped (Prinzip) — 0 clipped
+PASS H hides decorative annotation but keeps boundary and alternative
+PASS Escape exits presentation to same view
+PASS presentation Szene posts not clipped — 0 clipped
+PASS stage fit + token + document-identity sweep (12 situation/variant combinations × 6 views) done
+PASS tools page lists tools with honest states incl. KI-Simulation
+PASS tool entry opens Outlook screen
+PASS three entrances converge on the same situation — #/s/leadership-forum/eigenes-team/szene #/s/leadership-forum/eigenes-team/szene/outlook #/s/leadership-forum/eigenes-team/prinzip/doc
+PASS custom name survives Teams → Outlook → Explorer → SharePoint → Teams
+PASS content field keeps focus while typing
+PASS edited post text rendered as text, not markup
+PASS cross-app identity: renamed canonical file in SharePoint, Teams and Prinzip — [["Forum-Plan 2027.xlsx","Forum-Plan 2027.xlsx"],["Forum-Plan 2027.xlsx"],"Forum-Plan 2027"]
+PASS cross-app identity: Explorer copies match Prinzip copies, not the canonical file
+PASS unsupported tool shows honest unavailable state
+PASS old Teams tab route still valid
+PASS PNG app: real PNG 1920×1080, selected output, no controls — {"name":"leadership-forum-2027-teams-posts-app.png","size":195394,"sig":"PNG","w":1920,"h":1080,"kind":"app"}
+PASS PNG folie: real PNG 1920×1080, selected output, no controls — {"name":"leadership-forum-2027-teams-posts-folie.png","size":254729,"sig":"PNG","w":1920,"h":1080,"kind":"folie"}
+PASS PNG prinzip: real PNG 1920×1080, selected output, no controls — {"name":"leadership-forum-2027-prinzip-doc-prinzip.png","size":252728,"sig":"PNG","w":1920,"h":1080,"kind":"prinzip"}
+PASS PNG folie: real PNG 1920×1080, selected output, no controls — {"name":"kundenportal-bis-maerz-teams-posts-folie.png","size":276655,"sig":"PNG","w":1920,"h":1080,"kind":"folie"}
+PASS PNG vergleich: real PNG 1920×1080, selected output, no controls — {"name":"leadership-forum-2027-sharepoint-vergleich.png","size":223612,"sig":"PNG","w":1920,"h":1080,"kind":"vergleich"}
+PASS screen sweep: 10 situation/variant × 12 screens render or explain unavailability, slides fit
+PASS sequences page lists seven teaching sequences with a how-to
+PASS sequence step 1 opens workspace with flow, sequence bar and objective
+PASS Weiter moves to step 2 (chat)
+PASS sequence stage opens on same step
+PASS ArrowRight advances the sequence in presentation
+PASS whole sequence exports 5 PNGs in story order — ["01-einarbeitung-im-kundendienst-teams-posts-folie.png","02-einarbeitung-im-kundendienst-chat-folie.png","03-einarbeitung-im-kundendienst-planner-folie.png","04-einarbeitung-im-kundendienst-todo-folie.png","05-einarbeitung-im-kundendienst-prinzip-tasks-prinzip.png"]
+PASS task edit keeps focus and updates Planner live
+PASS renamed task identical in To Do (Daniel) and Prinzip
+PASS long attachment name fully visible (no ellipsis), slide fits — {"w":true,"txt":"Veranstaltungsplan_Mara.xlsx"}
+PASS annotation badges are circles
+PASS 2× export produces 3840×2160 PNG — {"w":3840,"h":2160,"name":"leadership-forum-2027-outlook-folie@2x.png"}
+PASS customisations persist after reload (localStorage)
+PASS JSON download is versioned and contains customisations
+PASS reset all restores originals
+PASS JSON import validates schema and situations, restores customisations — Unbekanntes Format: erwartet «msteams-personas.customisations». / Die Datei verweist auf unbekannte Situationen. / 
+PASS focus crop removes the empty band above posts and keeps the channel header — {"gapApp":61,"tight":false,"inside":true}
+PASS long post text: workspace shows a fit warning (no silent truncation)
+PASS long post text: stage reports the fit issue before export
+PASS Planner task details: owner, checklist and comment for the same task
+PASS AI recap labelled as simulation with human review states
+PASS Planner shows only reviewed AI tasks (edited text, rejected absent)
+PASS offline: no external resources loaded
+PASS configurator step 1
+PASS Back keeps previous answer
+PASS result page
+PASS rationale + alternative shown
+PASS suggestion is Leadership Forum for university project
+PASS earlier customisation preserved after changing answers
+PASS live preview updates names
+PASS different answers -> personal starting point
+PASS reset returns to step 1 with defaults
+PASS commission guest variant lists external member, marked extern
+PASS commission link variant: external member not in team
+PASS commission tasks principle: lean, no plan
+PASS teaching variant adds Bewertung channel
+PASS research scene: three posts, no variant switcher
+PASS Nora series principle shows secretariat as non-person owner
+PASS Nora publication has its own personal scene
+PASS Hinweise off: scene hides notes but keeps assumption
+PASS Hinweise off: stage keeps boundary, alternative and assumption
+PASS Business + course answer: result labelled as example from Hochschule
+PASS direct link to legacy-world Prinzip works
+PASS legacy atlas still renders
+PASS keyboard reaches three entries and Eigene Situation — Team-PersonasWelcher | ToolsVon welcher Obe | Use CasesWelches Pro | Eigene Situation bes | Eigene Abfolge erste | Szene öffnen | Prinzip öffnen | OutlookSuchenDWStart | Downloads›Dieser PC› | SuchenDWAktivitätCha | SharePointAuf dieser | Vom Mail-Anhang zur 
+PASS 375px landing: no horizontal scroll
+PASS 375px szene: no horizontal scroll
+PASS 375px prinzip: no horizontal scroll
+PASS 375px konfigurator: no horizontal scroll
+PASS 375px praesentation: no horizontal scroll
+PASS 375px abfolgen: no horizontal scroll
+PASS 375px abfolge-schritt: no horizontal scroll
+PASS 375px tools: no horizontal scroll
+PASS 375px abfolge-praesentation: no horizontal scroll
+PASS 200% zoom landing: no horizontal scroll
+PASS 200% zoom szene: no horizontal scroll
+PASS 200% zoom prinzip: no horizontal scroll
+PASS 200% zoom abfolge: no horizontal scroll
+PASS 200% zoom planner: no horizontal scroll
+PASS no JS errors during journey
+
+110/110 checks passed

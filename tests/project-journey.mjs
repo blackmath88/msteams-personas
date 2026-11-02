@@ -91,6 +91,42 @@ try {
   check('export: invalid project refused, nothing produced', !bad.ok && bad.n === 0 && bad.stage === 'validate' && /Export abgebrochen, keine Datei/.test(await $('#pj-status')), J(bad));
   await setVal('[data-path="meta.title"]', keepTitle);
 
+  // Optional Teams chat: add, edit all chat fields, export, save/review and remove.
+  await setVal('#pj-addp', 'teams-chat', 'change');
+  await click('[data-op="add-slide"]');
+  const ci = (await cur()).scenes.length - 1;
+  const cb = `scenes.${ci}.`;
+  check('chat: fourth slide added with current capability version', (await count('.pj-thumb .m3-chat')) === 1 && (await cur()).capabilityVersion === 2 && /Teams: Chat zu zweit/.test(await p.eval(`document.querySelectorAll('.pj-slide h3')[3].textContent`)));
+  await setVal(`[data-path="${cb}team"]`, 'Abendcrew');
+  await setVal(`[data-path="${cb}viewer"]`, 'p-marco', 'change');
+  await setVal(`[data-path="${cb}partner"]`, 'p-aylin', 'change');
+  await setVal(`[data-path="${cb}messages.0.text"]`, 'Ich übernehme die offene Arbeit.');
+  await setVal(`[data-path="${cb}messages.0.time"]`, '16:10');
+  await setVal(`[data-path="${cb}messages.0.by"]`, 'p-aylin', 'change');
+  await setVal(`[data-path="${cb}messages.0.hint"]`, 'Jonas sieht die Zusage hier nicht.');
+  await click(`[data-bool="${cb}messages.0.decision"]`);
+  await click(`[data-not-seen="${ci}"][value="p-jonas"]`);
+  check('chat: participant controls rewrite author choices', await p.eval(`JSON.stringify([...document.querySelector('[data-path="${cb}messages.0.by"]').options].map(o=>o.value))`) === J(['p-marco', 'p-aylin']));
+  check('chat: fields and decision appear in live preview', /Abendcrew/.test(await prevText(3)) && /Ich übernehme die offene Arbeit/.test(await prevText(3)) && /16:10/.test(await prevText(3)) && /Jonas sieht die Zusage/.test(await prevText(3)) && (await count('.pj-thumb .c-msg.dec')) === 1 && (await cur()).scenes[ci].notSeenBy.join() === 'p-jonas');
+  await click(`[data-op="add-message"][data-s="${ci}"]`);
+  check('chat: add message', (await cur()).scenes[ci].messages.length === 2);
+  await click(`[data-op="del-message"][data-s="${ci}"][data-i="1"]`);
+  check('chat: remove message', (await cur()).scenes[ci].messages.length === 1);
+  const chatExport = await p.eval(`ProjectUI.exportAll({download:false,dataUrl:true}).then(r=>({ok:r.ok,files:r.slides.map(s=>s.fileName),diagnostics:r.diagnostics}))`);
+  check('chat: four-slide PNG export succeeds', chatExport.ok && chatExport.files[3] === '04-velotech-werkstatt-uebergabe-teams-chat.png', J(chatExport.diagnostics));
+  await p.shot(SHOTS + '08-teams-chat-editor.png', true);
+  // Oversize text is a warning on import but a located fit error on render.
+  const chatSavedSlide = (await cur()).slides[3].id;
+  const chatFit = await p.eval(`(async()=>{const q=ProjectCore.copy(ProjectUI.current());const sc=q.scenes[${ci}];sc.messages=Array.from({length:6},(_,i)=>({id:'m'+i,by:sc.viewer,text:('Eine lange Nachricht mit Zeilenumbruch.'+String.fromCharCode(10)).repeat(15)}));const r=await ProjectRender.renderAll(q);return {ok:r.ok,diagnostics:r.diagnostics}})()`);
+  check('chat: overflow aborts export with located fit error', !chatFit.ok && chatFit.diagnostics.some(d=>d.code==='fit' && d.slide===chatSavedSlide && /Chat-Nachrichten/.test(d.detail)));
+  const chatSaved = await cur();
+  await p.eval(`location.hash='#/projekt'`); await p.sleep(300);
+  await paste(J(chatSaved));
+  check('chat: import review lists the new profile', /Teams: Chat zu zweit/.test(await $('.pj-sum', 'innerText')) && /Keine Fehler/.test(await $('.pj', 'innerText')));
+  await click('[data-op="cancel"]');
+  await p.eval(`location.hash='#/projekt/bearbeiten'`); await p.sleep(300);
+  await click('[data-op="del-slide"][data-i="3"]');
+
   // 2 save and reopen the whole project (file input path)
   const saved = await cur();
   const before = await drafts();

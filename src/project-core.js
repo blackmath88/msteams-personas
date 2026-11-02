@@ -20,7 +20,7 @@
 })(typeof window !== 'undefined' ? window : globalThis, function () {
   var FORMAT = 'msteams-personas/project';
   var PROJECT_VERSION = 1;
-  var CAPABILITY_VERSION = 1;
+  var CAPABILITY_VERSION = 2;
   var RENDERER_VERSION = 'v3';
   var MAX_INPUT = 200 * 1024;
   var ID = /^[a-z][a-z0-9-]{0,39}$/;
@@ -34,6 +34,10 @@
       'teams-posts': {
         label: 'Teams: Beiträge im Kanal', renderer: 'posts', needs: ['team', 'channel', 'posts'],
         budgets: { team: 40, channel: 30, postTitle: 60, postText: 220, posts: 4 }
+      },
+      'teams-chat': {
+        label: 'Teams: Chat zu zweit', renderer: 'chat', needs: ['team', 'viewer', 'partner', 'messages'],
+        budgets: { team: 40, messageText: 220, messages: 6 }
       },
       planner: {
         label: 'Planner: gemeinsames Board', renderer: 'planner', needs: ['team', 'state'],
@@ -50,6 +54,7 @@
   function copy(x) { return JSON.parse(JSON.stringify(x)); }
   function str(x) { return typeof x === 'string'; }
   function len(x) { return str(x) ? x.length : 0; }
+  function diagnosticText(x) { return str(x) ? x : JSON.stringify(x); }
 
   /* ---------- Template: a NEW fictional organisation (not a curated fixture) ---------- */
   function template() {
@@ -171,7 +176,7 @@
     if (!isObj(p)) { err('not-object', '', 'Das Projekt ist kein JSON-Objekt.'); return { ok: false, errors: errors, warnings: warnings }; }
     if (p.format !== FORMAT) err('format', 'format', 'Unbekanntes Format. Erwartet: «' + FORMAT + '».');
     if (p.projectVersion !== PROJECT_VERSION) err('project-version', 'projectVersion', 'Projektversion ' + JSON.stringify(p.projectVersion) + ' wird nicht unterstützt (erwartet ' + PROJECT_VERSION + ').');
-    if (p.capabilityVersion !== CAPABILITY_VERSION) err('capability-version', 'capabilityVersion', 'Fähigkeitsversion ' + JSON.stringify(p.capabilityVersion) + ' wird nicht unterstützt (erwartet ' + CAPABILITY_VERSION + ').');
+    if (p.capabilityVersion !== 1 && p.capabilityVersion !== CAPABILITY_VERSION) err('capability-version', 'capabilityVersion', 'Fähigkeitsversion ' + JSON.stringify(p.capabilityVersion) + ' wird nicht unterstützt (erwartet 1 oder ' + CAPABILITY_VERSION + ').');
     var meta = p.meta;
     if (!isObj(meta)) { err('meta', 'meta', 'Angaben zur Abfolge («meta») fehlen oder sind kein Objekt.'); meta = {}; }
     reqStr(meta, 'title', 'meta', 'meta-title', 'Die Abfolge braucht einen Titel.');
@@ -209,7 +214,7 @@
     docs.forEach(function (e) { reqStr(e.x, 'name', 'documents[' + e.i + ']', 'document-name', 'Dokument ' + (e.i + 1) + ' hat keinen Namen.'); });
     function personRef(id, path, where) {
       if (!str(id)) err('type', path, where + ': Die Person muss als ID (Text) angegeben sein.', { expected: 'string' });
-      else if (!P[id]) err('unknown-person', path, where + ': Die Person «' + id + '» gibt es in diesem Projekt nicht.', { ref: id, where: where });
+      else if (!Object.prototype.hasOwnProperty.call(P, id)) err('unknown-person', path, where + ': Die Person «' + id + '» gibt es in diesem Projekt nicht.', { ref: id, where: where });
     }
     var ids = states.map(function (e) { return e.x.id; });
     if (Array.isArray(p.states) && (ids.length !== STATE_IDS.length || STATE_IDS.some(function (k) { return ids.indexOf(k) < 0; })))
@@ -233,13 +238,14 @@
     });
     scenes.forEach(function (e) {
       var sc = e.x, path = 'scenes[' + e.i + ']', prof = str(sc.profile) && Object.prototype.hasOwnProperty.call(CAPABILITIES.profiles, sc.profile) ? CAPABILITIES.profiles[sc.profile] : null;
-      if (!prof) { err('unknown-profile', path + '.profile', 'Szene «' + sc.id + '»: Ansicht «' + sc.profile + '» wird nicht unterstützt. Möglich: ' + Object.keys(CAPABILITIES.profiles).join(', ') + '.'); return; }
+      if (!prof) { err('unknown-profile', path + '.profile', 'Szene «' + diagnosticText(sc.id) + '»: Ansicht «' + diagnosticText(sc.profile) + '» wird nicht unterstützt. Möglich: ' + Object.keys(CAPABILITIES.profiles).join(', ') + '.'); return; }
+      if (sc.profile === 'teams-chat' && p.capabilityVersion === 1) err('profile-version', path + '.profile', 'Teams: Chat zu zweit braucht capabilityVersion 2.');
       var B = prof.budgets;
-      reqStr(sc, 'team', path, 'scene-team', 'Szene «' + sc.id + '» braucht einen Teamnamen.');
+      reqStr(sc, 'team', path, 'scene-team', 'Szene «' + diagnosticText(sc.id) + '» braucht einen Teamnamen.');
       if (len(sc.team) > B.team) warn('long', path + '.team', 'Teamname ist länger als ' + B.team + ' Zeichen.');
       if (sc.profile === 'teams-posts') {
-        reqStr(sc, 'channel', path, 'scene-channel', 'Szene «' + sc.id + '» braucht einen Kanal.');
-        if (!Array.isArray(sc.posts) || !sc.posts.length) err('scene-posts', path + '.posts', 'Szene «' + sc.id + '» braucht mindestens einen Beitrag.');
+        reqStr(sc, 'channel', path, 'scene-channel', 'Szene «' + diagnosticText(sc.id) + '» braucht einen Kanal.');
+        if (!Array.isArray(sc.posts) || !sc.posts.length) err('scene-posts', path + '.posts', 'Szene «' + diagnosticText(sc.id) + '» braucht mindestens einen Beitrag.');
         else {
           if (sc.posts.length > B.posts) warn('many-posts', path + '.posts', 'Mehr als ' + B.posts + ' Beiträge passen nicht gut auf eine Folie.');
           sc.posts.forEach(function (q, j) {
@@ -250,16 +256,41 @@
             ['id', 'time', 'title', 'hint'].forEach(function (k) { optStr(q, k, qp, where); });
             if (len(q.text) > B.postText) warn('long', qp + '.text', where + ': Text ist länger als ' + B.postText + ' Zeichen.');
             if (len(q.title) > B.postTitle) warn('long', qp + '.title', where + ': Betreff ist länger als ' + B.postTitle + ' Zeichen.');
-            if (q.document != null && !(str(q.document) && D[q.document])) err('unknown-document', qp + '.document', where + ': Das Dokument «' + q.document + '» gibt es nicht.', { ref: q.document });
+            if (q.document != null && !(str(q.document) && D[q.document])) err('unknown-document', qp + '.document', where + ': Das Dokument «' + diagnosticText(q.document) + '» gibt es nicht.', { ref: q.document });
+          });
+        }
+      }
+      if (sc.profile === 'teams-chat') {
+        personRef(sc.viewer, path + '.viewer', 'Chat-Ansicht');
+        personRef(sc.partner, path + '.partner', 'Chat-Partner');
+        if (str(sc.viewer) && sc.viewer === sc.partner) err('chat-participants', path + '.partner', 'Ein Chat zu zweit braucht zwei verschiedene Personen.');
+        if (sc.notSeenBy != null) {
+          if (!Array.isArray(sc.notSeenBy)) err('type', path + '.notSeenBy', '«notSeenBy» muss eine Liste von Personen-IDs sein.', { expected: 'string[]' });
+          else sc.notSeenBy.forEach(function (id, j) { personRef(id, path + '.notSeenBy[' + j + ']', 'Nicht am Chat beteiligt'); });
+        }
+        if (sc.messages != null && !Array.isArray(sc.messages)) err('type', path + '.messages', 'Chat-Nachrichten müssen eine Liste sein.', { expected: 'array' });
+        else if (!sc.messages || !sc.messages.length) err('scene-messages', path + '.messages', 'Ein Chat braucht mindestens eine Nachricht.');
+        else {
+          if (sc.messages.length > B.messages) err('too-many-messages', path + '.messages', 'Ein Chat hat höchstens ' + B.messages + ' Nachrichten.');
+          sc.messages.forEach(function (q, j) {
+            var qp = path + '.messages[' + j + ']', where = 'Chat-Nachricht ' + (j + 1);
+            if (!isObj(q)) { err('bad-entry', qp, where + ' ist kein Objekt.'); return; }
+            reqStr(q, 'id', qp, 'message-id', where + ' braucht eine ID.');
+            personRef(q.by, qp + '.by', where);
+            if (str(q.by) && q.by !== sc.viewer && q.by !== sc.partner) err('chat-author', qp + '.by', where + ': Nur die beiden Chat-Personen können schreiben.');
+            reqStr(q, 'text', qp, 'message-text', where + ' hat keinen Text.');
+            ['time', 'hint'].forEach(function (k) { optStr(q, k, qp, where); });
+            if (q.decision != null && typeof q.decision !== 'boolean') err('type', qp + '.decision', where + ': «decision» muss true oder false sein.', { expected: 'boolean' });
+            if (len(q.text) > B.messageText) warn('long', qp + '.text', where + ': Text ist länger als ' + B.messageText + ' Zeichen.');
           });
         }
       }
       if (sc.profile === 'planner') {
-        if (STATE_IDS.indexOf(sc.state) < 0 || !S[sc.state]) err('unknown-state', path + '.state', 'Planner-Szene «' + sc.id + '»: Zustand «' + sc.state + '» fehlt. Möglich: «before» oder «after».');
-        else if (!planTasks(p, sc.state).length) warn('empty-plan', path + '.state', 'Im Zustand «' + sc.state + '» steht keine Aufgabe im gemeinsamen Plan.');
+        if (STATE_IDS.indexOf(sc.state) < 0 || !S[sc.state]) err('unknown-state', path + '.state', 'Planner-Szene «' + diagnosticText(sc.id) + '»: Zustand «' + diagnosticText(sc.state) + '» fehlt. Möglich: «before» oder «after».');
+        else if (!planTasks(p, sc.state).length) warn('empty-plan', path + '.state', 'Im Zustand «' + diagnosticText(sc.state) + '» steht keine Aufgabe im gemeinsamen Plan.');
       }
       if (sc.profile === 'prinzip-tasks') {
-        if (sc.before !== 'before' || sc.after !== 'after') err('prinzip-states', path, 'Prinzip-Szene «' + sc.id + '»: «before» muss «before» und «after» muss «after» sein.');
+        if (sc.before !== 'before' || sc.after !== 'after') err('prinzip-states', path, 'Prinzip-Szene «' + diagnosticText(sc.id) + '»: «before» muss «before» und «after» muss «after» sein.');
         var b = S.before, rows = {};
         if (b && isObj(b.tasks)) Object.keys(b.tasks).forEach(function (k) { var t = b.tasks[k]; if (isObj(t) && t.list === 'personal' && str(t.owner)) rows[t.owner] = 1; });
         if (Object.keys(rows).length > PRINZIP_LISTS) warn('prinzip-lists', path, 'Prinzip-Folie: ' + Object.keys(rows).length + ' Personen haben vorher eine persönliche Liste; nur ' + PRINZIP_LISTS + ' passen auf die Folie, weitere werden nicht gezeigt.');
@@ -314,6 +345,13 @@
       var m = q.hint ? ++mark : null; if (m) notes[m] = q.hint;
       return { id: q.id, by: q.by, time: q.time || '', title: q.title || '', text: q.text, file: q.document && D[q.document] ? D[q.document].name : undefined, replies: [], mark: m };
     }) : [];
+    var chat = sc.profile === 'teams-chat' ? {
+      viewer: sc.viewer, partner: sc.partner, generated: false, others: [], later: sc.notSeenBy || [], laterLabel: null,
+      messages: sc.messages.map(function (q) {
+        var m = q.hint ? ++mark : null; if (m) notes[m] = q.hint;
+        return { by: q.by, time: q.time || '', text: q.text, mark: m, decision: !!q.decision };
+      })
+    } : null;
     var after = sc.profile === 'planner' ? sc.state : sc.after;
     var tasks = planTasks(p, after).map(function (t) { return { title: t.title, owner: t.owner, due: t.due || '', bucket: t.bucket || 'Aufgaben', done: !!t.done }; });
     var principles = {};
@@ -345,7 +383,7 @@
       people: people, person: function (pid) { return byId[pid] || { id: pid, name: P[pid] ? P[pid].name : '?', role: '' }; },
       team: sc.team, teamOriginal: sc.team,
       scene: { personal: false, team: sc.team, teamNote: '', active: sc.channel || 'Allgemein', channels: [sc.channel || 'Allgemein'], members: members, posts: posts, files: [], tasks: tasks, outside: [], notes: notes },
-      principles: principles, story: null, tools: ['teams', 'planner'], taskDetail: null, chat: null, todo: null, ai: null,
+      principles: principles, story: null, tools: chat ? ['teams', 'chat', 'planner'] : ['teams', 'planner'], taskDetail: null, chat: chat, todo: null, ai: null,
       fill: function (x) { return x == null ? '' : String(x); }, legacyHref: null
     };
   }
@@ -382,6 +420,7 @@
     lines.push('- Kontext: ' + (brief.context || '(nicht angegeben)'));
     if (brief.duration) lines.push('- Dauer: ' + brief.duration);
     lines.push('- Standard: drei Folien in dieser Reihenfolge: Teams-Beiträge → Planner-Board → Prinzip (Aufgaben vorher/nachher).');
+    lines.push('Teams-Chat (teams-chat) ist eine optionale zusätzliche Folie; die Standardabfolge bleibt bei drei Folien.');
     lines.push('');
     lines.push('## Vorgehen');
     lines.push('Du darfst zuerst kurz ein Storyboard (3 Zeilen) vorschlagen und Rückfragen stellen. Wenn keine Antwort kommt, arbeite mit den Standards weiter.');
@@ -401,6 +440,8 @@
     lines.push('- Annahmen über das Verhalten von Microsoft 365, die du triffst, schreibe in meta.assumptions.');
     lines.push('- Behaupte nicht, du hättest die Folien gerendert oder das JSON geprüft. Die Prüfung macht die Website beim Import.');
     lines.push('- Kein HTML, kein CSS, kein Script, keine Bild-URLs. Texte sind reiner Text.');
+    lines.push('');
+    lines.push('Optionale Chat-Szene (in scenes einfügen und in slides referenzieren): ' + JSON.stringify({ id: 'sc-chat', profile: 'teams-chat', team: 'Werkstatt Velotech', viewer: 'p-marco', partner: 'p-aylin', messages: [{ id: 'm1', by: 'p-aylin', text: 'Ich übernehme die Bremsen.', hint: 'Der Entscheid ist noch nicht im Plan.', decision: true }], notSeenBy: ['p-jonas'] }));
     lines.push('');
     lines.push('## Vollständiges Beispiel (Inhalt ersetzen, Struktur beibehalten)');
     lines.push('```json');
@@ -425,7 +466,11 @@
   /* ---------- Shared editing operations (website and bridge use the same ones) ---------- */
   function replacePersonRef(p, from, to) {
     var q = copy(p);
-    q.scenes.forEach(function (sc) { (sc.posts || []).forEach(function (x) { if (x.by === from) x.by = to; }); });
+    q.scenes.forEach(function (sc) {
+      (sc.posts || []).concat(sc.messages || []).forEach(function (x) { if (x.by === from) x.by = to; });
+      ['viewer', 'partner'].forEach(function (k) { if (sc[k] === from) sc[k] = to; });
+      if (Array.isArray(sc.notSeenBy)) sc.notSeenBy = sc.notSeenBy.map(function (id) { return id === from ? to : id; });
+    });
     q.states.forEach(function (st) { Object.keys(st.tasks || {}).forEach(function (k) { if (st.tasks[k].owner === from) st.tasks[k].owner = to; }); });
     return q;
   }

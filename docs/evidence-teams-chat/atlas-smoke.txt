@@ -1,0 +1,16 @@
+PASS campus-people-development/heute
+PASS campus-people-development/m365
+PASS campus-people-development/vergleich
+PASS urban-health-analytics/heute
+PASS urban-health-analytics/m365
+PASS urban-health-analytics/vergleich
+PASS nora-keller/heute
+PASS nora-keller/m365
+PASS nora-keller/vergleich
+PASS commission-digital-collaboration/heute
+PASS commission-digital-collaboration/m365
+PASS commission-digital-collaboration/vergleich
+PASS teaching-team/heute
+PASS teaching-team/m365
+PASS teaching-team/vergleich
+15/15 passed; no script errors

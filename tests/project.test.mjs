@@ -13,7 +13,7 @@ test('template and blank are valid projects of the current versions', () => {
     assert.equal(p.projectVersion, PC.PROJECT_VERSION);
     assert.equal(p.capabilityVersion, PC.CAPABILITY_VERSION);
   }
-  assert.deepEqual(Object.keys(PC.capabilities().profiles), ['teams-posts', 'planner', 'prinzip-tasks']);
+  assert.deepEqual(Object.keys(PC.capabilities().profiles), ['teams-posts', 'teams-chat', 'planner', 'prinzip-tasks']);
 });
 
 test('save and reopen keeps every field, notes and assumptions included', () => {
@@ -97,7 +97,7 @@ test('markup in text stays data: compile does not interpret it', () => {
 test('authoring pack is built from the live capabilities and its example validates', () => {
   const pack = PC.authoringPack({ audience: 'Pflege', goal: 'Übergaben', context: 'Spital' });
   for (const k of Object.keys(PC.capabilities().profiles)) assert.match(pack, new RegExp(k));
-  assert.match(pack, /projectVersion 1 · capabilityVersion 1/);
+  assert.match(pack, /projectVersion 1 · capabilityVersion 2/);
   assert.match(pack, /GENAU EIN vollständiges JSON-Projekt/);
   assert.match(pack, /Behaupte nicht, du hättest/);
   const parsed = PC.parseInput(pack);
