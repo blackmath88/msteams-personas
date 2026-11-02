@@ -2,6 +2,10 @@
 
 A configurable library of fictional M365 application scenes and conceptual explainers for training, adoption and consulting. Create useful PowerPoint visuals without provisioning a real tenant.
 
+## Web app
+
+Open [msteams-personas](https://blackmath88.github.io/msteams-personas/) in your browser, or go directly to [Eigene Abfolge](https://blackmath88.github.io/msteams-personas/#/projekt). GitHub Pages publishes `main` from the repository root; changes on main redeploy automatically. No build step, backend or Microsoft login is required. Drafts remain in the current browser; download project JSON to move work between devices. CLI and MCP remain local tools.
+
 ## Available now
 
 The complete V3 trainer library is on `main` (merged at `300e006`). Open `index.html` directly; no install, Microsoft login or backend is required.
@@ -29,7 +33,7 @@ node tools/mcp-server.mjs                      # MCP over stdio
 node tools/mcp-server.mjs --http               # MCP over Streamable HTTP, http://127.0.0.1:8787/mcp
 ```
 
-Website, CLI and MCP share one validator (`src/project-core.js`) and one render operation (`src/project-render.js`). Commands, client configuration, evidence and limits: [CLI/MCP handoff](docs/CLI-MCP-HANDOFF.md). Concept: [Slides as Code](docs/SLIDES-AS-CODE-CONCEPT.md). WebMCP and hosting are not built.
+Website, CLI and MCP share one validator (`src/project-core.js`) and one render operation (`src/project-render.js`). Commands, client configuration, evidence and limits: [CLI/MCP handoff](docs/CLI-MCP-HANDOFF.md). Concept: [Slides as Code](docs/SLIDES-AS-CODE-CONCEPT.md). WebMCP and a hosted rendering/MCP service are not built. The browser app is hosted on GitHub Pages.
 
 - [Active build plan](docs/BUILD-PLAN.md)
 - [Product brief](docs/PRODUCT.md)
