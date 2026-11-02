@@ -1,6 +1,6 @@
 # Current status
 
-Updated: 2026-10-31.
+Updated: 2026-11-02.
 
 ## Implemented and merged
 
@@ -14,13 +14,15 @@ See [V3 handoff](V3-BUILD-HANDOFF.md) for screen availability, evidence and know
 
 ## Planned, not implemented
 
-[Slides as Code concept](SLIDES-AS-CODE-CONCEPT.md) and [active build plan](BUILD-PLAN.md) retain hosting, authentication, a job service and remote deployment, plus a WebMCP browser adapter. Editable PPTX remains deferred. Local Streamable HTTP is built on the branch below; it is not a hosted service.
+[Slides as Code concept](SLIDES-AS-CODE-CONCEPT.md) and [active build plan](BUILD-PLAN.md) retain hosting, authentication, a job service and remote deployment, plus a WebMCP browser adapter. Editable PPTX remains deferred. Local Streamable HTTP is built (see below); it is not a hosted service.
+
+Next planned initiative: [deck components](DECK-COMPONENTS-PLAN.md). M365 screens become components inside the trainer's own slides (company template), for chat-planned trainings, existing decks and persona scenarios. Not built.
 
 Customisation-backup JSON and portable-project JSON are separate formats with separate import paths.
 
-## Built on branch feat/cli-mcp-render (not merged)
+## Merged to main: shared render operation, CLI and local MCP (`5a6ece6`)
 
-Built 2026-10-30 on main `7d5f330`, pushed as `0280a8c`, `7fbd75f` and `952640f`, pending PR and review: validator hardening (null entries, typed fields, before/after-only states, shared-before meaning), all-or-nothing export with fit/render diagnostics, honest storage and draft-limit handling, one render operation for website/CLI/MCP, `tools/cli.mjs`, and an MCP server (official SDK v2, stdio + Streamable HTTP on `127.0.0.1`). This implements slice 4 and only the local HTTP transport part of slice 5. Proved with the SDK client, then in Claude Code over stdio ([host test](HOST-TEST-CLAUDE-CODE.md)). Evidence: [CLI/MCP handoff](CLI-MCP-HANDOFF.md).
+Built 2026-10-30 on main `7d5f330`, pushed as `0280a8c`, `7fbd75f` and `952640f`, merged via PR #3 at `5a6ece6`: validator hardening (null entries, typed fields, before/after-only states, shared-before meaning), all-or-nothing export with fit/render diagnostics, honest storage and draft-limit handling, one render operation for website/CLI/MCP, `tools/cli.mjs`, and an MCP server (official SDK v2, stdio + Streamable HTTP on `127.0.0.1`). This implements slice 4 and only the local HTTP transport part of slice 5. Proved with the SDK client, then in Claude Code over stdio ([host test](HOST-TEST-CLAUDE-CODE.md)). Evidence: [CLI/MCP handoff](CLI-MCP-HANDOFF.md).
 
 ## Merged to main: portable project authoring (`7d5f330`)
 
@@ -36,7 +38,7 @@ First increment of portable projects, built 2026-10-29: shared core `src/project
 
 ## Next actions
 
-1. Review the pending CLI/MCP PR and merge after review.
+1. Deck components slice D1: component export with measured anchors ([plan](DECK-COMPONENTS-PLAN.md)).
 2. Run the cross-assistant bridge trial with two real assistants.
 3. Optionally apply the small MCP polish points from the [host test](HOST-TEST-CLAUDE-CODE.md).
 4. Add the next capability profile, Teams chat or Outlook, through the existing project contract.

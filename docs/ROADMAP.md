@@ -10,10 +10,11 @@ Current detail: [active build plan](BUILD-PLAN.md).
 | V2 P1 | Coherent Outlook/Explorer/Teams/SharePoint teaching story | Merged on main, included in V3 at `300e006` |
 | V2 P2 / V3 | OneDrive personal scene, wider renderer coverage and trainer sequences | Merged on main at `300e006`; scenario-dependent coverage |
 | Portable projects, slices 1–3 | Project contract, manual authoring/import/save and assistant bridge | Merged on main at `7d5f330`; three capability profiles, real-assistant and trainer trials open |
-| CLI/MCP, slice 4 | Shared render operation, CLI, local MCP over stdio and Streamable HTTP | Built and pushed on `feat/cli-mcp-render`, pending PR; [handoff](CLI-MCP-HANDOFF.md) |
-| Hosting, slice 5 | Hosted rendering, authentication and job service | Not built; only local Streamable HTTP exists on branch |
+| CLI/MCP, slice 4 | Shared render operation, CLI, local MCP over stdio and Streamable HTTP | Merged on main at `5a6ece6`; [handoff](CLI-MCP-HANDOFF.md) |
+| Hosting, slice 5 | Hosted rendering, authentication and job service | Not built; only local Streamable HTTP exists |
 | WebMCP, slice 6 | Browser-agent adapter | Not built |
-| Later | Broader authoring/templates and editable PPTX | Deferred; editable PPTX not built |
+| Deck components, D0–D6 | M365 screens as components, slide patterns, PPTX on a company template, existing decks, persona scenarios | Planned; [plan](DECK-COMPONENTS-PLAN.md). Text editable, screens stay pictures |
+| Later | Broader authoring, editable native M365 shapes | Deferred |
 
 - [UX plan](UX-LIBRARY-PLAN.md)
 - [M365 fidelity/output plan](M365-UI-FIDELITY-PLAN.md)

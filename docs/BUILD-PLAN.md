@@ -1,10 +1,10 @@
 # Active build plan — Slides as Code and the AI-assistant bridge
 
-Updated: 2026-10-31. Slices 1–3 are built and merged on main; slice 4 is built on `feat/cli-mcp-render`, pending PR; slice 5 is partial and slice 6 is not built.
+Updated: 2026-11-02. Slices 1–4 are built and merged on main; slice 5 is partial and slice 6 is not built. The next initiative, M365 screens as parts of training slides, is planned in the [deck components plan](DECK-COMPONENTS-PLAN.md).
 
 ## Completed attempt: manual authoring and assistant bridge
 
-The [30-minute Claude/Orca task](ORCA-NUC-BRIDGE-30MIN.md) delivered portable-project authoring and the assistant bridge, merged at `7d5f330`. See the [bridge handoff](BRIDGE-BUILD-HANDOFF.md) for implementation, evidence and limits. The follow-up shared render operation, CLI and local MCP server are built on `feat/cli-mcp-render`; see the [CLI/MCP handoff](CLI-MCP-HANDOFF.md).
+The [30-minute Claude/Orca task](ORCA-NUC-BRIDGE-30MIN.md) delivered portable-project authoring and the assistant bridge, merged at `7d5f330`. See the [bridge handoff](BRIDGE-BUILD-HANDOFF.md) for implementation, evidence and limits. The follow-up shared render operation, CLI and local MCP server are merged at `5a6ece6`; see the [CLI/MCP handoff](CLI-MCP-HANDOFF.md).
 
 Completion of these builds does not establish every acceptance claim below. The two-assistant bridge trial, five observed trainer tasks and full keyboard/screen-reader pass remain open. The MCP server passed a [Claude Code host test](HOST-TEST-CLAUDE-CODE.md) over stdio; other hosts are untested. Portable projects support only `teams-posts`, `planner` and `prinzip-tasks`; fit checks do not flag wrapping Planner titles.
 
@@ -81,7 +81,7 @@ Conduct at least five observed trainer tasks before claiming low friction. Initi
 
 ## Slice 4 — headless render runner and CLI
 
-State: Built on `feat/cli-mcp-render` (`0280a8c`, with handoff updates `7fbd75f` and `952640f`), pushed and pending PR; see the [CLI/MCP handoff](CLI-MCP-HANDOFF.md) for delivered commands, outputs and proof.
+State: Built (`0280a8c`, with handoff updates `7fbd75f` and `952640f`) and merged via PR #3 at `5a6ece6`; see the [CLI/MCP handoff](CLI-MCP-HANDOFF.md) for delivered commands, outputs and proof.
 
 - Expose shared domain operations independently of UI events.
 - Add catalogue, validate, preview and render commands with structured output and documented exit codes.
@@ -96,7 +96,7 @@ A clean checkout can validate and render a new-project fixture noninteractively.
 
 ## Slice 5 — hosted job service, HTTP and remote MCP
 
-State: Partial: local Streamable HTTP on `127.0.0.1` exists on the CLI/MCP branch; hosting, authentication and a job service are not built.
+State: Partial: local Streamable HTTP on `127.0.0.1` exists on main; hosting, authentication and a job service are not built.
 
 This is a planned integration, not approval to buy services or publish infrastructure.
 
@@ -136,7 +136,7 @@ Test schema evolution, unsafe text, broken identity links, before/after snapshot
 
 ## Deferred
 
-In-site generative AI, tenant integration, general arbitrary HTML generation, editable native PPTX shapes, public deployment and a broad framework migration. Additional catalogue screens remain useful but must not obscure the bridge's end-to-end acceptance.
+In-site generative AI, tenant integration, general arbitrary HTML generation, editable native M365 shapes in PPTX (PPTX with editable text and picture screens is planned in the [deck components plan](DECK-COMPONENTS-PLAN.md)), public deployment and a broad framework migration. Additional catalogue screens remain useful but must not obscure the bridge's end-to-end acceptance.
 
 ## Handoff
 

@@ -1,10 +1,10 @@
 # Repository working agreement
 
-Read README.md, docs/STATUS.md, docs/BUILD-PLAN.md, docs/UX-LIBRARY-PLAN.md, docs/M365-UI-FIDELITY-PLAN.md and docs/ORCA-NUC-BUILD-TASK.md before the next build. docs/WEAVR-FIRST-TEST.md is historical.
+Read README.md, docs/STATUS.md, docs/BUILD-PLAN.md, docs/DECK-COMPONENTS-PLAN.md, docs/UX-LIBRARY-PLAN.md, docs/M365-UI-FIDELITY-PLAN.md and docs/ORCA-NUC-BUILD-TASK.md before the next build. docs/WEAVR-FIRST-TEST.md is historical.
 
 This repository owns a standalone persona/scenario visual tool. The Unibas / isolutions atlas is the initial example collection. Keep implemented capabilities distinct from roadmap items.
 
-- Follow the active v2 build plan: library UX and faithful M365 renderers, targeted slide-content fields and real PNG export. The full editor and editable PPTX remain deferred.
+- Follow the active build plan and the deck components plan: M365 screens as components inside the trainer's own slides. PPTX keeps text editable and screens as pictures; editable native M365 shapes and a full editor remain deferred.
 - Preserve the tested prototype branch and its content fixes; do not rebuild from the older main atlas.
 - Use German UI with Swiss spelling; keep the data adaptable to other locales.
 - Use Szene and Prinzip as the two primary visual modes; maps/comparisons fit within them.
