@@ -22,6 +22,8 @@ See [V3 handoff](docs/V3-BUILD-HANDOFF.md) for evidence, supported coverage and 
 
 Portable-project authoring (`7d5f330`) and the shared render operation, CLI and local MCP server (`5a6ece6`) are merged on `main`. The MCP server passed a real Claude Code host test over stdio.
 
+Next: [deck components plan](docs/DECK-COMPONENTS-PLAN.md). M365 screens become parts of the trainer's own slides on a company template, instead of finished slides.
+
 `#/projekt` («Eigene Abfolge») authors a new Teams → Planner → Prinzip sequence by hand or with the user's own chat assistant. The same project JSON can be validated and rendered without the website:
 
 ```sh

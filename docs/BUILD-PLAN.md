@@ -1,6 +1,6 @@
 # Active build plan — Slides as Code and the AI-assistant bridge
 
-Updated: 2026-10-31. Slices 1–4 are built and merged on main (`5a6ece6`); slice 5 is partial and slice 6 is not built. A fourth profile (`teams-chat`) and the first bridge trial are on branches pending review.
+Updated: 2026-10-31. Slices 1–4 are built and merged on main (`5a6ece6`); slice 5 is partial and slice 6 is not built. A fourth profile (`teams-chat`) and the first bridge trial are on branches pending review. The next initiative, M365 screens as parts of training slides, is planned in the [deck components plan](DECK-COMPONENTS-PLAN.md).
 
 ## Completed attempt: manual authoring and assistant bridge
 

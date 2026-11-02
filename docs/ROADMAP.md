@@ -14,7 +14,8 @@ Current detail: [active build plan](BUILD-PLAN.md).
 | Teams chat profile | Fourth portable-project profile, capabilityVersion 2 | On branch, pending review; [handoff](TEAMS-CHAT-PROFILE-HANDOFF.md) |
 | Hosting, slice 5 | Hosted rendering, authentication and job service | Not built; only local Streamable HTTP exists on main |
 | WebMCP, slice 6 | Browser-agent adapter | Not built |
-| Later | Broader authoring/templates and editable PPTX | Deferred; editable PPTX not built |
+| Deck components, D0–D6 | M365 screens as components, slide patterns, PPTX on a company template, existing decks, persona scenarios | Planned; [plan](DECK-COMPONENTS-PLAN.md). Text editable, screens stay pictures |
+| Later | Broader authoring, editable native M365 shapes | Deferred |
 
 - [UX plan](UX-LIBRARY-PLAN.md)
 - [M365 fidelity/output plan](M365-UI-FIDELITY-PLAN.md)
