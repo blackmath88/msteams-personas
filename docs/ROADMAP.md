@@ -12,6 +12,7 @@ Current detail: [active build plan](BUILD-PLAN.md).
 | Portable projects, slices 1–3 | Project contract, manual authoring/import/save and assistant bridge | Merged on main at `7d5f330`; first two-assistant CLI trial passed 4/4 (PR #4); trainer tasks open |
 | CLI/MCP, slice 4 | Shared render operation, CLI, local MCP over stdio and Streamable HTTP | Merged on main at `5a6ece6`; real Claude Code host test passed; [handoff](CLI-MCP-HANDOFF.md) |
 | Teams chat profile | Fourth portable-project profile, capabilityVersion 2 | On branch, pending review; [handoff](TEAMS-CHAT-PROFILE-HANDOFF.md) |
+| Workspace profiles | Linked Team → Kanal → Dateiablage map, Teams preview and local configurator | Proposed. [Workspace profile plan](WORKSPACE-PROFILE-PLAN.md) |
 | Hosting, slice 5 | Hosted rendering, authentication and job service | Not built; only local Streamable HTTP exists on main |
 | WebMCP, slice 6 | Browser-agent adapter | Not built |
 | Later | Broader authoring/templates and editable PPTX | Deferred; editable PPTX not built |
