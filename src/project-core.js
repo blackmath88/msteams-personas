@@ -14,13 +14,14 @@
  * for the objects they include; there are no patch chains.
  */
 (function (root, factory) {
-  var core = factory();
+  var core = factory(typeof module === 'object' && module.exports ? require('./workspace-core.js') : root.WorkspaceCore,
+    typeof module === 'object' && module.exports ? require('./workspace-examples.js') : root.WorkspaceExample);
   if (typeof module === 'object' && module.exports) module.exports = core;
   else root.ProjectCore = core;
-})(typeof window !== 'undefined' ? window : globalThis, function () {
+})(typeof window !== 'undefined' ? window : globalThis, function (Workspace, workspaceExample) {
   var FORMAT = 'msteams-personas/project';
   var PROJECT_VERSION = 1;
-  var CAPABILITY_VERSION = 3;
+  var CAPABILITY_VERSION = Workspace.VERSION;
   var RENDERER_VERSION = 'v3';
   var MAX_INPUT = 200 * 1024;
   var ID = /^[a-z][a-z0-9-]{0,39}$/;
@@ -30,7 +31,7 @@
   var CAPABILITIES = {
     capabilityVersion: CAPABILITY_VERSION,
     rendererVersion: RENDERER_VERSION,
-    profiles: {
+    profiles: Object.assign({
       'teams-posts': {
         label: 'Teams: Beiträge im Kanal', renderer: 'posts', needs: ['team', 'channel', 'posts'],
         budgets: { team: 40, channel: 30, postTitle: 60, postText: 220, posts: 4 }
@@ -55,8 +56,8 @@
         label: 'Prinzip: Aufgaben, vorher und nachher', renderer: 'principle:tasks', needs: ['before', 'after'],
         budgets: { title: 60, question: 90, problem: 200, recommendation: 200, boundary: 200 }
       }
-    },
-    limits: { people: 8, tasks: 12, documents: 8, slides: 6, presenterNotes: 1200, prinzipLists: PRINZIP_LISTS }
+    }, Workspace.profiles),
+    limits: { people: 8, workspacePeople: 16, tasks: 12, documents: 8, slides: 6, presenterNotes: 1200, prinzipLists: PRINZIP_LISTS }
   };
 
   function copy(x) { return JSON.parse(JSON.stringify(x)); }
@@ -184,7 +185,7 @@
     if (!isObj(p)) { err('not-object', '', 'Das Projekt ist kein JSON-Objekt.'); return { ok: false, errors: errors, warnings: warnings }; }
     if (p.format !== FORMAT) err('format', 'format', 'Unbekanntes Format. Erwartet: «' + FORMAT + '».');
     if (p.projectVersion !== PROJECT_VERSION) err('project-version', 'projectVersion', 'Projektversion ' + JSON.stringify(p.projectVersion) + ' wird nicht unterstützt (erwartet ' + PROJECT_VERSION + ').');
-    if ([1, 2, 3].indexOf(p.capabilityVersion) < 0) err('capability-version', 'capabilityVersion', 'Fähigkeitsversion ' + JSON.stringify(p.capabilityVersion) + ' wird nicht unterstützt (erwartet 1, 2 oder 3).');
+    if (![1, 2, 3, CAPABILITY_VERSION].includes(p.capabilityVersion)) err('capability-version', 'capabilityVersion', 'Fähigkeitsversion ' + JSON.stringify(p.capabilityVersion) + ' wird nicht unterstützt (erwartet 1 bis ' + CAPABILITY_VERSION + ').');
     var meta = p.meta;
     if (!isObj(meta)) { err('meta', 'meta', 'Angaben zur Abfolge («meta») fehlen oder sind kein Objekt.'); meta = {}; }
     reqStr(meta, 'title', 'meta', 'meta-title', 'Die Abfolge braucht einen Titel.');
@@ -213,7 +214,7 @@
       });
       return ok;
     }
-    var people = list('people', L.people), docs = list('documents', L.documents), tasks = list('tasks', L.tasks);
+    var people = list('people', p.workspace ? L.workspacePeople : L.people), docs = list('documents', L.documents), tasks = list('tasks', L.tasks);
     var states = list('states', STATE_IDS.length), scenes = list('scenes', 8), slides = list('slides', L.slides);
     function ix(a) { var m = {}; a.forEach(function (e) { if (str(e.x.id)) m[e.x.id] = e.x; }); return m; }
     var P = ix(people), D = ix(docs), T = ix(tasks), S = ix(states), SC = ix(scenes);
@@ -271,11 +272,13 @@
         if (len(t.bucket) > CAPABILITIES.profiles.planner.budgets.bucket) warn('long', path + '.bucket', where + ': Bucket-Name ist lang und wird eventuell gekürzt.');
       });
     });
+    Workspace.check(p, err);
     scenes.forEach(function (e) {
       var sc = e.x, path = 'scenes[' + e.i + ']', prof = str(sc.profile) && Object.prototype.hasOwnProperty.call(CAPABILITIES.profiles, sc.profile) ? CAPABILITIES.profiles[sc.profile] : null;
       if (!prof) { err('unknown-profile', path + '.profile', 'Szene «' + diagnosticText(sc.id) + '»: Ansicht «' + diagnosticText(sc.profile) + '» wird nicht unterstützt. Möglich: ' + Object.keys(CAPABILITIES.profiles).join(', ') + '.'); return; }
       if (sc.profile === 'teams-chat' && p.capabilityVersion === 1) err('profile-version', path + '.profile', 'Teams: Chat zu zweit braucht capabilityVersion 2.');
       if (['todo', 'planner-task'].indexOf(sc.profile) >= 0 && p.capabilityVersion < 3) err('profile-version', path + '.profile', prof.label + ' braucht capabilityVersion 3.');
+      if (Workspace.isProfile(sc.profile)) return;
       var B = prof.budgets;
       reqStr(sc, 'team', path, 'scene-team', 'Szene «' + diagnosticText(sc.id) + '» braucht einen Teamnamen.');
       if (len(sc.team) > B.team) warn('long', path + '.team', 'Teamname ist länger als ' + B.team + ' Zeichen.');
@@ -408,6 +411,28 @@
     var P = idx(p.people), D = idx(p.documents || []);
     var people = p.people.map(function (x, i) { return { id: x.id, idx: i, original: x.name, name: x.name, role: x.role || '', external: false, outside: false }; });
     var byId = idx(people);
+    if (Workspace.isProfile(sc.profile)) {
+      var model = Workspace.model(p, sc), personal = model.base.kind === 'personal';
+      var files = model.entries.map(function (n) {
+        var shared = (n.sharedWith || []).map(function (id) { return byId[id].name; });
+        return { name: n.name, kind: n.kind, canonical: n === model.selected, mark: n === model.selected ? 3 : null,
+          note: shared.length ? 'Bearbeitungszugriff für ' + shared.join(', ') : 'Privat', when: '–' };
+      });
+      var workspaceIndex = Workspace.index(p.workspace);
+      return {
+        title: p.meta.title, world: { id: model.base.id }, team: model.base.name, workspace: model,
+        tools: [personal ? 'onedrive' : 'teams'],
+        person: function (id) { return byId[id]; }, fill: function (value) { return value || ''; },
+        scene: { members: personal ? [model.base.owner] : model.base.members, viewer: model.viewer,
+          active: model.active.name, channels: model.channels.map(function (n) { return n.name; }), activeIndex: model.channels.indexOf(model.active),
+          folderPath: Workspace.trail(workspaceIndex, model.folder.id).slice(personal ? 2 : 3).map(function (n) { return n.name; }),
+          files: files, tasks: [], workspace: true,
+          posts: (model.active.posts || []).map(function (post) {
+            var file = workspaceIndex.get(post.file);
+            return Object.assign({}, post, { file: file && file.name, filePath: file && Workspace.trail(workspaceIndex, file.id).slice(1, -1).filter(function (n) { return n.kind !== 'storage'; }).map(function (n) { return n.name; }).join(' › '), mark: file ? 3 : null });
+          }) }
+      };
+    }
     var notes = {}, mark = 0;
     var posts = sc.profile === 'teams-posts' ? sc.posts.map(function (q) {
       var m = q.hint ? ++mark : null; if (m) notes[m] = q.hint;
@@ -469,6 +494,7 @@
   /* What the existing slide composer needs for this slide: params, kind and principle meta. */
   function slidePlan(p, slideIndex) {
     var sl = p.slides[slideIndex], sc = sl && idx(p.scenes)[sl.scene]; if (!sc) return null;
+    if (Workspace.isProfile(sc.profile)) return { params: { mode: sc.profile === 'workspace-map' ? 'prinzip' : 'szene', sub: 'workspace', tab: sc.tab }, kind: 'workspace', meta: null };
     if (sc.profile === 'prinzip-tasks') {
       var t = sl.teaching || {};
       return { params: { mode: 'prinzip', sub: 'tasks', annot: false }, kind: 'prinzip', meta: { id: 'tasks', title: t.title || 'Prinzip', question: t.question || '' } };
@@ -532,6 +558,8 @@
     lines.push('Optionale Detailszene: ' + JSON.stringify({ id: 'sc-detail', profile: 'planner-task', team: 'Werkstatt Velotech', state: 'after', task: 't-bremsen' }));
     lines.push('Optionale To-Do-Szene: ' + JSON.stringify({ id: 'sc-todo', profile: 'todo', team: 'Werkstatt Velotech', state: 'after', viewer: 'p-aylin', taskIds: ['t-bremsen', 't-lager'], personalListPrivate: true, myDaySelected: true, plannerConnected: true }));
     lines.push('');
+    lines.push('Arbeitsbereich: workspace-map und workspace-scene verwenden dieselbe workspace.nodes-Liste. root und selected verweisen auf IDs. workspace-scene nutzt tab posts oder files. viewer ist für persönliche Ablagen erforderlich. house ist ein optionales Boolean für die Karte.');
+    lines.push('Vollständiges Arbeitsbereich-Beispiel (alternativ zur Aufgabenabfolge): ' + JSON.stringify(workspaceExample()));
     lines.push('## Vollständiges Beispiel (Inhalt ersetzen, Struktur beibehalten)');
     lines.push('```json');
     lines.push(JSON.stringify(minimalExample(), null, 1));
@@ -560,6 +588,14 @@
       ['viewer', 'partner'].forEach(function (k) { if (sc[k] === from) sc[k] = to; });
       if (Array.isArray(sc.notSeenBy)) sc.notSeenBy = sc.notSeenBy.map(function (id) { return id === from ? to : id; });
     });
+    if (q.workspace && Array.isArray(q.workspace.nodes)) q.workspace.nodes.forEach(function (n) {
+      if (!isObj(n)) return;
+      if (n.owner === from) n.owner = to;
+      ['members', 'sharedWith'].forEach(function (k) {
+        if (Array.isArray(n[k])) n[k] = Array.from(new Set(n[k].map(function (id) { return id === from ? to : id; })));
+      });
+      if (Array.isArray(n.posts)) n.posts.forEach(function (post) { if (isObj(post) && post.by === from) post.by = to; });
+    });
     q.states.forEach(function (st) { Object.keys(st.tasks || {}).forEach(function (k) { if (st.tasks[k].owner === from) st.tasks[k].owner = to; if (st.tasks[k].comment && st.tasks[k].comment.by === from) st.tasks[k].comment.by = to; }); });
     return q;
   }
@@ -572,7 +608,7 @@
   return {
     FORMAT: FORMAT, STATE_IDS: STATE_IDS.slice(), PROJECT_VERSION: PROJECT_VERSION, CAPABILITY_VERSION: CAPABILITY_VERSION, RENDERER_VERSION: RENDERER_VERSION, MAX_INPUT: MAX_INPUT,
     capabilities: function () { return copy(CAPABILITIES); },
-    template: template, blank: blank, parseInput: parseInput, validate: validate, summary: summary,
+    template: template, workspaceExample: workspaceExample, blank: blank, parseInput: parseInput, validate: validate, summary: summary,
     compile: compile, slidePlan: slidePlan, fileName: fileName, planTasks: planTasks,
     authoringPack: authoringPack, repairPrompt: repairPrompt, replacePersonRef: replacePersonRef, newId: newId, serialise: serialise, copy: copy
   };

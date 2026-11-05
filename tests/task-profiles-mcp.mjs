@@ -18,7 +18,7 @@ const call = async (name,args={}) => { const r=await client.callTool({name,argum
 try {
   await client.connect(transport);
   const caps=(await call('get_capabilities')).structuredContent;
-  assert.equal(caps.capabilityVersion,3);
+  assert.equal(caps.capabilityVersion,4);
   assert.ok(caps.profiles.todo && caps.profiles['planner-task']);
   assert.equal((await call('get_example')).structuredContent.slides.length,3);
   assert.deepEqual((await call('validate_project',{project})).structuredContent.warnings,[]);

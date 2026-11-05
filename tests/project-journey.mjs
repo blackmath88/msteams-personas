@@ -96,7 +96,7 @@ try {
   await click('[data-op="add-slide"]');
   const ci = (await cur()).scenes.length - 1;
   const cb = `scenes.${ci}.`;
-  check('chat: fourth slide added with current capability version', (await count('.pj-thumb .m3-chat')) === 1 && (await cur()).capabilityVersion === 3 && /Teams: Chat zu zweit/.test(await p.eval(`document.querySelectorAll('.pj-slide h3')[3].textContent`)));
+  check('chat: fourth slide added with current capability version', (await count('.pj-thumb .m3-chat')) === 1 && (await cur()).capabilityVersion === 4 && /Teams: Chat zu zweit/.test(await p.eval(`document.querySelectorAll('.pj-slide h3')[3].textContent`)));
   await setVal(`[data-path="${cb}team"]`, 'Abendcrew');
   await setVal(`[data-path="${cb}viewer"]`, 'p-marco', 'change');
   await setVal(`[data-path="${cb}partner"]`, 'p-aylin', 'change');

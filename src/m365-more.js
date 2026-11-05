@@ -183,12 +183,14 @@
   function onedrive(vm, o) {
     o = o || {};
     var me = vm.person(vm.scene.members[0]), files = vm.scene.files;
-    var sel = files.filter(function (f) { return sharingOf(f).shared; })[0] || files[0];
+    var sel = (vm.scene.workspace && files.find(function (f) { return f.canonical; })) || files.find(function (f) { return sharingOf(f).shared; }) || files[0];
+    var folder = (vm.scene.folderPath || []).map(function (name) { return ' › ' + esc(name); }).join('');
+    var accessNote = vm.scene.workspace ? '' : '<p class="s-k">Alle anderen Dateien</p><p>' + fi('lock') + 'Privat: nur ' + esc(first(me.name)) + '</p>';
     return frame('m3-onedrive', 'OneDrive, nachgebildet: Meine Dateien von ' + me.name,
       '<div class="od-top">' + fi('waffle', 'od-waf') + '<strong>OneDrive</strong><span class="od-search">' + fi('search') + '<span>Suchen</span></span><span class="od-tr">' + fi('gear') + avatar(me, 30) + '</span></div>' +
       '<nav class="od-nav"><p class="od-me">' + esc(short(me.name)) + '</p><ul><li>' + fi('home') + 'Start</li><li class="on">' + fi('draft') + 'Meine Dateien</li><li>' + fi('clock') + 'Zuletzt verwendet</li><li>' + fi('people') + 'Geteilt</li><li>' + fi('star') + 'Favoriten</li><li>' + fi('trash') + 'Papierkorb</li></ul></nav>' +
       '<section class="od-main">' + A.cmdbar([['plus', 'Hinzufügen oder erstellen', 'm-pri'], ['upload', 'Hochladen'], ['share', 'Teilen'], ['link', 'Link kopieren'], ['download', 'Herunterladen'], ['more', '']]) +
-        '<h3>Meine Dateien</h3><table class="m-ft od-ft"><thead><tr><th class="m-ck"></th><th>Name</th><th>Geändert</th><th>Dateigröße</th><th>Freigabe</th></tr></thead><tbody>' +
+        '<h3>Meine Dateien' + folder + '</h3><table class="m-ft od-ft"><thead><tr><th class="m-ck"></th><th>Name</th><th>Geändert</th><th>Dateigröße</th><th>Freigabe</th></tr></thead><tbody>' +
         files.map(function (f, i) {
           var sh = sharingOf(f), on = f === sel;
           return '<tr class="' + (on ? 'sel' : '') + '"><td class="m-ck">' + (on ? '<span class="m-tick">' + fi('check') + '</span>' : '') + '</td>' +
@@ -196,10 +198,9 @@
             '<td>' + ['Gestern', 'Mo', 'letzte Woche', '12. Sept.'][i % 4] + '</td><td>' + (f.kind === 'folder' ? (i + 3) + ' Elemente' : ['84 KB', '1,2 MB', '36 KB', '420 KB'][i % 4]) + '</td>' +
             '<td class="od-sh' + (sh.shared ? ' on' : '') + '">' + (sh.shared ? fi('people') : fi('lock')) + sh.label + '</td></tr>';
         }).join('') + '</tbody></table></section>' +
-      '<aside class="od-pane"><p class="s-ph">' + ftype(sel.name, sel.kind) + '<strong>' + esc(sel.name.replace(/\s*\/$/, '')) + '</strong></p>' +
+      (sel ? '<aside class="od-pane"><p class="s-ph">' + ftype(sel.name, sel.kind) + '<strong>' + esc(sel.name.replace(/\s*\/$/, '')) + '</strong></p>' +
         '<p class="s-k">Zugriff</p><p class="od-acc">' + fi('people') + esc(vm.fill(sel.note || '')) + '</p>' +
-        '<p class="s-k">Speicherort</p><p>OneDrive › Meine Dateien</p>' +
-        '<p class="s-k">Alle anderen Dateien</p><p>' + fi('lock') + 'Privat: nur ' + esc(first(me.name)) + '</p></aside>');
+        '<p class="s-k">Speicherort</p><p>OneDrive › Meine Dateien' + folder + '</p>' + accessNote + '</aside>' : ''));
   }
   function onedriveNotes(vm) {
     var sc = vm.scene, marks = [];

@@ -103,16 +103,16 @@
     o = o || {};
     var sc = vm.scene;
     var tab = o.tab || 'posts';
-    var tabs = [['posts', 'Beiträge', sc.posts.length], ['files', 'Dateien', sc.files.length], ['tasks', 'Aufgaben', sc.tasks.length]].filter(function (t) { return t[2] > 0; });
+    var tabs = [['posts', 'Beiträge', sc.workspace || sc.posts.length], ['files', 'Dateien', sc.workspace || sc.files.length], ['tasks', 'Aufgaben', sc.tasks.length]].filter(function (t) { return t[2] > 0; });
     if (!tabs.some(function (t) { return t[0] === tab; })) tab = tabs[0][0];
-    var me = vm.person(vm.story ? vm.story.viewer : sc.members[0]);
+    var me = vm.person(vm.story ? vm.story.viewer : sc.viewer || sc.members[0]);
     var members = sc.members.map(vm.person);
     /* Member pane only when the teaching point is about who belongs (guests/externals). */
     var showMembers = members.some(function (p) { return p.external; });
     var rail = teamsRail('teams');
     var body = tab === 'files' ? teamsFiles(vm, o) : tab === 'tasks' ? teamsTasks(vm, o) : teamsPosts(vm, o);
     var tile = '<span class="t-tile t-tile-' + (vm.world.id.length % 5) + '" aria-hidden="true">' + esc(initials(vm.team)) + '</span>';
-    return frame('m3-teams' + (o.annot ? ' annot' : ''), 'Microsoft Teams, nachgebildet: ' + vm.team + ', Kanal ' + sc.active,
+    return frame('m3-teams' + (sc.workspace ? ' wp-m365' : '') + (o.annot ? ' annot' : ''), 'Microsoft Teams, nachgebildet: ' + vm.team + ', Kanal ' + sc.active,
       '<div class="t-title">' +
         '<span class="t-nav">' + fi('back') + fi('fwd') + '</span>' +
         '<span class="t-search">' + fi('search') + '<span>Suchen</span></span>' +
@@ -124,9 +124,10 @@
       '<aside class="t-list">' +
         '<div class="t-lh"><strong>Teams</strong><span>' + fi('filter') + fi('more') + fi('plus') + '</span></div>' +
         '<p class="t-sec">' + fi('chevd') + 'Teams und Kanäle</p>' +
-        '<div class="t-team">' + fi('chevd', 't-chev') + tile + '<span><strong data-bind="team">' + esc(vm.team) + '</strong></span>' + fi('more', 't-dim') + '</div>' +
-        '<ul class="t-chans">' + sc.channels.map(function (c) {
-          return '<li class="' + (c === sc.active ? 'on' : '') + '"' + (c === sc.active ? ' aria-current="true"' : '') + '>' + esc(c) + '</li>';
+        '<div class="t-team">' + fi('chevd', 't-chev') + tile + '<span><strong data-bind="team">' + esc(vm.team) + '</strong></span>' + (sc.workspace ? mk(1, o.annot) : '') + fi('more', 't-dim') + '</div>' +
+        '<ul class="t-chans">' + sc.channels.map(function (c, i) {
+          var active = sc.workspace ? i === sc.activeIndex : c === sc.active;
+          return '<li class="' + (active ? 'on' : '') + '"' + (active ? ' aria-current="true"' : '') + '>' + esc(c) + (sc.workspace && active ? mk(2, o.annot) : '') + '</li>';
         }).join('') + '</ul>' +
         '<p class="t-all">Alle Ihre Teams und Kanäle anzeigen</p>' +
       '</aside>' +
@@ -161,7 +162,7 @@
 
   function teamsPosts(vm, o) {
     var list = vm.scene.posts;
-    return '<ol class="t-posts">' + list.map(function (q) {
+    return '<ol class="t-posts">' + (vm.scene.workspace && !list.length ? '<li>Hier sind noch keine Beiträge.</li>' : '') + list.map(function (q) {
       var p = vm.person(q.by), reps = q.replies || [];
       var names = reps.map(function (r) { return short(vm.person(r.by).name).split(' ')[0]; }).filter(function (n, i, a) { return a.indexOf(n) === i; });
       return '<li class="t-post' + (q.canonical ? ' is-canon' : '') + '">' + avatar(p, 32) +
@@ -169,7 +170,7 @@
           '<p class="t-ph"><strong>' + esc(short(p.name)) + '</strong><time>' + esc(q.time) + '</time></p>' +
           (q.title ? '<p class="t-subj">' + esc(vm.fill(q.title)) + '</p>' : '') +
           '<p class="t-tx">' + esc(vm.fill(q.text)) + '</p>' +
-          (q.file ? '<div class="t-att">' + ftype(q.file) + '<span><strong data-docref="' + (q.canonical ? 'canonical' : '') + '">' + esc(q.file) + '</strong><small>' + esc(vm.team) + ' › Dokumente › ' + esc(vm.scene.active) + '</small></span>' + fi('more', 't-dim') + '</div>' : '') +
+          (q.file ? '<div class="t-att">' + ftype(q.file) + '<span><strong data-docref="' + (q.canonical ? 'canonical' : '') + '">' + esc(q.file) + '</strong><small>' + esc(vm.team) + ' › Dokumente › ' + esc(q.filePath || vm.scene.active) + '</small></span>' + fi('more', 't-dim') + '</div>' : '') +
           (q.canonical ? '<p class="t-react"><span>👍 ' + Math.min(4, vm.scene.members.length - 1) + '</span></p>' : '') +
           /* Replies collapsed as in the «Beiträge» layout: avatars plus «n Antworten von …». */
           (reps.length ? '<div class="t-reps"><span class="t-rav">' + reps.slice(0, 3).map(function (r) { return avatar(vm.person(r.by), 20); }).join('') + '</span>' +
@@ -186,7 +187,7 @@
   function teamsFiles(vm, o) {
     return '<div class="t-files">' +
       cmdbar([['plus', 'Neu', 'm-pri'], ['upload', 'Hochladen'], ['edit', 'In Rasteransicht bearbeiten'], ['share', 'Teilen'], ['link', 'Link kopieren'], ['sync', 'Synchronisieren'], ['more', '']]) +
-      '<p class="t-crumb">Dokumente <span>›</span> <strong>' + esc(vm.scene.active) + '</strong></p>' +
+      '<p class="t-crumb">Dokumente <span>›</span> <strong>' + esc(vm.scene.active) + '</strong>' + (vm.scene.folderPath || []).map(function (name) { return ' <span>›</span> ' + esc(name); }).join('') + '</p>' +
       fileTable(vm, vm.scene.files, o, true) + '</div>';
   }
   function fileTable(vm, files, o, withBy) {

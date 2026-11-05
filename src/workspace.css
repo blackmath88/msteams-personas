@@ -1,0 +1,48 @@
+/* The map is a teaching diagram. The adjacent app preview retains its own M365 styling. */
+.wp-slide{position:relative;box-sizing:border-box;background:#f5f8f8;color:#172e30;text-align:left;font-family:system-ui,sans-serif}
+.wp-head{position:absolute;left:66px;top:47px;right:66px}
+.wp-head p,.wp-kind{font-weight:700;color:#005d58;letter-spacing:.06em;text-transform:uppercase;font-size:25px;margin:0 0 12px}
+.wp-head h2{font-size:58px;line-height:1.12;margin:0;overflow-wrap:anywhere}
+.wp-map{position:absolute;inset:205px 66px 79px;display:grid;grid-template-columns: minmax(0, .96fr) minmax(0, 1.04fr);gap:36px}
+.wp-map section,.wp-guide{background:white;border:2px solid #c5d9d6;border-top:7px solid #08766e;padding:30px 34px;min-width:0}
+.wp-map h3{font-size:39px;line-height:1.12;margin:10px 0 14px;overflow-wrap:anywhere}
+.wp-map p:not(.wp-kind){font-size:27px;line-height:1.25;margin:12px 0;overflow-wrap:anywhere}
+.wp-map p.wp-kind{margin-top:12px}
+.wp-mark{display:inline-grid;place-items:center;width:37px;height:37px;margin-right:13px;border-radius:50%;background:#006761;color:white;font:700 24px/1 system-ui,sans-serif;vertical-align:middle;flex:none}
+.wp-map ul{margin:12px 0 14px;padding:0;list-style:none}
+.wp-map li{display:flex;align-items:center;min-height:47px;padding:4px 12px;gap:10px;border-bottom:1px solid #dce8e6;font-size:27px;line-height:1.13;overflow-wrap:anywhere}
+.wp-map li span:first-child{min-width:0}
+.wp-map li small{margin-left:auto;font-size:20px;color:#385353;text-align:right}
+.wp-map .wp-selected{outline:3px solid #08766e;outline-offset:-3px;background:#e4f4f1;font-weight:700}
+.wp-channels{border-left:3px solid #aac6c2;padding-left:14px!important}
+.wp-hash,.wp-provider,.wp-crumb,.wp-viewer{color:#385353}
+.wp-map .wp-work{border-top:1px solid #c5d9d6;padding-top:12px}
+.wp-work strong{margin-right:8px}
+.wp-app{position:absolute;left:66px;top:197px;width:1370px;height:771px;border:2px solid #c5d9d6;overflow:hidden}
+.wp-app>.m3{transform:scale(.95);transform-origin:0 0}
+.wp-guide{position:absolute;left:1465px;top:197px;right:66px;font-size:27px;line-height:1.25;overflow-wrap:anywhere}
+.wp-guide p{margin:14px 0;display:flex;align-items:flex-start}
+.wp-guide-focus{padding-top:12px;border-top:1px solid #c5d9d6}
+.wp-foot{position:absolute;left:66px;bottom:22px;margin:0;font-size:22px;color:#385353}
+.wp-editor{display:grid;grid-template-columns:minmax(260px,1fr) minmax(0,1.55fr);gap:1.4rem;align-items:start}
+.wp-controls{min-width:0}
+.wp-controls fieldset{margin:0 0 .8rem;padding:.65rem .8rem}
+.wp-controls input[type=text],.wp-controls select{width:100%;max-width:100%;box-sizing:border-box}
+.wp-controls label{display:block;font-weight:600;margin:.4rem 0}
+.wp-controls .wp-inline{display:flex;align-items:center;gap:.4rem}
+.wp-controls ul{list-style:none;margin:.25rem 0;padding-left:.85rem;border-left:1px solid #b5ccc7}
+.wp-controls>ul{padding-left:.35rem;border:0}
+.wp-controls li{margin:.2rem 0}
+.wp-controls .wp-node{width:100%;text-align:left;white-space:normal;overflow-wrap:anywhere;padding:.3rem .45rem}
+.wp-controls .wp-node[aria-pressed=true]{outline:2px solid #08766e;outline-offset:-2px;background:#e4f4f1;color:#172e30}
+.wp-controls .wp-node:focus-visible{outline:3px solid #4a55b4;outline-offset:1px}
+.wp-editor .pj-thumb{margin:0 0 1rem}
+.wp-editor .pj-sl{min-width:0}
+@media(max-width:850px){.wp-editor{grid-template-columns:1fr}}
+
+.wp-m365 .t-posts{justify-content:flex-start;padding-top:34px}
+.wp-m365 .t-team,.wp-m365 .t-chans li{position:relative}
+.wp-m365 .t-team .m-mk,.wp-m365 .t-chans .m-mk{position:static;display:inline-grid;margin-left:6px;vertical-align:middle}
+.wp-map .wp-reference{border-left:3px dashed #08766e;padding-left:12px;font-size:23px!important}
+.wp-m365 .t-team>span:has(strong){min-width:0;flex:1}
+.wp-guide .wp-guide-focus{font-size:22px}

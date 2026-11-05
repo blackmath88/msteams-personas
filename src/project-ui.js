@@ -12,7 +12,7 @@
  */
 (function (root) {
   var PC = root.ProjectCore, V = root.Views, X = root.Export, A = root.M365;
-  var esc = V.esc;
+  var esc = V.esc, WE = root.WorkspaceEditor;
   var KEY = 'mtp.projects';
 
   /* ---------- storage: several drafts, one current; an import never overwrites a draft ---------- */
@@ -85,6 +85,8 @@
       '<h1>Eigene Abfolge erstellen</h1>' + storageBox() +
       '<p class="lead">Eine kurze Folgenreihe für die Schulung: Teams-Beiträge → Planner → Prinzip. Von Hand im Formular oder mit deinem KI-Assistenten vorbereitet. Beide Wege ergeben dieselbe Projektdatei, die du sichern, wieder öffnen und als PNG exportieren kannst.</p>' +
       '<div class="pj-routes">' +
+        '<div class="pj-route"><h2>Arbeitsbereich erkunden</h2><p>Team, Kanäle und Dateiablage planen und in der Vorschau ansehen.</p>' +
+          '<p><button type="button" class="btn btn-p" data-op="adapt-workspace">Arbeitsbereich öffnen</button></p></div>' +
         '<div class="pj-route"><h2>Von Hand</h2><p>Mit beschrifteten Feldern. Kein JSON nötig.</p>' +
           '<p class="pj-acts"><button type="button" class="btn btn-p" data-op="adapt">Beispiel anpassen</button> <button type="button" class="btn" data-op="new">Neue Abfolge</button></p></div>' +
         '<div class="pj-route"><h2>Mit deinem KI-Assistenten vorbereiten</h2><p>Kurz beschreiben, Auftrag kopieren, Ergebnis hier einfügen. Gedacht für Chat-Assistenten, die einen längeren Auftrag annehmen; kein Konto oder Schlüssel nötig. Ob ein bestimmter Assistent gültige Projekte liefert, ist nicht garantiert: die Website prüft jedes Ergebnis.</p>' +
@@ -159,6 +161,7 @@
     if (!editable(v)) return '<section class="block pj"><nav class="pj-crumbs" aria-label="Pfad"><a href="#/">Bibliothek</a> › <a href="#/projekt">Eigene Abfolge</a> › Bearbeiten</nav><h1>Dieser Entwurf kann nicht bearbeitet werden</h1>' +
       '<p>Er hat Strukturfehler, die der Editor nicht anzeigen kann:</p>' + validity(v) +
       '<p class="pj-acts"><button type="button" class="btn" data-op="save">Projekt sichern</button> <a class="btn" href="#/projekt">Zurück</a></p><p class="pj-small" id="pj-status" role="status"></p></section>';
+    if (p.workspace && v.ok && WE.focus(p)) return workspaceEditor(p, v);
     var after = p.states.filter(function (s) { return s.id === 'after'; })[0], before = p.states.filter(function (s) { return s.id === 'before'; })[0];
     var bi = p.states.indexOf(before), ai = p.states.indexOf(after);
     function stateSel(si, tid) {
@@ -251,7 +254,7 @@
           '<p class="pj-move"><button type="button" class="btn sm" data-op="up" data-i="' + i + '"' + (i ? '' : ' disabled') + ' aria-label="Folie ' + (i + 1) + ' nach oben">↑</button><button type="button" class="btn sm" data-op="down" data-i="' + i + '"' + (i < p.slides.length - 1 ? '' : ' disabled') + ' aria-label="Folie ' + (i + 1) + ' nach unten">↓</button><button type="button" class="btn sm" data-op="del-slide" data-i="' + i + '" aria-label="Folie ' + (i + 1) + ' entfernen">Entfernen</button></p>' +
           body + field('Notizen für die Moderation', 'slides.' + i + '.presenterNotes', sl.presenterNotes, { area: true, rows: 2 }) + '</li>';
       }).join('') + '</ol>' +
-      '<p class="pj-f"><label for="pj-addp">Folie hinzufügen</label><select id="pj-addp">' + Object.keys(prof).map(function (k) { return '<option value="' + k + '">' + esc(prof[k].label) + '</option>'; }).join('') + '</select> <button type="button" class="btn sm" data-op="add-slide">Hinzufügen</button></p>' +
+      '<p class="pj-f"><label for="pj-addp">Folie hinzufügen</label><select id="pj-addp">' + Object.keys(prof).filter(function (k) { return !root.WorkspaceCore.isProfile(k); }).map(function (k) { return '<option value="' + k + '">' + esc(prof[k].label) + '</option>'; }).join('') + '</select> <button type="button" class="btn sm" data-op="add-slide">Hinzufügen</button></p>' +
       '<p class="pj-small">Noch nicht unterstützt: weitere Ansichten (Outlook, Dateien), Antworten auf Beiträge, Bilder und eigene Layouts.</p></fieldset>' +
       '</div><div class="pj-prev" id="pj-prev" aria-label="Vorschau der Folien">' + previews(p) + '</div></div></section>';
     return html;
@@ -263,6 +266,22 @@
     if (v.ok && !v.warnings.length) return '<p class="pj-ok">' + V.ic('i-check') + 'Alles passt.</p>';
     return (v.errors.length ? '<div class="pj-errbox"><p><strong>' + v.errors.length + ' Fehler</strong></p><ul>' + v.errors.map(function (e) { return '<li>' + esc(e.message) + '</li>'; }).join('') + '</ul></div>' : '') +
       (v.warnings.length ? '<div class="pj-warnbox"><p><strong>Hinweise</strong></p><ul>' + v.warnings.map(function (e) { return '<li>' + esc(e.message) + '</li>'; }).join('') + '</ul></div>' : '');
+  }
+  function workspaceEditor(p, v) {
+    return '<section class="block pj"><nav class="pj-crumbs" aria-label="Pfad"><a href="#/">Bibliothek</a> › <a href="#/projekt">Eigene Abfolge</a> › Arbeitsbereich</nav>' +
+      '<h1>Arbeitsbereich erkunden</h1>' + storageBox() +
+      '<p class="lead">Wähle einen Eintrag aus, um seinen Ort in der Karte und in der Vorschau zu sehen. Änderungen bleiben in diesem fiktiven Entwurf.</p>' +
+      '<p class="pj-acts"><button type="button" class="btn" data-op="save">Projekt sichern</button> <button type="button" class="btn btn-p" data-op="export">Alle Folien als PNG</button></p>' +
+      '<p class="pj-small" id="pj-status" role="status"></p>' + validity(v) +
+      '<div class="wp-editor">' + WE.controls(p) + '<section id="pj-prev"><h2>Vorschau</h2>' + previews(p) + '</section></div></section>';
+  }
+  function workspaceChange(p, command, value) {
+    var next = PC.copy(p);
+    if (!WE.change(next, command, value)) return;
+    var v = PC.validate(next);
+    if (v.ok) { st.drafts[st.current].project = next; touch(); }
+    render.keep();
+    if (!v.ok) document.getElementById('pj-status').textContent = v.errors[0].message;
   }
   function slideHtml(p, i) {
     var plan = PC.slidePlan(p, i); if (!plan) return '';
@@ -333,7 +352,7 @@
     if (t.hasAttribute('data-path')) setPath(p, t.getAttribute('data-path'), t.value);
     else if (t.hasAttribute('data-lines')) setPath(p, t.getAttribute('data-lines'), t.value.split('\n').map(function (x) { return x.trim(); }).filter(Boolean));
     else return;
-    if (/^states\.\d+\.tasks\..+\.(notes|checklist|comment)/.test(t.getAttribute('data-path') || '')) p.capabilityVersion = 3;
+    if (/^states\.\d+\.tasks\..+\.(notes|checklist|comment)/.test(t.getAttribute('data-path') || '')) p.capabilityVersion = Math.max(p.capabilityVersion, 3);
     touch(); clearTimeout(timer); timer = setTimeout(refresh, 120);
   }
   function onChange(e) {
@@ -343,6 +362,9 @@
       if (f.size > PC.MAX_INPUT) { alertBox('Die Datei ist zu gross.'); return; }
       f.text().then(function (txt) { var err = receive(txt, 'import'); if (err) alertBox(err.message); });
       return;
+    }
+    if (p && p.workspace && /^wp-(parent|perspective|house|tab)$/.test(t.id)) {
+      workspaceChange(p, t.id, t.type === 'checkbox' ? t.checked : t.value); return;
     }
     if (p && t.hasAttribute('data-bool')) { setPath(p, t.getAttribute('data-bool'), t.checked); touch(); refresh(); return; }
     if (p && t.hasAttribute('data-todo-task')) {
@@ -373,7 +395,7 @@
       var path = t.getAttribute('data-path');
       setPath(p, path, t.value || null);
       if (/^states\.\d+\.tasks\..+\.progress$/.test(path)) {
-        setPath(p, path.replace(/progress$/, 'done'), t.value === 'completed'); p.capabilityVersion = 3;
+        setPath(p, path.replace(/progress$/, 'done'), t.value === 'completed'); p.capabilityVersion = Math.max(p.capabilityVersion, 3);
       }
       touch();
       if (/^scenes\.\d+\.(state|task)$/.test(path)) render.keep(); else refresh();
@@ -397,6 +419,7 @@
     var b = e.target.closest('[data-op]'); if (!b || b.tagName === 'INPUT') return;
     var op = b.getAttribute('data-op'), p = cur(), i = +b.getAttribute('data-i');
     if (op === 'adapt') { if (addDraft(PC.template(), 'template')) go('bearbeiten'); }
+    else if (op === 'adapt-workspace') { if (addDraft(PC.workspaceExample(), 'template')) go('bearbeiten'); }
     else if (op === 'new') { if (addDraft(PC.blank(), 'manual')) go('bearbeiten'); }
     else if (op === 'open-draft') { st.current = i; persist(); go('bearbeiten'); }
     else if (op === 'del-draft') { st.drafts.splice(i, 1); st.current = st.drafts.length ? 0 : -1; if (/Entwürfe gespeichert/.test(storageProblem)) storageProblem = ''; persist(); render.keep(); announce('Entwurf entfernt'); }
@@ -416,6 +439,11 @@
     else if (!p) return;
     else if (op === 'save') { download(p); var s = document.getElementById('pj-status'); if (s) s.textContent = 'Projektdatei gesichert: ' + (p.meta.id || 'projekt') + '.msteams-personas.json'; announce('Projekt gesichert'); }
     else if (op === 'export') exportAll();
+    else if (p.workspace && op === 'wp-save-fields') {
+      var purpose = document.getElementById('wp-purpose');
+      workspaceChange(p, op, { name: document.getElementById('wp-name').value, purpose: purpose && purpose.value });
+    }
+    else if (p.workspace && op.indexOf('wp-') === 0) workspaceChange(p, op, b.getAttribute('data-i'));
     else {
       if (op === 'add-person') p.people.push({ id: PC.newId('p-', p.people), name: 'Neue Person', role: '' });
       else if (op === 'del-person') {
@@ -438,7 +466,7 @@
         if (op === 'del-check') entry.checklist.splice(i, 1);
         if (op === 'add-comment') entry.comment = { by: entry.owner || p.people[0].id, text: 'Neuer Kommentar' };
         if (op === 'del-comment') delete entry.comment;
-        p.capabilityVersion = 3;
+        p.capabilityVersion = Math.max(p.capabilityVersion, 3);
       }
       else if (op === 'add-message') { var chat = p.scenes[+b.getAttribute('data-s')]; if (chat.messages.length < 6) chat.messages.push({ id: PC.newId('m', chat.messages), by: chat.viewer, time: '', text: 'Neue Nachricht' }); }
       else if (op === 'del-message') { var chat = p.scenes[+b.getAttribute('data-s')]; if (chat.messages.length > 1) chat.messages.splice(i, 1); }
@@ -459,7 +487,7 @@
           : kind === 'todo' ? { id: scId, profile: kind, team: team, state: 'after', viewer: defaultViewer, taskIds: p.tasks.filter(function (t) { var e = afterTasks[t.id]; return e && e.owner === defaultViewer; }).slice(0, 6).map(function (t) { return t.id; }), personalListPrivate: true, myDaySelected: true, plannerConnected: true }
           : { id: scId, profile: kind, team: team, before: 'before', after: 'after' };
         if (kind === 'teams-chat') p.capabilityVersion = Math.max(p.capabilityVersion, 2);
-        if (kind === 'todo' || kind === 'planner-task') p.capabilityVersion = 3;
+        if (kind === 'todo' || kind === 'planner-task') p.capabilityVersion = Math.max(p.capabilityVersion, 3);
         p.scenes.push(scn);
         p.slides.push(Object.assign({ id: PC.newId('s-', p.slides), scene: scId, presenterNotes: '' }, kind === 'prinzip-tasks' ? { teaching: { title: 'Prinzip', question: '', problem: '', recommendation: 'Empfehlung', boundary: 'Grenze' } } : {}));
       }
@@ -472,6 +500,10 @@
   function render(h) {
     var page = h[1] || '';
     if (page === 'bearbeiten') return editor();
+    if (page === 'arbeitsbereich') return '<section class="block pj"><nav class="pj-crumbs" aria-label="Pfad"><a href="#/">Bibliothek</a> › Arbeitsbereich</nav>' +
+      '<h1>Arbeitsbereich erkunden</h1>' + storageBox() +
+      '<p class="lead">Plane, wo ein Team zusammenarbeitet. Das fiktive Beispiel verbindet Team, Kanäle und Dateiablage mit einer passenden Vorschau.</p>' +
+      '<p><button type="button" class="btn btn-p" data-op="adapt-workspace">Beispiel als Entwurf öffnen</button> <a href="#/projekt">Gespeicherte Entwürfe</a></p></section>';
     if (page === 'ki') return assistant();
     if (page === 'import') return review();
     return start();
@@ -479,10 +511,11 @@
   /* Re-render the current project page in place, keeping scroll position and focus where possible. */
   render.keep = function () {
     if (!container) return;
-    var y = window.scrollY, active = document.activeElement, key = active && (active.getAttribute('data-path') || active.getAttribute('data-op') + (active.getAttribute('data-i') || ''));
+    var y = window.scrollY, active = document.activeElement, wpId = active && active.id, key = active && (active.getAttribute('data-path') || active.getAttribute('data-op') + (active.getAttribute('data-i') || ''));
     container.innerHTML = render(location.hash.replace(/^#\/?/, '').split('/').filter(Boolean));
     mount(container); window.scrollTo(0, y);
-    if (key) { var again = container.querySelector('[data-path="' + CSS.escape(key) + '"]') || Array.prototype.filter.call(container.querySelectorAll('[data-op]'), function (x) { return x.getAttribute('data-op') + (x.getAttribute('data-i') || '') === key && !x.disabled; })[0]; if (again) again.focus(); }
+    if (wpId && wpId.indexOf('wp-') === 0) { var field = document.getElementById(wpId); if (field) field.focus(); }
+    else if (key) { var again = container.querySelector('[data-path="' + CSS.escape(key) + '"]') || Array.prototype.filter.call(container.querySelectorAll('[data-op]'), function (x) { return x.getAttribute('data-op') + (x.getAttribute('data-i') || '') === key && !x.disabled; })[0]; if (again) again.focus(); }
   };
   function mount(el) {
     if (container !== el) {

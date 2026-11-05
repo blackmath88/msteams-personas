@@ -7,14 +7,14 @@ export const INPUT_LIMIT_BYTES = PC.MAX_INPUT;
 export function getCapabilities() {
   return {
     format: PC.FORMAT, projectVersion: PC.PROJECT_VERSION, capabilityVersion: PC.CAPABILITY_VERSION, rendererVersion: PC.RENDERER_VERSION,
-    stateIds: PC.STATE_IDS, ...PC.capabilities(),
+    stateIds: PC.STATE_IDS, examples: ['tasks', 'workspace'], ...PC.capabilities(),
     output: { width: 1920, height: 1080, format: 'image/png', scales: LIMITS.scales },
     inputLimitBytes: INPUT_LIMIT_BYTES,
     semantics: 'states are complete snapshots: a task missing from a state is not shown there; list "personal" = a person\'s own list (owner required), list "plan" = the shared plan. planner-task selects task by ID; todo selects taskIds owned by viewer in that state. Mein Tag is an explicit personal selection, not a copy. Assigned Planner tasks require the same work account and an enabled Planner connection.'
   };
 }
 
-export function getExample() { return PC.template(); }
+export function getExample(kind) { return kind === 'workspace' ? PC.workspaceExample() : PC.template(); }
 
 /* Accepts a parsed object or text (raw JSON or one ```json fence). Never throws. */
 export function parseProject(input) {

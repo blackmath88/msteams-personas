@@ -33,6 +33,7 @@
 
   /* Returns the slide HTML, or null if the combination is not available. */
   function compose(vm, p, kind, principleMeta) {
+    if (kind === 'workspace') return root.WorkspaceView.compose(vm, p);
     if (p.mode === 'prinzip') {
       var pid = principleMeta ? principleMeta.id : 'chat';
       return '<div class="slide slide-prinzip" data-kind="prinzip" style="width:' + SW + 'px;height:' + SH + 'px">' +
@@ -76,6 +77,11 @@
   /* Fit check: reports content that does not fit instead of silently cutting it. */
   function fitIssues(el) {
     var out = [];
+    Array.prototype.forEach.call(el.querySelectorAll('.wp-map section'), function (section) {
+      if (section.scrollHeight > section.clientHeight + 2) out.push('Arbeitsbereich: Karte ist zu dicht');
+    });
+    var workspaceHead = el.querySelector('.wp-head');
+    if (workspaceHead && workspaceHead.getBoundingClientRect().bottom > el.getBoundingClientRect().top + 194) out.push('Arbeitsbereich: Titel ist zu lang');
     Array.prototype.forEach.call(el.querySelectorAll('.pt-dlg'), function (c) {
       var r = c.getBoundingClientRect(), parent = c.parentElement.getBoundingClientRect();
       if (r.bottom > parent.bottom + 1 || r.right > parent.right + 1) out.push('Aufgabendetails ausserhalb der Anwendung');

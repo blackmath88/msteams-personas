@@ -56,7 +56,7 @@ const ProjectArg = z.record(z.string(), z.unknown()).describe('The project as a 
 
 function build() {
   const server = new McpServer({ name: 'msteams-personas', version: VERSION }, {
-    instructions: 'Creates fictional Microsoft 365 training slides (Teams chat → channel posts → Planner board → task detail → To Do → task principle) from a JSON project. ' +
+    instructions: 'Creates fictional Microsoft 365 training slides (task sequences or a linked workspace map and Teams/OneDrive scene) from a JSON project. ' +
       'Typical flow: get_capabilities, get_example, adapt the example, validate_project until ok, render_project, then read the returned resource links (or retrieve_artifact) to inspect the PNGs. ' +
       'All content must be fictional. States "before" and "after" are complete snapshots.'
   });
@@ -67,9 +67,9 @@ function build() {
   }, async () => { const c = getCapabilities(); return { content: json(c), structuredContent: c }; });
 
   server.registerTool('get_example', {
-    title: 'Example project', description: 'A complete, valid three-slide example project (fictional bicycle workshop). Adapt it rather than writing from scratch.',
-    annotations: { readOnlyHint: true }
-  }, async () => { const p = getExample(); return { content: json(p), structuredContent: p }; });
+    title: 'Example project', description: 'A complete valid example project. Choose tasks (default) or workspace (fictional Uni Basel training case).',
+    inputSchema: z.object({ kind: z.enum(['tasks', 'workspace']).optional() }), annotations: { readOnlyHint: true }
+  }, async ({ kind }) => { const p = getExample(kind); return { content: json(p), structuredContent: p }; });
 
   server.registerTool('validate_project', {
     title: 'Validate project', description: 'Checks a project and returns structured errors (blocking) and warnings, each with code, path and message.',

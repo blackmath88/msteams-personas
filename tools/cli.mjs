@@ -10,7 +10,7 @@ import { getCapabilities, getExample, validateProject, renderToDir, INPUT_LIMIT_
 const HELP = `Usage: node tools/cli.mjs <command> [options]
 
   capabilities                      supported profiles, limits and versions (JSON)
-  example [--out project.json]      a complete valid example project (JSON)
+  example [--kind tasks|workspace] [--out project.json]      a complete valid example project (JSON)
   validate <project.json | ->       validate; prints {ok, errors, warnings}
   render <project.json | -> --out <dir> [--scale 1|2] [--timeout <ms>]
                                     write ordered PNGs and manifest.json; prints the manifest
@@ -46,7 +46,8 @@ if (opt.help || !cmd) { (cmd ? process.stdout : process.stderr).write(HELP + '\n
 
 if (cmd === 'capabilities') out(getCapabilities());
 else if (cmd === 'example') {
-  const json = JSON.stringify(getExample(), null, 2) + '\n';
+  if (opt.kind && !['tasks', 'workspace'].includes(opt.kind)) fail('Choose --kind tasks or workspace.');
+  const json = JSON.stringify(getExample(opt.kind), null, 2) + '\n';
   if (opt.out) { writeFileSync(resolve(opt.out), json); process.stderr.write(`Example written to ${opt.out}\n`); }
   else process.stdout.write(json);
 }

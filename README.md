@@ -18,6 +18,10 @@ The complete V3 trainer library is on `main` (merged at `300e006`). Open `index.
 
 See [V3 handoff](docs/V3-BUILD-HANDOFF.md) for evidence, supported coverage and limitations. Independent model review passed 17/17; the builder reports 110/110 Chromium checks. New-project authoring, CLI and MCP are described below.
 
+## Arbeitsbereich erkunden
+
+Plan a fictional team workspace as a map and Teams or OneDrive preview. Open «Arbeitsbereich erkunden» from the library and adapt the example as a local draft. See the [workspace profile handoff](docs/WORKSPACE-PROFILE-HANDOFF.md) for model limits and CLI/MCP usage.
+
 ## Portable projects, CLI and MCP
 
 Capability version 3 adds custom `planner-task` (individual task details) and `todo` (a person's explicitly selected «Mein Tag» tasks). Project format remains version 1; capability versions 1 and 2 still load. Website, CLI and MCP use the same validator, compiler, curated renderers and PNG operation.
