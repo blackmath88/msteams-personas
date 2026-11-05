@@ -2,7 +2,7 @@
 
 Status: design concept for the next workspace visual. The overview is a standalone HTML and JavaScript mockup. See the [current workspace handoff](WORKSPACE-PROFILE-HANDOFF.md) for implemented behaviour.
 
-![Overview slide with three Teams houses, named channel rows and a file cabinet beside each channel](mockups/three-houses.png)
+![Overview slide with three Teams houses, team names inside the houses, channel purposes and an aligned file cabinet](mockups/three-houses.png)
 
 [HTML and JavaScript source](mockups/three-houses.html)
 
@@ -20,7 +20,7 @@ A cabinet sits to the right of its room. Folders and subfolders are nested withi
 
 ## Slide 1 · The person’s houses
 
-Start from Mara’s fictional perspective. Show three houses side by side. Draw each channel as a named room in a horizontal row and align a filing cabinet to its right. Give each house a team name, a type label and a short description of who works there. Keep the cabinets at icon level in the overview. Reveal file and folder names on the individual house slides.
+Start from Mara’s fictional perspective. Show three houses side by side. Draw each channel as a named room in a horizontal row and align a filing cabinet to its right. Put the team name and a small team tile inside the house header beneath its roof. Add a team-type label and a short description of who works there. Give each channel one short purpose line and use a restrained Teams-inspired palette with a labelled file column. Keep the cabinets at icon level in the overview. Reveal file and folder names on the individual house slides.
 
 | House | Teamtyp | Zusammenarbeit |
 | --- | --- | --- |
