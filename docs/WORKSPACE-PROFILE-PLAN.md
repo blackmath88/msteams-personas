@@ -10,6 +10,8 @@ The first presentation replaces the setup exposition from Module 1 with a map an
 
 ## Visual grammar
 
+The [house cutaway concept](WORKSPACE-HOUSE-CUTAWAY.md) develops the optional metaphor into a person-centred overview with several Teams, horizontal rooms and a filing cabinet for each room.
+
 Keep the repository’s two visual modes. **Prinzip** explains the workspace with a labelled map. **Szene** shows a recognisable Teams or OneDrive mock for the selected location. «Arbeitsbereich erkunden» is the feature name. In the configurator, label the panes «Arbeitsbereich» and «Vorschau».
 
 | Layer | Default label | Optional metaphor | How to draw it |
