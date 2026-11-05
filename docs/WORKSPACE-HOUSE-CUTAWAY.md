@@ -20,7 +20,7 @@ A cabinet sits to the right of its room. Folders and subfolders are nested withi
 
 ## Slide 1 · The person’s houses
 
-Start from Mara’s fictional perspective. Show three houses side by side. Draw each channel as a named room in a horizontal row and align a filing cabinet to its right. Put the team name and a small team tile inside the house header beneath its roof. Add a team-type label and a short description of who works there. Give each channel one short purpose line and use a restrained Teams-inspired palette with a labelled file column. Keep the cabinets at icon level in the overview. Reveal file and folder names on the individual house slides.
+Start from Mara’s fictional perspective. Show three houses side by side. Draw each channel as a named room in a horizontal row and align a filing cabinet to its right. Put the team name and a small team tile inside the house header beneath its roof. Add a team-type label and a short description of who works there. Give each channel one short purpose line and use a restrained Teams-inspired palette with a labelled file column. Use an architectural cutaway with a tiled roof, attic window, wall edges and a shared ground line. The team header borrows the initials tile and expand chevron from the Teams renderer; the rooms reuse its Fluent icons as visual cues for their purpose. The roof, room-purpose icons and cabinets are teaching devices. Keep the cabinets at icon level in the overview. Reveal file and folder names on the individual house slides.
 
 | House | Teamtyp | Zusammenarbeit |
 | --- | --- | --- |
