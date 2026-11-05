@@ -14,13 +14,14 @@
  * for the objects they include; there are no patch chains.
  */
 (function (root, factory) {
-  var core = factory();
+  var core = factory(typeof module === 'object' && module.exports ? require('./workspace-core.js') : root.WorkspaceCore,
+    typeof module === 'object' && module.exports ? require('./workspace-examples.js') : root.WorkspaceExample);
   if (typeof module === 'object' && module.exports) module.exports = core;
   else root.ProjectCore = core;
-})(typeof window !== 'undefined' ? window : globalThis, function () {
+})(typeof window !== 'undefined' ? window : globalThis, function (Workspace, workspaceExample) {
   var FORMAT = 'msteams-personas/project';
   var PROJECT_VERSION = 1;
-  var CAPABILITY_VERSION = 2;
+  var CAPABILITY_VERSION = Workspace.VERSION;
   var RENDERER_VERSION = 'v3';
   var MAX_INPUT = 200 * 1024;
   var ID = /^[a-z][a-z0-9-]{0,39}$/;
@@ -30,7 +31,7 @@
   var CAPABILITIES = {
     capabilityVersion: CAPABILITY_VERSION,
     rendererVersion: RENDERER_VERSION,
-    profiles: {
+    profiles: Object.assign({
       'teams-posts': {
         label: 'Teams: Beiträge im Kanal', renderer: 'posts', needs: ['team', 'channel', 'posts'],
         budgets: { team: 40, channel: 30, postTitle: 60, postText: 220, posts: 4 }
@@ -43,12 +44,20 @@
         label: 'Planner: gemeinsames Board', renderer: 'planner', needs: ['team', 'state'],
         budgets: { team: 40, taskTitle: 60, bucket: 24, tasks: 8 }
       },
+      'planner-task': {
+        label: 'Planner: Aufgabendetails', renderer: 'plantask', minCapabilityVersion: 3, needs: ['team', 'state', 'task'],
+        budgets: { team: 40, notes: 240, checklist: 5, checklistText: 70, commentText: 180 }
+      },
+      todo: {
+        label: 'Microsoft To Do: Mein Tag', renderer: 'todo', minCapabilityVersion: 3, needs: ['team', 'state', 'viewer', 'taskIds', 'personalListPrivate', 'myDaySelected'],
+        budgets: { team: 40, tasks: 6, dateLabel: 40 }
+      },
       'prinzip-tasks': {
         label: 'Prinzip: Aufgaben, vorher und nachher', renderer: 'principle:tasks', needs: ['before', 'after'],
         budgets: { title: 60, question: 90, problem: 200, recommendation: 200, boundary: 200 }
       }
-    },
-    limits: { people: 8, tasks: 12, documents: 8, slides: 6, presenterNotes: 1200, prinzipLists: PRINZIP_LISTS }
+    }, Workspace.profiles),
+    limits: { people: 8, workspacePeople: 16, tasks: 12, documents: 8, slides: 6, presenterNotes: 1200, prinzipLists: PRINZIP_LISTS }
   };
 
   function copy(x) { return JSON.parse(JSON.stringify(x)); }
@@ -176,7 +185,7 @@
     if (!isObj(p)) { err('not-object', '', 'Das Projekt ist kein JSON-Objekt.'); return { ok: false, errors: errors, warnings: warnings }; }
     if (p.format !== FORMAT) err('format', 'format', 'Unbekanntes Format. Erwartet: «' + FORMAT + '».');
     if (p.projectVersion !== PROJECT_VERSION) err('project-version', 'projectVersion', 'Projektversion ' + JSON.stringify(p.projectVersion) + ' wird nicht unterstützt (erwartet ' + PROJECT_VERSION + ').');
-    if (p.capabilityVersion !== 1 && p.capabilityVersion !== CAPABILITY_VERSION) err('capability-version', 'capabilityVersion', 'Fähigkeitsversion ' + JSON.stringify(p.capabilityVersion) + ' wird nicht unterstützt (erwartet 1 oder ' + CAPABILITY_VERSION + ').');
+    if (![1, 2, 3, CAPABILITY_VERSION].includes(p.capabilityVersion)) err('capability-version', 'capabilityVersion', 'Fähigkeitsversion ' + JSON.stringify(p.capabilityVersion) + ' wird nicht unterstützt (erwartet 1 bis ' + CAPABILITY_VERSION + ').');
     var meta = p.meta;
     if (!isObj(meta)) { err('meta', 'meta', 'Angaben zur Abfolge («meta») fehlen oder sind kein Objekt.'); meta = {}; }
     reqStr(meta, 'title', 'meta', 'meta-title', 'Die Abfolge braucht einen Titel.');
@@ -205,7 +214,7 @@
       });
       return ok;
     }
-    var people = list('people', L.people), docs = list('documents', L.documents), tasks = list('tasks', L.tasks);
+    var people = list('people', p.workspace ? L.workspacePeople : L.people), docs = list('documents', L.documents), tasks = list('tasks', L.tasks);
     var states = list('states', STATE_IDS.length), scenes = list('scenes', 8), slides = list('slides', L.slides);
     function ix(a) { var m = {}; a.forEach(function (e) { if (str(e.x.id)) m[e.x.id] = e.x; }); return m; }
     var P = ix(people), D = ix(docs), T = ix(tasks), S = ix(states), SC = ix(scenes);
@@ -233,13 +242,43 @@
         if (t.list === 'personal' && t.owner == null) err('personal-owner', path + '.owner', where + ': Eine persönliche Aufgabe braucht eine Person.');
         optStr(t, 'bucket', path, where); optStr(t, 'due', path, where);
         if (t.done != null && typeof t.done !== 'boolean') err('type', path + '.done', where + ': «done» muss true oder false sein.', { expected: 'boolean' });
+        var detailFields = ['notes', 'checklist', 'comment', 'progress'];
+        if (p.capabilityVersion < 3 && detailFields.some(function (k) { return t[k] != null; })) err('task-version', path, where + ': Aufgabendetails brauchen capabilityVersion 3.');
+        optStr(t, 'notes', path, where);
+        if (len(t.notes) > 240) warn('long', path + '.notes', where + ': Notizen auf höchstens 240 Zeichen kürzen.');
+        if (t.progress != null && ['not-started', 'in-progress', 'completed'].indexOf(t.progress) < 0) err('task-progress', path + '.progress', where + ': Möglich sind not-started, in-progress, completed.');
+        if (t.progress != null && t.done != null && (t.progress === 'completed') !== t.done) err('task-progress-conflict', path + '.done', where + ': «done» und «progress» widersprechen sich. Beide auf denselben Abschlussstand setzen.');
+        if (t.checklist != null) {
+          if (!Array.isArray(t.checklist)) err('type', path + '.checklist', where + ': Checkliste muss eine Liste sein.');
+          else {
+            if (t.checklist.length > 5) err('too-many-checklist', path + '.checklist', where + ': Höchstens fünf Checklistenpunkte.');
+            t.checklist.forEach(function (c, j) {
+              var cp = path + '.checklist[' + j + ']';
+              if (!isObj(c)) { err('bad-entry', cp, 'Checklistenpunkt muss ein Objekt mit text und done sein.'); return; }
+              reqStr(c, 'text', cp, 'checklist-text', 'Checklistenpunkt braucht Text.');
+              if (typeof c.done !== 'boolean') err('type', cp + '.done', 'Checklistenpunkt: done muss true oder false sein.');
+              if (len(c.text) > 70) warn('long', cp + '.text', 'Checklistenpunkt auf höchstens 70 Zeichen kürzen.');
+            });
+          }
+        }
+        if (t.comment != null) {
+          if (!isObj(t.comment)) err('type', path + '.comment', where + ': Kommentar muss ein Objekt mit by und text sein.');
+          else {
+            personRef(t.comment.by, path + '.comment.by', 'Aufgabenkommentar');
+            reqStr(t.comment, 'text', path + '.comment', 'comment-text', 'Kommentar braucht Text.');
+            if (len(t.comment.text) > 180) warn('long', path + '.comment.text', 'Kommentar auf höchstens 180 Zeichen kürzen.');
+          }
+        }
         if (len(t.bucket) > CAPABILITIES.profiles.planner.budgets.bucket) warn('long', path + '.bucket', where + ': Bucket-Name ist lang und wird eventuell gekürzt.');
       });
     });
+    Workspace.check(p, err);
     scenes.forEach(function (e) {
       var sc = e.x, path = 'scenes[' + e.i + ']', prof = str(sc.profile) && Object.prototype.hasOwnProperty.call(CAPABILITIES.profiles, sc.profile) ? CAPABILITIES.profiles[sc.profile] : null;
       if (!prof) { err('unknown-profile', path + '.profile', 'Szene «' + diagnosticText(sc.id) + '»: Ansicht «' + diagnosticText(sc.profile) + '» wird nicht unterstützt. Möglich: ' + Object.keys(CAPABILITIES.profiles).join(', ') + '.'); return; }
       if (sc.profile === 'teams-chat' && p.capabilityVersion === 1) err('profile-version', path + '.profile', 'Teams: Chat zu zweit braucht capabilityVersion 2.');
+      if (['todo', 'planner-task'].indexOf(sc.profile) >= 0 && p.capabilityVersion < 3) err('profile-version', path + '.profile', prof.label + ' braucht capabilityVersion 3.');
+      if (Workspace.isProfile(sc.profile)) return;
       var B = prof.budgets;
       reqStr(sc, 'team', path, 'scene-team', 'Szene «' + diagnosticText(sc.id) + '» braucht einen Teamnamen.');
       if (len(sc.team) > B.team) warn('long', path + '.team', 'Teamname ist länger als ' + B.team + ' Zeichen.');
@@ -285,9 +324,40 @@
           });
         }
       }
-      if (sc.profile === 'planner') {
+      if (['planner', 'planner-task', 'todo'].indexOf(sc.profile) >= 0) {
         if (STATE_IDS.indexOf(sc.state) < 0 || !S[sc.state]) err('unknown-state', path + '.state', 'Planner-Szene «' + diagnosticText(sc.id) + '»: Zustand «' + diagnosticText(sc.state) + '» fehlt. Möglich: «before» oder «after».');
-        else if (!planTasks(p, sc.state).length) warn('empty-plan', path + '.state', 'Im Zustand «' + diagnosticText(sc.state) + '» steht keine Aufgabe im gemeinsamen Plan.');
+        else if (sc.profile === 'planner' && !planTasks(p, sc.state).length) warn('empty-plan', path + '.state', 'Im Zustand «' + diagnosticText(sc.state) + '» steht keine Aufgabe im gemeinsamen Plan.');
+      }
+      if (sc.profile === 'planner-task') {
+        var snapshot = stateOf(p, sc.state), entry = snapshot && isObj(snapshot.tasks) && str(sc.task) && snapshot.tasks[sc.task];
+        if (!str(sc.task) || !Object.prototype.hasOwnProperty.call(T, sc.task)) err('unknown-task', path + '.task', 'Aufgabendetails: eine vorhandene Aufgaben-ID in «task» wählen.');
+        else if (!isObj(entry) || entry.list !== 'plan') err('detail-task-state', path + '.task', 'Aufgabendetails: die Aufgabe muss im gewählten Zustand im gemeinsamen Plan stehen.');
+        else if (!entry.owner) err('detail-task-owner', path + '.task', 'Aufgabendetails: der Aufgabe im gewählten Zustand eine Person zuweisen.');
+      }
+      if (sc.profile === 'todo') {
+        personRef(sc.viewer, path + '.viewer', 'To-Do-Ansicht');
+        ['personalListPrivate', 'myDaySelected'].forEach(function (k) {
+          if (sc[k] !== true) err('todo-assumption', path + '.' + k, 'To Do: «' + k + '» auf true setzen. Das Beispiel setzt eine nicht geteilte persönliche Liste und bewusst für Mein Tag gewählte Aufgaben voraus.');
+        });
+        if (sc.plannerConnected != null && typeof sc.plannerConnected !== 'boolean') err('type', path + '.plannerConnected', 'To Do: plannerConnected muss true oder false sein.');
+        optStr(sc, 'dateLabel', path, 'To Do');
+        if (len(sc.dateLabel) > B.dateLabel) warn('long', path + '.dateLabel', 'Datumszeile auf höchstens 40 Zeichen kürzen.');
+        if (!Array.isArray(sc.taskIds) || !sc.taskIds.length) err('todo-tasks', path + '.taskIds', 'To Do: vorhandene Aufgaben-IDs für Mein Tag in «taskIds» auswählen.');
+        else {
+          if (sc.taskIds.length > B.tasks) err('too-many-todo', path + '.taskIds', 'To Do: höchstens sechs Aufgaben für Mein Tag auswählen.');
+          var seenTasks = {};
+          sc.taskIds.forEach(function (tid, j) {
+            var tp = path + '.taskIds[' + j + ']', st = stateOf(p, sc.state), t = st && isObj(st.tasks) && str(tid) && st.tasks[tid];
+            if (!str(tid) || !Object.prototype.hasOwnProperty.call(T, tid)) { err('unknown-task', tp, 'To Do: «' + diagnosticText(tid) + '» durch eine vorhandene Aufgaben-ID ersetzen.'); return; }
+            if (seenTasks[tid]) err('duplicate-task', tp, 'To Do: jede Aufgabe nur einmal auswählen.');
+            seenTasks[tid] = true;
+            if (!isObj(t)) err('todo-task-state', tp, 'To Do: diese Aufgabe fehlt im gewählten Zustand. Aufgabe dort erfassen oder Auswahl entfernen.');
+            else {
+              if (t.owner !== sc.viewer) err('todo-task-owner', tp, 'To Do: nur Aufgaben der gewählten Person auswählen. Person oder Zuständigkeit im Zustand prüfen.');
+              if (t.list === 'plan' && sc.plannerConnected !== true) err('todo-connection', path + '.plannerConnected', 'Zugewiesene Planner-Aufgaben: plannerConnected auf true setzen. Dasselbe Arbeitskonto und aktivierte Planner-Verbindung sind Voraussetzung.');
+            }
+          });
+        }
       }
       if (sc.profile === 'prinzip-tasks') {
         if (sc.before !== 'before' || sc.after !== 'after') err('prinzip-states', path, 'Prinzip-Szene «' + diagnosticText(sc.id) + '»: «before» muss «before» und «after» muss «after» sein.');
@@ -337,10 +407,36 @@
   /* ---------- Compiler: project + slide -> view model the existing renderers accept ---------- */
   function compile(p, slideIndex) {
     var sl = p.slides[slideIndex]; if (!sl) return null;
-    var sc = idx(p.scenes)[sl.scene]; if (!sc) return null;
+    return compileScene(p, sl.scene, sl.teaching);
+  }
+  /* Scene → view model; slides add only their teaching text. Components compile scenes directly. */
+  function compileScene(p, sceneId, teaching) {
+    var sc = idx(p.scenes)[sceneId]; if (!sc) return null;
     var P = idx(p.people), D = idx(p.documents || []);
     var people = p.people.map(function (x, i) { return { id: x.id, idx: i, original: x.name, name: x.name, role: x.role || '', external: false, outside: false }; });
     var byId = idx(people);
+    if (Workspace.isProfile(sc.profile)) {
+      var model = Workspace.model(p, sc), personal = model.base.kind === 'personal';
+      var files = model.entries.map(function (n) {
+        var shared = (n.sharedWith || []).map(function (id) { return byId[id].name; });
+        return { name: n.name, kind: n.kind, canonical: n === model.selected, mark: n === model.selected ? 3 : null,
+          note: shared.length ? 'Bearbeitungszugriff für ' + shared.join(', ') : 'Privat', when: '–' };
+      });
+      var workspaceIndex = Workspace.index(p.workspace);
+      return {
+        title: p.meta.title, world: { id: model.base.id }, team: model.base.name, workspace: model,
+        tools: [personal ? 'onedrive' : 'teams'],
+        person: function (id) { return byId[id]; }, fill: function (value) { return value || ''; },
+        scene: { members: personal ? [model.base.owner] : model.base.members, viewer: model.viewer,
+          active: model.active.name, channels: model.channels.map(function (n) { return n.name; }), activeIndex: model.channels.indexOf(model.active),
+          folderPath: Workspace.trail(workspaceIndex, model.folder.id).slice(personal ? 2 : 3).map(function (n) { return n.name; }),
+          files: files, tasks: [], workspace: true,
+          posts: (model.active.posts || []).map(function (post) {
+            var file = workspaceIndex.get(post.file);
+            return Object.assign({}, post, { file: file && file.name, filePath: file && Workspace.trail(workspaceIndex, file.id).slice(1, -1).filter(function (n) { return n.kind !== 'storage'; }).map(function (n) { return n.name; }).join(' › '), mark: file ? 3 : null });
+          }) }
+      };
+    }
     var notes = {}, mark = 0;
     var posts = sc.profile === 'teams-posts' ? sc.posts.map(function (q) {
       var m = q.hint ? ++mark : null; if (m) notes[m] = q.hint;
@@ -350,16 +446,27 @@
       viewer: sc.viewer, partner: sc.partner, generated: false, others: [], later: sc.notSeenBy || [], laterLabel: null,
       messages: sc.messages.map(function (q) {
         var m = q.hint ? ++mark : null; if (m) notes[m] = q.hint;
-        return { by: q.by, time: q.time || '', text: q.text, mark: m, decision: !!q.decision };
+        return { id: q.id, by: q.by, time: q.time || '', text: q.text, mark: m, decision: !!q.decision };
       })
     } : null;
-    var after = sc.profile === 'planner' ? sc.state : sc.after;
-    var tasks = planTasks(p, after).map(function (t) { return { title: t.title, owner: t.owner, due: t.due || '', bucket: t.bucket || 'Aufgaben', done: !!t.done }; });
+    var after = sc.state || sc.after;
+    function taskView(t) { return Object.assign({}, t, { due: t.due || '', bucket: t.bucket || 'Aufgaben', done: t.progress ? t.progress === 'completed' : !!t.done }); }
+    var tasks = planTasks(p, after).map(taskView);
+    var taskDetail = null, todo = null;
+    if (sc.profile === 'planner-task') {
+      var selected = tasks.filter(function (t) { return t.id === sc.task; })[0];
+      taskDetail = { task: selected, notes: selected.notes || '', checklist: (selected.checklist || []).map(function (c) { return [c.text, c.done]; }), comment: selected.comment || null };
+    }
+    if (sc.profile === 'todo') {
+      var st = stateOf(p, sc.state), T = idx(p.tasks), selectedTasks = sc.taskIds.map(function (id) { return taskView(Object.assign({}, T[id], st.tasks[id])); });
+      var owned = p.tasks.filter(function (t) { return st.tasks[t.id] && st.tasks[t.id].owner === sc.viewer; });
+      todo = { viewer: sc.viewer, personal: selectedTasks.filter(function (t) { return t.list === 'personal'; }), assigned: selectedTasks.filter(function (t) { return t.list === 'plan'; }), personalCount: owned.filter(function (t) { return st.tasks[t.id].list === 'personal'; }).length, assignedCount: owned.filter(function (t) { return st.tasks[t.id].list === 'plan'; }).length, plan: sc.plannerConnected === true, dateLabel: sc.dateLabel || 'Für diesen Arbeitstag ausgewählt' };
+    }
     var principles = {};
     if (sc.profile === 'prinzip-tasks') {
       /* Before side keeps the meaning of each entry: personal lists hold only list:'personal';
          tasks already in the shared plan before are shown as such, never as someone's list. */
-      var t = sl.teaching || {}, before = stateOf(p, sc.before), personal = [], beforeShared = [];
+      var t = teaching || {}, before = stateOf(p, sc.before), personal = [], beforeShared = [];
       p.tasks.forEach(function (task) {
         var e = before && before.tasks[task.id]; if (!e) return;
         if (e.list === 'plan') { beforeShared.push({ t: task.title, who: e.owner || null, whoLabel: e.owner ? '' : 'offen', due: e.due || '' }); return; }
@@ -384,13 +491,14 @@
       people: people, person: function (pid) { return byId[pid] || { id: pid, name: P[pid] ? P[pid].name : '?', role: '' }; },
       team: sc.team, teamOriginal: sc.team,
       scene: { personal: false, team: sc.team, teamNote: '', active: sc.channel || 'Allgemein', channels: [sc.channel || 'Allgemein'], members: members, posts: posts, files: [], tasks: tasks, outside: [], notes: notes },
-      principles: principles, story: null, tools: chat ? ['teams', 'chat', 'planner'] : ['teams', 'planner'], taskDetail: null, chat: chat, todo: null, ai: null,
+      principles: principles, story: null, tools: (chat ? ['teams', 'chat', 'planner'] : ['teams', 'planner']).concat(taskDetail ? ['plantask'] : [], todo ? ['todo'] : []), taskDetail: taskDetail, chat: chat, todo: todo, ai: null,
       fill: function (x) { return x == null ? '' : String(x); }, legacyHref: null
     };
   }
   /* What the existing slide composer needs for this slide: params, kind and principle meta. */
   function slidePlan(p, slideIndex) {
     var sl = p.slides[slideIndex], sc = sl && idx(p.scenes)[sl.scene]; if (!sc) return null;
+    if (Workspace.isProfile(sc.profile)) return { params: { mode: sc.profile === 'workspace-map' ? 'prinzip' : 'szene', sub: 'workspace', tab: sc.tab }, kind: 'workspace', meta: null };
     if (sc.profile === 'prinzip-tasks') {
       var t = sl.teaching || {};
       return { params: { mode: 'prinzip', sub: 'tasks', annot: false }, kind: 'prinzip', meta: { id: 'tasks', title: t.title || 'Prinzip', question: t.question || '' } };
@@ -401,6 +509,116 @@
     var sl = p.slides[slideIndex], sc = idx(p.scenes)[sl.scene];
     var base = ((p.meta.id || 'projekt') + '-' + sc.profile).toLowerCase().replace(/[äÄ]/g, 'ae').replace(/[öÖ]/g, 'oe').replace(/[üÜ]/g, 'ue').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     return ('0' + (slideIndex + 1)).slice(-2) + '-' + base + '.png';
+  }
+
+  /* ---------- Components: one M365 screen (or an excerpt) as a picture for the trainer's own slide ----------
+   * A component instance is { scene, type?, view, select?, marks? }. The type follows from the
+   * scene's profile; the view decides how much of the window is shown; select names the entities
+   * by ID. The renderer returns the PNG plus measured anchors, so callouts are placed by entity,
+   * never by authored pixels. Readability is checked where the picture is placed (see below).
+   */
+  var COMPONENT_VERSION = 1;
+  var COMPONENTS = {
+    'teams.channel': {
+      profile: 'teams-posts', label: 'Teams: Kanal mit Beiträgen',
+      teachingUses: ['Zeigen, wo eine Information heute steht', 'Ausgangslage oder Problem: Arbeit, die nur im Beitrag steht'],
+      avoidWhen: ['Mehr als zwei Beiträge auf einer kleinen Fläche', 'Wenn es um Verantwortung und Termine geht: dafür planner.board'],
+      views: {
+        window: { label: 'Ganzes Teams-Fenster mit Navigation', select: null },
+        posts: { label: 'Nur die Beiträge, ohne leeren Bereich', select: 'postIds', reflow: true }
+      }
+    },
+    'teams.chat': {
+      profile: 'teams-chat', label: 'Teams: Chat zu zweit',
+      teachingUses: ['Eine Absprache, die nur zwei Personen sehen', 'Entscheid im Chat, der ins Team gehört'],
+      avoidWhen: ['Wenn das ganze Team die Information braucht: dafür teams.channel'],
+      views: {
+        window: { label: 'Ganzes Chat-Fenster', select: null },
+        messages: { label: 'Nur die Nachrichten', select: 'messageIds', reflow: true }
+      }
+    },
+    'planner.board': {
+      profile: 'planner', label: 'Planner: gemeinsames Board',
+      teachingUses: ['Zielbild: jede Aufgabe mit Person, Termin und Bucket', 'Lösung nach einem Problem aus Teams'],
+      avoidWhen: ['Persönliche Erinnerungen: die gehören nicht in den Plan'],
+      views: {
+        board: { label: 'Ganzes Planner-Fenster', select: null },
+        bucket: { label: 'Ein Bucket mit seinen Aufgaben', select: 'bucket', required: true }
+      }
+    }
+  };
+  /* Effective text size on the slide = text px × 72 × placed width ÷ picture width (inches, pt). */
+  var READABILITY = { minTextPt: 12, note: 'Kleinster Fliesstext im Bild, in Punkt auf der Folie. Unter 12 pt ist er im Schulungsraum schwer lesbar.' };
+  var MAX_COMPONENTS = 8;
+  /* Reflowed excerpts: list width in app px. Narrower wraps the text like a narrow Teams window,
+     so the picture can be placed smaller at the same text size. */
+  var REFLOW = { min: 420, max: 1080, default: 640 };
+
+  function componentType(profile) {
+    return Object.keys(COMPONENTS).filter(function (k) { return COMPONENTS[k].profile === profile; })[0] || null;
+  }
+  /* Entities a scene shows, for selection and anchors. */
+  function sceneEntities(p, sc) {
+    if (sc.profile === 'teams-posts') return { ids: sc.posts.map(function (q) { return q.id; }), buckets: [] };
+    if (sc.profile === 'teams-chat') return { ids: sc.messages.map(function (q) { return q.id; }), buckets: [] };
+    if (sc.profile === 'planner') {
+      var t = planTasks(p, sc.state), b = [];
+      t.forEach(function (x) { var n = x.bucket || 'Aufgaben'; if (b.indexOf(n) < 0) b.push(n); });
+      return { ids: t.map(function (x) { return x.id; }), buckets: b };
+    }
+    return { ids: [], buckets: [] };
+  }
+  /* Validates the project and every component spec. Never throws. */
+  function validateComponents(p, specs) {
+    var v = validate(p), errors = v.errors.slice(), warnings = v.warnings.slice(), out = [];
+    function err(code, path, message, extra) { errors.push(Object.assign({ code: code, path: path, message: message, severity: 'error' }, extra || {})); }
+    function warn(code, path, message) { warnings.push({ code: code, path: path, message: message, severity: 'warning' }); }
+    if (!Array.isArray(specs) || !specs.length) { err('components', 'components', 'Mindestens eine Komponente angeben.'); return { ok: false, errors: errors, warnings: warnings, components: out }; }
+    if (specs.length > MAX_COMPONENTS) err('too-many-components', 'components', 'Höchstens ' + MAX_COMPONENTS + ' Komponenten pro Aufruf.');
+    if (!v.ok) return { ok: false, errors: errors, warnings: warnings, components: out };
+    var SC = idx(p.scenes);
+    specs.slice(0, MAX_COMPONENTS).forEach(function (s, i) {
+      var path = 'components[' + i + ']';
+      if (!isObj(s)) { err('bad-entry', path, 'Komponente ' + (i + 1) + ' ist kein Objekt.'); return; }
+      var sc = str(s.scene) ? SC[s.scene] : null;
+      if (!sc) { err('unknown-scene', path + '.scene', 'Komponente ' + (i + 1) + ': Szene «' + diagnosticText(s.scene) + '» fehlt.'); return; }
+      var type = componentType(sc.profile);
+      if (!type) { err('no-component', path + '.scene', 'Szene «' + sc.id + '» (' + sc.profile + ') gibt es noch nicht als Komponente. Möglich: ' + Object.keys(COMPONENTS).join(', ') + '.'); return; }
+      if (s.type != null && s.type !== type) { err('component-type', path + '.type', 'Szene «' + sc.id + '» ergibt «' + type + '», nicht «' + diagnosticText(s.type) + '».'); return; }
+      var C = COMPONENTS[type], view = s.view == null ? Object.keys(C.views)[0] : s.view, V = C.views[view];
+      if (!V) { err('component-view', path + '.view', '«' + type + '» kennt die Ansicht «' + diagnosticText(view) + '» nicht. Möglich: ' + Object.keys(C.views).join(', ') + '.'); return; }
+      if (s.width != null && (!V.reflow || typeof s.width !== 'number' || !isFinite(s.width) || s.width < REFLOW.min || s.width > REFLOW.max))
+        err('component-width', path + '.width', V.reflow ? '«width» ist eine Zahl von ' + REFLOW.min + ' bis ' + REFLOW.max + ' (Pixel der App).' : 'Ansicht «' + view + '» hat keine wählbare Breite.');
+      if (s.marks != null && typeof s.marks !== 'boolean') err('type', path + '.marks', '«marks» muss true oder false sein.', { expected: 'boolean' });
+      var E = sceneEntities(p, sc), dup = E.ids.filter(function (x, j) { return str(x) && E.ids.indexOf(x) !== j; });
+      if (dup.length) err('duplicate-entity', path + '.scene', 'Szene «' + sc.id + '»: die ID «' + dup[0] + '» kommt mehrfach vor.');
+      if (E.ids.some(function (x) { return !str(x); })) warn('no-entity-id', path + '.scene', 'Szene «' + sc.id + '»: Einträge ohne ID bekommen keinen Ankerpunkt.');
+      var sel = isObj(s.select) ? s.select : {}, picked = null;
+      if (s.select != null && !isObj(s.select)) err('type', path + '.select', '«select» muss ein Objekt sein.', { expected: 'object' });
+      Object.keys(sel).forEach(function (k) { if (k !== V.select) err('select-field', path + '.select.' + k, 'Ansicht «' + view + '» wählt ' + (V.select ? 'mit «' + V.select + '»' : 'nichts aus') + ', nicht mit «' + k + '».'); });
+      if (V.select === 'bucket') {
+        picked = sel.bucket;
+        if (!str(picked)) err('select-bucket', path + '.select.bucket', 'Ansicht «bucket» braucht einen Bucket. Möglich: ' + E.buckets.join(', ') + '.');
+        else if (E.buckets.indexOf(picked) < 0) err('unknown-bucket', path + '.select.bucket', 'Den Bucket «' + picked + '» gibt es im Plan nicht. Möglich: ' + E.buckets.join(', ') + '.');
+      } else if (V.select && sel[V.select] != null) {
+        picked = sel[V.select];
+        if (!Array.isArray(picked) || !picked.length || !picked.every(str)) err('type', path + '.select.' + V.select, '«' + V.select + '» muss eine nicht leere Liste von IDs sein.', { expected: 'string[]' });
+        else picked.forEach(function (id, j) {
+          if (E.ids.indexOf(id) < 0) err('unknown-entity', path + '.select.' + V.select + '[' + j + ']', 'Die ID «' + id + '» gibt es in Szene «' + sc.id + '» nicht.', { ref: id });
+          else if (picked.indexOf(id) !== j) err('duplicate-entity', path + '.select.' + V.select + '[' + j + ']', 'Die ID «' + id + '» ist doppelt gewählt.');
+        });
+      }
+      out.push({ index: i, type: type, scene: sc.id, profile: sc.profile, view: view, select: picked, marks: s.marks === true, width: V.reflow ? Math.round(s.width || REFLOW.default) : null });
+    });
+    return { ok: !errors.length, errors: errors, warnings: warnings, components: errors.length ? [] : out };
+  }
+  function componentFile(p, c) {
+    var base = ((p.meta.id || 'projekt') + '-' + c.scene + '-' + c.view).toLowerCase().replace(/[äÄ]/g, 'ae').replace(/[öÖ]/g, 'oe').replace(/[üÜ]/g, 'ue').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    return 'c' + ('0' + (c.index + 1)).slice(-2) + '-' + base + '.png';
+  }
+  function componentCatalogue() {
+    var c = copy(COMPONENTS);
+    return { componentVersion: COMPONENT_VERSION, readability: copy(READABILITY), reflowWidth: copy(REFLOW), maxPerCall: MAX_COMPONENTS, types: c };
   }
 
   /* ---------- Assistant bridge: authoring pack and repair prompt ---------- */
@@ -422,6 +640,7 @@
     if (brief.duration) lines.push('- Dauer: ' + brief.duration);
     lines.push('- Standard: drei Folien in dieser Reihenfolge: Teams-Beiträge → Planner-Board → Prinzip (Aufgaben vorher/nachher).');
     lines.push('Teams-Chat (teams-chat) ist eine optionale zusätzliche Folie; die Standardabfolge bleibt bei drei Folien.');
+    lines.push('Vollständige Aufgabenabfolge (sechs Folien): teams-chat → teams-posts → planner → planner-task → todo → prinzip-tasks.');
     lines.push('');
     lines.push('## Vorgehen');
     lines.push('Du darfst zuerst kurz ein Storyboard (3 Zeilen) vorschlagen und Rückfragen stellen. Wenn keine Antwort kommt, arbeite mit den Standards weiter.');
@@ -444,11 +663,17 @@
     lines.push('- Aussagen zu Berechtigungen, Benachrichtigungen und Sichtbarkeit als Bedingungen dieses Beispiels formulieren («persönlich» heisst hier: nicht geteilt). Keine garantierten Teams-Benachrichtigungen behaupten.');
     lines.push('- Bei Pflege-, Schul- oder Mandatsbeispielen: organisatorische Aufgaben ohne Namen betreuter Personen und ohne Angaben zu Gesundheit oder Behandlung. Die Inhalte müssen die eigene Grenze («boundary») der Prinzip-Folie einhalten.');
     lines.push('- Annahmen über das Verhalten von Microsoft 365, die du triffst, schreibe in meta.assumptions.');
+    lines.push('- planner-task: team, state und task (bestehende Aufgaben-ID). Die Aufgabe steht in diesem Zustand mit owner im Plan. Details stehen NUR in states[].tasks[taskId]: notes, progress (not-started/in-progress/completed), checklist [{text,done}], optional comment {by,text}. Kein zweiter Aufgabentitel in der Szene.');
+    lines.push('- todo: team, state, viewer und taskIds (1–6 bestehende IDs, nur Aufgaben dieser Person). Zeigt die bewusst ausgewählten Aufgaben in Mein Tag. personalListPrivate:true und myDaySelected:true sind erforderlich. Für Planner-Aufgaben zusätzlich plannerConnected:true: gleiches Arbeitskonto und aktivierte Planner-Verbindung voraussetzen. Mein Tag ist keine automatische Kopie aller Aufgaben. Aufgaben-IDs, Titel, Termine und Status bleiben identisch mit dem Plan.');
     lines.push('- Behaupte nicht, du hättest die Folien gerendert oder das JSON geprüft. Die Prüfung macht die Website beim Import.');
     lines.push('- Kein HTML, kein CSS, kein Script, keine Bild-URLs. Texte sind reiner Text.');
     lines.push('');
     lines.push('Optionale Chat-Szene (in scenes einfügen und in slides referenzieren): ' + JSON.stringify({ id: 'sc-chat', profile: 'teams-chat', team: 'Werkstatt Velotech', viewer: 'p-marco', partner: 'p-aylin', messages: [{ id: 'm1', by: 'p-aylin', text: 'Ich übernehme die Bremsen.', hint: 'Der Entscheid ist noch nicht im Plan.', decision: true }], notSeenBy: ['p-jonas'] }));
+    lines.push('Optionale Detailszene: ' + JSON.stringify({ id: 'sc-detail', profile: 'planner-task', team: 'Werkstatt Velotech', state: 'after', task: 't-bremsen' }));
+    lines.push('Optionale To-Do-Szene: ' + JSON.stringify({ id: 'sc-todo', profile: 'todo', team: 'Werkstatt Velotech', state: 'after', viewer: 'p-aylin', taskIds: ['t-bremsen', 't-lager'], personalListPrivate: true, myDaySelected: true, plannerConnected: true }));
     lines.push('');
+    lines.push('Arbeitsbereich: workspace-map und workspace-scene verwenden dieselbe workspace.nodes-Liste. root und selected verweisen auf IDs. workspace-scene nutzt tab posts oder files. viewer ist für persönliche Ablagen erforderlich. house ist ein optionales Boolean für die Karte.');
+    lines.push('Vollständiges Arbeitsbereich-Beispiel (alternativ zur Aufgabenabfolge): ' + JSON.stringify(workspaceExample()));
     lines.push('## Vollständiges Beispiel (Inhalt ersetzen, Struktur beibehalten)');
     lines.push('```json');
     lines.push(JSON.stringify(minimalExample(), null, 1));
@@ -477,7 +702,15 @@
       ['viewer', 'partner'].forEach(function (k) { if (sc[k] === from) sc[k] = to; });
       if (Array.isArray(sc.notSeenBy)) sc.notSeenBy = sc.notSeenBy.map(function (id) { return id === from ? to : id; });
     });
-    q.states.forEach(function (st) { Object.keys(st.tasks || {}).forEach(function (k) { if (st.tasks[k].owner === from) st.tasks[k].owner = to; }); });
+    if (q.workspace && Array.isArray(q.workspace.nodes)) q.workspace.nodes.forEach(function (n) {
+      if (!isObj(n)) return;
+      if (n.owner === from) n.owner = to;
+      ['members', 'sharedWith'].forEach(function (k) {
+        if (Array.isArray(n[k])) n[k] = Array.from(new Set(n[k].map(function (id) { return id === from ? to : id; })));
+      });
+      if (Array.isArray(n.posts)) n.posts.forEach(function (post) { if (isObj(post) && post.by === from) post.by = to; });
+    });
+    q.states.forEach(function (st) { Object.keys(st.tasks || {}).forEach(function (k) { if (st.tasks[k].owner === from) st.tasks[k].owner = to; if (st.tasks[k].comment && st.tasks[k].comment.by === from) st.tasks[k].comment.by = to; }); });
     return q;
   }
   function newId(prefix, list) {
@@ -489,8 +722,9 @@
   return {
     FORMAT: FORMAT, STATE_IDS: STATE_IDS.slice(), PROJECT_VERSION: PROJECT_VERSION, CAPABILITY_VERSION: CAPABILITY_VERSION, RENDERER_VERSION: RENDERER_VERSION, MAX_INPUT: MAX_INPUT,
     capabilities: function () { return copy(CAPABILITIES); },
-    template: template, blank: blank, parseInput: parseInput, validate: validate, summary: summary,
-    compile: compile, slidePlan: slidePlan, fileName: fileName, planTasks: planTasks,
+    template: template, workspaceExample: workspaceExample, blank: blank, parseInput: parseInput, validate: validate, summary: summary,
+    compile: compile, compileScene: compileScene, slidePlan: slidePlan, fileName: fileName, planTasks: planTasks,
+    COMPONENT_VERSION: COMPONENT_VERSION, components: componentCatalogue, validateComponents: validateComponents, componentFile: componentFile,
     authoringPack: authoringPack, repairPrompt: repairPrompt, replacePersonRef: replacePersonRef, newId: newId, serialise: serialise, copy: copy
   };
 });

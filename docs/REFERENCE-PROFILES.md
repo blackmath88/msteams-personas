@@ -11,6 +11,7 @@ All profiles use a German, light theme and a fixed 1440 × 810 CSS-px design vie
 | Teams meeting recap | Same Teams profile, Kalender selected, meeting chat with «Zusammenfassung» tab. **AI notes and suggestions are a labelled simulation** | Recap with AI notes, suggested tasks and review states (v3) |
 | Planner | Planner (web / new Planner experience), German, light: «Mein Tag / Meine Aufgaben / Meine Pläne», plan header with «Raster / Board / Diagramme / Zeitplan», Board grouped by bucket, task cards with label, due date (overdue in red), checklist count and assignee | Board (v3); also embedded in the Teams «Aufgaben» tab |
 | To Do | Microsoft To Do (web), German, light, blue header: «Mein Tag, Wichtig, Geplant, Zugewiesen an mich, Aufgaben» | «Mein Tag» with own tasks and «Zugewiesen an mich» Planner tasks (v3) |
+| Planner task details | Existing Planner shell with task dialog, German, light | Custom capability-v3 profile `planner-task`: same task as board, owner/date/progress, notes, up to five checklist items and optional comment. Priority remains the illustrative default «Mittel». |
 | Outlook | New Outlook / Outlook im Web, German, light: blue header, simplified ribbon, folder pane, message list (Relevant / Sonstige), reading pane on the right. Classic Outlook chrome is **not** mixed in. | Posteingang with selected message and attachment |
 | Windows Explorer | Windows 11 File Explorer, German (CH: «Grösse»), light, details view, tabbed title bar | Downloads folder with downloaded copies |
 | SharePoint | SharePoint Online team site, modern document library, German, light | Dokumente › channel folder, selected file with details pane |
@@ -50,6 +51,8 @@ The user's own environment takes priority. If a real reference screenshot is sup
 No publicly available product screenshots were downloaded or bundled. All visuals are recreated with local CSS and inline icons.
 
 ## Deliberate simplifications
+
+Custom task profiles (2026-11-02): [Microsoft Support, See Planner tasks in Microsoft To Do](https://support.microsoft.com/en-us/planner/see-planner-tasks-in-microsoft-to-do) confirms the Planner connection and adding assigned tasks to My Day. The page itself warns that instructions are being updated for the new Planner experience. These scenes assume the same work account, an available Planner connection enabled in To Do and a conscious My Day selection. They do not prove behaviour in a University tenant or for every plan type. Personal lists in this example are explicitly not shared. Progress is an explicit snapshot field; a checked checklist item does not automatically set progress.
 
 - Replies are collapsed («2 Antworten von …»), as in the Beiträge layout. Full threads are not rendered.
 - Teaching marks are small numbered badges. Their explanations sit outside the application, in the workspace notes or the slide column.

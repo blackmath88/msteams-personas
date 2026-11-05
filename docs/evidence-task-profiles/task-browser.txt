@@ -1,0 +1,11 @@
+PASS six-slide import opens detail and To Do previews
+PASS one title edit reaches board, details, To Do and principle
+PASS explicit completion reaches detail and To Do without changing before
+PASS checklist editor adds a canonical item
+PASS invalid To Do ownership stays editable and blocks export
+PASS reload preserves task details and selections
+PASS website exports all six through shared operation
+PASS mobile editor has no page overflow
+PASS new-profile authoring upgrades capability version and stays valid
+PASS offline file editor loads the new catalogue
+PASS no script errors

@@ -1,0 +1,31 @@
+Node v26.8.1 · 2026-11-02T13:19:21.901Z
+Project: examples/lichtblick-kulissenwechsel.project.json
+Specs: [{"scene":"sc-kanal","view":"posts"},{"scene":"sc-kanal","view":"posts","select":{"postIds":["q2"]}},{"scene":"sc-chat","view":"messages","select":{"messageIds":["m1","m2"]}},{"scene":"sc-plan","view":"bucket","select":{"bucket":"Abendprobe"}},{"scene":"sc-kanal","view":"window"}]
+
+ok   mcp: render_components discovered — get_capabilities, get_example, validate_project, render_project, render_components, retrieve_artifact
+ok   mcp: capabilities list component types
+ok   mcp: render ok — []
+ok   mcp: c01-lichtblick-kulissenwechsel-sc-kanal-posts.png is the listed PNG — 1344×542
+ok   mcp: c01-lichtblick-kulissenwechsel-sc-kanal-posts.png anchors inside the picture — q1,q2
+ok   mcp: c02-lichtblick-kulissenwechsel-sc-kanal-posts.png is the listed PNG — 1344×244
+ok   mcp: c02-lichtblick-kulissenwechsel-sc-kanal-posts.png anchors inside the picture — q2
+ok   mcp: c03-lichtblick-kulissenwechsel-sc-chat-messages.png is the listed PNG — 1344×328
+ok   mcp: c03-lichtblick-kulissenwechsel-sc-chat-messages.png anchors inside the picture — m1,m2
+ok   mcp: c04-lichtblick-kulissenwechsel-sc-plan-bucket.png is the listed PNG — 592×598
+ok   mcp: c04-lichtblick-kulissenwechsel-sc-plan-bucket.png anchors inside the picture — t-rampe,t-licht,Abendprobe
+ok   mcp: c05-lichtblick-kulissenwechsel-sc-kanal-window.png is the listed PNG — 2880×1620
+ok   mcp: c05-lichtblick-kulissenwechsel-sc-kanal-window.png anchors inside the picture — q1,q2
+ok   posts: every post anchored by id
+ok   posts: selection shows only q2
+ok   chat: selection shows only m1, m2
+ok   bucket: tasks and the bucket itself anchored
+ok   window: full app size at scale 2
+ok   readability: excerpt needs less width than the window — 8 in vs 17.14 in
+ok   provenance: context and attribution
+ok   mcp: retrieve_artifact returns the component
+ok   mcp: located errors for unknown id, unsupported scene, missing bucket — unknown-entity@components[0].select.postIds[0] no-component@components[1].scene select-bucket@components[2].select.bucket
+ok   cli: same files, byte-identical to MCP
+ok   cli: invalid selection exits 1, nothing written
+ok   anchors: longer post q1 moves q2 down — 332 px → 372 px
+
+25 passed, 0 failed

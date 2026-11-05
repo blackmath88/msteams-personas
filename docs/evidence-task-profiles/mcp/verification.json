@@ -1,0 +1,542 @@
+[
+  {
+    "name": "get_capabilities",
+    "isError": false,
+    "result": {
+      "format": "msteams-personas/project",
+      "projectVersion": 1,
+      "capabilityVersion": 3,
+      "rendererVersion": "v3",
+      "stateIds": [
+        "before",
+        "after"
+      ],
+      "profiles": {
+        "teams-posts": {
+          "label": "Teams: Beiträge im Kanal",
+          "renderer": "posts",
+          "needs": [
+            "team",
+            "channel",
+            "posts"
+          ],
+          "budgets": {
+            "team": 40,
+            "channel": 30,
+            "postTitle": 60,
+            "postText": 220,
+            "posts": 4
+          }
+        },
+        "teams-chat": {
+          "label": "Teams: Chat zu zweit",
+          "renderer": "chat",
+          "needs": [
+            "team",
+            "viewer",
+            "partner",
+            "messages"
+          ],
+          "budgets": {
+            "team": 40,
+            "messageText": 220,
+            "messages": 6
+          }
+        },
+        "planner": {
+          "label": "Planner: gemeinsames Board",
+          "renderer": "planner",
+          "needs": [
+            "team",
+            "state"
+          ],
+          "budgets": {
+            "team": 40,
+            "taskTitle": 60,
+            "bucket": 24,
+            "tasks": 8
+          }
+        },
+        "planner-task": {
+          "label": "Planner: Aufgabendetails",
+          "renderer": "plantask",
+          "minCapabilityVersion": 3,
+          "needs": [
+            "team",
+            "state",
+            "task"
+          ],
+          "budgets": {
+            "team": 40,
+            "notes": 240,
+            "checklist": 5,
+            "checklistText": 70,
+            "commentText": 180
+          }
+        },
+        "todo": {
+          "label": "Microsoft To Do: Mein Tag",
+          "renderer": "todo",
+          "minCapabilityVersion": 3,
+          "needs": [
+            "team",
+            "state",
+            "viewer",
+            "taskIds",
+            "personalListPrivate",
+            "myDaySelected"
+          ],
+          "budgets": {
+            "team": 40,
+            "tasks": 6,
+            "dateLabel": 40
+          }
+        },
+        "prinzip-tasks": {
+          "label": "Prinzip: Aufgaben, vorher und nachher",
+          "renderer": "principle:tasks",
+          "needs": [
+            "before",
+            "after"
+          ],
+          "budgets": {
+            "title": 60,
+            "question": 90,
+            "problem": 200,
+            "recommendation": 200,
+            "boundary": 200
+          }
+        }
+      },
+      "limits": {
+        "people": 8,
+        "tasks": 12,
+        "documents": 8,
+        "slides": 6,
+        "presenterNotes": 1200,
+        "prinzipLists": 3
+      },
+      "output": {
+        "width": 1920,
+        "height": 1080,
+        "format": "image/png",
+        "scales": [
+          1,
+          2
+        ]
+      },
+      "inputLimitBytes": 204800,
+      "semantics": "states are complete snapshots: a task missing from a state is not shown there; list \"personal\" = a person's own list (owner required), list \"plan\" = the shared plan. planner-task selects task by ID; todo selects taskIds owned by viewer in that state. Mein Tag is an explicit personal selection, not a copy. Assigned Planner tasks require the same work account and an enabled Planner connection."
+    }
+  },
+  {
+    "name": "get_example",
+    "isError": false,
+    "result": {
+      "format": "msteams-personas/project",
+      "projectVersion": 1,
+      "capabilityVersion": 3,
+      "meta": {
+        "id": "velotech-werkstatt-uebergabe",
+        "title": "Werkstatt-Übergabe ohne verlorene Aufträge",
+        "organisation": "Velotech Werkstätten (fiktiv)",
+        "audience": "Teamleitungen in Werkstatt und Verkauf",
+        "goal": "Zeigen, wie offene Aufträge bei Schichtwechseln sichtbar bleiben",
+        "locale": "de-CH",
+        "fictional": true,
+        "source": {
+          "kind": "template",
+          "note": "Vorlage der Bibliothek, fiktiver Inhalt"
+        },
+        "assumptions": [
+          "Das Team nutzt einen Teams-Kanal und einen gemeinsamen Planner-Plan."
+        ],
+        "notes": ""
+      },
+      "people": [
+        {
+          "id": "p-lina",
+          "name": "Lina Huber",
+          "role": "Leitung Werkstatt"
+        },
+        {
+          "id": "p-marco",
+          "name": "Marco Bianchi",
+          "role": "Mechaniker Frühschicht"
+        },
+        {
+          "id": "p-aylin",
+          "name": "Aylin Demir",
+          "role": "Mechanikerin Spätschicht"
+        },
+        {
+          "id": "p-jonas",
+          "name": "Jonas Keller",
+          "role": "Verkauf und Annahme"
+        }
+      ],
+      "documents": [
+        {
+          "id": "d-uebergabe",
+          "name": "Schichtübergabe Werkstatt.docx"
+        }
+      ],
+      "tasks": [
+        {
+          "id": "t-bremsen",
+          "title": "E-Bike Meier: Bremsen entlüften"
+        },
+        {
+          "id": "t-ersatz",
+          "title": "Ersatzteil Akku bestellen"
+        },
+        {
+          "id": "t-kunde",
+          "title": "Kundin Rossi zurückrufen"
+        },
+        {
+          "id": "t-lager",
+          "title": "Lagerliste Schläuche prüfen"
+        }
+      ],
+      "states": [
+        {
+          "id": "before",
+          "label": "Heute",
+          "tasks": {
+            "t-bremsen": {
+              "owner": "p-marco",
+              "list": "personal"
+            },
+            "t-ersatz": {
+              "owner": "p-marco",
+              "list": "personal"
+            },
+            "t-kunde": {
+              "owner": "p-jonas",
+              "list": "personal"
+            },
+            "t-lager": {
+              "owner": "p-aylin",
+              "list": "personal"
+            }
+          }
+        },
+        {
+          "id": "after",
+          "label": "Mit gemeinsamem Plan",
+          "tasks": {
+            "t-bremsen": {
+              "owner": "p-aylin",
+              "list": "plan",
+              "bucket": "Heute",
+              "due": "Do 14.11."
+            },
+            "t-ersatz": {
+              "owner": "p-marco",
+              "list": "plan",
+              "bucket": "Bestellungen",
+              "due": "Fr 15.11."
+            },
+            "t-kunde": {
+              "owner": "p-jonas",
+              "list": "plan",
+              "bucket": "Heute",
+              "due": "Do 14.11."
+            },
+            "t-lager": {
+              "owner": "p-aylin",
+              "list": "personal"
+            }
+          }
+        }
+      ],
+      "scenes": [
+        {
+          "id": "sc-kanal",
+          "profile": "teams-posts",
+          "team": "Werkstatt Velotech",
+          "channel": "Schichtwechsel",
+          "posts": [
+            {
+              "id": "q1",
+              "by": "p-marco",
+              "time": "13:52",
+              "title": "Übergabe Frühschicht",
+              "text": "E-Bike Meier steht auf Platz 3, Bremsen noch nicht entlüftet. Akku ist bestellt? Weiss ich nicht sicher.",
+              "hint": "Offene Arbeit steht nur im Beitrag, ohne verantwortliche Person."
+            },
+            {
+              "id": "q2",
+              "by": "p-aylin",
+              "time": "14:05",
+              "title": "",
+              "text": "Übernehme Platz 3. Ich trage es im Plan ein, damit Jonas der Kundin Bescheid geben kann.",
+              "document": "d-uebergabe",
+              "hint": "Die Übergabe verweist auf eine gemeinsame Datei und den Plan."
+            }
+          ]
+        },
+        {
+          "id": "sc-plan",
+          "profile": "planner",
+          "team": "Werkstatt Velotech",
+          "state": "after"
+        },
+        {
+          "id": "sc-prinzip",
+          "profile": "prinzip-tasks",
+          "team": "Werkstatt Velotech",
+          "before": "before",
+          "after": "after"
+        }
+      ],
+      "slides": [
+        {
+          "id": "s-1",
+          "scene": "sc-kanal",
+          "presenterNotes": "Fragen: Woran merkt die Spätschicht, was noch offen ist?"
+        },
+        {
+          "id": "s-2",
+          "scene": "sc-plan",
+          "presenterNotes": "Jede offene Arbeit hat eine Person, einen Termin und einen Bucket."
+        },
+        {
+          "id": "s-3",
+          "scene": "sc-prinzip",
+          "presenterNotes": "Persönliche Notizen bleiben persönlich. Nur, was jemand anderes betrifft, kommt in den Plan.",
+          "teaching": {
+            "title": "Gemeinsame Aufgaben gehören in einen Plan",
+            "question": "Wer erledigt was bis wann, auch nach dem Schichtwechsel?",
+            "problem": "Offene Arbeiten stehen in Beiträgen und persönlichen Listen. Bei der Übergabe geht etwas verloren.",
+            "recommendation": "Aufgaben, die eine andere Person übernehmen kann, in den gemeinsamen Plan: mit Person, Termin und Bucket.",
+            "boundary": "Kurze persönliche Erinnerungen gehören nicht in den Plan. Der Plan ersetzt kein Gespräch bei der Übergabe."
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "validate_project",
+    "isError": false,
+    "result": {
+      "ok": true,
+      "errors": [],
+      "warnings": [],
+      "summary": {
+        "title": "Pendenzen aus der Teamsitzung sichtbar machen",
+        "slides": [
+          {
+            "index": 0,
+            "id": "s-1",
+            "file": "01-unibas-leadership-forum-pendenzen-teams-chat.png"
+          },
+          {
+            "index": 1,
+            "id": "s-2",
+            "file": "02-unibas-leadership-forum-pendenzen-teams-posts.png"
+          },
+          {
+            "index": 2,
+            "id": "s-3",
+            "file": "03-unibas-leadership-forum-pendenzen-planner.png"
+          },
+          {
+            "index": 3,
+            "id": "s-detail",
+            "file": "04-unibas-leadership-forum-pendenzen-planner-task.png"
+          },
+          {
+            "index": 4,
+            "id": "s-todo",
+            "file": "05-unibas-leadership-forum-pendenzen-todo.png"
+          },
+          {
+            "index": 5,
+            "id": "s-4",
+            "file": "06-unibas-leadership-forum-pendenzen-prinzip-tasks.png"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "name": "render_project",
+    "isError": false,
+    "result": {
+      "ok": true,
+      "renderId": "r-6033e19ffcf6307d",
+      "manifestUri": "mtp://renders/r-6033e19ffcf6307d/manifest.json",
+      "format": "msteams-personas/render-manifest",
+      "manifestVersion": 1,
+      "rendererVersion": "v3",
+      "projectVersion": 1,
+      "capabilityVersion": 3,
+      "project": {
+        "id": "unibas-leadership-forum-pendenzen",
+        "title": "Pendenzen aus der Teamsitzung sichtbar machen"
+      },
+      "stage": "done",
+      "width": 1920,
+      "height": 1080,
+      "durationMs": 1360,
+      "slides": [
+        {
+          "index": 0,
+          "id": "s-1",
+          "profile": "teams-chat",
+          "file": "01-unibas-leadership-forum-pendenzen-teams-chat.png",
+          "width": 1920,
+          "height": 1080,
+          "bytes": 176412,
+          "fit": [],
+          "sha256": "6f9d09f6bd7414bb2ea5a0cfbeba05e074d9a89e94dc906590e08df27e9d46bf",
+          "uri": "mtp://renders/r-6033e19ffcf6307d/01-unibas-leadership-forum-pendenzen-teams-chat.png"
+        },
+        {
+          "index": 1,
+          "id": "s-2",
+          "profile": "teams-posts",
+          "file": "02-unibas-leadership-forum-pendenzen-teams-posts.png",
+          "width": 1920,
+          "height": 1080,
+          "bytes": 212509,
+          "fit": [],
+          "sha256": "f36e8913ed619534f41b5555a8ce32a064dd1652cebfdded6453659bb97efb47",
+          "uri": "mtp://renders/r-6033e19ffcf6307d/02-unibas-leadership-forum-pendenzen-teams-posts.png"
+        },
+        {
+          "index": 2,
+          "id": "s-3",
+          "profile": "planner",
+          "file": "03-unibas-leadership-forum-pendenzen-planner.png",
+          "width": 1920,
+          "height": 1080,
+          "bytes": 179804,
+          "fit": [],
+          "sha256": "87d8bb68218f2bdd18502aa086e8235e3c809050134686bf0e2cb1e923389580",
+          "uri": "mtp://renders/r-6033e19ffcf6307d/03-unibas-leadership-forum-pendenzen-planner.png"
+        },
+        {
+          "index": 3,
+          "id": "s-detail",
+          "profile": "planner-task",
+          "file": "04-unibas-leadership-forum-pendenzen-planner-task.png",
+          "width": 1920,
+          "height": 1080,
+          "bytes": 252345,
+          "fit": [],
+          "sha256": "4e421e6c85d199cdfd1c9a8a0149ac351fdae1ed055c83ac5c5ce7d3e4f79c49",
+          "uri": "mtp://renders/r-6033e19ffcf6307d/04-unibas-leadership-forum-pendenzen-planner-task.png"
+        },
+        {
+          "index": 4,
+          "id": "s-todo",
+          "profile": "todo",
+          "file": "05-unibas-leadership-forum-pendenzen-todo.png",
+          "width": 1920,
+          "height": 1080,
+          "bytes": 220729,
+          "fit": [],
+          "sha256": "8e8bae20434cfdd8236f6338620aa7b673226b2749324d61bcf02d91110ff4f5",
+          "uri": "mtp://renders/r-6033e19ffcf6307d/05-unibas-leadership-forum-pendenzen-todo.png"
+        },
+        {
+          "index": 5,
+          "id": "s-4",
+          "profile": "prinzip-tasks",
+          "file": "06-unibas-leadership-forum-pendenzen-prinzip-tasks.png",
+          "width": 1920,
+          "height": 1080,
+          "bytes": 263452,
+          "fit": [],
+          "sha256": "9ba62e7dc75d2cc5c32ce098acc75e0a498ca41bcc57385dcd8825c957d5c5ea",
+          "uri": "mtp://renders/r-6033e19ffcf6307d/06-unibas-leadership-forum-pendenzen-prinzip-tasks.png"
+        }
+      ],
+      "diagnostics": [],
+      "renderedAt": "2026-11-02T11:10:36.953Z"
+    }
+  },
+  {
+    "name": "retrieve_artifact",
+    "isError": false
+  },
+  {
+    "name": "retrieve_artifact",
+    "isError": false
+  },
+  {
+    "name": "retrieve_artifact",
+    "isError": false
+  },
+  {
+    "name": "retrieve_artifact",
+    "isError": false
+  },
+  {
+    "name": "retrieve_artifact",
+    "isError": false
+  },
+  {
+    "name": "retrieve_artifact",
+    "isError": false
+  },
+  {
+    "name": "validate_project",
+    "isError": false,
+    "result": {
+      "ok": false,
+      "errors": [
+        {
+          "code": "todo-task-owner",
+          "path": "scenes[4].taskIds[2]",
+          "message": "To Do: nur Aufgaben der gewählten Person auswählen. Person oder Zuständigkeit im Zustand prüfen.",
+          "severity": "error"
+        }
+      ],
+      "warnings": []
+    }
+  },
+  {
+    "name": "render_project",
+    "isError": true,
+    "result": {
+      "ok": false,
+      "stage": "validate",
+      "diagnostics": [
+        {
+          "code": "todo-task-owner",
+          "path": "scenes[4].taskIds[2]",
+          "message": "To Do: nur Aufgaben der gewählten Person auswählen. Person oder Zuständigkeit im Zustand prüfen.",
+          "severity": "error"
+        }
+      ]
+    }
+  },
+  {
+    "name": "render_project",
+    "isError": true,
+    "result": {
+      "ok": false,
+      "stage": "render",
+      "diagnostics": [
+        {
+          "code": "fit",
+          "path": "slides[3]",
+          "message": "Folie 4: Inhalt passt nicht (Aufgabendetails ausserhalb der Anwendung). Bitte Text kürzen oder Einträge entfernen.",
+          "severity": "error",
+          "detail": "Aufgabendetails ausserhalb der Anwendung",
+          "slide": "s-detail"
+        },
+        {
+          "code": "long",
+          "path": "states[1].tasks.t-einladung.notes",
+          "message": "Zustand «Gemeinsam im Plan», Aufgabe «Einladung für Auftakt versenden»: Notizen auf höchstens 240 Zeichen kürzen.",
+          "severity": "warning"
+        }
+      ]
+    }
+  }
+]

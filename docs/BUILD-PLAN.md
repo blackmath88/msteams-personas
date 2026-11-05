@@ -1,6 +1,6 @@
 # Active build plan — Slides as Code and the AI-assistant bridge
 
-Updated: 2026-10-31. Slices 1–4 are built and merged on main (`5a6ece6`); slice 5 is partial and slice 6 is not built. A fourth profile (`teams-chat`) and the first bridge trial are on branches pending review.
+Updated: 2026-11-05. Slices 1–4 are implemented. Local HTTP covers part of slice 5. Slice 6 remains planned. See the [task profiles](TASK-PROFILES-HANDOFF.md), [workspace explorer](WORKSPACE-PROFILE-HANDOFF.md) and [deck components](COMPONENTS-D1-HANDOFF.md) handoffs for the current implementations.
 
 ## Completed attempt: manual authoring and assistant bridge
 
@@ -34,7 +34,7 @@ Gate: architecture decisions identify evidence versus hypotheses. No unnecessary
 
 ## Slice 1 — portable projects and a new-scenario proof
 
-State: Built and merged on main (`e660d44`, `7d5f330`), with three profiles. The `teams-chat` profile (capabilityVersion 2) is on a branch pending review.
+State: The first three profiles landed in `e660d44` and `7d5f330`. Later profiles are listed in [current status](STATUS.md).
 
 - Define a versioned JSON schema, supported-capability catalogue and structured diagnostics.
 - Separate entity IDs, state snapshots, scene projections and slide composition.

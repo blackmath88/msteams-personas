@@ -5,15 +5,19 @@
 // Exit codes: 0 success · 1 project invalid · 2 usage or unreadable input · 3 render failed
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { getCapabilities, getExample, validateProject, renderToDir, INPUT_LIMIT_BYTES } from './ops.mjs';
+import { getCapabilities, getExample, validateProject, renderToDir, renderComponentsToDir, INPUT_LIMIT_BYTES } from './ops.mjs';
 
 const HELP = `Usage: node tools/cli.mjs <command> [options]
 
   capabilities                      supported profiles, limits and versions (JSON)
-  example [--out project.json]      a complete valid example project (JSON)
+  example [--kind tasks|workspace] [--out project.json]      a complete valid example project (JSON)
   validate <project.json | ->       validate; prints {ok, errors, warnings}
   render <project.json | -> --out <dir> [--scale 1|2] [--timeout <ms>]
                                     write ordered PNGs and manifest.json; prints the manifest
+  component <project.json | -> --out <dir> (--spec <components.json> | --scene <id> [--view <v>]
+            [--select <id,id> | --bucket <name>] [--width <px>] [--marks true]) [--scale 1|2]
+                                    M365 screens or excerpts without slide chrome, with anchors;
+                                    writes PNGs and manifest.json (default scale 2)
 
 Exit codes: 0 ok, 1 project invalid, 2 usage/input error, 3 render failed (fit, browser, timeout).
 Rendering needs Chromium (set CHROMIUM=/path/to/chrome if it is not on PATH as "chromium").`;
@@ -46,7 +50,8 @@ if (opt.help || !cmd) { (cmd ? process.stdout : process.stderr).write(HELP + '\n
 
 if (cmd === 'capabilities') out(getCapabilities());
 else if (cmd === 'example') {
-  const json = JSON.stringify(getExample(), null, 2) + '\n';
+  if (opt.kind && !['tasks', 'workspace'].includes(opt.kind)) fail('Choose --kind tasks or workspace.');
+  const json = JSON.stringify(getExample(opt.kind), null, 2) + '\n';
   if (opt.out) { writeFileSync(resolve(opt.out), json); process.stderr.write(`Example written to ${opt.out}\n`); }
   else process.stdout.write(json);
 }
@@ -61,6 +66,25 @@ else if (cmd === 'render') {
   const m = await renderToDir(readInput(pos[1]), resolve(opt.out), { scale, timeoutMs });
   out(m);
   if (m.ok) process.stderr.write(`${m.slides.length} PNG written to ${opt.out}\n`);
+  process.exit(m.ok ? 0 : m.stage === 'parse' ? 2 : m.stage === 'validate' || m.stage === 'options' ? 1 : 3);
+}
+else if (cmd === 'component') {
+  if (!opt.out) fail('component needs --out <dir>.\n\n' + HELP);
+  let specs;
+  if (opt.spec) { try { specs = JSON.parse(readFileSync(resolve(opt.spec), 'utf8')); } catch (e) { fail(`Cannot read ${opt.spec}: ${e.message}`); } if (!Array.isArray(specs)) specs = [specs]; }
+  else if (opt.scene) {
+    const s = { scene: opt.scene };
+    if (opt.view) s.view = opt.view;
+    if (opt.bucket) s.select = { bucket: opt.bucket };
+    else if (opt.select) s.select = { [s.view === 'messages' ? 'messageIds' : 'postIds']: opt.select.split(',').map(x => x.trim()).filter(Boolean) };
+    if (opt.width) s.width = Number(opt.width);
+    if (opt.marks) s.marks = opt.marks === 'true';
+    specs = [s];
+  } else fail('component needs --spec <file> or --scene <id>.\n\n' + HELP);
+  const scale = opt.scale ? Number(opt.scale) : 2, timeoutMs = opt.timeout ? Number(opt.timeout) : undefined;
+  const m = await renderComponentsToDir(readInput(pos[1]), specs, resolve(opt.out), { scale, timeoutMs });
+  out(m);
+  if (m.ok) process.stderr.write(`${m.components.length} PNG written to ${opt.out}\n`);
   process.exit(m.ok ? 0 : m.stage === 'parse' ? 2 : m.stage === 'validate' || m.stage === 'options' ? 1 : 3);
 }
 else fail(`Unknown command "${cmd}".\n\n${HELP}`);

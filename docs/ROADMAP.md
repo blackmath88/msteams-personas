@@ -11,10 +11,13 @@ Current detail: [active build plan](BUILD-PLAN.md).
 | V2 P2 / V3 | OneDrive personal scene, wider renderer coverage and trainer sequences | Merged on main at `300e006`; scenario-dependent coverage |
 | Portable projects, slices 1–3 | Project contract, manual authoring/import/save and assistant bridge | Merged on main at `7d5f330`; first two-assistant CLI trial passed 4/4 (PR #4); trainer tasks open |
 | CLI/MCP, slice 4 | Shared render operation, CLI, local MCP over stdio and Streamable HTTP | Merged on main at `5a6ece6`; real Claude Code host test passed; [handoff](CLI-MCP-HANDOFF.md) |
-| Teams chat profile | Fourth portable-project profile, capabilityVersion 2 | On branch, pending review; [handoff](TEAMS-CHAT-PROFILE-HANDOFF.md) |
+| Teams chat profile | Fourth portable-project profile, capabilityVersion 2 | Merged; [handoff](TEAMS-CHAT-PROFILE-HANDOFF.md) |
+| Custom task profiles | Planner task details and To Do | Available; [handoff](TASK-PROFILES-HANDOFF.md) |
+| Workspace profiles | Linked Team → Kanal → Dateiablage map, Teams preview and local configurator | Available; [handoff](WORKSPACE-PROFILE-HANDOFF.md) and [plan](WORKSPACE-PROFILE-PLAN.md) |
 | Hosting, slice 5 | Hosted rendering, authentication and job service | Not built; only local Streamable HTTP exists on main |
 | WebMCP, slice 6 | Browser-agent adapter | Not built |
-| Later | Broader authoring/templates and editable PPTX | Deferred; editable PPTX not built |
+| Deck components, D0–D6 | M365 screens as components, slide patterns, PPTX on a company template, existing decks, persona scenarios | D1 available; [handoff](COMPONENTS-D1-HANDOFF.md). D2–D6 [planned](DECK-COMPONENTS-PLAN.md) |
+| Later | Broader authoring, editable native M365 shapes | Deferred |
 
 - [UX plan](UX-LIBRARY-PLAN.md)
 - [M365 fidelity/output plan](M365-UI-FIDELITY-PLAN.md)

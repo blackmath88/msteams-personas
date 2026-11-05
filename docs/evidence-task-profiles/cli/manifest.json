@@ -1,0 +1,86 @@
+{
+  "format": "msteams-personas/render-manifest",
+  "manifestVersion": 1,
+  "rendererVersion": "v3",
+  "projectVersion": 1,
+  "capabilityVersion": 3,
+  "project": {
+    "id": "unibas-leadership-forum-pendenzen",
+    "title": "Pendenzen aus der Teamsitzung sichtbar machen"
+  },
+  "ok": true,
+  "stage": "done",
+  "width": 1920,
+  "height": 1080,
+  "durationMs": 1333,
+  "slides": [
+    {
+      "index": 0,
+      "id": "s-1",
+      "profile": "teams-chat",
+      "file": "01-unibas-leadership-forum-pendenzen-teams-chat.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 176412,
+      "fit": [],
+      "sha256": "6f9d09f6bd7414bb2ea5a0cfbeba05e074d9a89e94dc906590e08df27e9d46bf"
+    },
+    {
+      "index": 1,
+      "id": "s-2",
+      "profile": "teams-posts",
+      "file": "02-unibas-leadership-forum-pendenzen-teams-posts.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 212509,
+      "fit": [],
+      "sha256": "f36e8913ed619534f41b5555a8ce32a064dd1652cebfdded6453659bb97efb47"
+    },
+    {
+      "index": 2,
+      "id": "s-3",
+      "profile": "planner",
+      "file": "03-unibas-leadership-forum-pendenzen-planner.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 179804,
+      "fit": [],
+      "sha256": "87d8bb68218f2bdd18502aa086e8235e3c809050134686bf0e2cb1e923389580"
+    },
+    {
+      "index": 3,
+      "id": "s-detail",
+      "profile": "planner-task",
+      "file": "04-unibas-leadership-forum-pendenzen-planner-task.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 252345,
+      "fit": [],
+      "sha256": "4e421e6c85d199cdfd1c9a8a0149ac351fdae1ed055c83ac5c5ce7d3e4f79c49"
+    },
+    {
+      "index": 4,
+      "id": "s-todo",
+      "profile": "todo",
+      "file": "05-unibas-leadership-forum-pendenzen-todo.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 220729,
+      "fit": [],
+      "sha256": "8e8bae20434cfdd8236f6338620aa7b673226b2749324d61bcf02d91110ff4f5"
+    },
+    {
+      "index": 5,
+      "id": "s-4",
+      "profile": "prinzip-tasks",
+      "file": "06-unibas-leadership-forum-pendenzen-prinzip-tasks.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 263452,
+      "fit": [],
+      "sha256": "9ba62e7dc75d2cc5c32ce098acc75e0a498ca41bcc57385dcd8825c957d5c5ea"
+    }
+  ],
+  "diagnostics": [],
+  "renderedAt": "2026-11-02T11:10:02.351Z"
+}

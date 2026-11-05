@@ -81,6 +81,7 @@
         '</ul>' +
         '<p class="own"><a class="btn" href="#/konfigurator/1">' + ic('i-repeat') + 'Eigene Situation beschreiben</a><span>Sechs Fragen, ein begründeter Vorschlag zum Anpassen.</span></p>' +
         '<p class="own"><a class="btn" href="#/projekt">' + ic('i-list') + 'Eigene Abfolge erstellen</a><span>Teams → Planner → Prinzip: von Hand oder mit deinem KI-Assistenten vorbereitet.</span></p>' +
+        '<p class="own"><a class="btn" href="#/projekt/arbeitsbereich">Arbeitsbereich erkunden</a><span>Team, Kanäle und Dateiablage als Karte und Vorschau.</span></p>' +
       '</div>' +
       '<div class="hero-v" aria-label="Beispiel: dieselbe Situation als Szene und als Prinzip">' +
         '<div class="hero-scene">' + frameHtml(A.teams(vm, { annot: false }), 'Beispiel: Teams-Kanal Leadership Forum 2027') + '<a class="hero-open" href="' + route('leadership-forum', 'eigenes-team', 'szene', 'posts') + '">Szene öffnen</a></div>' +

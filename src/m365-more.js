@@ -36,7 +36,7 @@
           '<span class="c-ha">' + fi('video') + fi('calls') + fi('people') + fi('more') + '</span></header>' +
         '<div class="c-body"><ol class="c-msgs">' + c.messages.map(function (m) {
           var p = vm.person(m.by), mine = m.by === c.viewer;
-          return '<li class="c-msg' + (mine ? ' me' : '') + (m.decision ? ' dec' : '') + '">' + (mine ? '' : avatar(p, 32)) +
+          return '<li class="c-msg' + (mine ? ' me' : '') + (m.decision ? ' dec' : '') + '"' + A.ent(m.id) + '>' + (mine ? '' : avatar(p, 32)) +
             '<div class="c-bub">' + mk(m.mark, o.annot) + (mine ? '<time>' + esc(m.time) + '</time>' : '<p class="c-meta"><b>' + esc(short(p.name)) + '</b><time>' + esc(m.time) + '</time></p>') +
             '<p>' + esc(m.text) + '</p></div></li>';
         }).join('') + '</ol>' +
@@ -88,7 +88,7 @@
     return '<div class="p-board" style="--bw:' + w + 'px">' + buckets.map(function (b, bi) {
           var bt = tasks.filter(function (t) { return t.bucket === b; });
           var openT = bt.filter(function (t) { return !t.done; }), done = bt.filter(function (t) { return t.done; });
-          return '<div class="p-bucket"><p class="p-bh"><strong>' + esc(b) + '</strong>' + fi('more') + '</p><p class="p-add">' + fi('plus') + 'Aufgabe hinzufügen</p>' +
+          return '<div class="p-bucket" data-bucket="' + esc(b) + '"><p class="p-bh"><strong>' + esc(b) + '</strong>' + fi('more') + '</p><p class="p-add">' + fi('plus') + 'Aufgabe hinzufügen</p>' +
             openT.map(function (t) { return card(vm, t, bi, o); }).join('') +
             (done.length ? '<p class="p-done">Erledigte Aufgaben anzeigen <b>' + done.length + '</b>' + fi('chevd') + '</p>' : '') + '</div>';
         }).join('') + '<div class="p-bucket p-newb"><p class="p-add">Neuen Bucket hinzufügen</p></div></div>';
@@ -105,10 +105,10 @@
   }
   function card(vm, t, bi, o) {
     var p = vm.person(t.owner), late = /^(Mo|Di)$/.test(t.due);
-    return '<div class="p-card' + (t.fromAi ? ' ai' : '') + '">' + mk(t.mark, o.annot) +
+    return '<div' + (t.id ? ' data-task-id="' + esc(t.id) + '"' : '') + ' class="p-card' + (t.fromAi ? ' ai' : '') + '"' + A.ent(t.id) + '>' + mk(t.mark, o.annot) +
       (t.fromAi ? '<span class="p-lab" style="background:#e8ebfa;color:#444791">Besprechung</span>' : '<span class="p-lab" style="background:' + LABELS[bi % LABELS.length] + '22;color:' + LABELS[bi % LABELS.length] + '">' + esc(t.bucket) + '</span>') +
       '<p class="p-ct"><span class="p-circ"></span>' + esc(t.title) + '</p>' +
-      '<p class="p-cf"><span class="p-due' + (late ? ' late' : '') + '">' + fi('calendar') + esc(t.due) + '</span>' + (t.fromAi ? '' : '<span class="p-chk">' + fi('listcheck') + '0/2</span>') + '<span class="p-own">' + avatar(p, 24) + '</span></p></div>';
+      '<p class="p-cf"><span class="p-due' + (late ? ' late' : '') + '">' + fi('calendar') + esc(t.due) + '</span>' + (vm.project ? (t.checklist && t.checklist.length ? '<span class="p-chk">' + fi('listcheck') + t.checklist.filter(function (c) { return c.done; }).length + '/' + t.checklist.length + '</span>' : '') : (t.fromAi ? '' : '<span class="p-chk">' + fi('listcheck') + '0/2</span>')) + '<span class="p-own">' + avatar(p, 24) + '</span></p></div>';
   }
   function plannerNotes(vm) {
     var out = vm.ai ? [[1, 'Nur Vorschläge, die eine Person geprüft und bestätigt hat, stehen im Plan.'], [2, 'Dieser Vorschlag wurde vor der Übernahme angepasst.']] : [];
@@ -123,21 +123,23 @@
     o = o || {};
     var d = vm.taskDetail, t = d.task, p = vm.person(t.owner), done = d.checklist.filter(function (c) { return c[1]; }).length;
     var base = planner(vm, { annot: false }).replace('class="m3 m3-planner"', 'class="m3 m3-planner m3-plantask"');
-    var cp = vm.person(d.comment.by);
-    var dlg = '<div class="pt-scrim"></div><section class="pt-dlg" aria-label="Aufgabendetails"><header class="pt-h"><span class="p-circ"></span><h3>' + esc(t.title) + '</h3>' + mk(1, o.annot) + '<span class="pt-x">' + fi('more') + fi('x') + '</span></header>' +
+    var cp = d.comment ? vm.person(d.comment.by) : null;
+    var progress = vm.project ? (t.done ? 'Abgeschlossen' : t.progress === 'in-progress' ? 'In Bearbeitung' : 'Nicht begonnen') : (done ? 'In Bearbeitung' : 'Nicht begonnen');
+    var dlg = '<div class="pt-scrim"></div><section class="pt-dlg"' + (t.id ? ' data-task-id="' + esc(t.id) + '"' : '') + ' aria-label="Aufgabendetails"><header class="pt-h"><span class="p-circ">' + (vm.project && t.done ? fi('check', null, true) : '') + '</span><h3>' + esc(t.title) + '</h3>' + mk(1, o.annot) + '<span class="pt-x">' + fi('more') + fi('x', null, true) + '</span></header>' +
       '<p class="pt-plan">' + esc(vm.team) + ' · Bucket <b>' + esc(t.bucket) + '</b></p>' +
       '<div class="pt-grid"><div><p class="s-k">Zugewiesen an</p><p class="pt-who">' + avatar(p, 28) + esc(short(p.name)) + '</p></div>' +
-        '<div><p class="s-k">Fortschritt</p><p>' + (done ? 'In Bearbeitung' : 'Nicht begonnen') + '</p></div><div><p class="s-k">Priorität</p><p>Mittel</p></div>' +
+        '<div><p class="s-k">Fortschritt</p><p>' + progress + '</p></div><div><p class="s-k">Priorität</p><p>Mittel</p></div>' +
         '<div><p class="s-k">Fälligkeitsdatum</p><p class="pt-due">' + fi('calendar') + esc(t.due) + '</p></div></div>' +
       '<p class="s-k">Notizen</p><p class="pt-notes">' + esc(d.notes) + '</p>' +
       '<p class="s-k">Checkliste ' + done + '/' + d.checklist.length + mk(2, o.annot) + '</p><ul class="pt-check">' + d.checklist.map(function (c) {
-        return '<li class="' + (c[1] ? 'done' : '') + '"><span class="d-circ">' + (c[1] ? fi('check') : '') + '</span>' + esc(c[0]) + '</li>';
+        return '<li class="' + (c[1] ? 'done' : '') + '"><span class="d-circ">' + (c[1] ? fi('check', null, true) : '') + '</span>' + esc(c[0]) + '</li>';
       }).join('') + '</ul>' +
-      '<p class="s-k">Kommentare</p><div class="pt-com">' + avatar(cp, 28) + '<p><b>' + esc(short(cp.name)) + '</b><br>' + esc(d.comment.text) + '</p></div></section>';
+      (cp ? '<p class="s-k">Kommentare</p><div class="pt-com">' + avatar(cp, 28) + '<p><b>' + esc(short(cp.name)) + '</b><br>' + esc(d.comment.text) + '</p></div>' : '') + '</section>';
     return base.replace(/<\/div>$/, dlg + '</div>');
   }
   function plantaskNotes(vm) {
     var p = vm.person(vm.taskDetail.task.owner);
+    if (vm.project) return [[1, 'Dieselbe Aufgabe wie im Plan. ' + first(p.name) + ' ist verantwortlich. Termin und Fortschritt bleiben gemeinsam sichtbar.'], [2, 'Checkliste, Notizen und Kommentar gehören zur Aufgabe. Die Checkliste legt den Fortschritt nicht automatisch fest.']];
     return [[1, 'Eine Aufgabe, eine verantwortliche Person: ' + first(p.name) + '. Termin und Fortschritt sieht das ganze Team.'], [2, 'Zwischenschritte stehen als Checkliste in der Aufgabe, nicht als eigene Aufgaben oder in Mails.']];
   }
 
@@ -145,21 +147,28 @@
   function todo(vm, o) {
     o = o || {};
     var d = vm.todo, me = vm.person(d.viewer);
-    var rows = d.personal.map(function (t, i) { return { t: t, sub: 'Aufgaben', mark: i === 0 ? 1 : 0, mine: true }; })
-      .concat(d.assigned.map(function (t, i) { return { t: t.title, sub: 'Zugewiesen an mich · Plan «' + vm.team + '»', due: t.due, done: t.done, mark: i === 0 ? 2 : 0 }; }));
+    var rows = d.personal.map(function (t, i) { return { id: t.id, t: typeof t === 'string' ? t : t.title, due: t.due, done: t.done, sub: 'Aufgaben', mark: i === 0 ? 1 : 0, mine: true }; })
+      .concat(d.assigned.map(function (t, i) { return { id: t.id, t: t.title, sub: 'Zugewiesen an mich · Plan «' + vm.team + '»', due: t.due, done: t.done, mark: i === 0 ? 2 : 0 }; }));
     return frame('m3-todo', 'Microsoft To Do, nachgebildet: Mein Tag von ' + me.name,
       '<div class="d-top">' + fi('waffle', 'd-waf') + '<strong>To Do</strong><span class="d-search">' + fi('search') + '<span>Suchen</span></span><span class="d-tr">' + fi('gear') + avatar(me, 30) + '</span></div>' +
       '<nav class="d-nav"><ul><li class="on">' + fi('sun') + 'Mein Tag<b>' + rows.length + '</b></li><li>' + fi('star') + 'Wichtig</li><li>' + fi('calendar') + 'Geplant</li>' +
-        (d.plan ? '<li>' + fi('people') + 'Zugewiesen an mich<b>' + d.assigned.length + '</b></li>' : '') + '<li>' + fi('home') + 'Aufgaben<b>' + d.personal.length + '</b></li></ul>' +
+        (d.plan ? '<li>' + fi('people') + 'Zugewiesen an mich<b>' + (vm.project ? d.assignedCount : d.assigned.length) + '</b></li>' : '') + '<li>' + fi('home') + 'Aufgaben<b>' + (vm.project ? d.personalCount : d.personal.length) + '</b></li></ul>' +
         '<p class="d-newl">' + fi('plus') + 'Neue Liste</p></nav>' +
-      '<section class="d-main"><h3>Mein Tag</h3><p class="d-date">Dienstag, 4. November</p>' +
+      '<section class="d-main"><h3>Mein Tag</h3><p class="d-date">' + esc(vm.project ? d.dateLabel : 'Dienstag, 4. November') + '</p>' +
         '<p class="d-add">' + fi('plus') + 'Aufgabe hinzufügen</p>' +
         '<ul class="d-list">' + rows.map(function (r) {
-          return '<li class="' + (r.done ? 'done' : '') + '"><span class="d-circ">' + (r.done ? fi('check') : '') + '</span><span class="d-t"><b>' + esc(r.t) + mk(r.mark, o.annot) + '</b><small>' + (r.mine ? fi('sun') + 'Mein Tag · ' : '') + esc(r.sub) + (r.due ? ' · ' + fi('calendar') + esc(r.due) : '') + '</small></span>' + fi('star', 'd-star') + '</li>';
+          return '<li' + (r.id ? ' data-task-id="' + esc(r.id) + '"' : '') + ' class="' + (r.done ? 'done' : '') + '"><span class="d-circ">' + (r.done ? fi('check', null, true) : '') + '</span><span class="d-t"><b>' + esc(r.t) + mk(r.mark, o.annot) + '</b><small>' + (r.mine ? fi('sun') + 'Mein Tag · ' : '') + esc(r.sub) + (r.due ? ' · ' + fi('calendar') + esc(r.due) : '') + '</small></span>' + fi('star', 'd-star') + '</li>';
         }).join('') + '</ul></section>');
   }
   function todoNotes(vm) {
     var d = vm.todo, n = first(vm.person(d.viewer).name);
+    if (vm.project) {
+      var notes = [];
+      if (d.personal.length) notes.push([1, 'Persönliche Aufgaben von ' + n + '. Annahme: Die persönliche Liste ist nicht geteilt.']);
+      if (d.assigned.length) notes.push([2, 'Dieselbe Planner-Aufgabe. Voraussetzung: gleiches Arbeitskonto und aktivierte Planner-Verbindung.']);
+      notes.push([3, 'Diese Aufgaben hat ' + n + ' bewusst für Mein Tag ausgewählt. Die gemeinsame Aufgabe bleibt im Plan.']);
+      return notes;
+    }
     var out = [[1, 'Persönliche To-dos von ' + n + ': niemand sonst muss sie sehen.']];
     if (d.assigned.length) out.push([2, 'Aus dem gemeinsamen Plan zugewiesen: dieselbe Aufgabe, die das Team im Plan sieht.']);
     return out;
@@ -174,23 +183,24 @@
   function onedrive(vm, o) {
     o = o || {};
     var me = vm.person(vm.scene.members[0]), files = vm.scene.files;
-    var sel = files.filter(function (f) { return sharingOf(f).shared; })[0] || files[0];
+    var sel = (vm.scene.workspace && files.find(function (f) { return f.canonical; })) || files.find(function (f) { return sharingOf(f).shared; }) || files[0];
+    var folder = (vm.scene.folderPath || []).map(function (name) { return ' › ' + esc(name); }).join('');
+    var accessNote = vm.scene.workspace ? '' : '<p class="s-k">Alle anderen Dateien</p><p>' + fi('lock') + 'Privat: nur ' + esc(first(me.name)) + '</p>';
     return frame('m3-onedrive', 'OneDrive, nachgebildet: Meine Dateien von ' + me.name,
       '<div class="od-top">' + fi('waffle', 'od-waf') + '<strong>OneDrive</strong><span class="od-search">' + fi('search') + '<span>Suchen</span></span><span class="od-tr">' + fi('gear') + avatar(me, 30) + '</span></div>' +
       '<nav class="od-nav"><p class="od-me">' + esc(short(me.name)) + '</p><ul><li>' + fi('home') + 'Start</li><li class="on">' + fi('draft') + 'Meine Dateien</li><li>' + fi('clock') + 'Zuletzt verwendet</li><li>' + fi('people') + 'Geteilt</li><li>' + fi('star') + 'Favoriten</li><li>' + fi('trash') + 'Papierkorb</li></ul></nav>' +
       '<section class="od-main">' + A.cmdbar([['plus', 'Hinzufügen oder erstellen', 'm-pri'], ['upload', 'Hochladen'], ['share', 'Teilen'], ['link', 'Link kopieren'], ['download', 'Herunterladen'], ['more', '']]) +
-        '<h3>Meine Dateien</h3><table class="m-ft od-ft"><thead><tr><th class="m-ck"></th><th>Name</th><th>Geändert</th><th>Dateigröße</th><th>Freigabe</th></tr></thead><tbody>' +
+        '<h3>Meine Dateien' + folder + '</h3><table class="m-ft od-ft"><thead><tr><th class="m-ck"></th><th>Name</th><th>Geändert</th><th>Dateigröße</th><th>Freigabe</th></tr></thead><tbody>' +
         files.map(function (f, i) {
           var sh = sharingOf(f), on = f === sel;
-          return '<tr class="' + (on ? 'sel' : '') + '"><td class="m-ck">' + (on ? '<span class="m-tick">' + fi('check') + '</span>' : '') + '</td>' +
+          return '<tr class="' + (on ? 'sel' : '') + '"><td class="m-ck">' + (on ? '<span class="m-tick">' + fi('check', null, true) + '</span>' : '') + '</td>' +
             '<td><span class="m-fn">' + ftype(f.name.replace(/\s*\/$/, ''), f.kind) + '<span>' + esc(f.name.replace(/\s*\/$/, '')) + '</span>' + mk(f.mark, o.annot) + '</span></td>' +
             '<td>' + ['Gestern', 'Mo', 'letzte Woche', '12. Sept.'][i % 4] + '</td><td>' + (f.kind === 'folder' ? (i + 3) + ' Elemente' : ['84 KB', '1,2 MB', '36 KB', '420 KB'][i % 4]) + '</td>' +
             '<td class="od-sh' + (sh.shared ? ' on' : '') + '">' + (sh.shared ? fi('people') : fi('lock')) + sh.label + '</td></tr>';
         }).join('') + '</tbody></table></section>' +
-      '<aside class="od-pane"><p class="s-ph">' + ftype(sel.name, sel.kind) + '<strong>' + esc(sel.name.replace(/\s*\/$/, '')) + '</strong></p>' +
+      (sel ? '<aside class="od-pane"><p class="s-ph">' + ftype(sel.name, sel.kind) + '<strong>' + esc(sel.name.replace(/\s*\/$/, '')) + '</strong></p>' +
         '<p class="s-k">Zugriff</p><p class="od-acc">' + fi('people') + esc(vm.fill(sel.note || '')) + '</p>' +
-        '<p class="s-k">Speicherort</p><p>OneDrive › Meine Dateien</p>' +
-        '<p class="s-k">Alle anderen Dateien</p><p>' + fi('lock') + 'Privat: nur ' + esc(first(me.name)) + '</p></aside>');
+        '<p class="s-k">Speicherort</p><p>OneDrive › Meine Dateien' + folder + '</p>' + accessNote + '</aside>' : ''));
   }
   function onedriveNotes(vm) {
     var sc = vm.scene, marks = [];
@@ -214,7 +224,7 @@
             '<p class="r-att">Teilnehmende: ' + a.attendees.map(function (id) { return esc(first(vm.person(id).name)); }).join(', ') + '</p></div>' +
           '<div class="r-tasks"><h4>' + fi('listcheck') + 'Vorgeschlagene Aufgaben' + mk(1, o.annot) + '</h4><ul>' + a.suggestions.map(function (s) {
             var p = vm.person(s.owner), state = st[s.status];
-            return '<li class="r-s r-' + state[1] + '"><div class="r-st">' + (s.status === 'rejected' ? fi('x') : fi('check')) + '</div><div class="r-tx">' +
+            return '<li class="r-s r-' + state[1] + '"><div class="r-st">' + (s.status === 'rejected' ? fi('x', null, true) : fi('check', null, true)) + '</div><div class="r-tx">' +
               (s.status === 'edited' ? '<p><s>' + esc(s.text) + '</s></p><p><b>' + esc(s.edited) + '</b></p>' : '<p>' + (s.status === 'rejected' ? '<s>' + esc(s.text) + '</s>' : '<b>' + esc(s.text) + '</b>') + '</p>') +
               '<p class="r-meta">' + avatar(p, 20) + esc(short(p.name)) + ' · fällig ' + esc(s.due) + '</p>' +
               (s.reason ? '<p class="r-why">' + esc(s.reason) + '</p>' : '') + '</div>' +

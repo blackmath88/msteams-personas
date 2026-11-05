@@ -18,9 +18,21 @@ The complete V3 trainer library is on `main` (merged at `300e006`). Open `index.
 
 See [V3 handoff](docs/V3-BUILD-HANDOFF.md) for evidence, supported coverage and limitations. Independent model review passed 17/17; the builder reports 110/110 Chromium checks. New-project authoring, CLI and MCP are described below.
 
+## Arbeitsbereich erkunden
+
+Plan a fictional team workspace as a map and Teams or OneDrive preview. Open «Arbeitsbereich erkunden» from the library and adapt the example as a local draft. See the [workspace profile handoff](docs/WORKSPACE-PROFILE-HANDOFF.md) for model limits and CLI/MCP usage.
+
 ## Portable projects, CLI and MCP
 
+Capability version 3 adds custom `planner-task` (individual task details) and `todo` (a person's explicitly selected «Mein Tag» tasks). Project format remains version 1; capability versions 1 and 2 still load. Website, CLI and MCP use the same validator, compiler, curated renderers and PNG operation.
+
+The fictional [Leadership Forum example](examples/leadership-forum-six.project.json) contains the complete six-slide training story: Teams chat → channel posts → Planner board → task details → To Do → before/after. Import it at `#/projekt`, or render it with `node tools/cli.mjs render examples/leadership-forum-six.project.json --out ./slides`. Presenter notes and visibility assumptions are included.
+
+Task details live in the shared state snapshot. To Do references existing task IDs owned by its viewer; shared tasks retain their identity and require an explicit Planner-connection assumption. See [profile contract, verification and restart handoff](docs/TASK-PROFILES-HANDOFF.md).
+
 Portable-project authoring (`7d5f330`) and the shared render operation, CLI and local MCP server (`5a6ece6`) are merged on `main`. The MCP server passed a real Claude Code host test over stdio.
+
+For your own slides, export [M365 screen components](docs/COMPONENTS-D1-HANDOFF.md) with measured callout anchors through the CLI or MCP. The [deck components plan](docs/DECK-COMPONENTS-PLAN.md) covers further composition work.
 
 `#/projekt` («Eigene Abfolge») authors a new Teams → Planner → Prinzip sequence by hand or with the user's own chat assistant. The same project JSON can be validated and rendered without the website:
 
@@ -29,6 +41,7 @@ npm install                                    # only for CLI/MCP; the website n
 node tools/cli.mjs example --out project.json
 node tools/cli.mjs validate project.json
 node tools/cli.mjs render project.json --out ./slides   # needs Chromium
+node tools/cli.mjs component project.json --scene sc-kanal --view posts --out ./parts   # M365 excerpt + anchors
 node tools/mcp-server.mjs                      # MCP over stdio
 node tools/mcp-server.mjs --http               # MCP over Streamable HTTP, http://127.0.0.1:8787/mcp
 ```
@@ -45,7 +58,7 @@ Open `index.html` for the library or `atlas.html` for the original atlas. Assets
 
 ```sh
 node check-worlds.mjs
-node --test tests/
+npm test
 python3 -m http.server 8766 --bind 127.0.0.1 &   # for the browser journeys
 node tests/journey.mjs && node tests/project-journey.mjs
 node tests/mcp-e2e.mjs                           # MCP SDK client over stdio + HTTP, and CLI

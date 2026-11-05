@@ -1,0 +1,13 @@
+[
+  "six-slide import opens detail and To Do previews",
+  "one title edit reaches board, details, To Do and principle",
+  "explicit completion reaches detail and To Do without changing before",
+  "checklist editor adds a canonical item",
+  "invalid To Do ownership stays editable and blocks export",
+  "reload preserves task details and selections",
+  "website exports all six through shared operation",
+  "mobile editor has no page overflow",
+  "new-profile authoring upgrades capability version and stays valid",
+  "offline file editor loads the new catalogue",
+  "no script errors"
+]
