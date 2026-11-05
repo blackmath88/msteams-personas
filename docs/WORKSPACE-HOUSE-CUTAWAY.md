@@ -2,7 +2,7 @@
 
 Status: design concept for the next workspace visual. The overview is a standalone HTML and JavaScript mockup. See the [current workspace handoff](WORKSPACE-PROFILE-HANDOFF.md) for implemented behaviour.
 
-![Overview slide showing three houses for Mara’s three Teams](mockups/three-houses.png)
+![Overview slide with three Teams houses, named channel rows and a file cabinet beside each channel](mockups/three-houses.png)
 
 [HTML and JavaScript source](mockups/three-houses.html)
 
@@ -20,7 +20,7 @@ A cabinet sits to the right of its room. Folders and subfolders are nested withi
 
 ## Slide 1 · The person’s houses
 
-Start from Mara’s fictional perspective. Show three distinct, closed houses side by side. Give each house a team name, a type label and a short description of who works there.
+Start from Mara’s fictional perspective. Show three houses side by side. Draw each channel as a named room in a horizontal row and align a filing cabinet to its right. Give each house a team name, a type label and a short description of who works there. Keep the cabinets at icon level in the overview. Reveal file and folder names on the individual house slides.
 
 | House | Teamtyp | Zusammenarbeit |
 | --- | --- | --- |
@@ -47,4 +47,4 @@ The overview and individual house slides are **Prinzip** views. The matching app
 - Keep one canonical workspace definition. Model the visible teams for a viewer separately from team type and collaboration tags. Reuse stable IDs for teams, channels, folders and files.
 - Extend the person perspective to supply an ordered list of visible Teams and one selected team, channel and file location to both views. For the Teams scene, reuse its existing rail, channel header and file table. Extend the sidebar view model for multiple teams with one expanded group.
 - Add the cutaway to the shared render path. Advertise its options through the MCP capability catalogue once the website, CLI and MCP can render it. The detail and application exports should preserve names, order, selection and markers. Separate map and app components are useful for inserting these visuals into an existing deck.
-- Acceptance: a participant can name Mara’s three houses from the overview. On the separate project-house slide, they can identify the room and cabinet for the checklist, then recognise the identical path in the Teams scene. A nested folder stays visibly inside the file layer. Check readability at slide size and after placement in the 4:3 Uni Basel deck.
+- Acceptance: a participant can name Mara’s three houses and see which cabinet belongs to each room. On the separate project-house slide, they can identify the room and cabinet for the checklist, then recognise the identical path in the Teams scene. A nested folder stays visibly inside the file layer. Check readability at slide size and after placement in the 4:3 Uni Basel deck.

@@ -25,30 +25,43 @@
   .deckline { font-size: 1.54cqw; color: #43534b; margin: .83cqw 0 0; }
   .houses { display: grid; align-items: end; grid-template-columns: repeat(3, 1fr); gap: 2.45cqw; margin: 0; padding: 0; list-style: none; }
   .house { min-width: 0; }
-  .figure { height: 19.5cqw; display: flex; align-items: end; justify-content: center; border-bottom: 1px solid #a2a79b; }
-  .model { width: 89%; height: 91%; position: relative; }
-  .body, .roof, .shade, .window, .door { position: absolute; }
-  .body { left: 9%; right: 9%; bottom: 0; height: 65%; background: var(--wall); }
-  .roof { inset: 1% 0 61%; background: var(--roof); clip-path: polygon(50% 0, 100% 91%, 100% 100%, 0 100%, 0 91%); z-index: 1; }
-  .shade { inset: 0 0 0 auto; width: 23%; background: var(--shade); }
-  .window { top: 29%; left: 17%; width: 22%; height: 26%; background: var(--light); box-shadow: inset 0 -.24cqw 0 var(--roof); }
-  .window.second { left: 46%; }
-  .door { left: 29%; bottom: 0; width: 22%; height: 35%; background: var(--roof); }
-  .core { --wall: #7e9a87; --roof: #25483d; --shade: #587866; --light: #d8e5ce; --accent: #25483d; }
-  .project { --wall: #df9f76; --roof: #82472e; --shade: #b97652; --light: #f6dbc2; --accent: #82472e; }
-  .partners { --wall: #9cacc1; --roof: #3b4e68; --shade: #778ca8; --light: #dce6ef; --accent: #3b4e68; }
-  .project .model { width: 78%; height: 100%; }
-  .project .roof { inset: 0 0 57%; clip-path: polygon(43% 0, 100% 88%, 100% 100%, 0 100%, 0 85%); }
-  .project .body { height: 61%; }
-  .project .window { left: 21%; top: 23%; width: 42%; height: 25%; }
-  .project .window.second { display: none; }
-  .project .door { left: 48%; }
-  .partners .model { width: 95%; height: 83%; }
-  .partners .roof { inset: 0 0 59%; clip-path: polygon(0 88%, 28% 0, 68% 0, 100% 88%, 100% 100%, 0 100%); }
-  .partners .body { height: 62%; }
-  .partners .door { left: 45%; width: 25%; }
+  .figure {
+    height: 22.6cqw;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    border-bottom: 1px solid #a2a79b;
+  }
+  .roof {
+    height: 5.5cqw;
+    flex: none;
+    background: var(--roof);
+    clip-path: polygon(50% 0, 100% 92%, 100% 100%, 0 100%, 0 92%);
+  }
+  .core { --wall: #e1e9df; --roof: #25483d; --line: #aebfae; --cabinet: #c9d9ca; }
+  .project { --wall: #f3dfd0; --roof: #82472e; --line: #d5ae94; --cabinet: #ebc7ae; }
+  .partners { --wall: #e2e8ef; --roof: #3b4e68; --line: #aebdcb; --cabinet: #ccd9e6; }
+  .project .roof { clip-path: polygon(43% 0, 100% 88%, 100% 100%, 0 100%, 0 87%); }
+  .partners .roof { clip-path: polygon(0 89%, 28% 0, 68% 0, 100% 89%, 100% 100%, 0 100%); }
+  .rooms { list-style: none; margin: 0; padding: 0; border-inline: 1px solid var(--line); }
+  .room {
+    min-height: 4.15cqw;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 4.4cqw;
+    border-top: 1px solid var(--line);
+    background: var(--wall);
+  }
+  .room-name { align-self: center; padding: .35cqw .84cqw; font-size: 1.52cqw; font-weight: 700; }
+  .cabinet {
+    background: var(--cabinet);
+    color: var(--roof);
+    border-left: 1px solid var(--line);
+    display: grid;
+    place-items: center;
+  }
+  .cabinet svg { display: block; width: 2.15cqw; height: 2.15cqw; }
   .label { padding: 1.18cqw 0 .25cqw; min-height: 8.65cqw; }
-  .type { color: var(--accent); font-size: .99cqw; margin: 0 0 .55cqw; }
+  .type { color: var(--roof); font-size: .99cqw; margin: 0 0 .55cqw; }
   h2 { font-size: 1.66cqw; line-height: 1.1; margin: 0; letter-spacing: -.04em; }
   .scope { margin: .49cqw 0 0; font-size: 1.18cqw; color: #43534b; }
   footer { display: flex; justify-content: space-between; border-top: 1px solid #b5b6a9; padding-top: .9cqw; color: #46574f; }
@@ -64,32 +77,42 @@
   <header>
     <p class="eyebrow">Teams sinnvoll nutzen · Maras Perspektive</p>
     <h1 id="title">Mara arbeitet in drei Teams</h1>
-    <p class="deckline">Jedes Haus steht für eine andere Gruppe, mit der sie zusammenarbeitet.</p>
+    <p class="deckline">Jeder Kanal hat ein Zimmer. Seine Dateien liegen im Schrank rechts.</p>
   </header>
   <ul class="houses" aria-label="Maras drei Teams"></ul>
   <footer>
     <span class="caption">Fiktives Beispiel · Universität Basel</span>
-    <span class="caption">Haus = Team</span>
+    <span class="caption">Haus = Team · Zimmer = Kanal · Schrank = Dateien</span>
   </footer>
 </main>
 <template id="house">
   <li class="house">
-    <div class="figure" aria-hidden="true">
-      <div class="model">
-        <div class="body"><div class="shade"></div><div class="window"></div><div class="window second"></div><div class="door"></div></div>
-        <div class="roof"></div>
-      </div>
+    <div class="figure">
+      <div class="roof" aria-hidden="true"></div>
+      <ul class="rooms" aria-label="Kanäle und Dateiablagen"></ul>
     </div>
     <div class="label"><p class="type"></p><h2></h2><p class="scope"></p></div>
   </li>
 </template>
+<template id="room">
+  <li class="room">
+    <span class="room-name"></span>
+    <span class="cabinet" role="img" aria-label="Dateiablage">
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+        <rect x="5" y="4" width="22" height="23" rx="2"/>
+        <path d="M5 15.5h22m-14-6h6m-6 11.5h6M9 27v2m14-2v2"/>
+      </svg>
+    </span>
+  </li>
+</template>
 <script>
   const teams = [
-    { style: 'core', name: 'Campus & People Development', type: 'Stammteam', scope: 'Mit dem eigenen Bereich' },
-    { style: 'project', name: 'Onboarding 2027', type: 'Projektteam', scope: 'Über mehrere Bereiche hinweg' },
-    { style: 'partners', name: 'Weiterbildungskooperation', type: 'Arbeitsgruppe', scope: 'Mit externen Partnern' },
+    { style: 'core', name: 'Campus & People Development', type: 'Stammteam', scope: 'Mit dem eigenen Bereich', rooms: ['Allgemein', 'Leadership Forum', 'Learning Programme', 'Interne Organisation'] },
+    { style: 'project', name: 'Onboarding 2027', type: 'Projektteam', scope: 'Über mehrere Bereiche hinweg', rooms: ['Allgemein', 'Pilotphase', 'Auswertung'] },
+    { style: 'partners', name: 'Weiterbildungskooperation', type: 'Arbeitsgruppe', scope: 'Mit externen Partnern', rooms: ['Allgemein', 'Workshop-Planung', 'Kursmaterial'] },
   ];
   const template = document.querySelector('#house');
+  const roomTemplate = document.querySelector('#room');
   const houses = document.querySelector('.houses');
   for (const team of teams) {
     const house = template.content.firstElementChild.cloneNode(true);
@@ -97,6 +120,12 @@
     house.querySelector('h2').textContent = team.name;
     house.querySelector('.type').textContent = team.type;
     house.querySelector('.scope').textContent = team.scope;
+    const rooms = house.querySelector('.rooms');
+    for (const name of team.rooms) {
+      const room = roomTemplate.content.firstElementChild.cloneNode(true);
+      room.querySelector('.room-name').textContent = name;
+      rooms.append(room);
+    }
     houses.append(house);
   }
 </script>
