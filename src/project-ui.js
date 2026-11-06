@@ -283,16 +283,19 @@
     render.keep();
     if (!v.ok) document.getElementById('pj-status').textContent = v.errors[0].message;
   }
-  function slideHtml(p, i) {
+  function slideHtml(p, i, interactive) {
     var plan = PC.slidePlan(p, i); if (!plan) return '';
     var vm = PC.compile(p, i);
+    plan.params.interactive = interactive;
     return X.compose(vm, plan.params, plan.kind, plan.meta) || '';
   }
   function previews(p) {
     return p.slides.map(function (sl, i) {
       var html = '';
-      try { html = slideHtml(p, i); } catch (e) { html = ''; }
-      return '<figure class="pj-thumb"><figcaption>Folie ' + (i + 1) + '</figcaption><div class="pj-sl" inert>' + (html || '<p class="pj-err">Diese Folie kann noch nicht dargestellt werden.</p>') + '</div>' +
+      var focus = p.workspace && WE.focus(p);
+      var interactive = focus && focus.profile === 'workspace-house-teams' && focus.id === sl.scene;
+      try { html = slideHtml(p, i, interactive); } catch (e) { html = ''; }
+      return '<figure class="pj-thumb"><figcaption>Folie ' + (i + 1) + '</figcaption><div class="pj-sl"' + (interactive ? '' : ' inert') + '>' + (html || '<p class="pj-err">Diese Folie kann noch nicht dargestellt werden.</p>') + '</div>' +
         (sl.presenterNotes ? '<p class="pj-notes"><strong>Notizen:</strong> ' + esc(sl.presenterNotes) + '</p>' : '') + '</figure>';
     }).join('');
   }
@@ -363,7 +366,7 @@
       f.text().then(function (txt) { var err = receive(txt, 'import'); if (err) alertBox(err.message); });
       return;
     }
-    if (p && p.workspace && /^wp-(parent|perspective|house|tab)$/.test(t.id)) {
+    if (p && p.workspace && /^wp-(parent|perspective|house|house-viewer|tab)$/.test(t.id)) {
       workspaceChange(p, t.id, t.type === 'checkbox' ? t.checked : t.value); return;
     }
     if (p && t.hasAttribute('data-bool')) { setPath(p, t.getAttribute('data-bool'), t.checked); touch(); refresh(); return; }
@@ -419,7 +422,7 @@
     var b = e.target.closest('[data-op]'); if (!b || b.tagName === 'INPUT') return;
     var op = b.getAttribute('data-op'), p = cur(), i = +b.getAttribute('data-i');
     if (op === 'adapt') { if (addDraft(PC.template(), 'template')) go('bearbeiten'); }
-    else if (op === 'adapt-workspace') { if (addDraft(PC.workspaceExample(), 'template')) go('bearbeiten'); }
+    else if (op === 'adapt-workspace' || op === 'adapt-workspace-houses') { if (addDraft(PC.workspaceExample(op === 'adapt-workspace-houses' ? 'workspace-houses' : 'workspace'), 'template')) go('bearbeiten'); }
     else if (op === 'new') { if (addDraft(PC.blank(), 'manual')) go('bearbeiten'); }
     else if (op === 'open-draft') { st.current = i; persist(); go('bearbeiten'); }
     else if (op === 'del-draft') { st.drafts.splice(i, 1); st.current = st.drafts.length ? 0 : -1; if (/Entwürfe gespeichert/.test(storageProblem)) storageProblem = ''; persist(); render.keep(); announce('Entwurf entfernt'); }
@@ -439,6 +442,7 @@
     else if (!p) return;
     else if (op === 'save') { download(p); var s = document.getElementById('pj-status'); if (s) s.textContent = 'Projektdatei gesichert: ' + (p.meta.id || 'projekt') + '.msteams-personas.json'; announce('Projekt gesichert'); }
     else if (op === 'export') exportAll();
+    else if (p.workspace && op === 'wp-preview-tab') workspaceChange(p, 'wp-tab', b.getAttribute('data-i'));
     else if (p.workspace && op === 'wp-save-fields') {
       var purpose = document.getElementById('wp-purpose');
       workspaceChange(p, op, { name: document.getElementById('wp-name').value, purpose: purpose && purpose.value });
@@ -503,7 +507,7 @@
     if (page === 'arbeitsbereich') return '<section class="block pj"><nav class="pj-crumbs" aria-label="Pfad"><a href="#/">Bibliothek</a> › Arbeitsbereich</nav>' +
       '<h1>Arbeitsbereich erkunden</h1>' + storageBox() +
       '<p class="lead">Plane, wo ein Team zusammenarbeitet. Das fiktive Beispiel verbindet Team, Kanäle und Dateiablage mit einer passenden Vorschau.</p>' +
-      '<p><button type="button" class="btn btn-p" data-op="adapt-workspace">Beispiel als Entwurf öffnen</button> <a href="#/projekt">Gespeicherte Entwürfe</a></p></section>';
+      '<p><button type="button" class="btn btn-p" data-op="adapt-workspace">Karte und Vorschau öffnen</button> <button type="button" class="btn" data-op="adapt-workspace-houses">Häuser und Teams öffnen</button> <a href="#/projekt">Gespeicherte Entwürfe</a></p></section>';
     if (page === 'ki') return assistant();
     if (page === 'import') return review();
     return start();
@@ -511,11 +515,16 @@
   /* Re-render the current project page in place, keeping scroll position and focus where possible. */
   render.keep = function () {
     if (!container) return;
+    var previewSource = document.activeElement && document.activeElement.closest('.wp-house-app, .wp-house');
     var y = window.scrollY, active = document.activeElement, wpId = active && active.id, key = active && (active.getAttribute('data-path') || active.getAttribute('data-op') + (active.getAttribute('data-i') || ''));
     container.innerHTML = render(location.hash.replace(/^#\/?/, '').split('/').filter(Boolean));
     mount(container); window.scrollTo(0, y);
     if (wpId && wpId.indexOf('wp-') === 0) { var field = document.getElementById(wpId); if (field) field.focus(); }
-    else if (key) { var again = container.querySelector('[data-path="' + CSS.escape(key) + '"]') || Array.prototype.filter.call(container.querySelectorAll('[data-op]'), function (x) { return x.getAttribute('data-op') + (x.getAttribute('data-i') || '') === key && !x.disabled; })[0]; if (again) again.focus(); }
+    else if (key) { var again = container.querySelector('[data-path="' + CSS.escape(key) + '"]') || Array.prototype.filter.call(container.querySelectorAll('[data-op]'), function (x) {
+      var source = x.closest('.wp-house-app, .wp-house');
+      return x.getAttribute('data-op') + (x.getAttribute('data-i') || '') === key && !x.disabled &&
+        (previewSource ? source && source.classList[0] === previewSource.classList[0] : !source);
+    })[0]; if (again) again.focus(); }
   };
   function mount(el) {
     if (container !== el) {

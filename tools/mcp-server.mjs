@@ -73,8 +73,8 @@ function build() {
   }, async () => { const c = getCapabilities(); return { content: json(c), structuredContent: c }; });
 
   server.registerTool('get_example', {
-    title: 'Example project', description: 'A complete valid example project. Choose tasks (default) or workspace (fictional Uni Basel training case).',
-    inputSchema: z.object({ kind: z.enum(['tasks', 'workspace']).optional() }), annotations: { readOnlyHint: true }
+    title: 'Example project', description: 'A complete valid example project. Choose tasks (default) workspace (map and app) or workspace-houses (overview and Teams comparison).',
+    inputSchema: z.object({ kind: z.enum(['tasks', 'workspace', 'workspace-houses']).optional() }), annotations: { readOnlyHint: true }
   }, async ({ kind }) => { const p = getExample(kind); return { content: json(p), structuredContent: p }; });
 
   server.registerTool('validate_project', {

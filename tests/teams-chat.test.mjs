@@ -17,7 +17,7 @@ const error = (p, code, path) => assert.ok(PC.validate(p).errors.some(e => e.cod
 test('valid teams-chat, catalogue and default three-slide sequence', () => {
   assert.deepEqual(PC.validate(project()), { ok: true, errors: [], warnings: [] });
   assert.equal(PC.template().slides.length, 3);
-  assert.equal(PC.capabilities().capabilityVersion, 4);
+  assert.equal(PC.capabilities().capabilityVersion, 5);
   assert.deepEqual(PC.capabilities().profiles['teams-chat'].budgets, { team: 40, messageText: 220, messages: 6 });
   assert.match(PC.authoringPack(), /optionale zusätzliche Folie/);
   assert.match(PC.authoringPack(), /"profile":"teams-chat"/);

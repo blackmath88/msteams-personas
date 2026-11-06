@@ -1,6 +1,6 @@
 # Haus, Zimmer und Regal
 
-Status: design concept for the next workspace visual. The overview is a standalone HTML and JavaScript mockup. See the [current workspace handoff](WORKSPACE-PROFILE-HANDOFF.md) for implemented behaviour.
+The approved overview is the visual reference for the scenario-driven JavaScript renderer. The standalone mockup captures the art direction. The production views use workspace data and the shared render path.
 
 ![Overview slide with three Teams houses, team names inside the houses, channel purposes and an aligned file cabinet](mockups/three-houses.png)
 
@@ -20,7 +20,7 @@ A cabinet sits to the right of its room. Folders and subfolders are nested withi
 
 ## Slide 1 · The person’s houses
 
-Start from Mara’s fictional perspective. Show three houses side by side. Draw each channel as a named room in a horizontal row and align a filing cabinet to its right. Put the team name and a small team tile inside the house header beneath its roof. Add a team-type label and a short description of who works there. Give each channel one short purpose line and use a restrained Teams-inspired palette with a labelled file column. Use an architectural cutaway with a tiled roof, attic window, wall edges and a shared ground line. The team header borrows the initials tile and expand chevron from the Teams renderer; the rooms reuse its Fluent icons as visual cues for their purpose. The roof, room-purpose icons and cabinets are teaching devices. Keep the cabinets at icon level in the overview. Reveal file and folder names on the individual house slides.
+Start from Mara’s fictional perspective. Show three houses side by side. Draw each channel as a named room in a horizontal row and align a filing cabinet to its right. Put the team name and a small team tile inside the house header beneath its roof. Add a team-type label and a short description of who works there. Give each channel one short purpose line and use a restrained Teams-inspired palette with a labelled file column. Use an architectural cutaway with a tiled roof, attic window, wall edges and a shared ground line. The team header borrows the initials tile and expand chevron from the Teams renderer; the rooms reuse its Fluent icons as visual cues for their purpose. The roof, room-purpose icons and cabinets are teaching devices. Keep the cabinets at icon level in the overview. Reveal file and folder names in the comparison with Teams.
 
 | House | Teamtyp | Zusammenarbeit |
 | --- | --- | --- |
@@ -28,23 +28,17 @@ Start from Mara’s fictional perspective. Show three houses side by side. Draw 
 | Onboarding 2027 | Projektteam | bereichsübergreifend |
 | Weiterbildungskooperation | Arbeitsgruppe | mit Externen |
 
-## House detail · One house per slide
+## Slide 2 · One house beside Teams
 
-Give each house its own detail slide. Open **Onboarding 2027** as the first worked example. Draw **Allgemein**, **Pilotphase** and **Auswertung** as horizontal rooms stacked vertically. Align a filing cabinet to the right of every room. Highlight **② Pilotphase** and open its **③ Dateien** cabinet. Show `Checkliste_Pilot.docx` and the folder «Unterlagen», with «Rückmeldungen» nested inside. Keep the other cabinets visually collapsed. «Eingeklappt» is a presentation state.
+Use **Onboarding 2027** for the worked example. The left column keeps the roof, team tile, the three rooms and their cabinets. The right column shows the existing Teams renderer with the channel navigation, tabs and file list. Mark the same **① team**, **② channel** and **③ file location** on both sides. The initial path is **Onboarding 2027 → Pilotphase → Dateien → Checkliste_Pilot.docx**. Opening «Unterlagen» exposes «Rückmeldungen» inside the same file layer.
 
-Use a small **Teamtyp** badge and a separate **Zusammenarbeit** label under each house name. Team type describes the group’s purpose. Collaboration labels describe who works together. Allow the project or fictional tenant to define its own vocabulary. Actual visibility comes from the scenario’s membership and access assumptions. A badge alone grants no access and represents no native Teams label.
+Ask «Wo legt Mara die Checkliste ab, damit die ganze Pilotgruppe damit arbeiten kann?» Then follow the path in both views. Selecting a room or its Teams sidebar entry selects the same channel. Selecting a cabinet opens «Dateien». Clicking a folder or file in the mockup, or choosing it in the editor tree, updates the shared selection. Choose the team in the perspective selector. Other cabinets remain at icon level.
 
-Ask «Wo legt Mara die Checkliste ab, damit die ganze Pilotgruppe damit arbeiten kann?» The audience should be able to explain why this work belongs in the project house.
+## Rebuild in JavaScript
 
-## Teams scene · The same route in the application
+- [workspace-core.js](../src/workspace-core.js) projects the ordered team roots and their channels for the overview. Membership determines visibility. Optional `teamType` and `collaboration` labels describe how the team works. They represent teaching metadata.
+- [workspace-view.js](../src/workspace-view.js) builds the cutaway from each team and its channel array. Use inline SVG for the tiled roof, chimney and attic window. Use HTML and CSS grid for the team header, horizontal floors and the right-hand cabinet column. Reuse the existing Fluent icon helper and Teams initials. Draw the team name inside the outer walls and align the foundations across the overview. The overview uses a generic discussion icon and up to two lines of channel purpose.
+- The side-by-side view uses one selection from `workspace.nodes` for both sides. Resolve the selection to its team, channel, folder and file using stable IDs. Keep the Teams rail, channel list, tabs, breadcrumb and file table in the [existing Teams renderer](../src/m365.js). Keep the house, team labels and cabinets outside the Teams mockup. For a folder, show the breadcrumb, and for a file, highlight its row.
+- Both profiles use the same compiler, browser preview and PNG export. Interactions belong to the editor preview. PNGs capture the selected state. The neutral workspace map and Nora’s OneDrive example remain available via the original workspace profiles.
 
-Keep the same house names and ordering in the Teams sidebar. Open **① Onboarding 2027**, select **② Pilotphase**, and place **③** on its file area. Show the same file and folder. To demonstrate a subfolder, open «Unterlagen» and keep the breadcrumb visible. Use the existing M365 renderer and application terms. Place the explanatory type tags outside the application chrome.
-
-The overview and individual house slides are **Prinzip** views. The matching application view is a **Szene** view. Keep the existing neutral workspace map as an alternative. A team-centred view can open a single house directly. For a personal workspace like Nora’s OneDrive, show the personal shelf without inventing a Teams house.
-
-## Implementation handoff
-
-- Keep one canonical workspace definition. Model the visible teams for a viewer separately from team type and collaboration tags. Reuse stable IDs for teams, channels, folders and files.
-- Extend the person perspective to supply an ordered list of visible Teams and one selected team, channel and file location to both views. For the Teams scene, reuse its existing rail, channel header and file table. Extend the sidebar view model for multiple teams with one expanded group.
-- Add the cutaway to the shared render path. Advertise its options through the MCP capability catalogue once the website, CLI and MCP can render it. The detail and application exports should preserve names, order, selection and markers. Separate map and app components are useful for inserting these visuals into an existing deck.
-- Acceptance: a participant can name Mara’s three houses and see which cabinet belongs to each room. On the separate project-house slide, they can identify the room and cabinet for the checklist, then recognise the identical path in the Teams scene. A nested folder stays visibly inside the file layer. Check readability at slide size and after placement in the 4:3 Uni Basel deck.
+The approved reference covers three houses. The renderer supports one to four houses within the existing workspace budget. The Teams mockup on the comparison slide is scoped to the selected team. See the [workspace handoff](WORKSPACE-PROFILE-HANDOFF.md) for the portable fields and the CLI and MCP commands.

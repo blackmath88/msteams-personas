@@ -46,3 +46,54 @@
 .wp-map .wp-reference{border-left:3px dashed #08766e;padding-left:12px;font-size:23px!important}
 .wp-m365 .t-team>span:has(strong){min-width:0;flex:1}
 .wp-guide .wp-guide-focus{font-size:22px}
+
+/* Architectural cutaway and its matching Teams scene. Geometry follows docs/mockups/three-houses.html. */
+.wp-house-slide{background:radial-gradient(ellipse at 88% 9%,#ecebff,transparent 55%),#f7f7fc;color:#202239;font-family:"Segoe UI",Arial,sans-serif}
+.wp-house-slide .wp-head p,.wp-house-slide .wp-foot{color:#45479a}
+.wp-houses,.wp-house-compare{position:absolute;inset:191px 66px 91px;display:grid;gap:26px}
+.wp-houses{grid-template-columns:repeat(var(--houses),minmax(0,1fr));align-items:end;padding-bottom:44px}
+.wp-houses:has(.wp-house:only-child){grid-template-columns:minmax(0,600px);justify-content:center}
+.wp-houses:has(.wp-house:nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,600px));justify-content:center}
+.wp-house-compare{grid-template-columns:465px 1fr;align-items:center}
+.wp-house{min-width:0;--roof:#6264a7;--light:#7679b8;--trim:#3c3f80;--tint:#eeeffc;--tile:#5b5fc7}
+.wp-house-1{--roof:#775da4;--light:#8b71b3;--trim:#4c3874;--tint:#f3edf9;--tile:#7655a6}
+.wp-house-2{--roof:#5078a2;--light:#688bb0;--trim:#304e74;--tint:#ecf2fb;--tile:#34659b}
+.wp-roof{display:block;width:100%;height:auto;max-height:165px;overflow:visible}
+.wp-roof-face{fill:var(--roof)}
+.wp-roof-light,.wp-eaves.wp-chimney{fill:var(--light)}
+.wp-eaves{fill:none;stroke:var(--trim);stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
+.wp-attic{stroke:var(--trim);stroke-width:3}
+.wp-house-building{margin:-2px 3% 0;background:#f5f5f5;border-inline:5px solid var(--trim);box-shadow:0 8px 20px #28295d15}
+.wp-house-name{display:grid;grid-template-columns:16px 41px minmax(0,1fr);align-items:center;gap:9px;padding:10px 12px;min-height:88px}
+.wp-house-name .fi{width:16px;height:16px;color:#616161}
+.wp-house-tile{display:grid;place-items:center;width:41px;height:41px;border-radius:6px;background:var(--tile);color:white;font-size:16px;font-weight:700}
+.wp-house-name h3{font-size:27px;line-height:1.04;margin:0 0 5px;overflow-wrap:anywhere}
+.wp-house-type,.wp-house-scope{display:inline-block;font-size:15px;line-height:1.13;margin:1px 5px 1px 0;color:#505050}
+.wp-house-type{background:var(--tint);border-radius:4px;padding:3px 5px;color:var(--trim);font-weight:700}
+.wp-house-cols,.wp-room{display:grid;grid-template-columns:minmax(0,1fr) 80px}
+.wp-house-cols{font-size:16px;font-weight:700;background:white;color:#555}
+.wp-house-cols span{padding:5px 12px}
+.wp-house-cols span:last-child{text-align:center;padding-inline:0;color:var(--trim);border-bottom:3px solid var(--tile)}
+.wp-house-building ul{list-style:none;margin:0;padding:0}
+.wp-room{min-height:73px;border-top:3px solid #c8c9d4;background:linear-gradient(180deg,#fff 89%,#f2f0f3 89%)}
+.wp-room-label,.wp-room-files{border:0;font:inherit;text-align:left;color:inherit;padding:7px 10px}
+.wp-room-label{display:grid;grid-template-columns:29px minmax(0,1fr);align-items:center;gap:8px;background:transparent}
+.wp-room-label>.fi{box-sizing:content-box;width:19px;height:19px;padding:5px;background:var(--tint);color:var(--trim);border-radius:5px}
+.wp-room-label strong,.wp-room-label small{display:block;overflow-wrap:anywhere}
+.wp-room-label strong{font-size:23px;line-height:1.04;color:#242424}
+.wp-room-label small{font-size:16px;line-height:1.12;color:#484848;margin-top:4px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.wp-room-files{display:flex;align-items:center;justify-content:center;gap:2px;background:var(--tint);color:var(--trim);border-left:2px solid #d5d4e1}
+.wp-room-files svg{width:33px;height:33px}
+.wp-room-on{outline:3px solid #5b5fc7;outline-offset:-3px;background:#fff}
+.wp-room-files-on{box-shadow:inset 0 -4px #5b5fc7}
+.wp-room .wp-mark{width:27px;height:27px;margin:0;font-size:16px}
+.wp-house-name .wp-mark{width:24px;height:24px;margin:0 0 0 6px;font-size:15px}
+.wp-house button{cursor:pointer}
+.wp-house button:focus-visible{outline:3px solid #242424;outline-offset:-4px}
+.wp-foundation{height:9px;border-radius:2px;margin-inline:1%;background:var(--trim);box-shadow:0 4px 0 -1px #9a9cb4,0 8px 12px #32355320}
+.wp-house-app{width:100%;height:732px;overflow:hidden;background:#fff;outline:2px solid #d5d4e1}
+.wp-house-app>.m3{transform:scale(.899);transform-origin:0 0}
+.wp-house-app .t-chans button,.wp-house-app .m-fn button{font:inherit;color:inherit;background:none;border:0;padding:0;text-align:left;cursor:pointer}
+.wp-house-app .t-chans button:hover,.wp-house-app .m-fn button:hover{text-decoration:underline}
+.wp-house-app .t-team strong,.wp-house-app .t-chans li{white-space:normal;overflow-wrap:anywhere}
+.wp-house-app .t-crumb .m-mk{position:static;margin-left:8px}

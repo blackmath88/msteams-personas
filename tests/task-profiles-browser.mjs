@@ -45,9 +45,9 @@ try{
   for(const kind of ['planner-task','todo']) {
     await page.eval(`document.querySelector('#pj-addp').value='${kind}'; document.querySelector('[data-op="add-slide"]').click()`); await page.sleep(200);
   }
-  check('new-profile authoring upgrades capability version and stays valid',await page.eval(`ProjectUI.current().capabilityVersion===4 && ProjectCore.validate(ProjectUI.current()).ok && document.querySelectorAll('.pj-thumb .slide').length===5`));
+  check('new-profile authoring upgrades capability version and stays valid',await page.eval(`ProjectUI.current().capabilityVersion===5 && ProjectCore.validate(ProjectUI.current()).ok && document.querySelectorAll('.pj-thumb .slide').length===5`));
   await page.goto('file://'+root+'index.html#/projekt');
-  check('offline file editor loads the new catalogue',await page.eval(`ProjectCore.capabilities().capabilityVersion===4 && !!ProjectCore.capabilities().profiles.todo`));
+  check('offline file editor loads the new catalogue',await page.eval(`ProjectCore.capabilities().capabilityVersion===5 && !!ProjectCore.capabilities().profiles.todo`));
   check('no script errors',page.errors.length===0);
   writeFileSync(out+'browser-checks.json',JSON.stringify(log,null,2));
 }finally{await page.close();}

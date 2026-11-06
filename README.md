@@ -20,7 +20,7 @@ See [V3 handoff](docs/V3-BUILD-HANDOFF.md) for evidence, supported coverage and 
 
 ## Arbeitsbereich erkunden
 
-Plan a fictional team workspace as a map and Teams or OneDrive preview. Open «Arbeitsbereich erkunden» from the library and adapt the example as a local draft. See the [workspace profile handoff](docs/WORKSPACE-PROFILE-HANDOFF.md) for model limits and CLI/MCP usage.
+Plan a fictional team workspace as a map and Teams or OneDrive preview. Open «Arbeitsbereich erkunden» from the library and adapt the example as a local draft. Choose «Häuser und Teams öffnen» for a person’s Teams houses and a side-by-side comparison with Teams channel navigation and files. See the [workspace profile handoff](docs/WORKSPACE-PROFILE-HANDOFF.md) for model limits and CLI/MCP usage.
 
 ## Portable projects, CLI and MCP
 
