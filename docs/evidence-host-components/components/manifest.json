@@ -1,0 +1,343 @@
+{
+  "format": "msteams-personas/component-manifest",
+  "manifestVersion": 1,
+  "rendererVersion": "v3",
+  "projectVersion": 1,
+  "capabilityVersion": 2,
+  "project": {
+    "id": "brunner-uebergabe-ferien",
+    "title": "Übergabe ohne offene Enden"
+  },
+  "componentVersion": 1,
+  "ok": true,
+  "stage": "done",
+  "scale": 2,
+  "durationMs": 3015,
+  "components": [
+    {
+      "index": 0,
+      "type": "teams.channel",
+      "scene": "sc-kanal",
+      "view": "posts",
+      "select": [
+        "q1",
+        "q2"
+      ],
+      "marks": false,
+      "reflowWidth": 640,
+      "file": "c01-brunner-uebergabe-ferien-sc-kanal-posts.png",
+      "width": 1344,
+      "height": 660,
+      "bytes": 104122,
+      "excerpt": true,
+      "crop": [
+        342,
+        436,
+        672,
+        330
+      ],
+      "anchors": [
+        {
+          "entity": "q1",
+          "kind": "post",
+          "box": [
+            0.0595,
+            0.0489,
+            0.8333,
+            0.602
+          ]
+        },
+        {
+          "entity": "q2",
+          "kind": "post",
+          "box": [
+            0.0595,
+            0.6812,
+            0.8333,
+            0.2703
+          ]
+        }
+      ],
+      "markers": [],
+      "text": {
+        "essentialPx": 14,
+        "minTextPt": 12,
+        "minPlacedWidthIn": 8
+      },
+      "context": "Microsoft Teams · Holzbau Brunner › Kita Sonnenhof",
+      "attribution": "Fiktives Beispiel · nachgebildete Oberfläche, kein Produkt von Microsoft",
+      "sha256": "437ffde022a371de00c0a6753b994c12c4b87582fee4a9b796ddcde50009fa0a"
+    },
+    {
+      "index": 1,
+      "type": "teams.chat",
+      "scene": "sc-chat",
+      "view": "messages",
+      "select": [
+        "m1",
+        "m2",
+        "m3",
+        "m4"
+      ],
+      "marks": false,
+      "reflowWidth": 640,
+      "file": "c02-brunner-uebergabe-ferien-sc-chat-messages.png",
+      "width": 1344,
+      "height": 704,
+      "bytes": 104273,
+      "excerpt": true,
+      "crop": [
+        342,
+        396,
+        672,
+        352
+      ],
+      "anchors": [
+        {
+          "entity": "m1",
+          "kind": "message",
+          "box": [
+            0.0714,
+            0.0458,
+            0.8214,
+            0.1734
+          ]
+        },
+        {
+          "entity": "m2",
+          "kind": "message",
+          "box": [
+            0.3138,
+            0.2533,
+            0.579,
+            0.1649
+          ]
+        },
+        {
+          "entity": "m3",
+          "kind": "message",
+          "box": [
+            0.0714,
+            0.4522,
+            0.8214,
+            0.2384
+          ]
+        },
+        {
+          "entity": "m4",
+          "kind": "message",
+          "box": [
+            0.0714,
+            0.7247,
+            0.8214,
+            0.2298
+          ]
+        }
+      ],
+      "markers": [],
+      "text": {
+        "essentialPx": 16,
+        "minTextPt": 12,
+        "minPlacedWidthIn": 7
+      },
+      "context": "Microsoft Teams · Chat",
+      "attribution": "Fiktives Beispiel · nachgebildete Oberfläche, kein Produkt von Microsoft",
+      "sha256": "ea30f7280102cb5e3322e92e1b7bf620bd5013f6e353e085edc959faf5dbc213"
+    },
+    {
+      "index": 2,
+      "type": "planner.board",
+      "scene": "sc-plan",
+      "view": "bucket",
+      "select": "Diese Woche",
+      "marks": false,
+      "reflowWidth": null,
+      "file": "c03-brunner-uebergabe-ferien-sc-plan-bucket.png",
+      "width": 592,
+      "height": 636,
+      "bytes": 58828,
+      "excerpt": true,
+      "crop": [
+        248,
+        137,
+        296,
+        318
+      ],
+      "anchors": [
+        {
+          "entity": "t-fenster",
+          "kind": "task",
+          "box": [
+            0.027,
+            0.2585,
+            0.9459,
+            0.376
+          ]
+        },
+        {
+          "entity": "t-statik",
+          "kind": "task",
+          "box": [
+            0.027,
+            0.6596,
+            0.9459,
+            0.3145
+          ]
+        },
+        {
+          "entity": "Diese Woche",
+          "kind": "bucket",
+          "box": [
+            0.027,
+            0.0275,
+            0.9459,
+            0.9466
+          ]
+        }
+      ],
+      "markers": [],
+      "text": {
+        "essentialPx": 14.5,
+        "minTextPt": 12,
+        "minPlacedWidthIn": 3.4
+      },
+      "context": "Planner · Holzbau Brunner › Diese Woche",
+      "attribution": "Fiktives Beispiel · nachgebildete Oberfläche, kein Produkt von Microsoft",
+      "sha256": "deee497bad6f7dcc3513d1b726c71cd9339cc582c3659a81712f593aa77cfa9d"
+    },
+    {
+      "index": 3,
+      "type": "planner.board",
+      "scene": "sc-plan",
+      "view": "bucket",
+      "select": "Montagewoche",
+      "marks": false,
+      "reflowWidth": null,
+      "file": "c04-brunner-uebergabe-ferien-sc-plan-bucket.png",
+      "width": 592,
+      "height": 382,
+      "bytes": 36462,
+      "excerpt": true,
+      "crop": [
+        544,
+        137,
+        296,
+        191
+      ],
+      "anchors": [
+        {
+          "entity": "t-kran",
+          "kind": "task",
+          "box": [
+            0.027,
+            0.4304,
+            0.9459,
+            0.5236
+          ]
+        },
+        {
+          "entity": "Montagewoche",
+          "kind": "bucket",
+          "box": [
+            0.027,
+            0.0458,
+            0.9459,
+            0.9081
+          ]
+        }
+      ],
+      "markers": [],
+      "text": {
+        "essentialPx": 14.5,
+        "minTextPt": 12,
+        "minPlacedWidthIn": 3.4
+      },
+      "context": "Planner · Holzbau Brunner › Montagewoche",
+      "attribution": "Fiktives Beispiel · nachgebildete Oberfläche, kein Produkt von Microsoft",
+      "sha256": "c52e51e866b1aae985658d226d7c1caafff91d210e28c7e2b7321674c212365a"
+    },
+    {
+      "index": 4,
+      "type": "planner.board",
+      "scene": "sc-plan",
+      "view": "board",
+      "select": null,
+      "marks": false,
+      "reflowWidth": null,
+      "file": "c05-brunner-uebergabe-ferien-sc-plan-board.png",
+      "width": 2880,
+      "height": 1620,
+      "bytes": 250512,
+      "excerpt": false,
+      "crop": [
+        0,
+        0,
+        1440,
+        810
+      ],
+      "anchors": [
+        {
+          "entity": "t-fenster",
+          "kind": "task",
+          "box": [
+            0.1778,
+            0.2706,
+            0.1944,
+            0.1476
+          ]
+        },
+        {
+          "entity": "t-statik",
+          "kind": "task",
+          "box": [
+            0.1778,
+            0.4281,
+            0.1944,
+            0.1235
+          ]
+        },
+        {
+          "entity": "t-kran",
+          "kind": "task",
+          "box": [
+            0.3833,
+            0.2706,
+            0.1944,
+            0.1235
+          ]
+        },
+        {
+          "entity": "Diese Woche",
+          "kind": "bucket",
+          "box": [
+            0.1778,
+            0.1799,
+            0.1944,
+            0.3716
+          ]
+        },
+        {
+          "entity": "Montagewoche",
+          "kind": "bucket",
+          "box": [
+            0.3833,
+            0.1799,
+            0.1944,
+            0.2141
+          ]
+        }
+      ],
+      "markers": [],
+      "text": {
+        "essentialPx": 14.5,
+        "minTextPt": 12,
+        "minPlacedWidthIn": 16.55
+      },
+      "context": "Planner · Holzbau Brunner",
+      "attribution": "Fiktives Beispiel · nachgebildete Oberfläche, kein Produkt von Microsoft",
+      "sha256": "af435e46e8b5267c5c12da9c97464b5b870a9cc100343ea3cf670594d9a619ea"
+    }
+  ],
+  "diagnostics": [],
+  "renderedAt": "2026-11-02T18:01:58.311Z"
+}

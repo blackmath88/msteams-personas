@@ -1,0 +1,129 @@
+{
+  "format": "msteams-personas/project",
+  "projectVersion": 1,
+  "capabilityVersion": 2,
+  "meta": {
+    "id": "brunner-uebergabe-ferien",
+    "title": "Übergabe ohne offene Enden",
+    "organisation": "Holzbau Brunner AG (fiktiv)",
+    "audience": "Projektleitende und Bauleitung",
+    "goal": "Zeigen, wie Arbeiten bei einer Übergabe vor den Ferien eine Person, einen Termin und einen Ort bekommen",
+    "locale": "de-CH",
+    "fictional": true,
+    "source": {
+      "kind": "chat",
+      "note": "Aus einem fiktiven Planungs-Chat abgeleitet; Firma, Personen und Baustelle sind erfunden."
+    },
+    "assumptions": [
+      "Das Team führt pro Baustelle einen Teams-Kanal und einen gemeinsamen Planner-Plan."
+    ],
+    "notes": ""
+  },
+  "people": [
+    { "id": "p-sandra", "name": "Sandra Keller", "role": "Projektleiterin" },
+    { "id": "p-luca", "name": "Luca Moser", "role": "Bauleiter" },
+    { "id": "p-nadia", "name": "Nadia Frei", "role": "Einkauf und Administration" },
+    { "id": "p-reto", "name": "Reto Brunner", "role": "Geschäftsleitung" }
+  ],
+  "documents": [
+    { "id": "d-fenster", "name": "Fensterliste Kita Sonnenhof.xlsx" }
+  ],
+  "tasks": [
+    { "id": "t-fenster", "title": "Fensterbestellung Kita Sonnenhof freigeben" },
+    { "id": "t-statik", "title": "Statikfreigabe Dachträger einholen" },
+    { "id": "t-kran", "title": "Kran für Montagewoche reservieren" },
+    { "id": "t-ferien", "title": "Ferienmeldung an Reto schicken" }
+  ],
+  "states": [
+    {
+      "id": "before",
+      "label": "Vor den Ferien",
+      "tasks": {
+        "t-fenster": { "owner": "p-sandra", "list": "personal" },
+        "t-statik": { "owner": "p-sandra", "list": "personal" },
+        "t-kran": { "owner": "p-luca", "list": "personal" },
+        "t-ferien": { "owner": "p-sandra", "list": "personal" }
+      }
+    },
+    {
+      "id": "after",
+      "label": "Mit gemeinsamem Plan",
+      "tasks": {
+        "t-fenster": { "owner": "p-nadia", "list": "plan", "bucket": "Diese Woche", "due": "Mi 13.11." },
+        "t-statik": { "owner": "p-luca", "list": "plan", "bucket": "Diese Woche", "due": "Fr 15.11." },
+        "t-kran": { "owner": "p-nadia", "list": "plan", "bucket": "Montagewoche", "due": "Mo 18.11." },
+        "t-ferien": { "owner": "p-sandra", "list": "personal" }
+      }
+    }
+  ],
+  "scenes": [
+    {
+      "id": "sc-kanal",
+      "profile": "teams-posts",
+      "team": "Holzbau Brunner",
+      "channel": "Kita Sonnenhof",
+      "posts": [
+        {
+          "id": "q1",
+          "by": "p-sandra",
+          "time": "16:40",
+          "title": "Übergabe vor meinen Ferien",
+          "text": "Fenster sind angefragt, die Freigabe fehlt noch. Statik für die Dachträger liegt beim Ingenieur. Kran für die Montagewoche: Bitte reserviert das noch jemand.",
+          "document": "d-fenster",
+          "hint": "Drei offene Arbeiten in einem Beitrag: ohne Person, ohne Termin."
+        },
+        {
+          "id": "q2",
+          "by": "p-luca",
+          "time": "17:05",
+          "title": "",
+          "text": "Alles klar, ich schau mal. Wann ist die Montagewoche nochmals?",
+          "hint": "«Ich schau mal» ist keine Zuständigkeit."
+        }
+      ]
+    },
+    {
+      "id": "sc-chat",
+      "profile": "teams-chat",
+      "team": "Holzbau Brunner",
+      "viewer": "p-luca",
+      "partner": "p-nadia",
+      "messages": [
+        { "id": "m1", "by": "p-nadia", "time": "09:10", "text": "Der Kran ist reserviert: KW 47, Montag bis Mittwoch.", "hint": "Ein Entscheid, den das ganze Team braucht, steht nur hier." },
+        { "id": "m2", "by": "p-luca", "time": "09:14", "text": "Super, danke. Sag ich Sandra, wenn sie zurück ist." },
+        { "id": "m3", "by": "p-nadia", "time": "09:15", "text": "Und die Fensterfreigabe? Der Lieferant wartet seit Montag auf unser OK.", "hint": "Die zweite Arbeit aus der Übergabe hat niemand übernommen." },
+        { "id": "m4", "by": "p-luca", "time": "09:21", "text": "Hab ich nicht auf dem Radar. Ich dachte, das macht Sandra vor den Ferien." }
+      ]
+    },
+    {
+      "id": "sc-plan",
+      "profile": "planner",
+      "team": "Holzbau Brunner",
+      "state": "after"
+    },
+    {
+      "id": "sc-prinzip",
+      "profile": "prinzip-tasks",
+      "team": "Holzbau Brunner",
+      "before": "before",
+      "after": "after"
+    }
+  ],
+  "slides": [
+    { "id": "s-kanal", "scene": "sc-kanal", "presenterNotes": "Zuerst lesen lassen. Dann fragen: Wer ist jetzt für die Fensterfreigabe zuständig? Bis wann?" },
+    { "id": "s-chat", "scene": "sc-chat", "presenterNotes": "Der Kran ist erledigt, aber nur zwei Personen wissen es. Die Fensterfreigabe fällt durch, weil niemand sie übernommen hat." },
+    { "id": "s-plan", "scene": "sc-plan", "presenterNotes": "Dieselben drei Arbeiten, jetzt mit Person, Termin und Bucket. Die Ferienmeldung bleibt persönlich." },
+    {
+      "id": "s-prinzip",
+      "scene": "sc-prinzip",
+      "presenterNotes": "Persönliche Erinnerungen bleiben in der eigenen Liste. Was jemand anderes übernehmen soll, kommt in den Plan.",
+      "teaching": {
+        "title": "Was andere übernehmen, gehört in den Plan",
+        "question": "Wer erledigt was bis wann, auch wenn ich in den Ferien bin?",
+        "problem": "Offene Arbeiten stehen in einem Übergabe-Beitrag und in persönlichen Listen. Zwei Wochen später weiss niemand, was erledigt ist.",
+        "recommendation": "Jede Arbeit, die eine andere Person übernimmt, in den gemeinsamen Plan: mit Person, Termin und Bucket. Entscheide aus dem Chat dort nachtragen.",
+        "boundary": "Kurze persönliche Erinnerungen gehören nicht in den Plan. Der Plan ersetzt das Übergabegespräch nicht."
+      }
+    }
+  ]
+}
