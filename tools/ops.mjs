@@ -15,7 +15,7 @@ export function getCapabilities() {
   };
 }
 
-export function getExample(kind) { return kind === 'workspace' ? PC.workspaceExample() : PC.template(); }
+export function getExample(kind) { return ['workspace', 'workspace-houses'].includes(kind) ? PC.workspaceExample(kind) : PC.template(); }
 
 /* Accepts a parsed object or text (raw JSON or one ```json fence). Never throws. */
 export function parseProject(input) {

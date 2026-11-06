@@ -1,13 +1,13 @@
 # Current status
 
-Updated 2026-11-05. `main` is the integration branch for the viewer, portable projects, the CLI and the MCP server.
+Updated 2026-11-06. `main` is the integration branch for the viewer, portable projects, the CLI and the MCP server.
 
 ## Available
 
 - The V3 library offers fictional application scenes, principle views, trainer sequences, browser-local editing and PNG export. See the [V3 handoff](V3-BUILD-HANDOFF.md).
-- Portable projects use project format v1 and accept capability versions 1–4. They support Teams posts and chat, Planner boards and task details, To Do, task principles, and linked workspace maps and scenes. See the [task profiles](TASK-PROFILES-HANDOFF.md) and [workspace explorer](WORKSPACE-PROFILE-HANDOFF.md).
+- Portable projects use project format v1 and accept capability versions 1–5. They support Teams posts and chat, Planner boards and task details, To Do, task principles, and linked workspace maps and scenes, and the house overview and Teams comparison. See the [task profiles](TASK-PROFILES-HANDOFF.md) and [workspace explorer](WORKSPACE-PROFILE-HANDOFF.md).
 - The [local CLI and MCP server](CLI-MCP-HANDOFF.md) share rendering with the website. The [deck component export](COMPONENTS-D1-HANDOFF.md) also renders individual M365 screens and excerpts with measured anchors.
-- GitHub Pages serves the static website from `main`. CLI and MCP run separately. An installed MCP process must load this revision and restart before it advertises capability version 4 and `render_components`.
+- GitHub Pages serves the static website from `main`. CLI and MCP run separately. An installed MCP process must load this revision and restart before it advertises capability version 5 and `render_components`.
 
 ## Open
 

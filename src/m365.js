@@ -116,8 +116,8 @@
   function ent(id) { return id ? ' data-entity="' + esc(id) + '"' : ''; }
   function mk(n, on) { return n && on ? '<span class="m-mk" aria-label="Hinweis ' + n + '">' + n + '</span>' : ''; }
   function nl2br(t) { return esc(t).replace(/\n/g, '<br>'); }
-  function frame(cls, label, inner) {
-    return '<div class="m3 ' + cls + '" role="img" aria-label="' + esc(label) + '" style="width:' + W + 'px;height:' + H + 'px">' + inner + '</div>';
+  function frame(cls, label, inner, interactive) {
+    return '<div class="m3 ' + cls + '" role="' + (interactive ? 'region' : 'img') + '" aria-label="' + esc(label) + '" style="width:' + W + 'px;height:' + H + 'px">' + inner + '</div>';
   }
   function fileExt(n) { var m = /\.([a-z0-9]+)$/i.exec(n || ''); return m ? m[1].toLowerCase() : ''; }
   function typeName(n) { return { xlsx: 'Microsoft Excel-Arbeitsblatt', docx: 'Microsoft Word-Dokument', pptx: 'Microsoft PowerPoint-Präsentation', pdf: 'PDF-Dokument' }[fileExt(n)] || 'Datei'; }
@@ -151,7 +151,7 @@
         '<div class="t-team">' + fi('chevd', 't-chev') + tile + '<span><strong data-bind="team">' + esc(vm.team) + '</strong></span>' + (sc.workspace ? mk(1, o.annot) : '') + fi('more', 't-dim') + '</div>' +
         '<ul class="t-chans">' + sc.channels.map(function (c, i) {
           var active = sc.workspace ? i === sc.activeIndex : c === sc.active;
-          return '<li class="' + (active ? 'on' : '') + '"' + (active ? ' aria-current="true"' : '') + '>' + esc(c) + (sc.workspace && active ? mk(2, o.annot) : '') + '</li>';
+          return '<li class="' + (active ? 'on' : '') + '"' + (active ? ' aria-current="true"' : '') + '>' + (o.workspaceNav ? '<button type="button" data-op="wp-select" data-i="' + esc(sc.channelIds[i]) + '">' + esc(c) + '</button>' : esc(c)) + (sc.workspace && active ? mk(2, o.annot) : '') + '</li>';
         }).join('') + '</ul>' +
         '<p class="t-all">Alle Ihre Teams und Kanäle anzeigen</p>' +
       '</aside>' +
@@ -159,7 +159,7 @@
         '<header class="t-ch">' + tile.replace('t-tile', 't-tile t-tile-l') +
           '<div class="t-chn"><p><strong># ' + esc(sc.active) + '</strong><small>' + esc(vm.team) + '</small></p>' +
           '<div class="t-tabs" role="tablist" aria-label="Ansicht im Kanal">' + tabs.map(function (t) {
-            return '<button type="button" role="tab" data-tab="' + t[0] + '" aria-selected="' + (t[0] === tab) + '"' + (t[0] === tab ? '' : ' tabindex="-1"') + '>' + t[1] + '</button>';
+            return '<button type="button" role="tab" data-tab="' + t[0] + '"' + (o.workspaceNav ? ' data-op="wp-preview-tab" data-i="' + t[0] + '"' : '') + ' aria-selected="' + (t[0] === tab) + '"' + (t[0] === tab || o.workspaceNav ? '' : ' tabindex="-1"') + '>' + t[1] + '</button>';
           }).join('') + '<span class="t-tabplus">' + fi('plus') + '</span></div></div>' +
           '<div class="t-cha"><span class="t-face">' + members.slice(0, 3).map(function (p) { return avatar(p, 24); }).join('') + '<small>' + members.length + '</small></span>' +
             '<span class="t-meet">' + fi('video') + 'Besprechen' + fi('chevd') + '</span>' + fi('info', 't-dim') + fi('more', 't-dim') + '</div>' +
@@ -169,7 +169,7 @@
             return '<li>' + avatar(p, 28) + '<span>' + esc(short(p.name)) + (p.external ? ' <em>extern</em>' : p.outside ? ' <em>andere Einheit</em>' : '') + '</span></li>';
           }).join('') + '</ul></aside>' : '') +
         '</div>' +
-      '</section>');
+      '</section>', o.workspaceNav);
   }
 
   function teamsRail(on) {
@@ -190,7 +190,7 @@
       var p = vm.person(q.by), reps = q.replies || [];
       var names = reps.map(function (r) { return short(vm.person(r.by).name).split(' ')[0]; }).filter(function (n, i, a) { return a.indexOf(n) === i; });
       return '<li class="t-post' + (q.canonical ? ' is-canon' : '') + '"' + ent(q.id) + '>' + avatar(p, 32) +
-        '<div class="t-card">' + mk(q.mark, o.annot) +
+        '<div class="t-card">' + mk(q.mark, o.annot && !o.workspaceCompare) +
           '<p class="t-ph"><strong>' + esc(short(p.name)) + '</strong><time>' + esc(q.time) + '</time></p>' +
           (q.title ? '<p class="t-subj">' + esc(vm.fill(q.title)) + '</p>' : '') +
           '<p class="t-tx">' + esc(vm.fill(q.text)) + '</p>' +
@@ -211,7 +211,7 @@
   function teamsFiles(vm, o) {
     return '<div class="t-files">' +
       cmdbar([['plus', 'Neu', 'm-pri'], ['upload', 'Hochladen'], ['edit', 'In Rasteransicht bearbeiten'], ['share', 'Teilen'], ['link', 'Link kopieren'], ['sync', 'Synchronisieren'], ['more', '']]) +
-      '<p class="t-crumb">Dokumente <span>›</span> <strong>' + esc(vm.scene.active) + '</strong>' + (vm.scene.folderPath || []).map(function (name) { return ' <span>›</span> ' + esc(name); }).join('') + '</p>' +
+      '<p class="t-crumb">Dokumente <span>›</span> <strong>' + esc(vm.scene.active) + '</strong>' + (vm.scene.folderPath || []).map(function (name) { return ' <span>›</span> ' + esc(name); }).join('') + (o.workspaceCompare && !vm.scene.files.some(function (f) { return f.canonical; }) ? mk(3, o.annot) : '') + '</p>' +
       fileTable(vm, vm.scene.files, o, true) + '</div>';
   }
   function fileTable(vm, files, o, withBy) {
@@ -219,7 +219,7 @@
       files.map(function (f) {
         var p = f.by ? vm.person(f.by) : null;
         return '<tr class="' + (f.canonical && o.select ? 'sel' : '') + '"><td class="m-ck">' + (f.canonical && o.select ? '<span class="m-tick">' + fi('check', null, true) + '</span>' : '') + '</td>' +
-          '<td><span class="m-fn">' + ftype(f.name, f.kind) + '<span' + (f.canonical ? ' data-docref="canonical"' : '') + '>' + esc(f.name) + '</span>' + mk(f.mark, o.annot) + '</span></td>' +
+          '<td><span class="m-fn">' + ftype(f.name, f.kind) + '<span' + (f.canonical ? ' data-docref="canonical"' : '') + '>' + (o.workspaceNav ? '<button type="button" data-op="wp-select" data-i="' + esc(f.id) + '">' + esc(f.name) + '</button>' : esc(f.name)) + '</span>' + mk(f.mark, o.annot) + '</span></td>' +
           '<td>' + esc(f.when || 'vor 2 Wochen') + '</td>' + (withBy ? '<td>' + (p ? esc(short(p.name)) : '–') + '</td>' : '') + '</tr>';
       }).join('') + '</tbody></table>';
   }

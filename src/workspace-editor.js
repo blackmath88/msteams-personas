@@ -2,7 +2,7 @@
 (function (root) {
   var W = root.WorkspaceCore, PC = root.ProjectCore, esc = root.Views.esc;
   var kinds = { team: 'Team', personal: 'Persönlicher Bereich', channel: 'Kanal', storage: 'Dateiablage', folder: 'Ordner', file: 'Datei' };
-  function focus(p) { return p.scenes.find(function (s) { return s.profile === 'workspace-map'; }) || p.scenes.find(function (s) { return W.isProfile(s.profile); }); }
+  function focus(p) { return p.scenes.find(function (s) { return s.profile === 'workspace-map'; }) || p.scenes.find(function (s) { return W.hasTab(s.profile); }) || p.scenes.find(function (s) { return s.profile === 'workspace-houses'; }); }
   function pairs(p, focus) {
     return p.scenes.filter(function (s) { return W.isProfile(s.profile) && s.root === focus.root && s.viewer === focus.viewer && s.selected === focus.selected; });
   }
@@ -29,13 +29,19 @@
     var sc = focus(p);
     if (!sc) return '';
     var m = W.model(p, sc), w = p.workspace, index = W.index(w);
+    if (m.houses) {
+      return '<div class="wp-controls">' + select('wp-house-viewer', 'Teams anzeigen für', p.people.filter(function (person) {
+        return w.nodes.some(function (node) { return node.kind === 'team' && W.canSee(node, person.id); });
+      }).map(function (person) { return option(person.id, person.name, m.viewer === person.id); }).join('')) + '</div>';
+    }
+    var compare = sc.profile === 'workspace-house-teams';
     var n = sc.editRoot ? m.base : m.selected;
-    var pairedScene = pairs(p, sc).find(function (s) { return s.profile === 'workspace-scene'; });
+    var pairedScene = pairs(p, sc).find(function (s) { return W.hasTab(s.profile); });
     var folders = destinations(w, m, n);
     var container = ['storage', 'folder'].includes(n.kind) ? n : m.folder;
     var canAddEntry = w.nodes.length < W.budgets.nodes && W.children(w, container.id).length < W.budgets.entries;
     var canAddFolder = canAddEntry && W.trail(index, container.id).filter(function (a) { return a.kind === 'folder'; }).length < 2;
-    var perspective = w.nodes.filter(function (a) { return ['team', 'personal'].includes(a.kind); }).map(function (a) {
+    var perspective = w.nodes.filter(function (a) { return compare ? a.kind === 'team' : ['team', 'personal'].includes(a.kind); }).map(function (a) {
       return a.kind === 'personal' ?
         option(a.id + ':' + a.owner, 'Person / ' + p.people.find(function (person) { return person.id === a.owner; }).name, sc.root === a.id && sc.viewer === a.owner) :
         option(a.id + ':', 'Team / ' + a.name, sc.root === a.id && !sc.viewer) +
@@ -46,7 +52,7 @@
     }).join('');
     return '<div class="wp-controls"><fieldset><legend>Perspektive und Darstellung</legend>' +
       select('wp-perspective', 'Arbeitsbereich anzeigen als', perspective) +
-      (m.base.kind === 'team' ? '<label class="wp-inline"><input id="wp-house" type="checkbox"' + (sc.house ? ' checked' : '') + '> Haus-Metapher anzeigen</label>' : '') +
+      (m.base.kind === 'team' && !compare ? '<label class="wp-inline"><input id="wp-house" type="checkbox"' + (sc.house ? ' checked' : '') + '> Haus-Metapher anzeigen</label>' : '') +
       (m.base.kind === 'team' && pairedScene ? select('wp-tab', 'Teams-Vorschau', option('posts', 'Beiträge', pairedScene.tab === 'posts') + option('files', 'Dateien', pairedScene.tab === 'files')) : '') +
       '</fieldset><h2>Arbeitsbereich</h2><ul aria-label="Struktur des Arbeitsbereichs">' + tree(w, m.base, n) + '</ul>' +
       '<fieldset><legend>Eintrag bearbeiten</legend>' + field('wp-name', 'Name', n.name, W.budgets.name) +
@@ -65,11 +71,15 @@
     var path = W.trail(W.index(p.workspace), id), base = path[0];
     pairs(p, sc).forEach(function (s) {
       s.selected = tab === 'posts' ? path[1].id : id;
-      if (s.profile === 'workspace-scene') s.tab = tab || (base.kind === 'personal' || path.length > 2 ? 'files' : s.tab);
+      if (W.hasTab(s.profile)) s.tab = tab || (base.kind === 'personal' || path.length > 2 ? 'files' : s.tab);
     });
   }
   function change(p, command, value) {
     var sc = focus(p), m = W.model(p, sc), w = p.workspace, index = W.index(w);
+    if (m.houses) {
+      if (command !== 'wp-house-viewer') return false;
+      sc.viewer = value; return true;
+    }
     var edited = sc.editRoot ? m.base : m.selected;
     if (command === 'wp-save-fields') {
       edited.name = value.name.trim();
@@ -77,15 +87,21 @@
     }
     else if (command === 'wp-parent') edited.parent = value;
     else if (command === 'wp-house') pairs(p, sc).forEach(function (s) { s.house = value; });
+    else if (command === 'wp-open-files') {
+      delete sc.editRoot; updateSelection(p, sc, value, 'files');
+    }
     else if (command === 'wp-tab') updateSelection(p, sc, sc.selected, value);
     else if (command === 'wp-perspective') {
       var parts = value.split(':'), next = index.get(parts[0]), viewer = parts[1] || undefined;
-      if (!next || !W.canSee(next, viewer)) return false;
+      if (!next || !W.canSee(next, viewer) || (sc.profile === 'workspace-house-teams' && next.kind !== 'team')) return false;
       var selected = sc.root === next.id ? sc.selected : W.children(w, next.id)[0].id;
       pairs(p, sc).forEach(function (s) {
         s.root = next.id; s.viewer = viewer; s.selected = selected; delete s.editRoot;
-        if (s.profile === 'workspace-scene' && next.kind === 'personal') s.tab = 'files';
+        if (W.hasTab(s.profile) && next.kind === 'personal') s.tab = 'files';
       });
+      if (sc.profile === 'workspace-house-teams' && viewer) p.scenes.filter(function (s) {
+        return s.profile === 'workspace-houses' && s.viewer === m.viewer;
+      }).forEach(function (s) { s.viewer = viewer; });
     } else if (command === 'wp-select') {
       if (value === m.base.id) sc.editRoot = true;
       else if (index.has(value)) { delete sc.editRoot; updateSelection(p, sc, value); }

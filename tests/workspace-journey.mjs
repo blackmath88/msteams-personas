@@ -51,5 +51,43 @@ try {
     assert.ok(result.slides.every(slide => slide.dataUrl.startsWith('data:image/png;base64,')));
     console.log('PASS website produces both PNGs through the shared renderer');
   }
+  await page.size(1440, 900);
+  await page.goto(base + '#/projekt/arbeitsbereich');
+  await click('[data-op="adapt-workspace-houses"]');
+  await page.sleep(250);
+  await check('Mara sees exactly her three houses and the paired Teams file', `
+    document.querySelectorAll('.wp-houses .wp-house').length === 3 &&
+    !document.querySelector('.wp-houses').textContent.includes('Urban Health') &&
+    document.querySelector('.wp-house-app .m-fn').textContent.includes('Checkliste_Pilot.docx')`);
+  await click('.wp-house-compare [data-op="wp-open-files"][data-i="onboarding-general"]');
+  await check('house cabinet opens the same channel in Teams files', `
+    document.querySelector('.wp-room-on').textContent.includes('Allgemein') &&
+    document.querySelector('.wp-house-app .t-crumb').textContent.includes('Allgemein')`);
+  await click('.wp-house-app .t-chans [data-i="pilot"]');
+  await click('.wp-house-app .m-fn [data-i="pilot-material"]');
+  await click('.wp-house-app .m-fn [data-i="pilot-feedback"]');
+  await check('Teams navigation follows nested folders with the same room still selected', `
+    document.querySelector('.wp-room-on').textContent.includes('Pilotphase') &&
+    document.querySelector('.wp-house-app .t-crumb').textContent.includes('Unterlagen › Rückmeldungen')`);
+  await check('the open cabinet shows the same nested path and its entries', `
+    document.querySelector('.wp-house-compare .wp-drawer-crumb').textContent.includes('Unterlagen › Rückmeldungen') &&
+    document.querySelector('.wp-house-compare .wp-drawer').textContent.includes('noch keine Dateien')`);
+  await click('.wp-house-compare [data-op="wp-open-files"][data-i="pilot"]');
+  await click('.wp-house-compare .wp-entry [data-op="wp-select"][data-i="pilot-checklist"]');
+  await check('choosing a file in the cabinet selects the same row in Teams', `
+    document.querySelector('.wp-house-compare .wp-entry-on').textContent.includes('Checkliste_Pilot.docx') &&
+    document.querySelector('.wp-house-app .m-ft tr.sel').textContent.includes('Checkliste_Pilot.docx') &&
+    document.querySelector('.wp-house-foot .wp-path').textContent.includes('Checkliste_Pilot.docx')`);
+  await click('.wp-house-app [data-op="wp-preview-tab"][data-i="posts"]');
+  await check('switching back to posts selects the channel instead of the folder', `
+    ProjectUI.current().scenes[1].selected === 'pilot' &&
+    document.querySelector('.wp-house-app .t-posts') &&
+    !document.querySelector('.wp-room-files-on')`);
+  await set('wp-perspective', 'campus:sophie');
+  await check('changing the linked viewer keeps the overview within membership', `
+    document.querySelectorAll('.wp-houses .wp-house').length === 1 &&
+    document.querySelector('.wp-house-compare h3').textContent.includes('Campus & People Development')`);
+  await page.size(390, 844);
+  await check('house and Teams drafts fit the narrow editor width', 'document.documentElement.scrollWidth <= innerWidth + 1');
   assert.deepEqual(page.errors, []);
 } finally { await page.close(); }

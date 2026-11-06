@@ -8,15 +8,30 @@ Open «Arbeitsbereich erkunden» in the library or go to `#/projekt/arbeitsberei
 
 The preview uses the existing stage and Teams/OneDrive renderers. Save the project as JSON or export the map and scene as PNG. Editing works when opened from disk. Use a local static HTTP server for offline browser PNG export so Chromium can read the stylesheet rules, or use the CLI. No Microsoft sign-in is involved.
 
+### Häuser und Teams
+
+Choose «Häuser und Teams öffnen» at `#/projekt/arbeitsbereich` to open Mara’s two-slide scenario. The overview shows only the Teams she belongs to. The comparison shows one house and the same workspace in the Teams mockup. Select a room or Teams channel, open its cabinet, switch between «Beiträge» and «Dateien», or open a nested folder. The editor tree provides another way to select the same nodes. The [approved image and visual specification](WORKSPACE-HOUSE-CUTAWAY.md) document the JavaScript reconstruction and its visual decisions; before/after renders are in [evidence-workspace-houses](evidence-workspace-houses/).
+
+Capability version 5 adds these profiles:
+
+| Profile | Scene fields |
+| --- | --- |
+| `workspace-houses` | `viewer` identifies an existing person with at least one team membership. The overview projects their teams in workspace order. |
+| `workspace-house-teams` | `root` identifies a team, `selected` identifies a channel or a file location in that team, and `tab` is `posts` or `files`. Optional `viewer` must be a member of the selected team. |
+
+Optional team fields `teamType` and `collaboration` accept one line of up to 24 characters each. The scenario models ordinary channels visible to all members of their team. Version 4 workspace projects still use the original map and scene profiles.
+
 ## CLI and MCP
 
 ```sh
 node tools/cli.mjs example --kind workspace --out workspace.json
 node tools/cli.mjs validate workspace.json
 node tools/cli.mjs render workspace.json --out workspace-png
+node tools/cli.mjs example --kind workspace-houses --out houses.json
+node tools/cli.mjs render houses.json --out house-png
 ```
 
-Use `get_capabilities`, `get_example({kind: "workspace"})`, `validate_project`, `render_project` and `retrieve_artifact` in an MCP client. Omitting the example kind still returns the three-slide tasks project. The workspace authoring example is also included in the assistant pack. A running MCP service needs this revision and a restart before it advertises the new capability.
+Use `get_capabilities`, `get_example({kind: "workspace"})` or `get_example({kind: "workspace-houses"})`, `validate_project`, `render_project` and `retrieve_artifact` in an MCP client. Omitting the example kind still returns the three-slide tasks project. The workspace authoring example is also included in the assistant pack. A running MCP service needs this revision and a restart before it advertises the new capability.
 
 ## Portable model
 
@@ -33,4 +48,4 @@ node tests/workspace-journey.mjs
 node tests/workspace-mcp.mjs /tmp/workspace-png
 ```
 
-Set `CHROMIUM` when the browser is not on PATH. Pass a local HTTP index URL to the browser journey to include a browser PNG export. The MCP check starts an isolated stdio process, renders all three fixture pairs, retrieves every PNG and checks dimensions and SHA-256 against the manifest. It also verifies that an out-of-scope selection is rejected.
+Set `CHROMIUM` when the browser is not on PATH. Pass a local HTTP index URL to the browser journey to include a browser PNG export. The MCP check starts an isolated stdio process, renders all three fixture pairs, also renders the two house slides, retrieves every PNG and checks dimensions and SHA-256 against the manifest. It also verifies that an out-of-scope selection is rejected.

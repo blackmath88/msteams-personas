@@ -185,7 +185,7 @@
     if (!isObj(p)) { err('not-object', '', 'Das Projekt ist kein JSON-Objekt.'); return { ok: false, errors: errors, warnings: warnings }; }
     if (p.format !== FORMAT) err('format', 'format', 'Unbekanntes Format. Erwartet: «' + FORMAT + '».');
     if (p.projectVersion !== PROJECT_VERSION) err('project-version', 'projectVersion', 'Projektversion ' + JSON.stringify(p.projectVersion) + ' wird nicht unterstützt (erwartet ' + PROJECT_VERSION + ').');
-    if (![1, 2, 3, CAPABILITY_VERSION].includes(p.capabilityVersion)) err('capability-version', 'capabilityVersion', 'Fähigkeitsversion ' + JSON.stringify(p.capabilityVersion) + ' wird nicht unterstützt (erwartet 1 bis ' + CAPABILITY_VERSION + ').');
+    if (![1, 2, 3, 4, CAPABILITY_VERSION].includes(p.capabilityVersion)) err('capability-version', 'capabilityVersion', 'Fähigkeitsversion ' + JSON.stringify(p.capabilityVersion) + ' wird nicht unterstützt (erwartet 1 bis ' + CAPABILITY_VERSION + ').');
     var meta = p.meta;
     if (!isObj(meta)) { err('meta', 'meta', 'Angaben zur Abfolge («meta») fehlen oder sind kein Objekt.'); meta = {}; }
     reqStr(meta, 'title', 'meta', 'meta-title', 'Die Abfolge braucht einen Titel.');
@@ -416,19 +416,23 @@
     var people = p.people.map(function (x, i) { return { id: x.id, idx: i, original: x.name, name: x.name, role: x.role || '', external: false, outside: false }; });
     var byId = idx(people);
     if (Workspace.isProfile(sc.profile)) {
-      var model = Workspace.model(p, sc), personal = model.base.kind === 'personal';
+      var model = Workspace.model(p, sc);
+      function person(id) { return byId[id]; }
+      if (model.houses) return { title: p.meta.title, workspace: model, person: person };
+      var personal = model.base.kind === 'personal';
       var files = model.entries.map(function (n) {
         var shared = (n.sharedWith || []).map(function (id) { return byId[id].name; });
-        return { name: n.name, kind: n.kind, canonical: n === model.selected, mark: n === model.selected ? 3 : null,
+        return { id: n.id, name: n.name, kind: n.kind, canonical: n === model.selected, mark: n === model.selected ? 3 : null,
           note: shared.length ? 'Bearbeitungszugriff für ' + shared.join(', ') : 'Privat', when: '–' };
       });
       var workspaceIndex = Workspace.index(p.workspace);
       return {
         title: p.meta.title, world: { id: model.base.id }, team: model.base.name, workspace: model,
         tools: [personal ? 'onedrive' : 'teams'],
-        person: function (id) { return byId[id]; }, fill: function (value) { return value || ''; },
+        person: person, fill: function (value) { return value || ''; },
         scene: { members: personal ? [model.base.owner] : model.base.members, viewer: model.viewer,
           active: model.active.name, channels: model.channels.map(function (n) { return n.name; }), activeIndex: model.channels.indexOf(model.active),
+          channelIds: model.channels.map(function (n) { return n.id; }),
           folderPath: Workspace.trail(workspaceIndex, model.folder.id).slice(personal ? 2 : 3).map(function (n) { return n.name; }),
           files: files, tasks: [], workspace: true,
           posts: (model.active.posts || []).map(function (post) {
@@ -498,7 +502,7 @@
   /* What the existing slide composer needs for this slide: params, kind and principle meta. */
   function slidePlan(p, slideIndex) {
     var sl = p.slides[slideIndex], sc = sl && idx(p.scenes)[sl.scene]; if (!sc) return null;
-    if (Workspace.isProfile(sc.profile)) return { params: { mode: sc.profile === 'workspace-map' ? 'prinzip' : 'szene', sub: 'workspace', tab: sc.tab }, kind: 'workspace', meta: null };
+    if (Workspace.isProfile(sc.profile)) return { params: { mode: Workspace.hasTab(sc.profile) ? 'szene' : 'prinzip', sub: 'workspace', profile: sc.profile, tab: sc.tab, key: p.meta.id + '-' + sl.id }, kind: 'workspace', meta: null };
     if (sc.profile === 'prinzip-tasks') {
       var t = sl.teaching || {};
       return { params: { mode: 'prinzip', sub: 'tasks', annot: false }, kind: 'prinzip', meta: { id: 'tasks', title: t.title || 'Prinzip', question: t.question || '' } };
@@ -673,6 +677,8 @@
     lines.push('Optionale To-Do-Szene: ' + JSON.stringify({ id: 'sc-todo', profile: 'todo', team: 'Werkstatt Velotech', state: 'after', viewer: 'p-aylin', taskIds: ['t-bremsen', 't-lager'], personalListPrivate: true, myDaySelected: true, plannerConnected: true }));
     lines.push('');
     lines.push('Arbeitsbereich: workspace-map und workspace-scene verwenden dieselbe workspace.nodes-Liste. root und selected verweisen auf IDs. workspace-scene nutzt tab posts oder files. viewer ist für persönliche Ablagen erforderlich. house ist ein optionales Boolean für die Karte.');
+    lines.push('Ab capabilityVersion 5: workspace-houses zeigt alle Teams der Person viewer anhand ihrer Mitgliedschaften. Keine Felder root, selected oder tab. workspace-house-teams zeigt ein Team (root) mit derselben Auswahl (selected) im Haus und in Teams, tab posts oder files. Optional: teamType und collaboration am Team, je maximal 24 Zeichen.');
+    lines.push('Vollständiges Haus-Beispiel: ' + JSON.stringify(workspaceExample('workspace-houses')));
     lines.push('Vollständiges Arbeitsbereich-Beispiel (alternativ zur Aufgabenabfolge): ' + JSON.stringify(workspaceExample()));
     lines.push('## Vollständiges Beispiel (Inhalt ersetzen, Struktur beibehalten)');
     lines.push('```json');

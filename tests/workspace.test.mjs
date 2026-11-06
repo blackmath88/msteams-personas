@@ -53,3 +53,32 @@ test('personal preview only compiles the selected owner’s workspace and explic
   ]);
   assert.deepEqual(vm.scene.channels, []);
 });
+
+test('house overview projects membership while the comparison resolves the same file and channel IDs', () => {
+  const p = PC.workspaceExample('workspace-houses');
+  assert.deepEqual(PC.validate(p), {ok: true, errors: [], warnings: []});
+  const [overview, detail] = p.slides.map((_, i) => PC.compile(p, i));
+  assert.deepEqual(overview.workspace.houses.map(h => h.team.id), ['campus', 'onboarding', 'partners']);
+  const pilot = overview.workspace.houses[1].channels.find(c => c.id === 'pilot');
+  assert.equal(detail.workspace.active, pilot);
+  assert.equal(detail.scene.channelIds[detail.scene.activeIndex], pilot.id);
+  assert.ok(detail.scene.files.some(f => f.id === 'pilot-checklist' && f.canonical));
+  p.scenes[1].selected = 'pilot-feedback';
+  assert.deepEqual(PC.compile(p, 1).scene.folderPath, ['Unterlagen', 'Rückmeldungen']);
+});
+
+test('house profiles reject old capabilities, invisible teams, empty membership and cross-team selection', () => {
+  const cases = [
+    [p => { p.capabilityVersion = 4; }, 'scenes[0].profile'],
+    [p => { p.scenes[0].viewer = 'nora'; }, 'scenes[0].viewer'],
+    [p => { p.scenes[0].root = 'onboarding'; }, 'scenes[0]'],
+    [p => { p.scenes[1].viewer = 'nora'; }, 'scenes[1].root'],
+    [p => { p.scenes[1].selected = 'heat-paper'; }, 'scenes[1].selected'],
+    [p => { p.scenes[1].tab = 'posts'; }, 'scenes[1].tab']
+  ];
+  for (const [edit, path] of cases) {
+    const p = PC.workspaceExample('workspace-houses');
+    edit(p);
+    assert.ok(PC.validate(p).errors.some(d => d.path === path), path);
+  }
+});

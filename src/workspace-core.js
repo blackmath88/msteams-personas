@@ -3,13 +3,15 @@
   if (typeof module === 'object' && module.exports) module.exports = factory();
   else root.WorkspaceCore = factory();
 })(typeof window !== 'undefined' ? window : globalThis, function () {
-  var VERSION = 4;
-  var B = { roots: 4, channels: 6, entries: 7, nodes: 60, name: 50, purpose: 110, posts: 3, postText: 180, postTitle: 60 };
+  var VERSION = 5;
+  var B = { roots: 4, channels: 6, entries: 7, nodes: 60, name: 50, teamLabel: 24, purpose: 110, posts: 3, postText: 180, postTitle: 60 };
   var parents = { channel: ['team'], storage: ['channel', 'personal'], folder: ['storage', 'folder'], file: ['storage', 'folder'] };
   var roots = ['team', 'personal'];
   var profiles = {
-    'workspace-map': { label: 'Prinzip: Arbeitsbereich', renderer: 'principle:workspace', minCapabilityVersion: VERSION, needs: ['workspace', 'root', 'selected'], budgets: B },
-    'workspace-scene': { label: 'Szene: Arbeitsbereich', renderer: 'workspace', minCapabilityVersion: VERSION, needs: ['workspace', 'root', 'selected', 'tab'], budgets: B }
+    'workspace-map': { label: 'Prinzip: Arbeitsbereich', renderer: 'principle:workspace', minCapabilityVersion: 4, needs: ['workspace', 'root', 'selected'], budgets: B },
+    'workspace-scene': { label: 'Szene: Arbeitsbereich', renderer: 'workspace', minCapabilityVersion: 4, needs: ['workspace', 'root', 'selected', 'tab'], budgets: B },
+    'workspace-houses': { label: 'Prinzip: Teams-Häuser einer Person', renderer: 'principle:workspace', minCapabilityVersion: VERSION, needs: ['workspace', 'viewer'], budgets: B },
+    'workspace-house-teams': { label: 'Szene: Haus und Teams nebeneinander', renderer: 'workspace', minCapabilityVersion: VERSION, needs: ['workspace', 'root', 'selected', 'tab'], budgets: B }
   };
   function isProfile(id) { return typeof id === 'string' && Object.hasOwn(profiles, id); }
   function object(x) { return !!x && typeof x === 'object' && !Array.isArray(x); }
@@ -25,10 +27,14 @@
   function canSee(node, viewer) {
     return node.kind === 'personal' ? node.owner === viewer : node.kind === 'team' && (!viewer || node.members.includes(viewer));
   }
+  function visibleTeams(w, viewer) {
+    return w.nodes.filter(function (n) { return n.kind === 'team' && Array.isArray(n.members) && canSee(n, viewer); });
+  }
+  function hasTab(profile) { return profile === 'workspace-scene' || profile === 'workspace-house-teams'; }
   function check(p, err) {
     var scenes = Array.isArray(p.scenes) ? p.scenes : [];
     if (p.workspace == null && !scenes.some(function (s) { return object(s) && isProfile(s.profile); })) return;
-    if (p.capabilityVersion < VERSION) err('workspace-version', 'capabilityVersion', 'Arbeitsbereiche brauchen capabilityVersion ' + VERSION + '.');
+    if (p.capabilityVersion < 4) err('workspace-version', 'capabilityVersion', 'Arbeitsbereiche brauchen capabilityVersion 4.');
     var w = p.workspace;
     if (!object(w) || !Array.isArray(w.nodes) || !w.nodes.length || w.nodes.length > B.nodes || !w.nodes.every(object)) {
       err('workspace-nodes', 'workspace.nodes', 'Der Arbeitsbereich braucht 1 bis ' + B.nodes + ' gültige Einträge.'); return;
@@ -54,6 +60,8 @@
       var lineage = trail(index, n.id), top = lineage[0];
       if (!top || !roots.includes(top.kind) || lineage.filter(function (a) { return a.kind === 'folder'; }).length > 2) fail(path + '.parent', 'Der Pfad muss bei einem Team oder persönlichen Bereich beginnen und darf höchstens zwei Ordner enthalten.');
       if (kind === 'team') {
+        if (n.teamType != null) label(n.teamType, B.teamLabel, path + '.teamType', 'Der Teamtyp');
+        if (n.collaboration != null) label(n.collaboration, B.teamLabel, path + '.collaboration', 'Die Zusammenarbeit');
         personIds(n.members, path + '.members', true);
         if (!kids.length || kids.length > B.channels) fail(path, 'Ein Team braucht 1 bis ' + B.channels + ' Kanäle.');
       }
@@ -85,27 +93,40 @@
     scenes.forEach(function (s, i) {
       if (!object(s) || !isProfile(s.profile)) return;
       var path = 'scenes[' + i + ']', base = index.get(s.root), chain = trail(index, s.selected);
+      if (p.capabilityVersion < profiles[s.profile].minCapabilityVersion && p.capabilityVersion >= 4)
+        fail(path + '.profile', 'Diese Ansicht braucht capabilityVersion ' + profiles[s.profile].minCapabilityVersion + '.');
+      if (s.profile === 'workspace-houses') {
+        if (!people.has(s.viewer) || !visibleTeams(w, s.viewer).length) fail(path + '.viewer', 'Wähle eine Person, die Mitglied in mindestens einem Team ist.');
+        if (s.root != null || s.selected != null || s.tab != null) fail(path, 'Die Häuserübersicht braucht nur die Person. Entferne root, selected und tab.');
+        return;
+      }
       var validViewer = s.viewer == null || people.has(s.viewer);
       if (!base || !roots.includes(base.kind) || !validViewer ||
           (base.kind === 'personal' && (!s.viewer || base.owner !== s.viewer)) ||
           (base.kind === 'team' && s.viewer && (!Array.isArray(base.members) || !base.members.includes(s.viewer)))) {
         fail(path + '.root', 'Wähle einen Arbeitsbereich, den diese Person sehen darf.'); return;
       }
+      if (s.profile === 'workspace-house-teams' && base.kind !== 'team') fail(path + '.root', 'Wähle ein Team für die Ansicht Haus und Teams.');
       if (chain.length < 2 || chain[0] !== base) fail(path + '.selected', 'Wähle einen Eintrag innerhalb dieses Arbeitsbereichs.');
       if (s.house != null && typeof s.house !== 'boolean') fail(path + '.house', 'Die Haus-Metapher braucht true oder false.');
-      if (s.profile === 'workspace-scene' && (!['posts', 'files'].includes(s.tab) || (base.kind === 'personal' && s.tab !== 'files') || (chain.length > 2 && s.tab !== 'files'))) fail(path + '.tab', 'Wähle Beiträge für einen Kanal oder Dateien für die Ablage.');
+      if (hasTab(s.profile) && (!['posts', 'files'].includes(s.tab) || (base.kind === 'personal' && s.tab !== 'files') || (chain.length > 2 && s.tab !== 'files'))) fail(path + '.tab', 'Wähle Beiträge für einen Kanal oder Dateien für die Ablage.');
     });
   }
   function model(p, scene) {
-    var w = p.workspace, path = trail(nodesById(w), scene.selected), base = path[0], active = path[1];
+    var w = p.workspace;
+    if (scene.profile === 'workspace-houses') return { viewer: scene.viewer, houses: visibleTeams(w, scene.viewer).map(function (team) {
+      return { team: team, channels: children(w, team.id) };
+    }) };
+    var path = trail(nodesById(w), scene.selected), base = path[0], active = path[1];
     var storage = base.kind === 'personal' ? active : children(w, active.id).find(function (n) { return n.kind === 'storage'; });
     var selected = path[path.length - 1];
     var folder = selected.kind === 'file' ? path[path.length - 2] : selected.kind === 'folder' ? selected : storage;
     return { base: base, active: active, storage: storage, selected: selected, path: path,
       channels: base.kind === 'team' ? children(w, base.id) : [],
+      houseTone: visibleTeams(w, scene.viewer).indexOf(base),
       folder: folder, entries: children(w, folder.id), house: !!scene.house, viewer: scene.viewer || null };
   }
 
   return { VERSION: VERSION, budgets: B, profiles: profiles, isProfile: isProfile, check: check,
-    model: model, children: children, trail: trail, index: nodesById, canSee: canSee };
+    model: model, children: children, trail: trail, index: nodesById, canSee: canSee, hasTab: hasTab };
 });

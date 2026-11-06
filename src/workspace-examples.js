@@ -2,7 +2,7 @@
   if (typeof module === 'object' && module.exports) module.exports = factory();
   else root.WorkspaceExample = factory();
 })(typeof window !== 'undefined' ? window : globalThis, function () {
-  function example() {
+  function example(kind) {
     var people = [
       { id: 'mara', name: 'Mara Conti' }, { id: 'sophie', name: 'Sophie Frei' },
       { id: 'daniel', name: 'Daniel Wyss' }, { id: 'lea', name: 'Lea Baumann' },
@@ -40,7 +40,7 @@
     nodes.push({ id: 'event-plan', kind: 'file', parent: 'forum-files', name: 'Veranstaltungsplan.xlsx' },
       { id: 'forum-material', kind: 'folder', parent: 'forum-files', name: 'Unterlagen' },
       { id: 'heat-paper', kind: 'file', parent: 'publications-files', name: 'Paper_HeatHealth.docx' });
-    return {
+    var project = {
       format: 'msteams-personas/project', projectVersion: 1, capabilityVersion: 4,
       meta: { id: 'uni-bas-arbeitsbereich', title: 'Wie ist der Arbeitsbereich organisiert?', fictional: true, locale: 'de-CH',
         source: { kind: 'fictional', note: 'Uni Basel M365, Modul 1' },
@@ -57,6 +57,39 @@
         { id: 'preview', scene: 'teams', presenterNotes: 'Zeige den Kanal in Teams und die Beiträge zum Termin. Wechsle zu Dateien, um denselben Plan zu öffnen.' }
       ]
     };
+    if (kind !== 'workspace-houses') return project;
+
+    project.capabilityVersion = 5;
+    project.meta.id = 'uni-bas-teams-haeuser';
+    project.meta.title = 'Haus und Teams zeigen denselben Kanal';
+    project.meta.assumptions = ['Mara ist Mitglied in drei Teams. In diesem Beispiel sehen alle Teammitglieder alle Kanäle ihres Teams.'];
+    project.workspace.nodes = nodes.filter(function (n) { return n.id !== 'nora-work' && n.parent !== 'nora-work' && n.parent !== 'nora-drive'; });
+    Object.assign(nodes[0], { teamType: 'Stammteam', collaboration: 'Eigener Bereich' });
+    var shortPurposes = { 'campus-general': 'Mitteilungen im Team', forum: 'Anlässe vorbereiten', learning: 'Weiterbildungen planen', organisation: 'Aufgaben und Zuständigkeiten' };
+    project.workspace.nodes.forEach(function (n) { if (shortPurposes[n.id]) n.purpose = shortPurposes[n.id]; });
+    project.workspace.nodes.push(
+      { id: 'onboarding', kind: 'team', name: 'Onboarding 2027', teamType: 'Projektteam', collaboration: 'Mehrere Bereiche', members: ['mara', 'lea', 'elena'] },
+      { id: 'partners', kind: 'team', name: 'Weiterbildungskooperation', teamType: 'Arbeitsgruppe', collaboration: 'Externe Partner', members: ['mara', 'coauthor'] }
+    );
+    nodes = project.workspace.nodes;
+    channel('onboarding', 'onboarding-general', 'Allgemein', 'Projektstand und Termine');
+    channel('onboarding', 'pilot', 'Pilotphase', 'Testlauf vorbereiten');
+    channel('onboarding', 'review', 'Auswertung', 'Rückmeldungen besprechen');
+    channel('partners', 'partners-general', 'Allgemein', 'Absprachen mit Partnern');
+    channel('partners', 'workshops', 'Workshop-Planung', 'Programm und Ablauf');
+    channel('partners', 'material', 'Kursmaterial', 'Unterlagen gemeinsam pflegen');
+    nodes.push(
+      { id: 'pilot-checklist', kind: 'file', parent: 'pilot-files', name: 'Checkliste_Pilot.docx' },
+      { id: 'pilot-material', kind: 'folder', parent: 'pilot-files', name: 'Unterlagen' },
+      { id: 'pilot-feedback', kind: 'folder', parent: 'pilot-material', name: 'Rückmeldungen' }
+    );
+    project.scenes = [
+      { id: 'overview', profile: 'workspace-houses', viewer: 'mara' },
+      { id: 'teams', profile: 'workspace-house-teams', root: 'onboarding', selected: 'pilot-checklist', viewer: 'mara', tab: 'files' }
+    ];
+    project.slides[0].presenterNotes = 'Zeige Maras drei Teams. Jedes Haus ist ein Team, jedes Zimmer ein Kanal. Rechts liegt die Dateiablage des Kanals.';
+    project.slides[1].presenterNotes = 'Verfolge den Weg in beiden Ansichten: Onboarding 2027 → Pilotphase → Dateien → Checkliste_Pilot.docx.';
+    return project;
   }
   return example;
 });
