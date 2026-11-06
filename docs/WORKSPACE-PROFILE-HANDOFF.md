@@ -10,7 +10,7 @@ The preview uses the existing stage and Teams/OneDrive renderers. Save the proje
 
 ### Häuser und Teams
 
-Choose «Häuser und Teams öffnen» at `#/projekt/arbeitsbereich` to open Mara’s two-slide scenario. The overview shows only the Teams she belongs to. The comparison shows one house and the same workspace in the Teams mockup. Select a room or Teams channel, open its cabinet, switch between «Beiträge» and «Dateien», or open a nested folder. The editor tree provides another way to select the same nodes. The [approved image and visual specification](WORKSPACE-HOUSE-CUTAWAY.md) document the JavaScript reconstruction.
+Choose «Häuser und Teams öffnen» at `#/projekt/arbeitsbereich` to open Mara’s two-slide scenario. The overview shows only the Teams she belongs to. The comparison shows one house and the same workspace in the Teams mockup. Select a room or Teams channel, open its cabinet, switch between «Beiträge» and «Dateien», or open a nested folder. The editor tree provides another way to select the same nodes. The [approved image and visual specification](WORKSPACE-HOUSE-CUTAWAY.md) document the JavaScript reconstruction and its visual decisions; before/after renders are in [evidence-workspace-houses](evidence-workspace-houses/).
 
 Capability version 5 adds these profiles:
 

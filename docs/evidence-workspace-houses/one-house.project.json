@@ -1,0 +1,416 @@
+{
+  "format": "msteams-personas/project",
+  "projectVersion": 1,
+  "capabilityVersion": 5,
+  "meta": {
+    "id": "ein-haus",
+    "title": "Ein Team, vier Kanäle",
+    "fictional": true,
+    "locale": "de-CH",
+    "source": {
+      "kind": "fictional",
+      "note": "Uni Basel M365, Modul 1"
+    },
+    "assumptions": [
+      "Mara ist Mitglied in drei Teams. In diesem Beispiel sehen alle Teammitglieder alle Kanäle ihres Teams."
+    ]
+  },
+  "people": [
+    {
+      "id": "mara",
+      "name": "Mara Conti"
+    },
+    {
+      "id": "sophie",
+      "name": "Sophie Frei"
+    },
+    {
+      "id": "daniel",
+      "name": "Daniel Wyss"
+    },
+    {
+      "id": "lea",
+      "name": "Lea Baumann"
+    },
+    {
+      "id": "regula",
+      "name": "Regula Aebi"
+    },
+    {
+      "id": "nora",
+      "name": "Dr. Nora Keller"
+    },
+    {
+      "id": "elena",
+      "name": "Elena Rossi"
+    },
+    {
+      "id": "lukas",
+      "name": "Lukas Gerber"
+    },
+    {
+      "id": "amira",
+      "name": "Amira Hassan"
+    },
+    {
+      "id": "marc",
+      "name": "Marc Schneider"
+    },
+    {
+      "id": "nina",
+      "name": "Nina Petrović"
+    },
+    {
+      "id": "julia",
+      "name": "Julia Berger"
+    },
+    {
+      "id": "david",
+      "name": "David Bucher"
+    },
+    {
+      "id": "coauthor",
+      "name": "Leonie Steiner"
+    }
+  ],
+  "documents": [],
+  "tasks": [],
+  "states": [
+    {
+      "id": "before",
+      "tasks": {}
+    },
+    {
+      "id": "after",
+      "tasks": {}
+    }
+  ],
+  "workspace": {
+    "nodes": [
+      {
+        "id": "campus",
+        "kind": "team",
+        "name": "Campus & People Development",
+        "purpose": "Das Verwaltungsteam organisiert Weiterbildungen und das Leadership Forum.",
+        "members": [
+          "mara",
+          "sophie",
+          "daniel",
+          "lea",
+          "regula"
+        ],
+        "teamType": "Stammteam",
+        "collaboration": "Eigener Bereich"
+      },
+      {
+        "id": "urban",
+        "kind": "team",
+        "name": "Urban Health Analytics",
+        "purpose": "Die Forschungsgruppe untersucht Hitze in Basel und publiziert ihre Ergebnisse.",
+        "members": [
+          "elena",
+          "lukas",
+          "amira",
+          "marc",
+          "nina",
+          "julia",
+          "david"
+        ]
+      },
+      {
+        "id": "campus-general",
+        "kind": "channel",
+        "parent": "campus",
+        "name": "Allgemein",
+        "purpose": "Mitteilungen im Team"
+      },
+      {
+        "id": "campus-general-files",
+        "kind": "storage",
+        "parent": "campus-general",
+        "name": "Dateiablage"
+      },
+      {
+        "id": "forum",
+        "kind": "channel",
+        "parent": "campus",
+        "name": "Leadership Forum",
+        "purpose": "Anlässe vorbereiten",
+        "posts": [
+          {
+            "by": "sophie",
+            "title": "Termin 3 findet online statt",
+            "text": "Der Raum ist doppelt belegt. Der Termin bleibt bestehen und wir treffen uns online."
+          },
+          {
+            "by": "mara",
+            "title": "Veranstaltungsplan nachgeführt",
+            "text": "Über diesen Link öffnet ihr die aktuelle Fassung.",
+            "file": "event-plan"
+          }
+        ]
+      },
+      {
+        "id": "forum-files",
+        "kind": "storage",
+        "parent": "forum",
+        "name": "Dateiablage"
+      },
+      {
+        "id": "learning",
+        "kind": "channel",
+        "parent": "campus",
+        "name": "Learning Programme",
+        "purpose": "Weiterbildungen planen"
+      },
+      {
+        "id": "learning-files",
+        "kind": "storage",
+        "parent": "learning",
+        "name": "Dateiablage"
+      },
+      {
+        "id": "organisation",
+        "kind": "channel",
+        "parent": "campus",
+        "name": "Interne Organisation",
+        "purpose": "Aufgaben und Zuständigkeiten"
+      },
+      {
+        "id": "organisation-files",
+        "kind": "storage",
+        "parent": "organisation",
+        "name": "Dateiablage"
+      },
+      {
+        "id": "urban-general",
+        "kind": "channel",
+        "parent": "urban",
+        "name": "Allgemein",
+        "purpose": "Mitteilungen für die Forschungsgruppe"
+      },
+      {
+        "id": "urban-general-files",
+        "kind": "storage",
+        "parent": "urban-general",
+        "name": "Dateiablage"
+      },
+      {
+        "id": "equipment",
+        "kind": "channel",
+        "parent": "urban",
+        "name": "Infrastruktur & Geräte",
+        "purpose": "Messgeräte und Einsatzmaterial organisieren"
+      },
+      {
+        "id": "equipment-files",
+        "kind": "storage",
+        "parent": "equipment",
+        "name": "Dateiablage"
+      },
+      {
+        "id": "heat-health",
+        "kind": "channel",
+        "parent": "urban",
+        "name": "Heat & Health Basel",
+        "purpose": "Messorte und Einsätze koordinieren. Rohdaten bleiben im Fachsystem."
+      },
+      {
+        "id": "heat-health-files",
+        "kind": "storage",
+        "parent": "heat-health",
+        "name": "Dateiablage"
+      },
+      {
+        "id": "publications",
+        "kind": "channel",
+        "parent": "urban",
+        "name": "Publikationen",
+        "purpose": "Am gemeinsamen Manuskript arbeiten"
+      },
+      {
+        "id": "publications-files",
+        "kind": "storage",
+        "parent": "publications",
+        "name": "Dateiablage"
+      },
+      {
+        "id": "urban-organisation",
+        "kind": "channel",
+        "parent": "urban",
+        "name": "Gruppenorganisation",
+        "purpose": "Die interne Gruppenarbeit koordinieren"
+      },
+      {
+        "id": "urban-organisation-files",
+        "kind": "storage",
+        "parent": "urban-organisation",
+        "name": "Dateiablage"
+      },
+      {
+        "id": "event-plan",
+        "kind": "file",
+        "parent": "forum-files",
+        "name": "Veranstaltungsplan.xlsx"
+      },
+      {
+        "id": "forum-material",
+        "kind": "folder",
+        "parent": "forum-files",
+        "name": "Unterlagen"
+      },
+      {
+        "id": "heat-paper",
+        "kind": "file",
+        "parent": "publications-files",
+        "name": "Paper_HeatHealth.docx"
+      },
+      {
+        "id": "onboarding",
+        "kind": "team",
+        "name": "Onboarding 2027",
+        "teamType": "Projektteam",
+        "collaboration": "Mehrere Bereiche",
+        "members": [
+          "mara",
+          "lea",
+          "elena"
+        ]
+      },
+      {
+        "id": "partners",
+        "kind": "team",
+        "name": "Weiterbildungskooperation",
+        "teamType": "Arbeitsgruppe",
+        "collaboration": "Externe Partner",
+        "members": [
+          "mara",
+          "coauthor"
+        ]
+      },
+      {
+        "id": "onboarding-general",
+        "kind": "channel",
+        "parent": "onboarding",
+        "name": "Allgemein",
+        "purpose": "Projektstand und Termine"
+      },
+      {
+        "id": "onboarding-general-files",
+        "kind": "storage",
+        "parent": "onboarding-general",
+        "name": "Dateiablage"
+      },
+      {
+        "id": "pilot",
+        "kind": "channel",
+        "parent": "onboarding",
+        "name": "Pilotphase",
+        "purpose": "Testlauf vorbereiten"
+      },
+      {
+        "id": "pilot-files",
+        "kind": "storage",
+        "parent": "pilot",
+        "name": "Dateiablage"
+      },
+      {
+        "id": "review",
+        "kind": "channel",
+        "parent": "onboarding",
+        "name": "Auswertung",
+        "purpose": "Rückmeldungen besprechen"
+      },
+      {
+        "id": "review-files",
+        "kind": "storage",
+        "parent": "review",
+        "name": "Dateiablage"
+      },
+      {
+        "id": "partners-general",
+        "kind": "channel",
+        "parent": "partners",
+        "name": "Allgemein",
+        "purpose": "Absprachen mit Partnern"
+      },
+      {
+        "id": "partners-general-files",
+        "kind": "storage",
+        "parent": "partners-general",
+        "name": "Dateiablage"
+      },
+      {
+        "id": "workshops",
+        "kind": "channel",
+        "parent": "partners",
+        "name": "Workshop-Planung",
+        "purpose": "Programm und Ablauf"
+      },
+      {
+        "id": "workshops-files",
+        "kind": "storage",
+        "parent": "workshops",
+        "name": "Dateiablage"
+      },
+      {
+        "id": "material",
+        "kind": "channel",
+        "parent": "partners",
+        "name": "Kursmaterial",
+        "purpose": "Unterlagen gemeinsam pflegen"
+      },
+      {
+        "id": "material-files",
+        "kind": "storage",
+        "parent": "material",
+        "name": "Dateiablage"
+      },
+      {
+        "id": "pilot-checklist",
+        "kind": "file",
+        "parent": "pilot-files",
+        "name": "Checkliste_Pilot.docx"
+      },
+      {
+        "id": "pilot-material",
+        "kind": "folder",
+        "parent": "pilot-files",
+        "name": "Unterlagen"
+      },
+      {
+        "id": "pilot-feedback",
+        "kind": "folder",
+        "parent": "pilot-material",
+        "name": "Rückmeldungen"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "id": "overview",
+      "profile": "workspace-houses",
+      "viewer": "sophie"
+    },
+    {
+      "id": "teams",
+      "profile": "workspace-house-teams",
+      "root": "campus",
+      "selected": "forum-material",
+      "viewer": "sophie",
+      "tab": "files"
+    }
+  ],
+  "slides": [
+    {
+      "id": "map",
+      "scene": "overview",
+      "presenterNotes": "Zeige Maras drei Teams. Jedes Haus ist ein Team, jedes Zimmer ein Kanal. Rechts liegt die Dateiablage des Kanals."
+    },
+    {
+      "id": "preview",
+      "scene": "teams",
+      "presenterNotes": "Verfolge den Weg in beiden Ansichten: Onboarding 2027 → Pilotphase → Dateien → Checkliste_Pilot.docx."
+    }
+  ]
+}

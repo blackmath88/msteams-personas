@@ -65,6 +65,8 @@
     project.meta.assumptions = ['Mara ist Mitglied in drei Teams. In diesem Beispiel sehen alle Teammitglieder alle Kanäle ihres Teams.'];
     project.workspace.nodes = nodes.filter(function (n) { return n.id !== 'nora-work' && n.parent !== 'nora-work' && n.parent !== 'nora-drive'; });
     Object.assign(nodes[0], { teamType: 'Stammteam', collaboration: 'Eigener Bereich' });
+    var shortPurposes = { 'campus-general': 'Mitteilungen im Team', forum: 'Anlässe vorbereiten', learning: 'Weiterbildungen planen', organisation: 'Aufgaben und Zuständigkeiten' };
+    project.workspace.nodes.forEach(function (n) { if (shortPurposes[n.id]) n.purpose = shortPurposes[n.id]; });
     project.workspace.nodes.push(
       { id: 'onboarding', kind: 'team', name: 'Onboarding 2027', teamType: 'Projektteam', collaboration: 'Mehrere Bereiche', members: ['mara', 'lea', 'elena'] },
       { id: 'partners', kind: 'team', name: 'Weiterbildungskooperation', teamType: 'Arbeitsgruppe', collaboration: 'Externe Partner', members: ['mara', 'coauthor'] }

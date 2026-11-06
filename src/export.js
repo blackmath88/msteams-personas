@@ -89,6 +89,8 @@
     });
     var workspaceHead = el.querySelector('.wp-head');
     if (workspaceHead && workspaceHead.getBoundingClientRect().bottom > el.getBoundingClientRect().top + 194) out.push('Arbeitsbereich: Titel ist zu lang');
+    var houseHead = el.querySelector('.wp-house-head');
+    if (houseHead && houseHead.getBoundingClientRect().bottom > el.getBoundingClientRect().top + (el.classList.contains('wp-house-scene') ? 180 : 240)) out.push('Arbeitsbereich: Titel ist zu lang');
     Array.prototype.forEach.call(el.querySelectorAll('.pt-dlg'), function (c) {
       var r = c.getBoundingClientRect(), parent = c.parentElement.getBoundingClientRect();
       if (r.bottom > parent.bottom + 1 || r.right > parent.right + 1) out.push('Aufgabendetails ausserhalb der Anwendung');

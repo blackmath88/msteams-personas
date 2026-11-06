@@ -69,6 +69,15 @@ try {
   await check('Teams navigation follows nested folders with the same room still selected', `
     document.querySelector('.wp-room-on').textContent.includes('Pilotphase') &&
     document.querySelector('.wp-house-app .t-crumb').textContent.includes('Unterlagen › Rückmeldungen')`);
+  await check('the open cabinet shows the same nested path and its entries', `
+    document.querySelector('.wp-house-compare .wp-drawer-crumb').textContent.includes('Unterlagen › Rückmeldungen') &&
+    document.querySelector('.wp-house-compare .wp-drawer').textContent.includes('noch keine Dateien')`);
+  await click('.wp-house-compare [data-op="wp-open-files"][data-i="pilot"]');
+  await click('.wp-house-compare .wp-entry [data-op="wp-select"][data-i="pilot-checklist"]');
+  await check('choosing a file in the cabinet selects the same row in Teams', `
+    document.querySelector('.wp-house-compare .wp-entry-on').textContent.includes('Checkliste_Pilot.docx') &&
+    document.querySelector('.wp-house-app .m-ft tr.sel').textContent.includes('Checkliste_Pilot.docx') &&
+    document.querySelector('.wp-house-foot .wp-path').textContent.includes('Checkliste_Pilot.docx')`);
   await click('.wp-house-app [data-op="wp-preview-tab"][data-i="posts"]');
   await check('switching back to posts selects the channel instead of the folder', `
     ProjectUI.current().scenes[1].selected === 'pilot' &&
