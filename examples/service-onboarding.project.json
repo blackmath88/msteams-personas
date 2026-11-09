@@ -57,6 +57,10 @@
     {
       "id": "t-2",
       "title": "Handbuchzugriff prüfen"
+    },
+    {
+      "id": "t-3",
+      "title": "Eigene Einführungserfahrungen notieren"
     }
   ],
   "states": [
@@ -88,6 +92,11 @@
           "bucket": "Vorbereitung",
           "due": "Fr 13.11.",
           "done": false
+        },
+        "t-3": {
+          "owner": "p-2",
+          "list": "personal",
+          "done": false
         }
       }
     },
@@ -118,6 +127,11 @@
           "list": "plan",
           "bucket": "Vorbereitung",
           "due": "Fr 13.11.",
+          "done": false
+        },
+        "t-3": {
+          "owner": "p-2",
+          "list": "personal",
           "done": false
         }
       }
@@ -161,7 +175,8 @@
       "state": "after",
       "viewer": "p-2",
       "taskIds": [
-        "t-1"
+        "t-1",
+        "t-3"
       ],
       "personalListPrivate": true,
       "myDaySelected": true,
@@ -224,17 +239,17 @@
     {
       "id": "s-2",
       "scene": "sc-plan",
-      "presenterNotes": "Was muss das Team sehen, was bleibt persönlich?"
+      "presenterNotes": "Aufgaben bewusst im Plan anlegen. Person, Termin und offene Beiträge gemeinsam prüfen."
     },
     {
       "id": "s-3",
       "scene": "sc-detail",
-      "presenterNotes": "Was muss das Team sehen, was bleibt persönlich?"
+      "presenterNotes": "Dieselbe Aufgabe öffnen: Kontext, Checkliste und Zuständigkeit prüfen."
     },
     {
       "id": "s-4",
       "scene": "sc-todo",
-      "presenterNotes": "Was muss das Team sehen, was bleibt persönlich?"
+      "presenterNotes": "Nur die gewählte Person sieht hier ihre zugewiesenen und gegebenenfalls persönlichen Aufgaben. Mein Tag wird bewusst gewählt."
     },
     {
       "id": "s-5",

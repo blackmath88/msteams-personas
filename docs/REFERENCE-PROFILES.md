@@ -60,3 +60,10 @@ Custom task profiles (2026-11-02): [Microsoft Support, See Planner tasks in Micr
 - Controls are illustrative except for the channel tabs, which switch the visible screen.
 - Planner shows overdue dates (Mo/Di in the fictional week) in red. Checklist counts are illustrative («0/2»).
 - The AI recap is deterministic sample content. It carries a visible simulation label inside the screen and a licensing note in the slide footer.
+
+
+## Capability 6: meeting notes and Loop components (2026-11-09)
+
+Own simplified German light-theme renderings. `meeting-notes` shows the agenda, a decision recorded as a note, and follow-up tasks. `loop-component` shows the same table in Teams chat and Outlook web. No Loop workspace shell or real permissions editor is claimed. UI controls are illustrative.
+
+Product and visual references: [Teams meeting notes](https://support.microsoft.com/en-us/teams/meetings/take-meeting-notes-in-microsoft-teams), [Teams components](https://support.microsoft.com/en-us/teams/apps-service/send-a-loop-component-in-microsoft-teams-chats), [Outlook components](https://support.microsoft.com/en-us/loop/use-loop-components-in-outlook), and [MicrosoftDocs UX screenshots](https://github.com/MicrosoftDocs/microsoft-365-docs/blob/public/microsoft-365/loop/loop-ux-examples.md). The actual MicrosoftDocs Teams and Outlook PNGs were visually inspected on 2026-11-09, retained only as temporary references. A current German tenant screenshot of the notes panel remains a fidelity gap. Detailed dispositions: [research record](research/PERSONA-SELECTION.md).

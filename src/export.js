@@ -78,6 +78,15 @@
   /* Fit check: reports content that does not fit instead of silently cutting it. */
   function fitIssues(el) {
     var out = [];
+    var collaboration = el.matches('.co-slide') ? el : el.querySelector('.co-slide');
+    if (collaboration) {
+      var slideBox = collaboration.getBoundingClientRect(), footer = collaboration.querySelector('.co-foot').getBoundingClientRect();
+      collaboration.querySelectorAll('.co-app, .co-teaching, .co-workflow').forEach(function (content) {
+        var box = content.getBoundingClientRect();
+        if (box.bottom > footer.top - 8 || box.right > slideBox.right - 8 || content.scrollWidth > content.clientWidth + 2) out.push('Zusammenarbeit: Inhalt kollidiert mit Rand oder Fusszeile');
+      });
+      if (footer.bottom > slideBox.bottom || footer.right > slideBox.right) out.push('Zusammenarbeit: Voraussetzungen passen nicht in die Fusszeile');
+    }
     Array.prototype.forEach.call(el.querySelectorAll('.wp-map section'), function (section) {
       if (section.scrollHeight > section.clientHeight + 2) out.push('Arbeitsbereich: Karte ist zu dicht');
     });

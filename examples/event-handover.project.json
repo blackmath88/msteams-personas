@@ -224,17 +224,17 @@
     {
       "id": "s-2",
       "scene": "sc-plan",
-      "presenterNotes": "Welche Information braucht Luca für die Übernahme?"
+      "presenterNotes": "Aufgaben bewusst im Plan anlegen. Person, Termin und offene Beiträge gemeinsam prüfen."
     },
     {
       "id": "s-3",
       "scene": "sc-detail",
-      "presenterNotes": "Welche Information braucht Luca für die Übernahme?"
+      "presenterNotes": "Dieselbe Aufgabe öffnen: Kontext, Checkliste und Zuständigkeit prüfen."
     },
     {
       "id": "s-4",
       "scene": "sc-todo",
-      "presenterNotes": "Welche Information braucht Luca für die Übernahme?"
+      "presenterNotes": "Nur die gewählte Person sieht hier ihre zugewiesenen und gegebenenfalls persönlichen Aufgaben. Mein Tag wird bewusst gewählt."
     },
     {
       "id": "s-5",

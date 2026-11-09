@@ -84,3 +84,15 @@ test('person replacement follows component authors and ownership without changin
   assert.equal(p.states[0].components['c-wochenrunde'].decisions[0].by, 'p-2');
   assert.equal(p.sharedComponents[0].id, 'c-wochenrunde');
 });
+test('publication follows a visible completed review, and onboarding retains a personal task', () => {
+  const p = R.project('peer-resource'), profiles=p.slides.map(s=>p.scenes.find(sc=>sc.id===s.scene).profile);
+  assert.ok(profiles.indexOf('todo')<profiles.indexOf('planner-task'));
+  const detail=PC.compile(p,profiles.indexOf('planner-task')).taskDetail.task;
+  const todo=PC.compile(p,profiles.indexOf('todo')).todo.assigned[0];
+  assert.equal(todo.id,detail.id); assert.equal(todo.done,false); assert.equal(detail.done,true); assert.equal(detail.owner,'p-3');
+  assert.ok(profiles.indexOf('planner-task')<profiles.indexOf('teams-posts'));
+  const on=R.project('service-onboarding'), index=on.slides.findIndex(s=>on.scenes.find(sc=>sc.id===s.scene).profile==='todo');
+  const personal=PC.compile(on,index).todo;
+  assert.equal(personal.personal.length,1); assert.equal(personal.assigned.length,1);
+  assert.ok(!PC.planTasks(on,'after').some(t=>t.id===personal.personal[0].id));
+});

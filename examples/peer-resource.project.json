@@ -87,7 +87,18 @@
           "list": "plan",
           "bucket": "Vorbereitung",
           "due": "Fr 13.11.",
-          "done": false
+          "done": false,
+          "notes": "Ava prüft Kriterien und Lernziel. Nils erhält das Ergebnis vor der Veröffentlichung.",
+          "checklist": [
+            {
+              "text": "Kriterien und Lernziel prüfen",
+              "done": false
+            },
+            {
+              "text": "Freigabe an Nils bestätigen",
+              "done": false
+            }
+          ]
         }
       }
     },
@@ -100,16 +111,16 @@
           "list": "plan",
           "bucket": "Vorbereitung",
           "due": "Mi 11.11.",
-          "done": false,
+          "done": true,
           "notes": "Nils redigiert das Methodenblatt. Ava prüft die Kriterien, Liv veröffentlicht den Link anschliessend bewusst.",
           "checklist": [
             {
               "text": "Beispiel aus dem Austausch einarbeiten",
-              "done": false
+              "done": true
             },
             {
               "text": "Review durch Ava im Kanal bestätigen",
-              "done": false
+              "done": true
             }
           ]
         },
@@ -118,7 +129,18 @@
           "list": "plan",
           "bucket": "Vorbereitung",
           "due": "Fr 13.11.",
-          "done": false
+          "done": true,
+          "notes": "Ava prüft Kriterien und Lernziel. Nils erhält das Ergebnis vor der Veröffentlichung.",
+          "checklist": [
+            {
+              "text": "Kriterien und Lernziel prüfen",
+              "done": true
+            },
+            {
+              "text": "Freigabe an Nils bestätigen",
+              "done": true
+            }
+          ]
         }
       }
     }
@@ -147,23 +169,23 @@
       "id": "sc-plan",
       "profile": "planner",
       "team": "Netzwerk Lehrpraxis",
-      "state": "after"
+      "state": "before"
     },
     {
       "id": "sc-detail",
       "profile": "planner-task",
       "team": "Netzwerk Lehrpraxis",
       "state": "after",
-      "task": "t-1"
+      "task": "t-2"
     },
     {
       "id": "sc-todo",
       "profile": "todo",
       "team": "Netzwerk Lehrpraxis",
-      "state": "after",
-      "viewer": "p-4",
+      "state": "before",
+      "viewer": "p-3",
       "taskIds": [
-        "t-1"
+        "t-2"
       ],
       "personalListPrivate": true,
       "myDaySelected": true,
@@ -209,20 +231,29 @@
           "tool": "Planner",
           "action": "Redaktion und Review zuweisen",
           "artefact": "Methodenblatt",
-          "relation": "manual",
-          "evidence": null
+          "relation": "sync",
+          "evidence": "planner-todo"
         },
         {
           "id": "w-3",
           "actor": "Ava",
-          "tool": "Planner-Details",
-          "action": "Reviewkriterien prüfen",
+          "tool": "To Do",
+          "action": "Review für heute auswählen",
           "artefact": "Reviewaufgabe",
           "relation": "manual",
           "evidence": null
         },
         {
           "id": "w-4",
+          "actor": "Ava",
+          "tool": "Planner-Details",
+          "action": "Review abschliessen und freigeben",
+          "artefact": "Reviewaufgabe",
+          "relation": "manual",
+          "evidence": null
+        },
+        {
+          "id": "w-5",
           "actor": "Liv",
           "tool": "Teams-Kanal",
           "action": "Freigegebene Ressource verlinken",
@@ -242,17 +273,17 @@
     {
       "id": "s-2",
       "scene": "sc-plan",
-      "presenterNotes": "Wer prüft die Ressource vor der Freigabe?"
-    },
-    {
-      "id": "s-3",
-      "scene": "sc-detail",
-      "presenterNotes": "Wer prüft die Ressource vor der Freigabe?"
+      "presenterNotes": "Aufgaben bewusst im Plan anlegen. Person, Termin und offene Beiträge gemeinsam prüfen."
     },
     {
       "id": "s-4",
       "scene": "sc-todo",
-      "presenterNotes": "Wer prüft die Ressource vor der Freigabe?"
+      "presenterNotes": "Nur die gewählte Person sieht hier ihre zugewiesenen und gegebenenfalls persönlichen Aufgaben. Mein Tag wird bewusst gewählt."
+    },
+    {
+      "id": "s-3",
+      "scene": "sc-detail",
+      "presenterNotes": "Ava hat das Review erledigt. Die Checkliste und der abgeschlossene Status machen die Freigabe vor der Publikation sichtbar."
     },
     {
       "id": "s-5",

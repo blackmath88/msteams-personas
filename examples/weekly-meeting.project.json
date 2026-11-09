@@ -18,8 +18,7 @@
       "Loop freigeschaltet, OneDrive/SharePoint und Exchange Online vorhanden.",
       "Direkt eingeladene interne Personen; keine externen Notizenteilnehmenden.",
       "Planner lizenziert; gleiches Arbeitskonto, Smartliste und Planner-Verbindung aktiv. Mein Tag von Hand wählen.",
-      "Interne geplante Terminserie; Notizenplan entsteht beim ersten Aufgabeneintrag.",
-      "To Do: Planner-Lizenz, gleiches Arbeitskonto, Smartliste «Zugewiesen an mich» und Planner-Verbindung aktiv; Mein Tag von Hand wählen."
+      "Interne geplante Terminserie; Notizenplan entsteht beim ersten Aufgabeneintrag."
     ],
     "notes": "Was ist erledigt, und wer prüft den Rest?"
   },
@@ -222,9 +221,10 @@
     },
     {
       "id": "sc-plan-review",
-      "profile": "planner",
+      "profile": "planner-task",
       "team": "Notizenplan Campus-Service",
-      "state": "after"
+      "state": "after",
+      "task": "t-1"
     },
     {
       "id": "sc-workflow",
@@ -291,12 +291,12 @@
     {
       "id": "s-2",
       "scene": "sc-plan",
-      "presenterNotes": "Was ist erledigt, und wer prüft den Rest?"
+      "presenterNotes": "Aufgaben bewusst im Plan anlegen. Person, Termin und offene Beiträge gemeinsam prüfen."
     },
     {
       "id": "s-3",
       "scene": "sc-todo",
-      "presenterNotes": "Was ist erledigt, und wer prüft den Rest?"
+      "presenterNotes": "Nur die gewählte Person sieht hier ihre zugewiesenen und gegebenenfalls persönlichen Aufgaben. Mein Tag wird bewusst gewählt."
     },
     {
       "id": "s-4",
@@ -306,7 +306,7 @@
     {
       "id": "s-5",
       "scene": "sc-plan-review",
-      "presenterNotes": "Was ist erledigt, und wer prüft den Rest?"
+      "presenterNotes": "Dieselbe Aufgabe öffnen: Kontext, Checkliste und Zuständigkeit prüfen."
     },
     {
       "id": "s-6",
