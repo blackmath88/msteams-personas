@@ -96,3 +96,8 @@ test('publication follows a visible completed review, and onboarding retains a p
   assert.equal(personal.personal.length,1); assert.equal(personal.assigned.length,1);
   assert.ok(!PC.planTasks(on,'after').some(t=>t.id===personal.personal[0].id));
 });
+test('synchronisation cannot be attached to an unrelated tool transition', () => {
+  const p=R.project('weekly-meeting');
+  p.scenes.find(s=>s.profile==='workflow').steps[2].tool='SharePoint';
+  has(p,'workflow-sync-pair');
+});

@@ -75,6 +75,13 @@
           ['actor', 'tool', 'action', 'artefact'].forEach(function (k) { text(s[k], k === 'action' ? 90 : 50, sp + '.' + k); });
           if (!['manual', 'link', 'sync'].includes(s.relation)) err('workflow-relation', sp + '.relation', 'Beziehung als manual, link oder sync beschriften.');
           if (s.relation === 'sync' && !['loop-planner', 'planner-todo', 'loop-surfaces'].includes(s.evidence)) err('workflow-evidence', sp + '.evidence', 'Synchronisation braucht belegte Beziehung: loop-planner, planner-todo oder loop-surfaces.');
+          if (s.relation === 'sync') {
+            var next = sc.steps[j + 1], from = typeof s.tool === 'string' ? s.tool : '', to = obj(next) && typeof next.tool === 'string' ? next.tool : '';
+            var pair = s.evidence === 'loop-planner' ? /loop|notizen/i.test(from) && /planner/i.test(to) :
+              s.evidence === 'planner-todo' ? (/planner/i.test(from) && /to.?do/i.test(to) || /to.?do/i.test(from) && /planner/i.test(to)) :
+              s.evidence === 'loop-surfaces' ? /teams|outlook/i.test(from) && /teams|outlook/i.test(to) : false;
+            if (!pair) err('workflow-sync-pair', sp + '.relation', 'Synchronisationsbeleg passt nicht zu diesen beiden Werkzeugen. Übergabe von Hand oder Link wählen, sonst passende belegte Werkzeuge nennen.');
+          }
         }); return;
       }
       var c = typeof sc.component === 'string' && components[sc.component], st = typeof sc.state === 'string' && states[sc.state];
