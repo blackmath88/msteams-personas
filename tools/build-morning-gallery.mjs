@@ -39,6 +39,12 @@ try {
   for (const kind of ['meeting','loop']) { await page.goto(`http://127.0.0.1:8766/docs/morning-review/${kind}-comparison.html`); await page.eval('document.fonts.ready'); await page.shot(resolve(dir,`${kind}-comparison.png`)); }
   await page.goto('http://127.0.0.1:8766/docs/morning-review/index.html'); await page.shot(resolve(dir,'persona-cards.png'));
   await page.goto('http://127.0.0.1:8766/docs/morning-review/specimen.html'); await page.shot(resolve(dir,'visual-language.png'));
+  await page.size(1920,1600);
+  for (const s of scenarios) {
+    await page.goto('http://127.0.0.1:8766/docs/morning-review/index.html');
+    await page.eval(`{const section=document.getElementById(${JSON.stringify(s.id)});document.body.innerHTML='<main id="contact"></main>';document.getElementById('contact').appendChild(section.cloneNode(true));}`);
+    await page.shot(resolve(dir,s.id+'-contact.png'));
+  }
   if(page.errors.length) throw new Error(page.errors.join('\n'));
 } finally { await page.close(); }
 console.log('Gallery complete: docs/morning-review/index.html');
