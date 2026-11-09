@@ -5,12 +5,13 @@
 // Exit codes: 0 success · 1 project invalid · 2 usage or unreadable input · 3 render failed
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { getCapabilities, getExample, validateProject, renderToDir, renderComponentsToDir, INPUT_LIMIT_BYTES } from './ops.mjs';
+import { getCapabilities, getCatalogue, getExample, validateProject, renderToDir, renderComponentsToDir, INPUT_LIMIT_BYTES } from './ops.mjs';
 
 const HELP = `Usage: node tools/cli.mjs <command> [options]
 
+  catalogue                         researched personas, scenarios, evidence and status (JSON)
   capabilities                      supported profiles, limits and versions (JSON)
-  example [--kind tasks|workspace|workspace-houses] [--out project.json]      a complete valid example project (JSON)
+  example [--kind tasks|workspace|workspace-houses] [--out project.json]      a complete valid example; also --kind weekly-meeting|shared-loop|grant-submission|event-handover|service-onboarding|peer-resource
   validate <project.json | ->       validate; prints {ok, errors, warnings}
   render <project.json | -> --out <dir> [--scale 1|2] [--timeout <ms>]
                                     write ordered PNGs and manifest.json; prints the manifest
@@ -48,9 +49,10 @@ const { pos, opt } = args(process.argv.slice(2));
 const cmd = pos[0];
 if (opt.help || !cmd) { (cmd ? process.stdout : process.stderr).write(HELP + '\n'); process.exit(cmd || opt.help ? 0 : 2); }
 
-if (cmd === 'capabilities') out(getCapabilities());
+if (cmd === 'catalogue') out(getCatalogue());
+else if (cmd === 'capabilities') out(getCapabilities());
 else if (cmd === 'example') {
-  if (opt.kind && !['tasks', 'workspace', 'workspace-houses'].includes(opt.kind)) fail('Choose --kind tasks, workspace or workspace-houses.');
+  if (opt.kind && !getCapabilities().examples.includes(opt.kind)) fail('Choose --kind from capabilities.examples.');
   const json = JSON.stringify(getExample(opt.kind), null, 2) + '\n';
   if (opt.out) { writeFileSync(resolve(opt.out), json); process.stderr.write(`Example written to ${opt.out}\n`); }
   else process.stdout.write(json);

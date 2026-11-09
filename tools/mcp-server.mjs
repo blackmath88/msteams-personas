@@ -22,7 +22,7 @@ import { McpServer, ResourceTemplate, createMcpHandler } from '@modelcontextprot
 import { serveStdio } from '@modelcontextprotocol/server/stdio';
 import { toNodeHandler, localhostHostValidation, localhostOriginValidation } from '@modelcontextprotocol/node';
 import * as z from 'zod/v4';
-import { getCapabilities, getExample, validateProject, renderToDir, renderComponentsToDir } from './ops.mjs';
+import { getCapabilities, getCatalogue, getExample, validateProject, renderToDir, renderComponentsToDir } from './ops.mjs';
 
 const VERSION = '0.1.0';
 const ARTIFACTS = process.env.MTP_ARTIFACT_DIR || join(tmpdir(), 'msteams-personas-artifacts');
@@ -72,9 +72,13 @@ function build() {
     annotations: { readOnlyHint: true }
   }, async () => { const c = getCapabilities(); return { content: json(c), structuredContent: c }; });
 
+  server.registerTool('get_catalogue', {
+    title: 'Researched higher-education catalogue', description: 'Four fictional group archetypes, twelve scenarios, capability status, prerequisites and traceable evidence. Only renderable scenarios have example projects.', annotations: { readOnlyHint: true }
+  }, async () => { const c = getCatalogue(); return { content: json(c), structuredContent: c }; });
+
   server.registerTool('get_example', {
-    title: 'Example project', description: 'A complete valid example project. Choose tasks (default) workspace (map and app) or workspace-houses (overview and Teams comparison).',
-    inputSchema: z.object({ kind: z.enum(['tasks', 'workspace', 'workspace-houses']).optional() }), annotations: { readOnlyHint: true }
+    title: 'Example project', description: 'A complete valid example project. Choose tasks (default) workspace (map and app) or workspace-houses (overview and Teams comparison). Also weekly-meeting, shared-loop, grant-submission, event-handover, service-onboarding, peer-resource; discover context and sources with get_catalogue.',
+    inputSchema: z.object({ kind: z.enum(getCapabilities().examples).optional() }), annotations: { readOnlyHint: true }
   }, async ({ kind }) => { const p = getExample(kind); return { content: json(p), structuredContent: p }; });
 
   server.registerTool('validate_project', {

@@ -1,0 +1,245 @@
+{
+  "format": "msteams-personas/project",
+  "projectVersion": 1,
+  "capabilityVersion": 6,
+  "meta": {
+    "id": "grant-submission",
+    "title": "Noch sieben Tage bis zur Einreichung",
+    "organisation": "Hochschule Tannwil (fiktiv)",
+    "audience": "Hochschulmitarbeitende und Trainer",
+    "goal": "Dokumentbeitrag und Aufgabe mit klarer Zuständigkeit verbinden.",
+    "locale": "de-CH",
+    "fictional": true,
+    "source": {
+      "kind": "fictional-synthesis",
+      "note": "edinburgh, uct-research, ms-todo · Quellenkartei im Hochschulkatalog, Zugriff 2026-11-09"
+    },
+    "assumptions": [
+      "Gemeinsamer Plan und Zugriff auf den verlinkten Entwurf.",
+      "Aufgaben werden von Hand angelegt; Einreichung im Förderportal bleibt manuell.",
+      "To Do: Planner-Lizenz, gleiches Arbeitskonto, Smartliste «Zugewiesen an mich» und Planner-Verbindung aktiv; Mein Tag von Hand wählen."
+    ],
+    "notes": "Ist ein Kanalbeitrag schon eine erledigte Aufgabe?"
+  },
+  "people": [
+    {
+      "id": "p-1",
+      "name": "Aline Graf",
+      "role": "Antragsleitung"
+    },
+    {
+      "id": "p-2",
+      "name": "Noah Wenger",
+      "role": "Forschungsservice"
+    },
+    {
+      "id": "p-3",
+      "name": "Iris Koch",
+      "role": "Budget"
+    },
+    {
+      "id": "p-4",
+      "name": "Cem Aydin",
+      "role": "Methodik"
+    }
+  ],
+  "documents": [
+    {
+      "id": "d-1",
+      "name": "Antrag_Brueckenforschung.docx"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t-1",
+      "title": "Budgetbeiträge intern prüfen"
+    },
+    {
+      "id": "t-2",
+      "title": "Methodik für Review ergänzen"
+    }
+  ],
+  "states": [
+    {
+      "id": "before",
+      "label": "Vorbereitung",
+      "tasks": {
+        "t-1": {
+          "owner": "p-2",
+          "list": "plan",
+          "bucket": "Vorbereitung",
+          "due": "Mi 11.11.",
+          "done": false,
+          "notes": "Budget mit Iris prüfen. Offene Beträge vor dem internen Review im Antragsentwurf klären.",
+          "checklist": [
+            {
+              "text": "Budgetbeiträge mit Iris abgleichen",
+              "done": false
+            },
+            {
+              "text": "Reviewfreigabe im Kanal bestätigen",
+              "done": false
+            }
+          ]
+        },
+        "t-2": {
+          "owner": "p-3",
+          "list": "plan",
+          "bucket": "Vorbereitung",
+          "due": "Fr 13.11.",
+          "done": false
+        }
+      }
+    },
+    {
+      "id": "after",
+      "label": "Verantwortung geklärt",
+      "tasks": {
+        "t-1": {
+          "owner": "p-2",
+          "list": "plan",
+          "bucket": "Vorbereitung",
+          "due": "Mi 11.11.",
+          "done": false,
+          "notes": "Budget mit Iris prüfen. Offene Beträge vor dem internen Review im Antragsentwurf klären.",
+          "checklist": [
+            {
+              "text": "Budgetbeiträge mit Iris abgleichen",
+              "done": false
+            },
+            {
+              "text": "Reviewfreigabe im Kanal bestätigen",
+              "done": false
+            }
+          ]
+        },
+        "t-2": {
+          "owner": "p-3",
+          "list": "plan",
+          "bucket": "Vorbereitung",
+          "due": "Fr 13.11.",
+          "done": false
+        }
+      }
+    }
+  ],
+  "scenes": [
+    {
+      "id": "sc-start",
+      "profile": "teams-posts",
+      "team": "Antragsteam Brückenforschung",
+      "channel": "Koordination",
+      "posts": [
+        {
+          "id": "q-1",
+          "by": "p-1",
+          "title": "Gemeinsam den nächsten Schritt klären",
+          "time": "Mo 09:10",
+          "text": "Hier liegt unser gemeinsames Dokument. Die nächsten Beiträge stehen mit Zuständigkeit und Termin im Plan.",
+          "document": "d-1",
+          "hint": "Datei verlinken und Aufgaben bewusst im gemeinsamen Plan anlegen."
+        }
+      ]
+    },
+    {
+      "id": "sc-plan",
+      "profile": "planner",
+      "team": "Antragsteam Brückenforschung",
+      "state": "after"
+    },
+    {
+      "id": "sc-detail",
+      "profile": "planner-task",
+      "team": "Antragsteam Brückenforschung",
+      "state": "after",
+      "task": "t-1"
+    },
+    {
+      "id": "sc-todo",
+      "profile": "todo",
+      "team": "Antragsteam Brückenforschung",
+      "state": "after",
+      "viewer": "p-2",
+      "taskIds": [
+        "t-1"
+      ],
+      "personalListPrivate": true,
+      "myDaySelected": true,
+      "plannerConnected": true,
+      "dateLabel": "Bewusst für heute ausgewählt"
+    },
+    {
+      "id": "sc-workflow",
+      "profile": "workflow",
+      "team": "Antragsteam Brückenforschung",
+      "title": "Noch sieben Tage bis zur Einreichung",
+      "question": "Ist ein Kanalbeitrag schon eine erledigte Aufgabe?",
+      "boundary": "Aufgaben werden von Hand angelegt; Einreichung im Förderportal bleibt manuell.",
+      "steps": [
+        {
+          "id": "w-1",
+          "actor": "Aline",
+          "tool": "Teams",
+          "action": "Reviewauftrag mit Dokumentlink veröffentlichen",
+          "artefact": "Antragsentwurf",
+          "relation": "manual",
+          "evidence": null
+        },
+        {
+          "id": "w-2",
+          "actor": "Noah",
+          "tool": "Planner",
+          "action": "Beiträge mit Person und Termin anlegen",
+          "artefact": "Beitragsplan",
+          "relation": "sync",
+          "evidence": "planner-todo"
+        },
+        {
+          "id": "w-3",
+          "actor": "Noah",
+          "tool": "To Do",
+          "action": "Eigenes Review für heute auswählen",
+          "artefact": "Reviewaufgabe",
+          "relation": "manual",
+          "evidence": null
+        },
+        {
+          "id": "w-4",
+          "actor": "Aline",
+          "tool": "Förderportal",
+          "action": "Geprüfte Fassung manuell einreichen",
+          "artefact": "Antrag",
+          "relation": "manual",
+          "evidence": null
+        }
+      ]
+    }
+  ],
+  "slides": [
+    {
+      "id": "s-1",
+      "scene": "sc-start",
+      "presenterNotes": "Ist ein Kanalbeitrag schon eine erledigte Aufgabe?"
+    },
+    {
+      "id": "s-2",
+      "scene": "sc-plan",
+      "presenterNotes": "Ist ein Kanalbeitrag schon eine erledigte Aufgabe?"
+    },
+    {
+      "id": "s-3",
+      "scene": "sc-detail",
+      "presenterNotes": "Ist ein Kanalbeitrag schon eine erledigte Aufgabe?"
+    },
+    {
+      "id": "s-4",
+      "scene": "sc-todo",
+      "presenterNotes": "Ist ein Kanalbeitrag schon eine erledigte Aufgabe?"
+    },
+    {
+      "id": "s-5",
+      "scene": "sc-workflow",
+      "presenterNotes": "Ist ein Kanalbeitrag schon eine erledigte Aufgabe?"
+    }
+  ]
+}

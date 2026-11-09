@@ -13,7 +13,7 @@ const REPLY = readFileSync(new URL('./fixtures/pflege-uebergabe.reply.md', impor
 const results = [];
 const check = (name, ok, info = '') => { results.push({ name, ok: !!ok }); console.log((ok ? 'PASS ' : 'FAIL ') + name + (info ? ' — ' + info : '')); };
 
-const p = await launch();
+const p = await launch({port: 0});
 const J = x => JSON.stringify(x);
 const $ = (sel, prop = 'textContent') => p.eval(`(document.querySelector(${J(sel)})||{})[${J(prop)}]`);
 const count = sel => p.eval(`document.querySelectorAll(${J(sel)}).length`);
@@ -96,7 +96,7 @@ try {
   await click('[data-op="add-slide"]');
   const ci = (await cur()).scenes.length - 1;
   const cb = `scenes.${ci}.`;
-  check('chat: fourth slide added with current capability version', (await count('.pj-thumb .m3-chat')) === 1 && (await cur()).capabilityVersion === 5 && /Teams: Chat zu zweit/.test(await p.eval(`document.querySelectorAll('.pj-slide h3')[3].textContent`)));
+  check('chat: fourth slide added with current capability version', (await count('.pj-thumb .m3-chat')) === 1 && (await cur()).capabilityVersion === 6 && /Teams: Chat zu zweit/.test(await p.eval(`document.querySelectorAll('.pj-slide h3')[3].textContent`)));
   await setVal(`[data-path="${cb}team"]`, 'Abendcrew');
   await setVal(`[data-path="${cb}viewer"]`, 'p-marco', 'change');
   await setVal(`[data-path="${cb}partner"]`, 'p-aylin', 'change');

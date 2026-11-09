@@ -156,7 +156,7 @@
     }
     return crumbs([['Bibliothek', '#/'], ['Team-Personas']]) +
       '<section class="block"><div class="block-h"><h1>Team-Personas</h1><p class="lead">Arbeitswelten, keine demografischen Profile: Wie ist die Arbeit organisiert, und wo reibt es?</p></div>' +
-      '<ul class="worlds">' + ws.map(worldCard).join('') + '</ul></section>';
+      '<ul class="worlds">' + ws.map(worldCard).join('') + '</ul><h2>Neue Hochschulgruppen</h2><p>Vier recherchierte Ergänzungen mit eigenen Szenarien und Quellen.</p>' + window.ResearchUI.cards() + '</section>';
   }
   function usecases(uid) {
     if (uid) {
@@ -462,6 +462,7 @@
     var h = parse(), html, presenting = false, p = routeParams(h);
     document.body.classList.remove('presenting');
     if (!h.length) html = landing();
+    else if (h[0] === 'hochschule') html = window.ResearchUI.render(h);
     else if (h[0] === 'personas') html = personas(h[1]);
     else if (h[0] === 'usecases') html = usecases(h[1]);
     else if (h[0] === 'tools') html = tools(h[1]);
@@ -475,6 +476,7 @@
     document.title = (presenting ? 'Präsentation · ' : '') + (document.querySelector('h1') ? document.querySelector('h1').textContent + ' · ' : '') + 'msteams-personas';
     fitFrames();
     if (h[0] === 'projekt') window.ProjectUI.mount(app);
+    if (h[0] === 'hochschule') window.ResearchUI.mount(app);
     if (presenting) { var x = app.querySelector('[data-act="exit"]'); if (x) x.focus(); fitStage(); }
     else if (!render.keepFocus) { var m = document.getElementById('main'); m.focus({ preventScroll: true }); window.scrollTo(0, 0); }
     render.keepFocus = false;

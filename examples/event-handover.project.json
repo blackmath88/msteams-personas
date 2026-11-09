@@ -1,0 +1,245 @@
+{
+  "format": "msteams-personas/project",
+  "projectVersion": 1,
+  "capabilityVersion": 6,
+  "meta": {
+    "id": "event-handover",
+    "title": "Konferenztag: Wer übernimmt die Technik?",
+    "organisation": "Hochschule Tannwil (fiktiv)",
+    "audience": "Hochschulmitarbeitende und Trainer",
+    "goal": "Übergabe mit Kontext und bestätigter Übernahme sichtbar machen.",
+    "locale": "de-CH",
+    "fictional": true,
+    "source": {
+      "kind": "fictional-synthesis",
+      "note": "uct-projects, adoption-event, ms-todo · Quellenkartei im Hochschulkatalog, Zugriff 2026-11-09"
+    },
+    "assumptions": [
+      "Gemeinsamer Plan; intern freigegebener Ablaufplan.",
+      "Zuständigkeit wird bewusst geändert; kein Automatismus aus Chatnachrichten.",
+      "To Do: Planner-Lizenz, gleiches Arbeitskonto, Smartliste «Zugewiesen an mich» und Planner-Verbindung aktiv; Mein Tag von Hand wählen."
+    ],
+    "notes": "Welche Information braucht Luca für die Übernahme?"
+  },
+  "people": [
+    {
+      "id": "p-1",
+      "name": "Elif Baumann",
+      "role": "Programmleitung"
+    },
+    {
+      "id": "p-2",
+      "name": "Luca Berger",
+      "role": "Logistik"
+    },
+    {
+      "id": "p-3",
+      "name": "Mina Schmid",
+      "role": "Technik"
+    },
+    {
+      "id": "p-4",
+      "name": "Jan Keller",
+      "role": "Kommunikation"
+    }
+  ],
+  "documents": [
+    {
+      "id": "d-1",
+      "name": "Ablaufplan_Konferenz.docx"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t-1",
+      "title": "Technikcheck vor Saalöffnung"
+    },
+    {
+      "id": "t-2",
+      "title": "Ablaufplan mit Moderation abstimmen"
+    }
+  ],
+  "states": [
+    {
+      "id": "before",
+      "label": "Vorbereitung",
+      "tasks": {
+        "t-1": {
+          "owner": "p-3",
+          "list": "plan",
+          "bucket": "Vorbereitung",
+          "due": "Mi 11.11.",
+          "done": false,
+          "notes": "Luca übernimmt von Mina. Ablaufplan: Saalöffnung 08.30 Uhr; Technikcheck vorher abschliessen.",
+          "checklist": [
+            {
+              "text": "Mikrofon und Projektion im Saal testen",
+              "done": false
+            },
+            {
+              "text": "Freigabe an die Moderation melden",
+              "done": false
+            }
+          ]
+        },
+        "t-2": {
+          "owner": "p-3",
+          "list": "plan",
+          "bucket": "Vorbereitung",
+          "due": "Fr 13.11.",
+          "done": false
+        }
+      }
+    },
+    {
+      "id": "after",
+      "label": "Verantwortung geklärt",
+      "tasks": {
+        "t-1": {
+          "owner": "p-2",
+          "list": "plan",
+          "bucket": "Vorbereitung",
+          "due": "Mi 11.11.",
+          "done": false,
+          "notes": "Luca übernimmt von Mina. Ablaufplan: Saalöffnung 08.30 Uhr; Technikcheck vorher abschliessen.",
+          "checklist": [
+            {
+              "text": "Mikrofon und Projektion im Saal testen",
+              "done": false
+            },
+            {
+              "text": "Freigabe an die Moderation melden",
+              "done": false
+            }
+          ]
+        },
+        "t-2": {
+          "owner": "p-3",
+          "list": "plan",
+          "bucket": "Vorbereitung",
+          "due": "Fr 13.11.",
+          "done": false
+        }
+      }
+    }
+  ],
+  "scenes": [
+    {
+      "id": "sc-start",
+      "profile": "teams-posts",
+      "team": "Campus-Konferenz Perspektiven",
+      "channel": "Koordination",
+      "posts": [
+        {
+          "id": "q-1",
+          "by": "p-1",
+          "title": "Übergabe vor dem Konferenztag",
+          "time": "Mo 09:10",
+          "text": "Mina übergibt den Technikcheck an Luca. Bitte die Aufgabe mit Checkliste und Ablaufplan gemeinsam durchgehen.",
+          "document": "d-1",
+          "hint": "Datei verlinken und Aufgaben bewusst im gemeinsamen Plan anlegen."
+        }
+      ]
+    },
+    {
+      "id": "sc-plan",
+      "profile": "planner",
+      "team": "Campus-Konferenz Perspektiven",
+      "state": "after"
+    },
+    {
+      "id": "sc-detail",
+      "profile": "planner-task",
+      "team": "Campus-Konferenz Perspektiven",
+      "state": "after",
+      "task": "t-1"
+    },
+    {
+      "id": "sc-todo",
+      "profile": "todo",
+      "team": "Campus-Konferenz Perspektiven",
+      "state": "after",
+      "viewer": "p-2",
+      "taskIds": [
+        "t-1"
+      ],
+      "personalListPrivate": true,
+      "myDaySelected": true,
+      "plannerConnected": true,
+      "dateLabel": "Bewusst für heute ausgewählt"
+    },
+    {
+      "id": "sc-workflow",
+      "profile": "workflow",
+      "team": "Campus-Konferenz Perspektiven",
+      "title": "Konferenztag: Wer übernimmt die Technik?",
+      "question": "Welche Information braucht Luca für die Übernahme?",
+      "boundary": "Zuständigkeit wird bewusst geändert; kein Automatismus aus Chatnachrichten.",
+      "steps": [
+        {
+          "id": "w-1",
+          "actor": "Mina",
+          "tool": "Teams",
+          "action": "Übergabe mit Ablaufplan ankündigen",
+          "artefact": "Technikcheck",
+          "relation": "manual",
+          "evidence": null
+        },
+        {
+          "id": "w-2",
+          "actor": "Elif",
+          "tool": "Planner",
+          "action": "Aufgabe an Luca übergeben",
+          "artefact": "Aufgabe t-1",
+          "relation": "manual",
+          "evidence": null
+        },
+        {
+          "id": "w-3",
+          "actor": "Luca",
+          "tool": "Planner-Details",
+          "action": "Checkliste und Kontext prüfen",
+          "artefact": "Aufgabe t-1",
+          "relation": "sync",
+          "evidence": "planner-todo"
+        },
+        {
+          "id": "w-4",
+          "actor": "Luca",
+          "tool": "To Do",
+          "action": "Übernommene Aufgabe für heute wählen",
+          "artefact": "Aufgabe t-1",
+          "relation": "manual",
+          "evidence": null
+        }
+      ]
+    }
+  ],
+  "slides": [
+    {
+      "id": "s-1",
+      "scene": "sc-start",
+      "presenterNotes": "Welche Information braucht Luca für die Übernahme?"
+    },
+    {
+      "id": "s-2",
+      "scene": "sc-plan",
+      "presenterNotes": "Welche Information braucht Luca für die Übernahme?"
+    },
+    {
+      "id": "s-3",
+      "scene": "sc-detail",
+      "presenterNotes": "Welche Information braucht Luca für die Übernahme?"
+    },
+    {
+      "id": "s-4",
+      "scene": "sc-todo",
+      "presenterNotes": "Welche Information braucht Luca für die Übernahme?"
+    },
+    {
+      "id": "s-5",
+      "scene": "sc-workflow",
+      "presenterNotes": "Welche Information braucht Luca für die Übernahme?"
+    }
+  ]
+}

@@ -1,0 +1,268 @@
+{
+  "format": "msteams-personas/project",
+  "projectVersion": 1,
+  "capabilityVersion": 6,
+  "meta": {
+    "id": "peer-resource",
+    "title": "Vom Austausch zum Methodenblatt",
+    "organisation": "Hochschule Tannwil (fiktiv)",
+    "audience": "Hochschulmitarbeitende und Trainer",
+    "goal": "Eine Ressource bewusst publizieren und redaktionell verantworten.",
+    "locale": "de-CH",
+    "fictional": true,
+    "source": {
+      "kind": "fictional-synthesis",
+      "note": "uct-groups, leuven, ms-chat · Quellenkartei im Hochschulkatalog, Zugriff 2026-11-09"
+    },
+    "assumptions": [
+      "Kanal und gemeinsame Datei für das interne Netzwerk.",
+      "Publikation und Aufgabenanlage sind manuell; keine automatische Loop-Veröffentlichung.",
+      "To Do: Planner-Lizenz, gleiches Arbeitskonto, Smartliste «Zugewiesen an mich» und Planner-Verbindung aktiv; Mein Tag von Hand wählen."
+    ],
+    "notes": "Wer prüft die Ressource vor der Freigabe?"
+  },
+  "people": [
+    {
+      "id": "p-1",
+      "name": "Liv Haller",
+      "role": "Moderation"
+    },
+    {
+      "id": "p-2",
+      "name": "Ben Steiner",
+      "role": "Lehrperson"
+    },
+    {
+      "id": "p-3",
+      "name": "Ava Fischer",
+      "role": "Didaktik"
+    },
+    {
+      "id": "p-4",
+      "name": "Nils Weber",
+      "role": "Redaktion"
+    }
+  ],
+  "documents": [
+    {
+      "id": "d-1",
+      "name": "Methodenblatt_Peerfeedback.docx"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t-1",
+      "title": "Methodenblatt redigieren"
+    },
+    {
+      "id": "t-2",
+      "title": "Peerfeedback-Kriterien prüfen"
+    }
+  ],
+  "states": [
+    {
+      "id": "before",
+      "label": "Vorbereitung",
+      "tasks": {
+        "t-1": {
+          "owner": "p-4",
+          "list": "plan",
+          "bucket": "Vorbereitung",
+          "due": "Mi 11.11.",
+          "done": false,
+          "notes": "Nils redigiert das Methodenblatt. Ava prüft die Kriterien, Liv veröffentlicht den Link anschliessend bewusst.",
+          "checklist": [
+            {
+              "text": "Beispiel aus dem Austausch einarbeiten",
+              "done": false
+            },
+            {
+              "text": "Review durch Ava im Kanal bestätigen",
+              "done": false
+            }
+          ]
+        },
+        "t-2": {
+          "owner": "p-3",
+          "list": "plan",
+          "bucket": "Vorbereitung",
+          "due": "Fr 13.11.",
+          "done": false
+        }
+      }
+    },
+    {
+      "id": "after",
+      "label": "Verantwortung geklärt",
+      "tasks": {
+        "t-1": {
+          "owner": "p-4",
+          "list": "plan",
+          "bucket": "Vorbereitung",
+          "due": "Mi 11.11.",
+          "done": false,
+          "notes": "Nils redigiert das Methodenblatt. Ava prüft die Kriterien, Liv veröffentlicht den Link anschliessend bewusst.",
+          "checklist": [
+            {
+              "text": "Beispiel aus dem Austausch einarbeiten",
+              "done": false
+            },
+            {
+              "text": "Review durch Ava im Kanal bestätigen",
+              "done": false
+            }
+          ]
+        },
+        "t-2": {
+          "owner": "p-3",
+          "list": "plan",
+          "bucket": "Vorbereitung",
+          "due": "Fr 13.11.",
+          "done": false
+        }
+      }
+    }
+  ],
+  "scenes": [
+    {
+      "id": "sc-chat",
+      "profile": "teams-chat",
+      "team": "Netzwerk Lehrpraxis",
+      "viewer": "p-1",
+      "partner": "p-2",
+      "messages": [
+        {
+          "id": "m-1",
+          "by": "p-2",
+          "text": "Die Peerfeedback-Methode sollte auch für andere auffindbar sein."
+        },
+        {
+          "id": "m-2",
+          "by": "p-1",
+          "text": "Nils redigiert sie. Nach dem Review verlinke ich das Methodenblatt im Kanal."
+        }
+      ]
+    },
+    {
+      "id": "sc-plan",
+      "profile": "planner",
+      "team": "Netzwerk Lehrpraxis",
+      "state": "after"
+    },
+    {
+      "id": "sc-detail",
+      "profile": "planner-task",
+      "team": "Netzwerk Lehrpraxis",
+      "state": "after",
+      "task": "t-1"
+    },
+    {
+      "id": "sc-todo",
+      "profile": "todo",
+      "team": "Netzwerk Lehrpraxis",
+      "state": "after",
+      "viewer": "p-4",
+      "taskIds": [
+        "t-1"
+      ],
+      "personalListPrivate": true,
+      "myDaySelected": true,
+      "plannerConnected": true,
+      "dateLabel": "Bewusst für heute ausgewählt"
+    },
+    {
+      "id": "sc-publish",
+      "profile": "teams-posts",
+      "team": "Netzwerk Lehrpraxis",
+      "channel": "Ressourcen",
+      "posts": [
+        {
+          "id": "q-publish",
+          "by": "p-1",
+          "title": "Peerfeedback: freigegebenes Methodenblatt",
+          "text": "Nils und Ava haben das Blatt geprüft. Hier ist die gemeinsame Fassung für unseren nächsten Austausch.",
+          "document": "d-1",
+          "hint": "Redaktion und Veröffentlichung bleiben bewusste menschliche Schritte."
+        }
+      ]
+    },
+    {
+      "id": "sc-workflow",
+      "profile": "workflow",
+      "team": "Netzwerk Lehrpraxis",
+      "title": "Vom Austausch zum Methodenblatt",
+      "question": "Wer prüft die Ressource vor der Freigabe?",
+      "boundary": "Publikation und Aufgabenanlage sind manuell; keine automatische Loop-Veröffentlichung.",
+      "steps": [
+        {
+          "id": "w-1",
+          "actor": "Liv",
+          "tool": "Teams-Chat",
+          "action": "Idee im kleinen Kreis schärfen",
+          "artefact": "Methodenidee",
+          "relation": "manual",
+          "evidence": null
+        },
+        {
+          "id": "w-2",
+          "actor": "Nils",
+          "tool": "Planner",
+          "action": "Redaktion und Review zuweisen",
+          "artefact": "Methodenblatt",
+          "relation": "manual",
+          "evidence": null
+        },
+        {
+          "id": "w-3",
+          "actor": "Ava",
+          "tool": "Planner-Details",
+          "action": "Reviewkriterien prüfen",
+          "artefact": "Reviewaufgabe",
+          "relation": "manual",
+          "evidence": null
+        },
+        {
+          "id": "w-4",
+          "actor": "Liv",
+          "tool": "Teams-Kanal",
+          "action": "Freigegebene Ressource verlinken",
+          "artefact": "Methodenblatt",
+          "relation": "manual",
+          "evidence": null
+        }
+      ]
+    }
+  ],
+  "slides": [
+    {
+      "id": "s-1",
+      "scene": "sc-chat",
+      "presenterNotes": "Wer prüft die Ressource vor der Freigabe?"
+    },
+    {
+      "id": "s-2",
+      "scene": "sc-plan",
+      "presenterNotes": "Wer prüft die Ressource vor der Freigabe?"
+    },
+    {
+      "id": "s-3",
+      "scene": "sc-detail",
+      "presenterNotes": "Wer prüft die Ressource vor der Freigabe?"
+    },
+    {
+      "id": "s-4",
+      "scene": "sc-todo",
+      "presenterNotes": "Wer prüft die Ressource vor der Freigabe?"
+    },
+    {
+      "id": "s-5",
+      "scene": "sc-publish",
+      "presenterNotes": "Wer prüft die Ressource vor der Freigabe?"
+    },
+    {
+      "id": "s-6",
+      "scene": "sc-workflow",
+      "presenterNotes": "Wer prüft die Ressource vor der Freigabe?"
+    }
+  ]
+}

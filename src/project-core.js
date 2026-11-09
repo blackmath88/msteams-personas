@@ -15,13 +15,14 @@
  */
 (function (root, factory) {
   var core = factory(typeof module === 'object' && module.exports ? require('./workspace-core.js') : root.WorkspaceCore,
-    typeof module === 'object' && module.exports ? require('./workspace-examples.js') : root.WorkspaceExample);
+    typeof module === 'object' && module.exports ? require('./workspace-examples.js') : root.WorkspaceExample,
+    typeof module === 'object' && module.exports ? require('./collaboration-core.js') : root.CollaborationCore);
   if (typeof module === 'object' && module.exports) module.exports = core;
   else root.ProjectCore = core;
-})(typeof window !== 'undefined' ? window : globalThis, function (Workspace, workspaceExample) {
+})(typeof window !== 'undefined' ? window : globalThis, function (Workspace, workspaceExample, Collaboration) {
   var FORMAT = 'msteams-personas/project';
   var PROJECT_VERSION = 1;
-  var CAPABILITY_VERSION = Workspace.VERSION;
+  var CAPABILITY_VERSION = 6;
   var RENDERER_VERSION = 'v3';
   var MAX_INPUT = 200 * 1024;
   var ID = /^[a-z][a-z0-9-]{0,39}$/;
@@ -56,7 +57,7 @@
         label: 'Prinzip: Aufgaben, vorher und nachher', renderer: 'principle:tasks', needs: ['before', 'after'],
         budgets: { title: 60, question: 90, problem: 200, recommendation: 200, boundary: 200 }
       }
-    }, Workspace.profiles),
+    }, Workspace.profiles, Collaboration.profiles),
     limits: { people: 8, workspacePeople: 16, tasks: 12, documents: 8, slides: 6, presenterNotes: 1200, prinzipLists: PRINZIP_LISTS }
   };
 
@@ -185,7 +186,7 @@
     if (!isObj(p)) { err('not-object', '', 'Das Projekt ist kein JSON-Objekt.'); return { ok: false, errors: errors, warnings: warnings }; }
     if (p.format !== FORMAT) err('format', 'format', 'Unbekanntes Format. Erwartet: «' + FORMAT + '».');
     if (p.projectVersion !== PROJECT_VERSION) err('project-version', 'projectVersion', 'Projektversion ' + JSON.stringify(p.projectVersion) + ' wird nicht unterstützt (erwartet ' + PROJECT_VERSION + ').');
-    if (![1, 2, 3, 4, CAPABILITY_VERSION].includes(p.capabilityVersion)) err('capability-version', 'capabilityVersion', 'Fähigkeitsversion ' + JSON.stringify(p.capabilityVersion) + ' wird nicht unterstützt (erwartet 1 bis ' + CAPABILITY_VERSION + ').');
+    if (![1, 2, 3, 4, 5, CAPABILITY_VERSION].includes(p.capabilityVersion)) err('capability-version', 'capabilityVersion', 'Fähigkeitsversion ' + JSON.stringify(p.capabilityVersion) + ' wird nicht unterstützt (erwartet 1 bis ' + CAPABILITY_VERSION + ').');
     var meta = p.meta;
     if (!isObj(meta)) { err('meta', 'meta', 'Angaben zur Abfolge («meta») fehlen oder sind kein Objekt.'); meta = {}; }
     reqStr(meta, 'title', 'meta', 'meta-title', 'Die Abfolge braucht einen Titel.');
@@ -273,12 +274,13 @@
       });
     });
     Workspace.check(p, err);
+    Collaboration.check(p, err);
     scenes.forEach(function (e) {
       var sc = e.x, path = 'scenes[' + e.i + ']', prof = str(sc.profile) && Object.prototype.hasOwnProperty.call(CAPABILITIES.profiles, sc.profile) ? CAPABILITIES.profiles[sc.profile] : null;
       if (!prof) { err('unknown-profile', path + '.profile', 'Szene «' + diagnosticText(sc.id) + '»: Ansicht «' + diagnosticText(sc.profile) + '» wird nicht unterstützt. Möglich: ' + Object.keys(CAPABILITIES.profiles).join(', ') + '.'); return; }
       if (sc.profile === 'teams-chat' && p.capabilityVersion === 1) err('profile-version', path + '.profile', 'Teams: Chat zu zweit braucht capabilityVersion 2.');
       if (['todo', 'planner-task'].indexOf(sc.profile) >= 0 && p.capabilityVersion < 3) err('profile-version', path + '.profile', prof.label + ' braucht capabilityVersion 3.');
-      if (Workspace.isProfile(sc.profile)) return;
+      if (Workspace.isProfile(sc.profile) || Collaboration.isProfile(sc.profile)) return;
       var B = prof.budgets;
       reqStr(sc, 'team', path, 'scene-team', 'Szene «' + diagnosticText(sc.id) + '» braucht einen Teamnamen.');
       if (len(sc.team) > B.team) warn('long', path + '.team', 'Teamname ist länger als ' + B.team + ' Zeichen.');
@@ -415,6 +417,7 @@
     var P = idx(p.people), D = idx(p.documents || []);
     var people = p.people.map(function (x, i) { return { id: x.id, idx: i, original: x.name, name: x.name, role: x.role || '', external: false, outside: false }; });
     var byId = idx(people);
+    if (Collaboration.isProfile(sc.profile)) return { title: p.meta.title, team: sc.team, collaboration: Collaboration.model(p, sc), person: function (id) { return byId[id]; }, assumptions: p.meta.assumptions || [] };
     if (Workspace.isProfile(sc.profile)) {
       var model = Workspace.model(p, sc);
       function person(id) { return byId[id]; }
@@ -489,7 +492,7 @@
     var members = people.map(function (x) { return x.id; });
     return {
       id: p.meta.id || 'projekt', project: true, complete: true, personal: false,
-      title: p.meta.title, persona: '', friction: '', usecases: [], collection: 'projekt',
+      title: p.meta.title, assumptions: p.meta.assumptions || [], persona: '', friction: '', usecases: [], collection: 'projekt',
       world: { id: p.meta.id || 'projekt', name: p.meta.organisation || '' },
       scenario: { id: sc.id, name: p.meta.title }, variant: null, variants: [],
       people: people, person: function (pid) { return byId[pid] || { id: pid, name: P[pid] ? P[pid].name : '?', role: '' }; },
@@ -502,6 +505,7 @@
   /* What the existing slide composer needs for this slide: params, kind and principle meta. */
   function slidePlan(p, slideIndex) {
     var sl = p.slides[slideIndex], sc = sl && idx(p.scenes)[sl.scene]; if (!sc) return null;
+    if (Collaboration.isProfile(sc.profile)) return { params: {}, kind: 'collaboration', meta: null };
     if (Workspace.isProfile(sc.profile)) return { params: { mode: Workspace.hasTab(sc.profile) ? 'szene' : 'prinzip', sub: 'workspace', profile: sc.profile, tab: sc.tab, key: p.meta.id + '-' + sl.id }, kind: 'workspace', meta: null };
     if (sc.profile === 'prinzip-tasks') {
       var t = sl.teaching || {};
@@ -669,6 +673,9 @@
     lines.push('- Annahmen über das Verhalten von Microsoft 365, die du triffst, schreibe in meta.assumptions.');
     lines.push('- planner-task: team, state und task (bestehende Aufgaben-ID). Die Aufgabe steht in diesem Zustand mit owner im Plan. Details stehen NUR in states[].tasks[taskId]: notes, progress (not-started/in-progress/completed), checklist [{text,done}], optional comment {by,text}. Kein zweiter Aufgabentitel in der Szene.');
     lines.push('- todo: team, state, viewer und taskIds (1–6 bestehende IDs, nur Aufgaben dieser Person). Zeigt die bewusst ausgewählten Aufgaben in Mein Tag. personalListPrivate:true und myDaySelected:true sind erforderlich. Für Planner-Aufgaben zusätzlich plannerConnected:true: gleiches Arbeitskonto und aktivierte Planner-Verbindung voraussetzen. Mein Tag ist keine automatische Kopie aller Aufgaben. Aufgaben-IDs, Titel, Termine und Status bleiben identisch mit dem Plan.');
+    lines.push('- Ab capabilityVersion 6: sharedComponents [{id,kind:meeting-notes|table,title,owner,storage:onedrive}]. Vollständige Zustände in states[].components[componentId]. Für meeting-notes: agenda und decisions als Listen [{id,text,by}], taskIds als Referenzen auf Aufgaben desselben Zustands (list plan, owner und due nötig). Für table: rows [{id,text,by}], keine taskIds. Höchstens 3 Agendaeinträge, 2 Entscheide, 4 Aufgaben oder 4 Tabellenzeilen; je 100 Zeichen.');
+    lines.push('- meeting-notes: team, component, state, viewer, meeting (bis 70 Zeichen), accessConfirmed:true. loop-component: team, component, state, viewer, partner, surface teams-chat|outlook, accessConfirmed:true. Titel und Inhalte nur am gemeinsamen Objekt, nie in Szenen duplizieren. Notizenplan entsteht beim ersten Aufgabeneintrag; Mein Tag bleibt persönliche Auswahl.');
+    lines.push('- workflow: team, title, question, boundary, steps (2–5) [{id,actor,tool,action,artefact,relation:manual|link|sync,evidence}]. sync nur mit evidence loop-planner|planner-todo|loop-surfaces und dokumentierten Voraussetzungen. Dies sind Erklärbilder, keine Live-Integrationen. Beispielprojekte: CLI catalogue und example --kind weekly-meeting oder shared-loop; MCP get_catalogue und get_example.');
     lines.push('- Behaupte nicht, du hättest die Folien gerendert oder das JSON geprüft. Die Prüfung macht die Website beim Import.');
     lines.push('- Kein HTML, kein CSS, kein Script, keine Bild-URLs. Texte sind reiner Text.');
     lines.push('');
@@ -703,6 +710,8 @@
   /* ---------- Shared editing operations (website and bridge use the same ones) ---------- */
   function replacePersonRef(p, from, to) {
     var q = copy(p);
+    (q.sharedComponents || []).forEach(function (c) { if (c.owner === from) c.owner = to; });
+    q.states.forEach(function (st) { Object.keys(st.components || {}).forEach(function (cid) { ['agenda', 'decisions', 'rows'].forEach(function (k) { (st.components[cid][k] || []).forEach(function (r) { if (r.by === from) r.by = to; }); }); }); });
     q.scenes.forEach(function (sc) {
       (sc.posts || []).concat(sc.messages || []).forEach(function (x) { if (x.by === from) x.by = to; });
       ['viewer', 'partner'].forEach(function (k) { if (sc[k] === from) sc[k] = to; });
