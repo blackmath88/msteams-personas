@@ -63,7 +63,7 @@ PASS 2× export produces 3840×2160 PNG — {"w":3840,"h":2160,"name":"leadershi
 PASS customisations persist after reload (localStorage)
 PASS JSON download is versioned and contains customisations
 PASS reset all restores originals
-PASS JSON import validates schema and situations, restores customisations — Unbekanntes Format: erwartet «msteams-personas.customisations». / Die Datei verweist auf unbekannte Situationen. / 
+PASS JSON import validates schema and situations, restores customisations — Unbekanntes Format: erwartet «msteams-personas.customisations». / Die Datei verweist auf unbekannte Situationen. /
 PASS focus crop removes the empty band above posts and keeps the channel header — {"gapApp":63,"tight":false,"inside":true}
 PASS long post text: workspace shows a fit warning (no silent truncation)
 PASS long post text: stage reports the fit issue before export
