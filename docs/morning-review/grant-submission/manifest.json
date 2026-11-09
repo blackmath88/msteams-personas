@@ -1,0 +1,75 @@
+{
+  "format": "msteams-personas/render-manifest",
+  "manifestVersion": 1,
+  "rendererVersion": "v3",
+  "projectVersion": 1,
+  "capabilityVersion": 6,
+  "project": {
+    "id": "grant-submission",
+    "title": "Noch sieben Tage bis zur Einreichung"
+  },
+  "ok": true,
+  "stage": "done",
+  "width": 1920,
+  "height": 1080,
+  "durationMs": 1196,
+  "slides": [
+    {
+      "index": 0,
+      "id": "s-1",
+      "profile": "teams-posts",
+      "file": "01-grant-submission-teams-posts.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 206514,
+      "fit": [],
+      "sha256": "98fed97ae870802d3207dadfe8778aaf0078d46b3ac0eb770d04025d49a08a69"
+    },
+    {
+      "index": 1,
+      "id": "s-2",
+      "profile": "planner",
+      "file": "02-grant-submission-planner.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 197899,
+      "fit": [],
+      "sha256": "b8ba07ed91491059b6997bb149dcd62b9210202dd1d365a07dba764d2996277c"
+    },
+    {
+      "index": 2,
+      "id": "s-3",
+      "profile": "planner-task",
+      "file": "03-grant-submission-planner-task.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 270336,
+      "fit": [],
+      "sha256": "bf201a8a36217a301617a414865bab3bfb97930b170d23be3756f3ba6be4b03f"
+    },
+    {
+      "index": 3,
+      "id": "s-4",
+      "profile": "todo",
+      "file": "04-grant-submission-todo.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 221399,
+      "fit": [],
+      "sha256": "1c00da6651c27befd66678b1af49da8d2ddf358b1d68473144c774439b71926e"
+    },
+    {
+      "index": 4,
+      "id": "s-5",
+      "profile": "workflow",
+      "file": "05-grant-submission-workflow.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 245627,
+      "fit": [],
+      "sha256": "dbd5b298b1fe6c90b9785d67e550cad85cb07b5fbc7d9f6f7290385d96af6f17"
+    }
+  ],
+  "diagnostics": [],
+  "renderedAt": "2026-11-09T21:38:09.051Z"
+}

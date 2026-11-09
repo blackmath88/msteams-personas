@@ -1,0 +1,3 @@
+msteams-personas MCP (stdio) ready · artifacts in /tmp/mtp-workspace-XbAWeA
+PASS: two house profile PNGs retrieved with matching dimensions and SHA-256.
+PASS: six workspace PNGs retrieved with matching dimensions and SHA-256; out-of-scope selection refused.

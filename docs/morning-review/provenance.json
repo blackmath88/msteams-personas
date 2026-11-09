@@ -1,0 +1,12 @@
+{
+  "base": "c3043a91ab5b84fb1facb7a213b0f7d3a58929a4",
+  "codeHead": "09ee3e207b313e4d45198601483e4933a54d387d",
+  "branch": "feat/researched-persona-scenarios",
+  "node": "v24.22.1",
+  "chromium": "Chromium 156.0.8078.79 built on Debian GNU/Linux 13 (trixie)",
+  "review": "coordinator self-review; no independent isolated reviewer",
+  "liveTenantAcceptance": false,
+  "assistantHostTrial": false,
+  "directFileOpening": "blocked by managed Chromium organization policy",
+  "newScenarioPngs": 32
+}

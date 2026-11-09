@@ -1,0 +1,86 @@
+{
+  "format": "msteams-personas/render-manifest",
+  "manifestVersion": 1,
+  "rendererVersion": "v3",
+  "projectVersion": 1,
+  "capabilityVersion": 6,
+  "project": {
+    "id": "weekly-meeting",
+    "title": "Vom Wochenmeeting zur erledigten Aufgabe"
+  },
+  "ok": true,
+  "stage": "done",
+  "width": 1920,
+  "height": 1080,
+  "durationMs": 1266,
+  "slides": [
+    {
+      "index": 0,
+      "id": "s-1",
+      "profile": "meeting-notes",
+      "file": "01-weekly-meeting-meeting-notes.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 283209,
+      "fit": [],
+      "sha256": "a4b28c859ec58d5e71b58a8ad1f62236ec1d3e9463be45a3b3c96861d8543135"
+    },
+    {
+      "index": 1,
+      "id": "s-2",
+      "profile": "planner",
+      "file": "02-weekly-meeting-planner.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 204959,
+      "fit": [],
+      "sha256": "851a474a22cc68a82ea73ea333e5ca5c499021065fac6aa5e00486065a15aa81"
+    },
+    {
+      "index": 2,
+      "id": "s-3",
+      "profile": "todo",
+      "file": "03-weekly-meeting-todo.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 227642,
+      "fit": [],
+      "sha256": "a1fe0b3aac16deb61c37b9fe902b8049c349890b5699f1b0e2baf4f8762a064f"
+    },
+    {
+      "index": 3,
+      "id": "s-4",
+      "profile": "meeting-notes",
+      "file": "04-weekly-meeting-meeting-notes.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 285234,
+      "fit": [],
+      "sha256": "03963844b018853c3827a7c6efb2be6a6b6578ee6b4b32c8dafe8b90ac63e411"
+    },
+    {
+      "index": 4,
+      "id": "s-5",
+      "profile": "planner-task",
+      "file": "05-weekly-meeting-planner-task.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 272188,
+      "fit": [],
+      "sha256": "a07941f85ac12561d2effb5309d88044245ca901c3ba86d4585207e470ae96c1"
+    },
+    {
+      "index": 5,
+      "id": "s-6",
+      "profile": "workflow",
+      "file": "06-weekly-meeting-workflow.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 247108,
+      "fit": [],
+      "sha256": "85c16a36b9aa6a3f32e43c624c750a3437d86059b6c6c54d6c8325d586fc3875"
+    }
+  ],
+  "diagnostics": [],
+  "renderedAt": "2026-11-09T21:38:06.387Z"
+}

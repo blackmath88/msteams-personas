@@ -1,0 +1,75 @@
+{
+  "format": "msteams-personas/render-manifest",
+  "manifestVersion": 1,
+  "rendererVersion": "v3",
+  "projectVersion": 1,
+  "capabilityVersion": 6,
+  "project": {
+    "id": "event-handover",
+    "title": "Konferenztag: Wer übernimmt die Technik?"
+  },
+  "ok": true,
+  "stage": "done",
+  "width": 1920,
+  "height": 1080,
+  "durationMs": 1226,
+  "slides": [
+    {
+      "index": 0,
+      "id": "s-1",
+      "profile": "teams-posts",
+      "file": "01-event-handover-teams-posts.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 208424,
+      "fit": [],
+      "sha256": "55ca17020add1112ec4975f715390a6028581881fe20beec2feded551070da93"
+    },
+    {
+      "index": 1,
+      "id": "s-2",
+      "profile": "planner",
+      "file": "02-event-handover-planner.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 200896,
+      "fit": [],
+      "sha256": "7f8297d946ac597752beccfc3f3b96277ca23a5204e811e9b05185e529e7cdbb"
+    },
+    {
+      "index": 2,
+      "id": "s-3",
+      "profile": "planner-task",
+      "file": "03-event-handover-planner-task.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 274085,
+      "fit": [],
+      "sha256": "8ff628058e7ee95a8075c93d9401b9e3ce964f53d709aac6f86a3ad5a43e059f"
+    },
+    {
+      "index": 3,
+      "id": "s-4",
+      "profile": "todo",
+      "file": "04-event-handover-todo.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 222427,
+      "fit": [],
+      "sha256": "2b497501ff94e4fa928b41719c0bb89b9834cc44e7cc1cf1df539535012146f8"
+    },
+    {
+      "index": 4,
+      "id": "s-5",
+      "profile": "workflow",
+      "file": "05-event-handover-workflow.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 245222,
+      "fit": [],
+      "sha256": "67fa379ebba63c726ed3a432ec870659bc7d010322c8aae1631f2977f282049f"
+    }
+  ],
+  "diagnostics": [],
+  "renderedAt": "2026-11-09T21:38:10.420Z"
+}
