@@ -1,0 +1,64 @@
+{
+  "date": "2026-11-10",
+  "timezone": "Europe/Zurich",
+  "implementationRevision": "c2c823a16f62d0dea0acbd66f0e794521d0001cb",
+  "source": "https://blackmath88.github.io/msteams-personas/",
+  "method": "Headless Chromium at stated CSS viewport; configured cloud proxy CA public key trusted for this isolated browser session. No application changes.",
+  "captures": [
+    {
+      "id": "home-desktop",
+      "route": "#/",
+      "width": 1440,
+      "height": 1000,
+      "fullPage": true,
+      "url": "https://blackmath88.github.io/msteams-personas/index.html#/",
+      "title": "M365-Situationen sichtbar machen – ohne eine Testumgebung aufzubauen. · msteams-personas",
+      "heading": "M365-Situationen sichtbar machen – ohne eine Testumgebung aufzubauen.",
+      "scrollWidth": 1440
+    },
+    {
+      "id": "library-desktop",
+      "route": "#/personas",
+      "width": 1440,
+      "height": 1000,
+      "fullPage": false,
+      "url": "https://blackmath88.github.io/msteams-personas/index.html#/personas",
+      "title": "Team-Personas · msteams-personas",
+      "heading": "Team-Personas",
+      "scrollWidth": 1440
+    },
+    {
+      "id": "scenario-desktop",
+      "route": "#/beispiele/municipal-opening-hours",
+      "width": 1440,
+      "height": 1000,
+      "fullPage": false,
+      "url": "https://blackmath88.github.io/msteams-personas/index.html#/beispiele/municipal-opening-hours",
+      "title": "Abgestimmt ist noch nicht veröffentlicht · msteams-personas",
+      "heading": "Abgestimmt ist noch nicht veröffentlicht",
+      "scrollWidth": 1440
+    },
+    {
+      "id": "project-desktop",
+      "route": "#/projekt",
+      "width": 1440,
+      "height": 1000,
+      "fullPage": false,
+      "url": "https://blackmath88.github.io/msteams-personas/index.html#/projekt",
+      "title": "Eigene Abfolge erstellen · msteams-personas",
+      "heading": "Eigene Abfolge erstellen",
+      "scrollWidth": 1440
+    },
+    {
+      "id": "library-mobile",
+      "route": "#/personas",
+      "width": 390,
+      "height": 844,
+      "fullPage": true,
+      "url": "https://blackmath88.github.io/msteams-personas/index.html#/personas",
+      "title": "Team-Personas · msteams-personas",
+      "heading": "Team-Personas",
+      "scrollWidth": 390
+    }
+  ]
+}

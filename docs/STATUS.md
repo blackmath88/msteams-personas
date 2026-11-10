@@ -15,6 +15,8 @@ Updated 2026-11-10. `main` is the integration branch for the viewer, portable pr
 
 ## Open
 
+- Web UI redesign research: the content is ahead of the presentation. The [Perplexity redesign brief](research/PERPLEXITY-WEB-UI-REDESIGN-SPARRING.md) and [fresh screenshot baseline](research/ui-redesign-baseline/provenance.json) request concrete design directions and a separate stack decision. Documentation branch only; no redesigned UI is implemented.
+
 - Practitioner feedback and live acceptance remain open for the administration/business pair. Trade follows, with engineering provisionally competing with manufacturing for fourth place.
 
 - A real Microsoft tenant acceptance test and a real assistant-host trial for capability 6 remain unverified. Forms/Lists/Power Automate remain research only. Shared-component and workflow fields currently use JSON authoring; the form preserves them and exposes the limitation.
