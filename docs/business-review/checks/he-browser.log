@@ -1,0 +1,29 @@
+PASS four group cards and twelve honest scenario statuses
+PASS twelve vocabulary symbols in small and large light/dark specimens
+PASS existing persona entry exposes four researched additions
+PASS provisional requests has no rendering or export controls
+PASS weekly-meeting opens an actual fitting preview
+PASS weekly-meeting advances with presenter notes
+PASS shared-loop opens an actual fitting preview
+PASS shared-loop advances with presenter notes
+PASS grant-submission opens an actual fitting preview
+PASS grant-submission advances with presenter notes
+PASS event-handover opens an actual fitting preview
+PASS event-handover advances with presenter notes
+PASS service-onboarding opens an actual fitting preview
+PASS service-onboarding advances with presenter notes
+PASS peer-resource opens an actual fitting preview
+PASS peer-resource advances with presenter notes
+PASS catalogue adapts via import review without overwriting a draft
+PASS new profiles render in project editor with preserved metadata disclosure
+PASS component text is escaped, never executable HTML
+PASS 390px #/hochschule has no horizontal scroll
+PASS 390px #/hochschule/gruppe/service has no horizontal scroll
+PASS 390px #/hochschule/weekly-meeting has no horizontal scroll
+PASS 390px #/hochschule/shared-loop has no horizontal scroll
+PASS 720px #/hochschule has no horizontal scroll
+PASS 720px #/hochschule/gruppe/service has no horizontal scroll
+PASS 720px #/hochschule/weekly-meeting has no horizontal scroll
+PASS 720px #/hochschule/shared-loop has no horizontal scroll
+PASS keyboard reaches export after slide navigation
+30 focused checks passed; no browser errors.

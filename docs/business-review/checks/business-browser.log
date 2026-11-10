@@ -1,0 +1,35 @@
+PASS combined discovery has 7 existing worlds and 6 research groups
+PASS native domain filter preserves focus and matches one group
+PASS combined filters have an explicit empty state
+PASS browser back restores filter selection
+PASS individual work remains findable through a legacy reference
+PASS reset restores complete discovery
+PASS business overview separates two examples from two research briefs
+PASS #/tools/planner exposes the canonical reference pair
+PASS #/usecases exposes the canonical reference pair
+PASS municipal-opening-hours slide 1 fits
+PASS municipal-opening-hours slide 2 fits
+PASS municipal-opening-hours slide 3 fits
+PASS municipal-opening-hours slide 4 fits
+PASS municipal-opening-hours slide 5 fits
+PASS municipal-opening-hours shows simpler alternative and failure
+PASS municipal-opening-hours imports through review
+PASS service-appointment-change slide 1 fits
+PASS service-appointment-change slide 2 fits
+PASS service-appointment-change slide 3 fits
+PASS service-appointment-change slide 4 fits
+PASS service-appointment-change slide 5 fits
+PASS service-appointment-change shows simpler alternative and failure
+PASS service-appointment-change imports through review
+PASS research-only entries have no export
+PASS 390px #/personas has no horizontal scroll
+PASS 390px #/personas/auswahl/administration/individual has no horizontal scroll
+PASS 390px #/beispiele has no horizontal scroll
+PASS 390px #/beispiele/municipal-opening-hours has no horizontal scroll
+PASS 390px #/beispiele/service-appointment-change has no horizontal scroll
+PASS 720px #/personas has no horizontal scroll
+PASS 720px #/personas/auswahl/administration/individual has no horizontal scroll
+PASS 720px #/beispiele has no horizontal scroll
+PASS 720px #/beispiele/municipal-opening-hours has no horizontal scroll
+PASS 720px #/beispiele/service-appointment-change has no horizontal scroll
+38 checks passed

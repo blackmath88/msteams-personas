@@ -4,7 +4,7 @@ import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { launch } from './cdp.mjs';
 import R from '../src/research-catalogue.js';
-const out = resolve('docs/morning-review'); mkdirSync(out,{recursive:true});
+const out = resolve(process.env.MTP_TEST_OUTPUT || 'docs/morning-review'); mkdirSync(out,{recursive:true});
 const page = await launch({port:0}); const results = [];
 const check = async (name, expression) => { assert.ok(await page.eval(expression), name); results.push(name); console.log('PASS '+name); };
 const goto = route => page.goto('http://127.0.0.1:8766/index.html'+route);
@@ -13,10 +13,10 @@ try {
   await check('four group cards and twelve honest scenario statuses', "document.querySelectorAll('.he-persona').length===4 && document.querySelectorAll('.he-scenario').length===12 && document.querySelectorAll('.he-status.renderable').length===6");
   await check('twelve vocabulary symbols in small and large light/dark specimens', "document.querySelectorAll('.he-specimen>div').length===12 && document.querySelectorAll('.he-dark').length===6");
   await page.shot(resolve(out,'website-catalogue.png'),true);
-  await goto('#/personas'); await check('existing persona entry exposes four researched additions', "document.querySelectorAll('.he-persona').length===4 && document.querySelectorAll('.worlds .world').length===7");
+  await goto('#/personas'); await check('existing persona entry exposes four researched additions', "document.querySelectorAll('.he-persona').length===6 && document.querySelectorAll('.worlds .world').length===7");
   await goto('#/hochschule/structured-requests');
   await check('provisional requests has no rendering or export controls', "!document.querySelector('.he-preview') && !document.querySelector('[data-he=export]') && document.body.innerText.includes('Provisorisch')");
-  for (const s of R.scenarios.filter(x=>x.status==='renderable')) {
+  for (const s of R.scenarios.filter(x=>x.status==='renderable' && x.collection==='hochschule')) {
     await goto('#/hochschule/'+s.id);
     await check(s.id+' opens an actual fitting preview', "!!document.querySelector('#he-preview .slide') && Export.fitIssues(document.querySelector('#he-preview .slide')).length===0");
     await page.eval("document.querySelector('[data-he=next]').click()");

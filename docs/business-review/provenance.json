@@ -1,0 +1,9 @@
+{
+  "renderBase": "8d5a6e75768829461b7b2f935fe94748f5076f3a",
+  "sourceAccess": "2026-11-10",
+  "projects": [
+    "municipal-opening-hours",
+    "service-appointment-change"
+  ],
+  "notes": "Production render operation. Source and gallery builder committed before generation; checks are separate from tenant or practitioner acceptance."
+}

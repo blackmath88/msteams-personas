@@ -1,0 +1,6 @@
+CLI/MCP filters agree: {"collection":"business"}
+CLI/MCP filters agree: {"domain":"administration","teamPattern":"committee"}
+CLI/MCP filters agree: {"teamPattern":"individual"}
+CLI/MCP filters agree: {"domain":"administration","teamPattern":"individual"}
+municipal-opening-hours: discovered, validated, rendered and all five PNGs retrieved byte-identically to CLI
+service-appointment-change: discovered, validated, rendered and all five PNGs retrieved byte-identically to CLI

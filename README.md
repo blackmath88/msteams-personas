@@ -18,6 +18,12 @@ The complete V3 trainer library is on `main` (merged at `300e006`). Open `index.
 
 See [V3 handoff](docs/V3-BUILD-HANDOFF.md) for evidence, supported coverage and limitations. Independent model review passed 17/17; the builder reports 110/110 Chromium checks. New-project authoring, CLI and MCP are described below.
 
+## Verwaltung und Business
+
+Zwei neue [Business-Beispiele](index.html#/beispiele) zeigen interne Servicezeiten-Abstimmung in einer Gemeinde und die bestätigte Übernahme eines verschobenen Servicebesuchs. Zehn vollständige PNG-Folien, zwei zusätzliche Recherchebriefe und Quellen unterscheiden fiktive Geschichten von dokumentierter Praxis. Die [Review-Galerie](docs/business-review/index.html) und der [Handoff](docs/BUSINESS-REFERENCE-HANDOFF.md) zeigen Ergebnis, Prüfungen und offene Grenzen.
+
+[Team-Personas](index.html#/personas) lässt sich nach **Branche / Umfeld** und **Zusammenarbeit** filtern; bestehende Einzelarbeit bleibt erreichbar. CLI: `catalogue --domain administration --team-pattern committee`; MCP: `get_catalogue({domain:"administration",teamPattern:"committee"})`. Neue Projekte: `example --kind municipal-opening-hours` und `example --kind service-appointment-change`. Projektformat v1 und Fähigkeit 6 bleiben erhalten. Die [veröffentlichte Bibliothek](https://blackmath88.github.io/msteams-personas/index.html#/beispiele) wird aus `main` bereitgestellt.
+
 ## Recherchierte Hochschul-Szenarien
 
 [Hochschul-Szenarien](index.html#/hochschule) ergänzt vier fiktive Gruppen: Campus-Service, Forschungsförderung, Konferenzorganisation und ein Lehrpraxis-Netzwerk. Zwölf Rechercheeinträge unterscheiden fertige Beispiele von offenen Kandidaten. Sechs vollständige Projekte liefern 32 PNG-Folien.

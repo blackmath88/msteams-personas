@@ -73,11 +73,11 @@ function build() {
   }, async () => { const c = getCapabilities(); return { content: json(c), structuredContent: c }; });
 
   server.registerTool('get_catalogue', {
-    title: 'Researched higher-education catalogue', description: 'Four fictional group archetypes, twelve scenarios, capability status, prerequisites and traceable evidence. Only renderable scenarios have example projects.', annotations: { readOnlyHint: true }
-  }, async () => { const c = getCatalogue(); return { content: json(c), structuredContent: c }; });
+    title: 'Shared persona and scenario catalogue', description: 'Business, administration and higher-education groups, legacy library references, discovery facets, evidence and honest rendering status. Optional filters combine with AND; unknown values return no matches. Only renderable scenarios have example projects.', inputSchema: z.object({domain:z.string().optional(),teamPattern:z.string().optional(),collection:z.enum(['business','hochschule']).optional()}), annotations: { readOnlyHint: true }
+  }, async (filters) => { const c = getCatalogue(filters); return { content: json(c), structuredContent: c }; });
 
   server.registerTool('get_example', {
-    title: 'Example project', description: 'A complete valid example project. Choose tasks (default) workspace (map and app) or workspace-houses (overview and Teams comparison). Also weekly-meeting, shared-loop, grant-submission, event-handover, service-onboarding, peer-resource; discover context and sources with get_catalogue.',
+    title: 'Example project', description: 'A complete valid example project. Choose tasks (default) workspace (map and app) or workspace-houses (overview and Teams comparison). Also municipal-opening-hours, service-appointment-change, weekly-meeting, shared-loop, grant-submission, event-handover, service-onboarding, peer-resource; discover context and sources with get_catalogue.',
     inputSchema: z.object({ kind: z.enum(getCapabilities().examples).optional() }), annotations: { readOnlyHint: true }
   }, async ({ kind }) => { const p = getExample(kind); return { content: json(p), structuredContent: p }; });
 

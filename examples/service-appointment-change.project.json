@@ -1,0 +1,290 @@
+{
+  "format": "msteams-personas/project",
+  "projectVersion": 1,
+  "capabilityVersion": 6,
+  "meta": {
+    "id": "service-appointment-change",
+    "title": "Termin verschoben: Wer übernimmt den Rest?",
+    "organisation": "Brunner Haustechnik AG (fiktiv)",
+    "audience": "Disposition, Kundendienst, Servicetechnik und Trainer",
+    "goal": "Vorschlag, bestätigte Übernahme und verbindlichen Auftrag auseinanderhalten.",
+    "locale": "de-CH",
+    "fictional": true,
+    "source": {
+      "kind": "fictional-synthesis",
+      "note": "bitkom-craft, seco-digital-work · Quellenkartei im gemeinsamen Katalog, Zugriff 2026-11-10"
+    },
+    "assumptions": [
+      "Interne Konten mit Zugriff auf Kanal, Plan und freigegebene Auftragsreferenz.",
+      "Geeignete Geräte und Zugriffszeiten für den Aussendienst lokal prüfen; das Beispiel zeigt Desktop-Ansichten.",
+      "Keine Kundendaten, Preise oder technischen Arbeitsanweisungen in diesem fiktiven Koordinationsplan.",
+      "Planner koordiniert die Ausnahme. Auftrag und Termin werden von Hand in der Fachanwendung aktualisiert; keine Integration."
+    ],
+    "notes": "Nina hat zugesagt. Was fehlt vor dem Versprechen an den Kunden?"
+  },
+  "people": [
+    {
+      "id": "samuel-brand",
+      "name": "Samuel Brand",
+      "role": "Disposition Servicetechnik"
+    },
+    {
+      "id": "elif-kaya",
+      "name": "Elif Kaya",
+      "role": "Kundendienst, Buddy für die Einarbeitung"
+    },
+    {
+      "id": "nina-graf",
+      "name": "Nina Graf",
+      "role": "Servicetechnikerin"
+    },
+    {
+      "id": "reto-furrer",
+      "name": "Reto Furrer",
+      "role": "Teamleitung Kundendienst"
+    }
+  ],
+  "documents": [
+    {
+      "id": "d-1",
+      "name": "Auftragsreferenz_A-2048.docx"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t-1",
+      "title": "Material und Übernahme A-2048 klären"
+    },
+    {
+      "id": "t-2",
+      "title": "Termin im Auftrag A-2048 aktualisieren"
+    },
+    {
+      "id": "t-3",
+      "title": "Kunden nach Auftragsänderung informieren"
+    }
+  ],
+  "states": [
+    {
+      "id": "before",
+      "label": "Übernahme noch offen",
+      "tasks": {
+        "t-1": {
+          "list": "plan",
+          "owner": "samuel-brand",
+          "bucket": "Zu klären",
+          "due": "Do 12.11. · 14 Uhr",
+          "done": false,
+          "notes": "Freitag ist nur vorgeschlagen. Material und Ninas Zusage prüfen. Danach Auftrag aktualisieren und erst dann Kunden informieren.",
+          "checklist": [
+            {
+              "text": "Materialverfügbarkeit geprüft",
+              "done": false
+            },
+            {
+              "text": "Nina bestätigt Freitag ausdrücklich",
+              "done": false
+            },
+            {
+              "text": "Kundendienst über den Stand informiert",
+              "done": false
+            }
+          ]
+        },
+        "t-2": {
+          "list": "plan",
+          "owner": "samuel-brand",
+          "bucket": "Zu klären",
+          "due": "Do 12.11. · 15 Uhr",
+          "done": false
+        },
+        "t-3": {
+          "list": "plan",
+          "owner": "elif-kaya",
+          "bucket": "Zu klären",
+          "due": "Do 12.11. · 16 Uhr",
+          "done": false
+        }
+      }
+    },
+    {
+      "id": "after",
+      "label": "Übernahme bestätigt · Auftrag offen",
+      "tasks": {
+        "t-1": {
+          "list": "plan",
+          "owner": "samuel-brand",
+          "bucket": "Bestätigt",
+          "due": "Do 12.11. · 14 Uhr",
+          "done": true,
+          "notes": "Material ist verfügbar, Nina hat Freitag bestätigt. Samuel aktualisiert noch den Auftrag. Elif informiert erst danach den Kunden.",
+          "checklist": [
+            {
+              "text": "Materialverfügbarkeit geprüft",
+              "done": true
+            },
+            {
+              "text": "Nina bestätigt Freitag ausdrücklich",
+              "done": true
+            },
+            {
+              "text": "Kundendienst über den Stand informiert",
+              "done": true
+            }
+          ],
+          "comment": {
+            "by": "nina-graf",
+            "text": "Ich übernehme A-2048 am Freitag. Samuel aktualisiert noch den Auftrag; Elif informiert danach den Kunden."
+          }
+        },
+        "t-2": {
+          "list": "plan",
+          "owner": "samuel-brand",
+          "bucket": "Zu klären",
+          "due": "Do 12.11. · 15 Uhr",
+          "done": false
+        },
+        "t-3": {
+          "list": "plan",
+          "owner": "elif-kaya",
+          "bucket": "Zu klären",
+          "due": "Do 12.11. · 16 Uhr",
+          "done": false
+        }
+      }
+    }
+  ],
+  "scenes": [
+    {
+      "id": "sc-rueckfrage",
+      "profile": "teams-chat",
+      "team": "Brunner Kundendienst",
+      "viewer": "elif-kaya",
+      "partner": "samuel-brand",
+      "messages": [
+        {
+          "id": "m-frage",
+          "by": "elif-kaya",
+          "text": "Kann ich Freitag für A-2048 schon bestätigen?"
+        },
+        {
+          "id": "m-antwort",
+          "by": "samuel-brand",
+          "text": "Noch nicht. Das Teil und Ninas Übernahme sind offen. Ich kläre beides; bitte noch nichts versprechen."
+        }
+      ]
+    },
+    {
+      "id": "sc-anfrage",
+      "profile": "teams-posts",
+      "team": "Brunner: Büro und Aussendienst",
+      "channel": "Disposition",
+      "posts": [
+        {
+          "id": "q-anfrage",
+          "by": "samuel-brand",
+          "title": "A-2048: Freitag ist vorläufig",
+          "time": "Do 10:15",
+          "text": "Nina, kannst du den Besuch übernehmen? Bitte bis 14 Uhr ausdrücklich bestätigen. Ich prüfe das Material. Elif wartet mit der Kundeninformation.",
+          "document": "d-1",
+          "hint": "Aufgabe zugewiesen heisst noch nicht: Besuch bestätigt."
+        }
+      ]
+    },
+    {
+      "id": "sc-zusage",
+      "profile": "planner-task",
+      "team": "Brunner Ausnahmen",
+      "state": "after",
+      "task": "t-1"
+    },
+    {
+      "id": "sc-rest",
+      "profile": "planner",
+      "team": "Brunner Ausnahmen",
+      "state": "after"
+    },
+    {
+      "id": "sc-prinzip",
+      "profile": "workflow",
+      "team": "Brunner: Büro und Aussendienst",
+      "title": "Termin verschoben: Wer übernimmt den Rest?",
+      "question": "Nina hat zugesagt. Was fehlt vor dem Versprechen an den Kunden?",
+      "boundary": "Planner koordiniert die Ausnahme. Auftrag und Termin werden von Hand in der Fachanwendung aktualisiert; keine Integration.",
+      "steps": [
+        {
+          "id": "w-1",
+          "actor": "Samuel",
+          "tool": "Fachanwendung",
+          "action": "Auftrag und fehlendes Teil prüfen",
+          "artefact": "A-2048",
+          "relation": "manual",
+          "evidence": null
+        },
+        {
+          "id": "w-2",
+          "actor": "Samuel",
+          "tool": "Teams",
+          "action": "Ausnahme mit Nina abstimmen",
+          "artefact": "Terminvorschlag Freitag",
+          "relation": "manual",
+          "evidence": null
+        },
+        {
+          "id": "w-3",
+          "actor": "Nina",
+          "tool": "Planner",
+          "action": "Übernahme ausdrücklich bestätigen",
+          "artefact": "Koordinationsaufgabe",
+          "relation": "manual",
+          "evidence": null
+        },
+        {
+          "id": "w-4",
+          "actor": "Samuel",
+          "tool": "Fachanwendung",
+          "action": "Bestätigten Termin im Auftrag eintragen",
+          "artefact": "Verbindlicher Auftrag",
+          "relation": "manual",
+          "evidence": null
+        },
+        {
+          "id": "w-5",
+          "actor": "Elif",
+          "tool": "Kundendienst",
+          "action": "Kunden nach Auftragsänderung informieren",
+          "artefact": "Kundeninformation",
+          "relation": "manual",
+          "evidence": null
+        }
+      ]
+    }
+  ],
+  "slides": [
+    {
+      "id": "s-1",
+      "scene": "sc-rueckfrage",
+      "presenterNotes": "Die Auftragsnummer ist eine fiktive Referenz, keine Systemintegration. Kundenadresse und technische Daten bleiben in der Fachanwendung."
+    },
+    {
+      "id": "s-2",
+      "scene": "sc-anfrage",
+      "presenterNotes": "Samuel benennt Nina und die Antwortfrist im Kanal. Die Koordinationsaufgabe bleibt bei ihm. Eine bestehende Disposition plus Anruf kann genügen."
+    },
+    {
+      "id": "s-3",
+      "scene": "sc-zusage",
+      "presenterNotes": "Nina bestätigt ihre Übernahme im Kommentar. Material und interne Information sind geprüft. Damit ist die Klärung erledigt; Auftrag und Kundeninformation bleiben offen."
+    },
+    {
+      "id": "s-4",
+      "scene": "sc-rest",
+      "presenterNotes": "Das Board zählt eine erledigte Klärung und zeigt zwei offene Aufgaben. Erledigte Karten sind eingeklappt. Samuel muss den Auftrag aktualisieren; Elif informiert erst danach den Kunden. Kein mobiler Praxistest."
+    },
+    {
+      "id": "s-5",
+      "scene": "sc-prinzip",
+      "presenterNotes": "Nina hat zugesagt. Was fehlt vor dem Versprechen an den Kunden? Einfachere Alternative: Bestehende Disposition plus Anruf und dort dokumentierte Zusage, wenn das ausreicht. Fachsystem- und Publikationsschritte sind manuell und werden hier nur erklärt."
+    }
+  ]
+}
