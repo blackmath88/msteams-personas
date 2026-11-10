@@ -4,3 +4,4 @@
 
 /* Catalogue facets use native controls and remain outside exported slides. */
 .discovery-filters{display:flex;gap:16px;align-items:end;flex-wrap:wrap;margin:24px 0}.discovery-filters label{display:grid;gap:8px;font-weight:650;min-width:220px}.discovery-filters select{font:inherit;padding:12px;border:1px solid #84998f;border-radius:7px;background:white;max-width:100%;min-height:46px}.discovery-filters select:focus-visible{outline:3px solid #7257a1;outline-offset:3px}@media(max-width:600px){.discovery-filters{display:grid;grid-template-columns:minmax(0,1fr)}.discovery-filters label{min-width:0}.discovery-filters .btn{justify-self:start}}
+@media(max-width:900px){.he-detail .co-strip{flex-direction:column}.he-detail .co-strip-card{min-height:0}}

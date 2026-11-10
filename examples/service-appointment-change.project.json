@@ -117,7 +117,7 @@
           "bucket": "Bestätigt",
           "due": "Do 12.11. · 14 Uhr",
           "done": true,
-          "notes": "Freitag ist nur vorgeschlagen. Material und Ninas Zusage prüfen. Danach Auftrag aktualisieren und erst dann Kunden informieren.",
+          "notes": "Material ist verfügbar, Nina hat Freitag bestätigt. Samuel aktualisiert noch den Auftrag. Elif informiert erst danach den Kunden.",
           "checklist": [
             {
               "text": "Materialverfügbarkeit geprüft",
@@ -279,7 +279,7 @@
     {
       "id": "s-4",
       "scene": "sc-rest",
-      "presenterNotes": "Das Board zeigt dieselbe erledigte Klärung und zwei offene Aufgaben. Samuel muss den Auftrag aktualisieren; Elif informiert erst danach den Kunden. Kein mobiler Praxistest."
+      "presenterNotes": "Das Board zählt eine erledigte Klärung und zeigt zwei offene Aufgaben. Erledigte Karten sind eingeklappt. Samuel muss den Auftrag aktualisieren; Elif informiert erst danach den Kunden. Kein mobiler Praxistest."
     },
     {
       "id": "s-5",

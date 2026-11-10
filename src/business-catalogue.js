@@ -34,6 +34,7 @@
     after = JSON.parse(JSON.stringify(before));
     if (municipal) { after['t-1'].done = true; after['t-2'].done = true; }
     else { after['t-1'].done = true; after['t-1'].bucket = 'Bestätigt'; }
+    if (!municipal) after[detail].notes = 'Material ist verfügbar, Nina hat Freitag bestätigt. Samuel aktualisiert noch den Auftrag. Elif informiert erst danach den Kunden.';
     after[detail].checklist.forEach(function (c) { c.done = true; });
     after[detail].comment = municipal ? { by: ids[2], text: 'Entwurf ist bereit. Martins Freigabeauftrag ist weiterhin offen; noch nicht veröffentlichen.' } : { by: ids[2], text: 'Ich übernehme A-2048 am Freitag. Samuel aktualisiert noch den Auftrag; Elif informiert danach den Kunden.' };
     p.states = [{ id: 'before', label: municipal ? 'Vorbereitung offen' : 'Übernahme noch offen', tasks: before }, { id: 'after', label: municipal ? 'Vorbereitet · Freigabe offen' : 'Übernahme bestätigt · Auftrag offen', tasks: after }];
@@ -48,7 +49,7 @@
       slide({ id: 'sc-rueckfrage', profile: 'teams-chat', team: 'Brunner Kundendienst', viewer: ids[1], partner: ids[0], messages: [{ id: 'm-frage', by: ids[1], text: 'Kann ich Freitag für A-2048 schon bestätigen?' }, { id: 'm-antwort', by: ids[0], text: 'Noch nicht. Das Teil und Ninas Übernahme sind offen. Ich kläre beides; bitte noch nichts versprechen.' }] }, 'Die Auftragsnummer ist eine fiktive Referenz, keine Systemintegration. Kundenadresse und technische Daten bleiben in der Fachanwendung.');
       slide({ id: 'sc-anfrage', profile: 'teams-posts', team: g.name, channel: 'Disposition', posts: [{ id: 'q-anfrage', by: ids[0], title: 'A-2048: Freitag ist vorläufig', time: 'Do 10:15', text: 'Nina, kannst du den Besuch übernehmen? Bitte bis 14 Uhr ausdrücklich bestätigen. Ich prüfe das Material. Elif wartet mit der Kundeninformation.', document: 'd-1', hint: 'Aufgabe zugewiesen heisst noch nicht: Besuch bestätigt.' }] }, 'Samuel benennt Nina und die Antwortfrist im Kanal. Die Koordinationsaufgabe bleibt bei ihm. Eine bestehende Disposition plus Anruf kann genügen.');
       slide({ id: 'sc-zusage', profile: 'planner-task', team: 'Brunner Ausnahmen', state: 'after', task: 't-1' }, 'Nina bestätigt ihre Übernahme im Kommentar. Material und interne Information sind geprüft. Damit ist die Klärung erledigt; Auftrag und Kundeninformation bleiben offen.');
-      slide({ id: 'sc-rest', profile: 'planner', team: 'Brunner Ausnahmen', state: 'after' }, 'Das Board zeigt dieselbe erledigte Klärung und zwei offene Aufgaben. Samuel muss den Auftrag aktualisieren; Elif informiert erst danach den Kunden. Kein mobiler Praxistest.');
+      slide({ id: 'sc-rest', profile: 'planner', team: 'Brunner Ausnahmen', state: 'after' }, 'Das Board zählt eine erledigte Klärung und zeigt zwei offene Aufgaben. Erledigte Karten sind eingeklappt. Samuel muss den Auftrag aktualisieren; Elif informiert erst danach den Kunden. Kein mobiler Praxistest.');
     }
     slide({ id: 'sc-prinzip', profile: 'workflow', team: g.name, title: s.title, question: s.question, boundary: s.boundary, steps: s.steps.map(function (x, i) { return Object.assign({ id: 'w-' + (i + 1) }, x); }) }, s.question + ' Einfachere Alternative: ' + s.alternative + ' Fachsystem- und Publikationsschritte sind manuell und werden hier nur erklärt.');
     return p;
