@@ -1,8 +1,8 @@
 # Current status
 
-Updated 2026-11-09 (feature branch; draft PR, not deployed). `main` is the integration branch for the viewer, portable projects, the CLI and the MCP server.
+Updated 2026-11-10. PR #14 is merged into `main` at `9a017f5`. `main` is the integration branch for the viewer, portable projects, the CLI and the MCP server.
 
-## Available on this feature branch
+## Available on main
 
 - Four researched higher-education group additions, twelve scenario records and six complete portable examples (32 PNGs). Meeting notes, cross-surface Loop tables and labelled workflows are capability 6. Discovery is shared by website, CLI `catalogue` and MCP `get_catalogue`. See the [morning gallery](morning-review/index.html) and [implementation handoff](PERSONA-SCENARIO-HANDOFF.md).
 
@@ -12,6 +12,8 @@ Updated 2026-11-09 (feature branch; draft PR, not deployed). `main` is the integ
 - GitHub Pages serves the static website from `main`. CLI and MCP run separately. An installed MCP process must load this revision and restart before it advertises capability version 6 and `render_components`.
 
 ## Open
+
+- The next content expansion targets general business and public-administration contexts in Switzerland and Germany. The [proposed domain plan](BUSINESS-DOMAINS-CH-DE-BUILD-PLAN.md) and [Perplexity sparring prompt](research/PERPLEXITY-BUSINESS-DOMAINS-CH-DE-SPARRING.md) prepare selection; they do not add implemented domain examples.
 
 - A real Microsoft tenant acceptance test and a real assistant-host trial for capability 6 remain unverified. Forms/Lists/Power Automate remain research only. Shared-component and workflow fields currently use JSON authoring; the form preserves them and exposes the limitation.
 
