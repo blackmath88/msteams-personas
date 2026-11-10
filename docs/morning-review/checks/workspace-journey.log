@@ -1,0 +1,18 @@
+PASS Campus opens map and Teams preview
+PASS channel rename follows into both views
+PASS house labels are map only
+PASS moving the file updates both views
+PASS added files appear in both views
+PASS research view has its own five channels and working manuscript
+PASS Nora uses OneDrive with personal sharing
+PASS narrow screen keeps a readable layout without horizontal scrolling
+PASS round-trip opens the workspace editor
+PASS website produces both PNGs through the shared renderer
+PASS Mara sees exactly her three houses and the paired Teams file
+PASS house cabinet opens the same channel in Teams files
+PASS Teams navigation follows nested folders with the same room still selected
+PASS the open cabinet shows the same nested path and its entries
+PASS choosing a file in the cabinet selects the same row in Teams
+PASS switching back to posts selects the channel instead of the folder
+PASS changing the linked viewer keeps the overview within membership
+PASS house and Teams drafts fit the narrow editor width

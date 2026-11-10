@@ -1,6 +1,6 @@
 # Higher-education personas, connected workflows and visual language
 
-Status: authorised research and implementation brief, 2026-11-09.
+Status: implemented on the isolated feature branch, 2026-11-09; draft review, not merged or deployed. See [handoff](PERSONA-SCENARIO-HANDOFF.md) and [morning gallery](morning-review/index.html). Live tenant acceptance, a real assistant-host trial and component-field form authoring remain open.
 This is the next build priority. The immediate outcome is a richer scenario library and reviewable visual examples. Deck composition remains a later milestone.
 
 ## Purpose

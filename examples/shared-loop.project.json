@@ -1,0 +1,225 @@
+{
+  "format": "msteams-personas/project",
+  "projectVersion": 1,
+  "capabilityVersion": 6,
+  "meta": {
+    "id": "shared-loop",
+    "title": "Eine Sammlung. Zwei Ansichten.",
+    "organisation": "Hochschule Tannwil (fiktiv)",
+    "audience": "Hochschulmitarbeitende und Trainer",
+    "goal": "Dieselbe Loop-Tabelle in Teams und Outlook erkennen.",
+    "locale": "de-CH",
+    "fictional": true,
+    "source": {
+      "kind": "fictional-synthesis",
+      "note": "newcastle-cop, leuven, colorado, ms-chat, ms-outlook, ms-requirements · Quellenkartei im Hochschulkatalog, Zugriff 2026-11-09"
+    },
+    "assumptions": [
+      "Unterstützte Teams-Chat- und Outlook-Web-Clients; Loop erlaubt.",
+      "Dieselbe interne Gruppe hat Bearbeitungszugriff auf die Komponente.",
+      "Eine Tabelle erzeugt keine Planner-Aufgaben. Bearbeitungszugriff prüfen."
+    ],
+    "notes": "Woran erkennen wir dieselbe Komponente?"
+  },
+  "people": [
+    {
+      "id": "p-1",
+      "name": "Liv Haller",
+      "role": "Moderation"
+    },
+    {
+      "id": "p-2",
+      "name": "Ben Steiner",
+      "role": "Lehrperson"
+    },
+    {
+      "id": "p-3",
+      "name": "Ava Fischer",
+      "role": "Didaktik"
+    },
+    {
+      "id": "p-4",
+      "name": "Nils Weber",
+      "role": "Redaktion"
+    }
+  ],
+  "documents": [
+    {
+      "id": "d-1",
+      "name": "Betriebshandbuch_Lernraeume.docx"
+    }
+  ],
+  "tasks": [],
+  "states": [
+    {
+      "id": "before",
+      "label": "Vor Bens Beitrag",
+      "tasks": {},
+      "components": {
+        "c-methoden": {
+          "rows": [
+            {
+              "id": "r-1",
+              "text": "Peerfeedback: erste Idee sammeln",
+              "by": "p-2"
+            },
+            {
+              "id": "r-2",
+              "text": "Lernjournal: Beispiel für das nächste Treffen",
+              "by": "p-3"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "after",
+      "label": "Nach Bens Beitrag",
+      "tasks": {},
+      "components": {
+        "c-methoden": {
+          "rows": [
+            {
+              "id": "r-1",
+              "text": "Peerfeedback: Kriterien gemeinsam vorab klären",
+              "by": "p-2"
+            },
+            {
+              "id": "r-2",
+              "text": "Lernjournal: Beispiel für das nächste Treffen",
+              "by": "p-3"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "scenes": [
+    {
+      "id": "sc-chat-before",
+      "profile": "loop-component",
+      "team": "Netzwerk Lehrpraxis",
+      "component": "c-methoden",
+      "state": "before",
+      "surface": "teams-chat",
+      "viewer": "p-1",
+      "partner": "p-2",
+      "accessConfirmed": true
+    },
+    {
+      "id": "sc-mail-before",
+      "profile": "loop-component",
+      "team": "Netzwerk Lehrpraxis",
+      "component": "c-methoden",
+      "state": "before",
+      "surface": "outlook",
+      "viewer": "p-1",
+      "partner": "p-2",
+      "accessConfirmed": true
+    },
+    {
+      "id": "sc-mail-after",
+      "profile": "loop-component",
+      "team": "Netzwerk Lehrpraxis",
+      "component": "c-methoden",
+      "state": "after",
+      "surface": "outlook",
+      "viewer": "p-1",
+      "partner": "p-2",
+      "accessConfirmed": true
+    },
+    {
+      "id": "sc-chat-after",
+      "profile": "loop-component",
+      "team": "Netzwerk Lehrpraxis",
+      "component": "c-methoden",
+      "state": "after",
+      "surface": "teams-chat",
+      "viewer": "p-1",
+      "partner": "p-2",
+      "accessConfirmed": true
+    },
+    {
+      "id": "sc-workflow",
+      "profile": "workflow",
+      "team": "Netzwerk Lehrpraxis",
+      "title": "Eine Sammlung. Zwei Ansichten.",
+      "question": "Woran erkennen wir dieselbe Komponente?",
+      "boundary": "Eine Tabelle erzeugt keine Planner-Aufgaben. Bearbeitungszugriff prüfen.",
+      "steps": [
+        {
+          "id": "w-1",
+          "actor": "Liv",
+          "tool": "Teams-Chat",
+          "action": "Tabelle erstellen und senden",
+          "artefact": "Methodensammlung",
+          "relation": "link",
+          "evidence": null
+        },
+        {
+          "id": "w-2",
+          "actor": "Liv",
+          "tool": "Outlook",
+          "action": "Komponentenlink kopieren und einfügen",
+          "artefact": "Dieselbe Komponente",
+          "relation": "manual",
+          "evidence": null
+        },
+        {
+          "id": "w-3",
+          "actor": "Ben",
+          "tool": "Outlook",
+          "action": "Beitrag konkretisieren",
+          "artefact": "Zeile r-1",
+          "relation": "sync",
+          "evidence": "loop-surfaces"
+        },
+        {
+          "id": "w-4",
+          "actor": "Liv",
+          "tool": "Teams-Chat",
+          "action": "Änderung in derselben Tabelle sehen",
+          "artefact": "Zeile r-1",
+          "relation": "manual",
+          "evidence": null
+        }
+      ]
+    }
+  ],
+  "slides": [
+    {
+      "id": "s-1",
+      "scene": "sc-chat-before",
+      "presenterNotes": "Liv kopiert den Komponentenlink bewusst nach Outlook. Beide Ansichten zeigen dieselbe ID und denselben Zustand."
+    },
+    {
+      "id": "s-2",
+      "scene": "sc-mail-before",
+      "presenterNotes": "Liv kopiert den Komponentenlink bewusst nach Outlook. Beide Ansichten zeigen dieselbe ID und denselben Zustand."
+    },
+    {
+      "id": "s-3",
+      "scene": "sc-mail-after",
+      "presenterNotes": "Ben präzisiert r-1 in Outlook. Teams zeigt danach dieselbe Änderung, keine zweite Tabelle."
+    },
+    {
+      "id": "s-4",
+      "scene": "sc-chat-after",
+      "presenterNotes": "Ben präzisiert r-1 in Outlook. Teams zeigt danach dieselbe Änderung, keine zweite Tabelle."
+    },
+    {
+      "id": "s-5",
+      "scene": "sc-workflow",
+      "presenterNotes": "Woran erkennen wir dieselbe Komponente?"
+    }
+  ],
+  "sharedComponents": [
+    {
+      "id": "c-methoden",
+      "kind": "table",
+      "title": "Methodensammlung",
+      "owner": "p-1",
+      "storage": "onedrive"
+    }
+  ]
+}

@@ -10,7 +10,7 @@ mkdirSync(OUT, { recursive: true });
 const results = [];
 const check = (name, ok, info = '') => { results.push({ name, ok: !!ok, info }); console.log((ok ? 'PASS ' : 'FAIL ') + name + (info ? ' — ' + info : '')); };
 
-const p = await launch();
+const p = await launch({port: 0});
 const $ = (sel, prop = 'textContent') => p.eval(`(document.querySelector(${JSON.stringify(sel)})||{})[${JSON.stringify(prop)}]`);
 const count = sel => p.eval(`document.querySelectorAll(${JSON.stringify(sel)}).length`);
 const click = async sel => { await p.eval(`document.querySelector(${JSON.stringify(sel)}).click()`); await p.sleep(250); };

@@ -26,13 +26,14 @@
   }
   function aiNote(vm, tool) { return vm.ai && (tool === 'recap' || tool === 'planner' || tool === 'plantask') ? vm.ai.short : ''; }
   function foot(vm, extra) {
-    var a = vm.variant && vm.variant.assumption ? 'Annahme: ' + vm.fill(vm.variant.assumption) : '';
+    var a = vm.assumptions && vm.assumptions.length ? 'Voraussetzung: ' + vm.assumptions.join(' · ') : vm.variant && vm.variant.assumption ? 'Annahme: ' + vm.fill(vm.variant.assumption) : '';
     return '<p class="sl-foot"><span>Fiktives Beispiel · nachgebildete Oberfläche, kein Produkt von Microsoft · ' + esc(vm.title) + '</span>' +
       (a || extra ? '<span class="sl-assume">' + esc([extra, a].filter(Boolean).join(' · ')) + '</span>' : '') + '</p>';
   }
 
   /* Returns the slide HTML, or null if the combination is not available. */
   function compose(vm, p, kind, principleMeta) {
+    if (kind === 'collaboration') return root.CollaborationView.compose(vm);
     if (kind === 'workspace') return root.WorkspaceView.compose(vm, p);
     if (p.mode === 'prinzip') {
       var pid = principleMeta ? principleMeta.id : 'chat';
@@ -77,6 +78,15 @@
   /* Fit check: reports content that does not fit instead of silently cutting it. */
   function fitIssues(el) {
     var out = [];
+    var collaboration = el.matches('.co-slide') ? el : el.querySelector('.co-slide');
+    if (collaboration) {
+      var slideBox = collaboration.getBoundingClientRect(), footer = collaboration.querySelector('.co-foot').getBoundingClientRect();
+      collaboration.querySelectorAll('.co-app, .co-teaching, .co-workflow').forEach(function (content) {
+        var box = content.getBoundingClientRect();
+        if (box.bottom > footer.top - 8 || box.right > slideBox.right - 8 || content.scrollWidth > content.clientWidth + 2) out.push('Zusammenarbeit: Inhalt kollidiert mit Rand oder Fusszeile');
+      });
+      if (footer.bottom > slideBox.bottom || footer.right > slideBox.right) out.push('Zusammenarbeit: Voraussetzungen passen nicht in die Fusszeile');
+    }
     Array.prototype.forEach.call(el.querySelectorAll('.wp-map section'), function (section) {
       if (section.scrollHeight > section.clientHeight + 2) out.push('Arbeitsbereich: Karte ist zu dicht');
     });
@@ -105,7 +115,7 @@
     Array.prototype.forEach.call(el.querySelectorAll('.p-board, .x-tbl, .m-ft, .pt-dlg, .d-main'), function (c) {
       if (c.scrollWidth > c.clientWidth + 2) out.push(c.className.split(' ')[0] + ' rechts abgeschnitten');
     });
-    Array.prototype.forEach.call(el.querySelectorAll('.o-read, .s-lib, .x-main, .t-files, .t-tasks, .t-content, .slide > .sl-app .pr, .sl-notes, .pt-dlg, .d-main'), function (c) {
+    Array.prototype.forEach.call(el.querySelectorAll('.co-paper, .co-workflow, .o-read, .s-lib, .x-main, .t-files, .t-tasks, .t-content, .slide > .sl-app .pr, .sl-notes, .pt-dlg, .d-main'), function (c) {
       if (c.scrollHeight > c.clientHeight + 2) out.push(c.className.split(' ')[0] + ' zu lang');
     });
     return out;

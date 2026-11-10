@@ -1,0 +1,51 @@
+# Auswahl und Evidenz, 9. November 2026
+
+Basis: `main` bei `c3043a9`. Direkter Codex-Cloud-Auftrag, keine Wiederaufnahme der archivierten Mission. Die Quellenkartei in `src/research-catalogue.js` ist die gemeinsame Grundlage für Website, CLI und MCP. Alle Grössen, Personen, Dialoge, Termine und Arbeitsabläufe sind unsere fiktive Synthese. Hochschulquellen belegen Bedürfnisse oder lokale Empfehlungen, keine Basler Richtlinie und keine Interviews.
+
+## Kandidatenvergleich
+
+| Kandidat | Abgrenzung zum Bestand | Evidenz / Lehrwert / Aufwand | Entscheidung |
+| --- | --- | --- | --- |
+| Departements- oder Programmkommission | Bereits Kommission Digitale Zusammenarbeit | UCT-Gremien; gute Entscheide, geringe neue Vielfalt | Bestehenden Archetyp behalten |
+| Lehrkoordination | Bereits Semesterstart mit kleinem Lehrteam | UCT-Lehre; Lernplattform-Grenze wertvoll | Recherchiertes Szenario, kein neuer Archetyp |
+| Forschungsverbund | Nähe zu Urban Health Analytics | UCT-Forschung; externe Zugriffe brauchen eigenes Modell | Zurückgestellt |
+| Forschungsförderung / Antragsteam | Befristete Beiträge unter harter Einreichungsfrist | UCL-/Teesside-Antragsteams, ergänzend Edinburgh/UCT; hohe Abgrenzung | **Ausgewählt** |
+| Konferenzorganisation | Temporäre, rollenübergreifende Durchführung und Abschluss | ASU-Konferenzorganisation und UCT-Projekte; Adoption-Eventleitfaden | **Ausgewählt** |
+| Laborbetrieb | Laufende Ressourcen und Wartung statt Publikationen | UCT-PASS nur indirekt; fachspezifische Evidenz dünn | Provisorisch; keine Labor-Sicherheitsprozesse illustrieren |
+| Community of Practice | Freiwilliger Austausch, wiederverwendbares Wissen | Newcastle-Lehrgemeinschaften und KU-Leuven-Loop; konkrete Wissenspflege | **Ausgewählt** als Lehrpraxis-Netzwerk |
+| Studienberatung / Onboarding | Wiederkehrende Anfragen, vertrauliche Einzelfälle | UCT-PASS und Cornell-Notizen; personenbezogene Fälle vermeiden | Onboarding als Service-Szenario |
+| Campus-Servicebetrieb | Dauerhafte operative Koordination, Wochenrhythmus | UCT-PASS und Cornell; ausgeprägter Meeting-/Aufgabenzyklus | **Ausgewählt** |
+| Einzelarbeit / persönlicher Entwurf | Nora deckt diesen Kontrast bewusst ab | KU Leuven erklärt Speicherorte; kein Team-Zwang | Bestehende Persona bewahren |
+
+Die vier Ergänzungen erweitern Campus & People Development, Urban Health Analytics und Nora um Antrag, Durchführung, freiwilliges Netzwerk und Betrieb. Zwei Quellen pro Ergänzung sind in der Kartei verknüpft; dort ist auch sichtbar, wo nur ein allgemeines Arbeitsmuster und keine identische Hochschulgruppe belegt ist.
+
+## Verifizierte Beziehungen und Grenzen
+
+- **Notizen → Planner:** erste Aufgabe erzeugt einen zugehörigen Plan. Aufgabenlisten entsprechen Buckets. Ein neuer Planner-Bucket erzeugt keine Notizenliste. Verschieben in einen anderen Plan entfernt die Aufgabe aus den Notizen. Wir zeigen ausdrücklich den erzeugten Notizenplan, keinen automatisch befüllten beliebigen Teamplan. [Microsoft Support](https://support.microsoft.com/en-au/loop/manage-your-tasks-from-loop-task-lists-and-collaborative-notes-in-planner).
+- **Planner → To Do:** zugewiesene Aufgaben über dieselbe Arbeitsidentität und aktivierte Planner-Verbindung. «Mein Tag» wird bewusst ausgewählt. [Microsoft Support](https://support.microsoft.com/en-us/planner/see-planner-tasks-in-microsoft-to-do).
+- **Loop über Ansichten:** Komponentenlink von Hand kopieren und in unterstützter Teams-Chat-/Outlook-Oberfläche einfügen; anschliessend dasselbe Objekt bearbeiten. Keine zusätzliche Kopie, keine automatische Publikation. Tabellen sind keine Planner-Aufgabenlisten. [Teams](https://support.microsoft.com/en-us/teams/apps-service/send-a-loop-component-in-microsoft-teams-chats), [Outlook](https://support.microsoft.com/en-us/loop/use-loop-components-in-outlook).
+- **Voraussetzungen:** passende OneDrive-/SharePoint-Lizenz, Exchange Online für volle Funktionen, erlaubte Loop-Richtlinien und WebSockets, Bearbeitungszugriff und unterstützte Clients. Eine Loop-Arbeitsraum-Lizenz ist eine eigene Frage. [Microsoft Learn](https://learn.microsoft.com/en-us/microsoft-365/loop/loop-requirements?view=o365-worldwide).
+- **Besprechungsgrenze:** interne direkt eingeladene Personen, geplante persönliche Teams-Terminserie. Keine externen Teilnehmenden in Notizen. Die Serie und der Einzeltermin sind unterschiedliche Bearbeitungsziele; wir öffnen beim nächsten Termin die bisherigen Notizen bewusst erneut. Kein AI-Recap, keine Copilot-Voraussetzung. [Microsoft Support](https://support.microsoft.com/en-us/teams/meetings/take-meeting-notes-in-microsoft-teams).
+- Cornell beschreibt teils ältere Einschränkungen (Notizen nur vorab aktivieren, Outlook). Bei abweichendem aktuellem Microsoft-Support gilt für die Darstellung die aktuelle Produktdokumentation. Cornell bleibt lokaler Praxisbeleg.
+- Forms → Lists → Teams ist **kein** mitgelieferter Automatismus: expliziter Power-Automate-Flow, Verbindungen, Berechtigungen, Fehlerbehandlung und gegebenenfalls Lizenzprüfung wären nötig. Dieses Szenario bleibt Recherche, ohne erfundene Forms-/Lists-Oberfläche.
+
+## GitHub und Wiederverwendung
+
+Direkt geprüft: [Fluent System Icons](https://github.com/microsoft/fluentui-system-icons) (MIT, LICENSE-Blob `bc9c36b28f467f7006c4e5f1be4ca0a1a0b895f3`); vorhandene lokale Pfade und bestehender Lizenzhinweis werden wiederverwendet. Haus-, Entscheid- und Übergabesymbole sind eigene SVG-Geometrie.
+
+[OfficeDev/Microsoft-Teams-Samples](https://github.com/OfficeDev/Microsoft-Teams-Samples) (MIT, LICENSE-Blob `9e841e7a26e4eb057b24511e7b92d42b257a80e5`) geprüft und verworfen: App-/Bot-/Graph-Beispiele benötigen einen Tenant und implementieren keine offline Schulungsoberfläche. Kein Code daraus übernommen. [MicrosoftDocs Loop-UX](https://github.com/MicrosoftDocs/microsoft-365-docs/blob/public/microsoft-365/loop/loop-ux-examples.md) dient als dokumentierte Referenz für eingebettete Komponenten; keine Screenshots oder Dokumentation kopiert. GitHub-Sterne sind kein Praxisbeleg.
+
+## UI-Referenzprofil
+
+Beobachtung 2026-11-09: Microsoft-Support-Abbildungen für Besprechungsnotizen (Agenda/Notizen/Folgeaufgaben), Teams-Komponenten (Karte mit Titel und Link) und Outlook-Komponenten. Eigene vereinfachte deutsche Light-Theme-Nachbildung, keine pixelgenaue Tenant-Aufnahme. Trainerhinweise, Objekt-ID und Synchronisationspfeile bleiben ausserhalb des App-Inhalts. Die aktuelle deutsche Beschriftung kann je Client abweichen. Keine Microsoft-Screenshots werden ausgeliefert.
+
+Edinburgh ist im Suchindex lesbar, Vollabruf lieferte 403; der Förderantragsbeleg ist deshalb als eingeschränkt und ergänzend markiert. UCT-Abfragen hatten einzelne Timeouts; alternative Vollabrufe werden als solche protokolliert. Nicht aus Suchfragmenten auf Implementierungsdetails schliessen.
+
+Vollabrufe von UCT-Projekte, UCT-Forschung und UCT-Lehre gelangen anschliessend direkt per HTTPS. Die Leitfäden enthalten teils historische Werkzeugempfehlungen (etwa Wiki); diese werden nicht in neue Produktaussagen übernommen. Cornell wurde über den Web-Leser gelesen, der direkte Bildabruf lieferte 403.
+
+Für Loop wurden die tatsächlichen MicrosoftDocs-Referenz-PNGs `media/teams-web-message.png` und `media/outlook-web-draft.png` am 2026-11-09 heruntergeladen und visuell geprüft (nur temporär, nicht ausgeliefert). Die neue Darstellung übernimmt Kartenrahmen, Titel und Einbettung, reduziert die Anwendungsnavigation aber deutlich. Für das Notizenpanel bleibt der Abgleich mit einem aktuellen deutschen Tenant-Screenshot offen. Die Support-Seite belegt Felder und Verhalten, keine pixelgenaue Kopie unseres Panels.
+
+Die direkte GitHub-Codesuche nach «Loop» in OfficeDev/Microsoft-Teams-Samples fand unter anderem das **archivierte** Beispiel `samples/TeamsSDK/Archived/msgext-unfurling-ac-loop-components/nodejs/README.md` bei `b9aedfea98e3505acbcf68a3931be05a780d6149`. Adaptive-Card-Link-Unfurling ist nicht dieselbe Funktion wie eine geteilte Loop-Tabelle; deshalb nicht wiederverwendet. MicrosoftDocs `loop-ux-examples.md`, Blob `30c26435cc3abb6e364eb90babd1bcf640910502`, beschreibt ausdrücklich dieselbe Komponente in Outlook und Teams.
+
+
+Die Schlussprüfung stärkt drei Archetypen mit direkt gelesenen Hochschulquellen: [UCL-Antragsvorbereitung](https://www.ucl.ac.uk/research-innovation/funding-and-support/planning-and-application/preparing-application) und [Teesside-Forschungsförderung](https://www.tees.ac.uk/sections/research/support_funding.cfm) belegen Antragsteams und Beitrags-/Reviewarbeit. [ASU-Konferenzplanung](https://eventguide.engineering.asu.edu/conferences/getting-started/) belegt die Rollen und Entscheiddokumentation, empfiehlt aber andere Tools; die M365-Zuordnung ist unsere Synthese. [Newcastle-Lehrgemeinschaften](https://www.ncl.ac.uk/learning-and-teaching/lec/fellows/) belegen ausdrücklich den Austausch und die Ressourcenpflege in Teams-Kanälen. Keiner dieser Belege wird als Nachweis einer Loop-Einführung dieser Hochschulen ausgegeben.

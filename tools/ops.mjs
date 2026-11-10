@@ -1,5 +1,6 @@
 // The operations every non-browser route calls. The CLI and the MCP server are thin adapters
 // over these functions; the website calls the same ProjectCore and ProjectRender directly.
+import Research from '../src/research-catalogue.js';
 import { PC, renderProject, renderComponents, LIMITS } from './render.mjs';
 
 export const INPUT_LIMIT_BYTES = PC.MAX_INPUT;
@@ -7,7 +8,7 @@ export const INPUT_LIMIT_BYTES = PC.MAX_INPUT;
 export function getCapabilities() {
   return {
     format: PC.FORMAT, projectVersion: PC.PROJECT_VERSION, capabilityVersion: PC.CAPABILITY_VERSION, rendererVersion: PC.RENDERER_VERSION,
-    stateIds: PC.STATE_IDS, examples: ['tasks', 'workspace'], ...PC.capabilities(),
+    stateIds: PC.STATE_IDS, examples: ['tasks', 'workspace', 'workspace-houses'].concat(Research.scenarios.filter(s => s.status === 'renderable').map(s => s.id)), catalogue: { operation: 'get_catalogue', personas: Research.personas.length, scenarios: Research.scenarios.length }, ...PC.capabilities(),
     output: { width: 1920, height: 1080, format: 'image/png', scales: LIMITS.scales },
     components: PC.components(),
     inputLimitBytes: INPUT_LIMIT_BYTES,
@@ -15,7 +16,8 @@ export function getCapabilities() {
   };
 }
 
-export function getExample(kind) { return ['workspace', 'workspace-houses'].includes(kind) ? PC.workspaceExample(kind) : PC.template(); }
+export function getCatalogue() { return Research.catalogue(); }
+export function getExample(kind) { if (Research.get(kind)?.status === 'renderable') return Research.project(kind); return ['workspace', 'workspace-houses'].includes(kind) ? PC.workspaceExample(kind) : PC.template(); }
 
 /* Accepts a parsed object or text (raw JSON or one ```json fence). Never throws. */
 export function parseProject(input) {

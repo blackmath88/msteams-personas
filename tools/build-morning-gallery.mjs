@@ -1,0 +1,50 @@
+// Rebuild all six examples through the production render operation, then the static review gallery.
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { resolve } from 'node:path';
+import R from '../src/research-catalogue.js';
+import { renderToDir } from './ops.mjs';
+import { launch } from './cdp.mjs';
+const dir = resolve('docs/morning-review'); mkdirSync(dir, {recursive:true});
+const E = x => String(x).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const scenarios = R.scenarios.filter(s => s.status === 'renderable');
+const manifests = new Map();
+for (const s of scenarios) {
+  const p = R.project(s.id), m = await renderToDir(p, resolve(dir, s.id));
+  if (!m.ok) throw new Error(`${s.id}: ${JSON.stringify(m.diagnostics)}`);
+  manifests.set(s.id, m); console.log(`${s.id}: ${m.slides.length} PNGs`);
+}
+const head = title => `<!doctype html><html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${E(title)}</title><link rel="stylesheet" href="../../src/collaboration.css"><style>body{font:18px/1.5 'Segoe UI',Arial,sans-serif;color:#192d36;background:#f5f4ef;margin:0}main{max-width:1600px;margin:auto;padding:45px}h1{font-size:52px;line-height:1.08;letter-spacing:-1.5px;margin:15px 0 25px}h2{font-size:32px;line-height:1.2}a{color:#23685d}section{margin:55px 0}.review-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.review-grid img,.pair img{width:100%;display:block;border:1px solid #cad5ce;border-radius:8px}figure{margin:0}figcaption{font-size:16px;margin:10px 0 22px}.review-lead{font-size:23px;max-width:1200px}.pair{display:grid;grid-template-columns:1fr 1fr;gap:25px}.compare{max-width:1792px}.compare h1{font-size:55px}.compare .co-identity{font-size:22px;margin:30px 0}.review-status{font-size:14px;color:#52646a}.he-personas{margin-top:35px}.he-persona{background:#fff}.specimen-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.specimen-grid>div{background:#fff;padding:25px;border-radius:12px}button:focus-visible,a:focus-visible{outline:3px solid #7257a1;outline-offset:3px}@media(max-width:700px){main{padding:22px}h1{font-size:35px}.review-grid,.pair,.specimen-grid{grid-template-columns:1fr}.he-personas{grid-template-columns:1fr}}</style><main>`;
+const scripts = `<script src="../../src/views.js"></script><script src="../../src/m365.js"></script><script src="../../src/research-catalogue.js"></script><script src="../../src/collaboration-view.js"></script>`;
+const card = g => `<li class="he-persona ${g.tone}"><span class="he-house" aria-hidden="true">⌂</span><small class="he-kicker">${E(g.archetype)}</small><h2>${E(g.name)}</h2><p>${E(g.friction)}</p><dl><dt>Menschen / Dauer</dt><dd>${E(g.size)} · ${E(g.duration)}</dd><dt>Rhythmus</dt><dd>${E(g.rhythm)}</dd><dt>Lehrfrage</dt><dd>${E(g.question)}</dd></dl><a href="../../index.html#/hochschule/gruppe/${g.id}">Gruppe erkunden →</a></li>`;
+const fig = (s, index, caption) => { const file = `${s}/${manifests.get(s).slides[index].file}`; return `<figure><a href="${file}"><img src="${file}" alt="${E(caption)}"></a><figcaption>${E(caption)} · <a href="${file}">PNG in Originalgrösse</a></figcaption></figure>`; };
+for (const [kind,title,id,indices,captions,claim] of [
+  ['meeting','Aus einem Beschluss wird überprüfbare Arbeit.','weekly-meeting',[0,3],['Montag: zwei Aufgaben mit Person und Termin','Nächster Montag: dieselbe Aufgabe t-1 ist erledigt'],'c-wochenrunde · t-1 bleibt dieselbe Aufgabe. Planner und To Do zeigen ihren gemeinsamen Stand. Die bisherigen Notizen werden beim Review bewusst erneut geöffnet.'],
+  ['loop','Ein Inhalt. Eine Änderung. Zwei Ansichten.','shared-loop',[2,3],['Outlook: Ben präzisiert die erste Zeile','Teams: dieselbe Präzisierung in derselben Zeile'],'c-methoden / r-1 · Der Komponentenlink wird von Hand weitergegeben. Danach wird derselbe Inhalt bearbeitet. Keine neue Tabelle und keine automatisch erzeugte Planner-Aufgabe.']
+]) {
+  writeFileSync(resolve(dir,`${kind}-comparison.html`),head(title)+`<div class="compare"><p class="he-kicker">MORGENREVIEW · ${kind === 'meeting' ? 'MEETING → AUFGABE → REVIEW' : 'LOOP → OUTLOOK / TEAMS'}</p><h1>${title}</h1><div class="pair">${indices.map((n,i)=>fig(id,n,captions[i])).join('')}</div><p class="co-identity">${claim}</p><p>Fiktive Synthese · Eigene vereinfachte Nachbildung · Voraussetzungen und Quellen in der <a href="../../index.html#/hochschule/${id}">vollständigen Abfolge</a>.</p><a href="index.html">← Alle Beispiele</a></div></main></html>`);
+}
+const base = execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
+let body = head('Morgenreview · Hochschulgruppen und verbundene Arbeit') + `<p class="he-kicker">MORGENREVIEW · 9. NOVEMBER 2026</p><h1>Gemeinsam arbeiten.<br>Verantwortung sichtbar machen.</h1><p class="review-lead">Vier zusätzliche Hochschulgruppen, zwölf recherchierte Situationen und sechs vollständige Abfolgen. Beginne mit dem Wochenmeeting und der gemeinsam bearbeiteten Loop-Komponente.</p><p><a href="../../index.html#/hochschule">Interaktive Bibliothek</a> · <a href="../PERSONA-SCENARIO-HANDOFF.md">Handoff und Testresultate</a> · <a href="../research/PERSONA-SELECTION.md">Quellen und Auswahl</a> · <a href="specimen.html">Bildsprache</a></p><p class="review-status">Quellenzugriff: ${R.date}. Alle Geschichten sind fiktive Synthese. Keine Tenant- oder Berechtigungsprüfung. Projektformat 1 · Fähigkeiten 6 · Renderbasis ${base.slice(0,12)}.</p><ul class="he-personas" id="persona-cards">${R.personas.map(card).join('')}</ul><section><h2>Zwei Beziehungen zuerst prüfen</h2><div class="pair"><a href="meeting-comparison.html"><img src="meeting-comparison.png" alt="Zugewiesene und erledigte Meeting-Aufgabe vergleichen"></a><a href="loop-comparison.html"><img src="loop-comparison.png" alt="Dasselbe Loop-Objekt in Outlook und Teams vergleichen"></a></div></section>`;
+for (const s of scenarios) {
+  const p = R.project(s.id), m = manifests.get(s.id);
+  body += `<section id="${s.id}"><p class="he-kicker">${E(R.persona(s.persona).name)} · ${m.slides.length} FOLIEN</p><h2>${E(s.title)}</h2><p>${E(s.objective)}</p><div class="review-strip" data-scenario="${s.id}"></div><p><a href="../../index.html#/hochschule/${s.id}">Abfolge erkunden und als PNG exportieren</a> · <a href="../../examples/${s.id}.project.json">Portables Projekt-JSON</a></p><div class="review-grid">${m.slides.map((slide,i)=>fig(s.id,i,`${i+1}. ${slide.profile} · ${p.slides[i].presenterNotes}`)).join('')}</div><p class="he-callout">Lehrfrage: ${E(s.question)}<br>Grenze: ${E(s.boundary)}</p></section>`;
+}
+body += `<section><h2>Drei visuelle Entscheidungen für Achim</h2><ol><li>Gruppe als Haus, geteiltes Objekt als eigener Rahmen: Ist die Trennung sofort verständlich?</li><li>Synchronisation nur mit beschrifteten Pfeilen: Reichen diese Erklärungen für eine Schulungsfolie?</li><li>Loop-Karte gross und fokussiert: Ist die vereinfachte Oberfläche als Lehrbild brauchbar, oder braucht es zusätzlich einen Tenant-Abgleich?</li></ol></section><p>Zusätzliche Rechercheeinträge: ${R.scenarios.filter(s=>s.status!=='renderable').map(s=>`<a href="../../index.html#/hochschule/${s.id}">${E(s.title)}</a>`).join(' · ')}.</p></main>${scripts}<script>document.querySelectorAll('[data-scenario]').forEach(el=>el.innerHTML=CollaborationView.strip(ResearchCatalogue.get(el.dataset.scenario).steps));document.querySelectorAll('.he-house').forEach(el=>el.innerHTML=CollaborationView.icon('house'));</script></html>`;
+writeFileSync(resolve(dir,'index.html'),body);
+writeFileSync(resolve(dir,'specimen.html'),head('Bildsprache · Menschen, Objekte und Übergaben')+`<p class="he-kicker">BILDSPRACHE · SZENE / PRINZIP</p><h1>Menschen handeln.<br>Objekte bleiben erkennbar.</h1><p>12 Begriffe · lokale Fluent-Pfade und eigene SVGs · klein / Präsentation · hell / dunkel.</p><div class="he-specimen" id="symbols"></div><h2>Manuell, verlinkt oder synchronisiert?</h2><div class="review-strip" data-scenario="shared-loop"></div><p>Das Haus steht für die Gruppe; es ist keine Darstellung tatsächlicher Zugriffsrechte. Die Komponentenkarte steht für dasselbe geteilte Objekt.</p><div class="pair"><a href="meeting-comparison.html">Meeting-Vergleich öffnen</a><a href="loop-comparison.html">Loop-Vergleich öffnen</a></div><p><a href="index.html">← Galerie</a></p></main>${scripts}<script>document.getElementById('symbols').innerHTML=Object.keys(CollaborationView.vocabulary).map((k,i)=>'<div class="'+(i%2?'he-dark':'')+'"><span class="he-big">'+CollaborationView.symbol(k)+'</span><span class="he-small">'+CollaborationView.symbol(k)+'</span></div>').join('');document.querySelector('[data-scenario]').innerHTML=CollaborationView.strip(ResearchCatalogue.get('shared-loop').steps);</script></html>`);
+const page = await launch({port:0});
+try {
+  await page.size(1920,1080);
+  for (const kind of ['meeting','loop']) { await page.goto(`http://127.0.0.1:8766/docs/morning-review/${kind}-comparison.html`); await page.eval('document.fonts.ready'); await page.shot(resolve(dir,`${kind}-comparison.png`)); }
+  await page.goto('http://127.0.0.1:8766/docs/morning-review/index.html'); await page.shot(resolve(dir,'persona-cards.png'));
+  await page.goto('http://127.0.0.1:8766/docs/morning-review/specimen.html'); await page.shot(resolve(dir,'visual-language.png'));
+  await page.size(1920,1600);
+  for (const s of scenarios) {
+    await page.goto('http://127.0.0.1:8766/docs/morning-review/index.html');
+    await page.eval(`{const section=document.getElementById(${JSON.stringify(s.id)});document.body.innerHTML='<main id="contact"></main>';document.getElementById('contact').appendChild(section.cloneNode(true));}`);
+    await page.shot(resolve(dir,s.id+'-contact.png'));
+  }
+  if(page.errors.length) throw new Error(page.errors.join('\n'));
+} finally { await page.close(); }
+console.log('Gallery complete: docs/morning-review/index.html');

@@ -18,6 +18,21 @@ The complete V3 trainer library is on `main` (merged at `300e006`). Open `index.
 
 See [V3 handoff](docs/V3-BUILD-HANDOFF.md) for evidence, supported coverage and limitations. Independent model review passed 17/17; the builder reports 110/110 Chromium checks. New-project authoring, CLI and MCP are described below.
 
+## Recherchierte Hochschul-Szenarien
+
+[Hochschul-Szenarien](index.html#/hochschule) ergänzt vier fiktive Gruppen: Campus-Service, Forschungsförderung, Konferenzorganisation und ein Lehrpraxis-Netzwerk. Zwölf Rechercheeinträge unterscheiden fertige Beispiele von offenen Kandidaten. Sechs vollständige Projekte liefern 32 PNG-Folien.
+
+Der [Morgenreview](docs/morning-review/index.html) zeigt die Gruppen, Arbeitsflüsse und alle Exporte. Beginnt mit dem Wochenmeeting (gemeinsame Agenda → Notizenplan → To Do → nächster Review) und derselben Loop-Tabelle in Teams-Chat und Outlook. Voraussetzungen, manuelle Übergaben und Quellen sind sichtbar. Das sind nachgebildete Oberflächen und fiktive Geschichten, keine Live-Integrationen.
+
+Projektformat bleibt v1; Fähigkeit 6 ergänzt `meeting-notes`, `loop-component` und `workflow`. Website, CLI und MCP verwenden dieselben Definitionen. Komponenten und Arbeitsflussschritte bleiben im Formular erhaltene Metadaten; sie lassen sich über Projekt-JSON und erneuten Import anpassen. [Vertrag, Quellen und Prüfresultate](docs/PERSONA-SCENARIO-HANDOFF.md).
+
+```sh
+node tools/cli.mjs catalogue
+node tools/cli.mjs example --kind weekly-meeting --out meeting.json
+node tools/cli.mjs render meeting.json --out slides
+# MCP: get_catalogue → get_example(kind: "shared-loop") → validate_project → render_project
+```
+
 ## Arbeitsbereich erkunden
 
 Plan a fictional team workspace as a map and Teams or OneDrive preview. Open «Arbeitsbereich erkunden» from the library and adapt the example as a local draft. Choose «Häuser und Teams öffnen» for a person’s Teams houses and a side-by-side comparison with Teams channel navigation and files. See the [workspace profile handoff](docs/WORKSPACE-PROFILE-HANDOFF.md) for model limits and CLI/MCP usage.

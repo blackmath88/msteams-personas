@@ -1,0 +1,260 @@
+{
+  "format": "msteams-personas/project",
+  "projectVersion": 1,
+  "capabilityVersion": 6,
+  "meta": {
+    "id": "service-onboarding",
+    "title": "Die erste Woche im Campus-Service",
+    "organisation": "Hochschule Tannwil (fiktiv)",
+    "audience": "Hochschulmitarbeitende und Trainer",
+    "goal": "Gemeinsame Einarbeitung von persönlicher Erinnerung trennen.",
+    "locale": "de-CH",
+    "fictional": true,
+    "source": {
+      "kind": "fictional-synthesis",
+      "note": "uct-pass, cornell, ms-todo · Quellenkartei im Hochschulkatalog, Zugriff 2026-11-09"
+    },
+    "assumptions": [
+      "Handbuch und Plan für die interne Gruppe freigegeben.",
+      "Keine Fall- oder Studierendendaten; formale Berechtigungen ausserhalb des Beispiels.",
+      "To Do: Planner-Lizenz, gleiches Arbeitskonto, Smartliste «Zugewiesen an mich» und Planner-Verbindung aktiv; Mein Tag von Hand wählen."
+    ],
+    "notes": "Was muss das Team sehen, was bleibt persönlich?"
+  },
+  "people": [
+    {
+      "id": "p-1",
+      "name": "Maja Frei",
+      "role": "Serviceleitung"
+    },
+    {
+      "id": "p-2",
+      "name": "Levin Roth",
+      "role": "Raumkoordination"
+    },
+    {
+      "id": "p-3",
+      "name": "Sofia Meier",
+      "role": "Medientechnik"
+    },
+    {
+      "id": "p-4",
+      "name": "Dario Blum",
+      "role": "Kommunikation"
+    }
+  ],
+  "documents": [
+    {
+      "id": "d-1",
+      "name": "Betriebshandbuch_Lernraeume.docx"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t-1",
+      "title": "Raumdienst gemeinsam durchgehen"
+    },
+    {
+      "id": "t-2",
+      "title": "Handbuchzugriff prüfen"
+    },
+    {
+      "id": "t-3",
+      "title": "Eigene Einführungserfahrungen notieren"
+    }
+  ],
+  "states": [
+    {
+      "id": "before",
+      "label": "Vorbereitung",
+      "tasks": {
+        "t-1": {
+          "owner": "p-2",
+          "list": "plan",
+          "bucket": "Vorbereitung",
+          "due": "Mi 11.11.",
+          "done": false,
+          "notes": "Levin geht den Raumdienst gemeinsam mit Sofia durch. Handbuch als gemeinsame Referenz nutzen.",
+          "checklist": [
+            {
+              "text": "Raumöffnung mit Sofia durchgehen",
+              "done": false
+            },
+            {
+              "text": "Handbuchzugriff selbst prüfen",
+              "done": false
+            }
+          ]
+        },
+        "t-2": {
+          "owner": "p-3",
+          "list": "plan",
+          "bucket": "Vorbereitung",
+          "due": "Fr 13.11.",
+          "done": false
+        },
+        "t-3": {
+          "owner": "p-2",
+          "list": "personal",
+          "done": false
+        }
+      }
+    },
+    {
+      "id": "after",
+      "label": "Verantwortung geklärt",
+      "tasks": {
+        "t-1": {
+          "owner": "p-2",
+          "list": "plan",
+          "bucket": "Vorbereitung",
+          "due": "Mi 11.11.",
+          "done": false,
+          "notes": "Levin geht den Raumdienst gemeinsam mit Sofia durch. Handbuch als gemeinsame Referenz nutzen.",
+          "checklist": [
+            {
+              "text": "Raumöffnung mit Sofia durchgehen",
+              "done": false
+            },
+            {
+              "text": "Handbuchzugriff selbst prüfen",
+              "done": false
+            }
+          ]
+        },
+        "t-2": {
+          "owner": "p-3",
+          "list": "plan",
+          "bucket": "Vorbereitung",
+          "due": "Fr 13.11.",
+          "done": false
+        },
+        "t-3": {
+          "owner": "p-2",
+          "list": "personal",
+          "done": false
+        }
+      }
+    }
+  ],
+  "scenes": [
+    {
+      "id": "sc-start",
+      "profile": "teams-posts",
+      "team": "Campus-Service Lernräume",
+      "channel": "Koordination",
+      "posts": [
+        {
+          "id": "q-1",
+          "by": "p-1",
+          "title": "Gemeinsam den nächsten Schritt klären",
+          "time": "Mo 09:10",
+          "text": "Hier liegt unser gemeinsames Dokument. Die nächsten Beiträge stehen mit Zuständigkeit und Termin im Plan.",
+          "document": "d-1",
+          "hint": "Datei verlinken und Aufgaben bewusst im gemeinsamen Plan anlegen."
+        }
+      ]
+    },
+    {
+      "id": "sc-plan",
+      "profile": "planner",
+      "team": "Campus-Service Lernräume",
+      "state": "after"
+    },
+    {
+      "id": "sc-detail",
+      "profile": "planner-task",
+      "team": "Campus-Service Lernräume",
+      "state": "after",
+      "task": "t-1"
+    },
+    {
+      "id": "sc-todo",
+      "profile": "todo",
+      "team": "Campus-Service Lernräume",
+      "state": "after",
+      "viewer": "p-2",
+      "taskIds": [
+        "t-1",
+        "t-3"
+      ],
+      "personalListPrivate": true,
+      "myDaySelected": true,
+      "plannerConnected": true,
+      "dateLabel": "Bewusst für heute ausgewählt"
+    },
+    {
+      "id": "sc-workflow",
+      "profile": "workflow",
+      "team": "Campus-Service Lernräume",
+      "title": "Die erste Woche im Campus-Service",
+      "question": "Was muss das Team sehen, was bleibt persönlich?",
+      "boundary": "Keine Fall- oder Studierendendaten; formale Berechtigungen ausserhalb des Beispiels.",
+      "steps": [
+        {
+          "id": "w-1",
+          "actor": "Maja",
+          "tool": "Teams",
+          "action": "Startpunkt mit Handbuchlink bereitstellen",
+          "artefact": "Betriebshandbuch",
+          "relation": "manual",
+          "evidence": null
+        },
+        {
+          "id": "w-2",
+          "actor": "Sofia",
+          "tool": "Planner",
+          "action": "Einführungstermine zuweisen",
+          "artefact": "Einarbeitungsplan",
+          "relation": "manual",
+          "evidence": null
+        },
+        {
+          "id": "w-3",
+          "actor": "Levin",
+          "tool": "Planner-Details",
+          "action": "Nächste Schritte nachlesen",
+          "artefact": "Aufgabe t-1",
+          "relation": "sync",
+          "evidence": "planner-todo"
+        },
+        {
+          "id": "w-4",
+          "actor": "Levin",
+          "tool": "To Do",
+          "action": "Eigenen Tag zusammenstellen",
+          "artefact": "Aufgabe t-1",
+          "relation": "manual",
+          "evidence": null
+        }
+      ]
+    }
+  ],
+  "slides": [
+    {
+      "id": "s-1",
+      "scene": "sc-start",
+      "presenterNotes": "Was muss das Team sehen, was bleibt persönlich?"
+    },
+    {
+      "id": "s-2",
+      "scene": "sc-plan",
+      "presenterNotes": "Aufgaben bewusst im Plan anlegen. Person, Termin und offene Beiträge gemeinsam prüfen."
+    },
+    {
+      "id": "s-3",
+      "scene": "sc-detail",
+      "presenterNotes": "Dieselbe Aufgabe öffnen: Kontext, Checkliste und Zuständigkeit prüfen."
+    },
+    {
+      "id": "s-4",
+      "scene": "sc-todo",
+      "presenterNotes": "Nur die gewählte Person sieht hier ihre zugewiesenen und gegebenenfalls persönlichen Aufgaben. Mein Tag wird bewusst gewählt."
+    },
+    {
+      "id": "s-5",
+      "scene": "sc-workflow",
+      "presenterNotes": "Was muss das Team sehen, was bleibt persönlich?"
+    }
+  ]
+}

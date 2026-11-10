@@ -1,0 +1,86 @@
+{
+  "format": "msteams-personas/render-manifest",
+  "manifestVersion": 1,
+  "rendererVersion": "v3",
+  "projectVersion": 1,
+  "capabilityVersion": 6,
+  "project": {
+    "id": "peer-resource",
+    "title": "Vom Austausch zum Methodenblatt"
+  },
+  "ok": true,
+  "stage": "done",
+  "width": 1920,
+  "height": 1080,
+  "durationMs": 1262,
+  "slides": [
+    {
+      "index": 0,
+      "id": "s-1",
+      "profile": "teams-chat",
+      "file": "01-peer-resource-teams-chat.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 172332,
+      "fit": [],
+      "sha256": "597e13585c34eb0591a6b4a0de6bcde8bafcfeb093969ce0718ab7205f4d5687"
+    },
+    {
+      "index": 1,
+      "id": "s-2",
+      "profile": "planner",
+      "file": "02-peer-resource-planner.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 191405,
+      "fit": [],
+      "sha256": "2d637550456861db3a17840fabab6a15c3141ee318b6aef87db90741c945e908"
+    },
+    {
+      "index": 2,
+      "id": "s-4",
+      "profile": "todo",
+      "file": "03-peer-resource-todo.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 217526,
+      "fit": [],
+      "sha256": "5ee0a825462ad39bf8f9c72d243da81d05e69d4139a1fc3f067f086b96cbf951"
+    },
+    {
+      "index": 3,
+      "id": "s-3",
+      "profile": "planner-task",
+      "file": "04-peer-resource-planner-task.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 253815,
+      "fit": [],
+      "sha256": "59c90d7a742ed8c71140059ddc25dc6c5c9987a72fcd391b6ac9fd47d2fd84d4"
+    },
+    {
+      "index": 4,
+      "id": "s-5",
+      "profile": "teams-posts",
+      "file": "05-peer-resource-teams-posts.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 200648,
+      "fit": [],
+      "sha256": "ab45203c8d1ce9efef4a5e7588f431c4f7c744ac37305d0de232e48deffe3679"
+    },
+    {
+      "index": 5,
+      "id": "s-6",
+      "profile": "workflow",
+      "file": "06-peer-resource-workflow.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 239691,
+      "fit": [],
+      "sha256": "a0354e9b1904a29577192f781b05e12764b6407035c9877d7ee8fa36e1b7e126"
+    }
+  ],
+  "diagnostics": [],
+  "renderedAt": "2026-11-09T21:38:13.146Z"
+}

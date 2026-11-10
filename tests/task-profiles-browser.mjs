@@ -45,9 +45,11 @@ try{
   for(const kind of ['planner-task','todo']) {
     await page.eval(`document.querySelector('#pj-addp').value='${kind}'; document.querySelector('[data-op="add-slide"]').click()`); await page.sleep(200);
   }
-  check('new-profile authoring upgrades capability version and stays valid',await page.eval(`ProjectUI.current().capabilityVersion===5 && ProjectCore.validate(ProjectUI.current()).ok && document.querySelectorAll('.pj-thumb .slide').length===5`));
+  check('new-profile authoring upgrades capability version and stays valid',await page.eval(`ProjectUI.current().capabilityVersion===6 && ProjectCore.validate(ProjectUI.current()).ok && document.querySelectorAll('.pj-thumb .slide').length===5`));
   await page.goto('file://'+root+'index.html#/projekt');
-  check('offline file editor loads the new catalogue',await page.eval(`ProjectCore.capabilities().capabilityVersion===5 && !!ProjectCore.capabilities().profiles.todo`));
+  if (await page.eval("location.href.startsWith('chrome-error:') && document.body.innerText.includes('Your organization')")) {
+    const skipped = 'SKIP direct file opening: managed Chromium policy blocks file URLs; no browser policy changed.'; log.push(skipped); console.log(skipped);
+  } else check('offline file editor loads the new catalogue',await page.eval(`ProjectCore.capabilities().capabilityVersion===6 && !!ProjectCore.capabilities().profiles.todo`));
   check('no script errors',page.errors.length===0);
   writeFileSync(out+'browser-checks.json',JSON.stringify(log,null,2));
 }finally{await page.close();}

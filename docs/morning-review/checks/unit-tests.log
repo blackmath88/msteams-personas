@@ -1,0 +1,83 @@
+
+> test
+> node --test tests/*.test.mjs
+
+✔ catalogue is traceable: four additions, twelve scenarios, six valid saved projects (10.806872ms)
+✔ capability six preserves earlier projects and rejects new profiles in old versions (2.253337ms)
+✔ Loop surfaces project the same snapshot and stable row identity (0.956898ms)
+✔ meeting, Planner, To Do and review preserve task identity, owner, due date and completion (1.137519ms)
+✔ broken component, snapshot, row author and task links have located diagnostics (4.728166ms)
+✔ shared components and all new scene fields tolerate malformed JSON without throwing (38.197827ms)
+✔ person replacement follows component authors and ownership without changing object IDs (0.635144ms)
+✔ publication follows a visible completed review, and onboarding retains a personal task (0.438709ms)
+✔ synchronisation cannot be attached to an unrelated tool transition (0.570557ms)
+✔ every legacy scenario is reachable through a library situation (1.837651ms)
+✔ seven worlds: five university, two business (0.257828ms)
+✔ all situation references resolve (people, use cases, principles) (2.43562ms)
+✔ custom names flow into scene and principle text; originals stay intact (0.403637ms)
+✔ every situation is complete and documented contradictions are explicit variants (0.460142ms)
+✔ variants change structure, not just labels (1.038261ms)
+✔ configurator is deterministic and different answers give different starting points (0.785731ms)
+✔ configurator flags examples borrowed from the other collection (0.217207ms)
+✔ setups with access or restriction assumptions carry them explicitly (0.38645ms)
+✔ story: copies come from Prinzip copies, canonical file is a scene file (0.583186ms)
+✔ story: content overrides rename the canonical file everywhere but leave originals intact (0.631298ms)
+✔ situations without a story only offer Teams (or nothing for personal work) (0.21317ms)
+✔ sequences: every step resolves to an available screen or a principle (0.384508ms)
+✔ chat: curated decision matches the principle; generated chats exist for team situations (0.431067ms)
+✔ task edits keep one identity across Teams tasks, Planner/To Do and Prinzip (0.338478ms)
+✔ AI simulation: rejected suggestions never become tasks; assumption names licensing (0.258148ms)
+✔ onboarding world is its own business context, not renamed university people (0.204267ms)
+✔ template and blank are valid projects of the current versions (3.176123ms)
+✔ save and reopen keeps every field, notes and assumptions included (0.437288ms)
+✔ renaming a person updates Teams, Planner and Prinzip views (1.414966ms)
+✔ changing only the after-state owner leaves the before state unchanged (0.262285ms)
+✔ absence: a task missing from a state is not shown there and not deleted (0.358068ms)
+✔ teaching text compiles into the principle binding (0.378238ms)
+✔ broken person reference is a located error; explicit replacement repairs it (0.717539ms)
+✔ rejects unknown versions and profiles, truncated JSON, oversized and ambiguous input (0.738721ms)
+✔ markup in text stays data: compile does not interpret it (0.234001ms)
+✔ authoring pack is built from the live capabilities and its example validates (1.285122ms)
+✔ null and non-object entries are located errors, never a crash (1.459133ms)
+✔ incorrectly typed metadata and fields are rejected (0.509496ms)
+✔ only the before/after states the editor supports are accepted (0.456797ms)
+✔ a task already in the shared plan before is shown as shared, not as a personal list item (0.174131ms)
+✔ more personal lists than the diagram holds is an error, not a silent drop (0.319741ms)
+✔ authoring pack states the Prinzip list limit and the trial wording rules (0.397948ms)
+✔ six-profile Leadership Forum validates without warnings; v1/v2 remain accepted (6.68707ms)
+✔ board, details and assigned To Do preserve id, title, owner, date, checklist and completion (1.509979ms)
+✔ To Do never leaks other owners or inherits missing snapshot tasks (0.822286ms)
+✔ personal-only To Do works without connection; shared tasks require explicit assumptions (1.146132ms)
+✔ details reject personal, unassigned and unknown tasks; comments repair person references (1.264741ms)
+✔ duplicate, empty, unknown To Do selections and conflicting progress are actionable (0.832351ms)
+✔ new fields handle malformed JSON types without throwing (23.397885ms)
+✔ budgets warn, checklist limits block, snapshots survive roundtrip; pack documents contract (3.435693ms)
+✔ valid teams-chat, catalogue and default three-slide sequence (8.282342ms)
+✔ v1 remains accepted but teams-chat needs capabilityVersion 2 at scene profile (1.373464ms)
+✔ chat rejects a known author outside the two participants (0.340061ms)
+✔ viewer and partner must differ (0.433091ms)
+✔ all chat person references are located and repairable (1.658253ms)
+✔ chat rejects prototype names as unknown people (2.01591ms)
+✔ chat budgets warn for long team and text, reject more than six messages (1.208376ms)
+✔ chat requires messages and nonempty text (1.022747ms)
+✔ chat fields handle every JSON type without throwing (22.936821ms)
+✔ compile produces renderer chat with hint marks, notes, unseen people and stable filename (2.061268ms)
+✔ project notes use hints, default only for unseen people; curated notes stay unchanged (2.676081ms)
+✔ workspace example validates and compiles map and scene from the same hierarchy (6.182021ms)
+✔ invalid workspace links, scope, shape, depth and old capability are refused (2.425936ms)
+✔ personal preview only compiles the selected owner’s workspace and explicit sharing (0.642295ms)
+✔ house overview projects membership while the comparison resolves the same file and channel IDs (0.662996ms)
+✔ house profiles reject old capabilities, invisible teams, empty membership and cross-team selection (1.848558ms)
+ℹ tests 66
+ℹ suites 0
+ℹ pass 66
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 211.632257
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice

@@ -1,0 +1,9 @@
+MCP discovers four personas, twelve statuses and full source records
+weekly-meeting: discovered example validates through MCP
+shared-loop: discovered example validates through MCP
+grant-submission: discovered example validates through MCP
+event-handover: discovered example validates through MCP
+service-onboarding: discovered example validates through MCP
+peer-resource: discovered example validates through MCP
+weekly-meeting: every retrieved PNG is byte-identical to CLI/gallery rendering
+shared-loop: every retrieved PNG is byte-identical to CLI/gallery rendering

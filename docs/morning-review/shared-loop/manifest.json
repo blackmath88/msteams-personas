@@ -1,0 +1,75 @@
+{
+  "format": "msteams-personas/render-manifest",
+  "manifestVersion": 1,
+  "rendererVersion": "v3",
+  "projectVersion": 1,
+  "capabilityVersion": 6,
+  "project": {
+    "id": "shared-loop",
+    "title": "Eine Sammlung. Zwei Ansichten."
+  },
+  "ok": true,
+  "stage": "done",
+  "width": 1920,
+  "height": 1080,
+  "durationMs": 1195,
+  "slides": [
+    {
+      "index": 0,
+      "id": "s-1",
+      "profile": "loop-component",
+      "file": "01-shared-loop-loop-component.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 233619,
+      "fit": [],
+      "sha256": "d359ea987d0f79d8c13b2425705a3fb96ee21979eee3c7471af10723ee793f92"
+    },
+    {
+      "index": 1,
+      "id": "s-2",
+      "profile": "loop-component",
+      "file": "02-shared-loop-loop-component.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 235248,
+      "fit": [],
+      "sha256": "9c2647ea027d709a94dd325c6fb94f4cc1dcc0e10bcd2b18093d73747f40655c"
+    },
+    {
+      "index": 2,
+      "id": "s-3",
+      "profile": "loop-component",
+      "file": "03-shared-loop-loop-component.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 235823,
+      "fit": [],
+      "sha256": "ed5367cef662da9dae6f1a9ca0a38e4b7db49802257cb5d31d2e4e9e8d133fb8"
+    },
+    {
+      "index": 3,
+      "id": "s-4",
+      "profile": "loop-component",
+      "file": "04-shared-loop-loop-component.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 234272,
+      "fit": [],
+      "sha256": "2efdc8d9fc026718f97df1ba579e30e5256eb96d3e6950ad3cba2ab529f5d4c8"
+    },
+    {
+      "index": 4,
+      "id": "s-5",
+      "profile": "workflow",
+      "file": "05-shared-loop-workflow.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 228903,
+      "fit": [],
+      "sha256": "c07e55804730aa1f311852d4153d3a4fd51be0a09efbbbdd35dd167aa8014e50"
+    }
+  ],
+  "diagnostics": [],
+  "renderedAt": "2026-11-09T21:38:07.720Z"
+}

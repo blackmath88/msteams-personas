@@ -1,0 +1,75 @@
+{
+  "format": "msteams-personas/render-manifest",
+  "manifestVersion": 1,
+  "rendererVersion": "v3",
+  "projectVersion": 1,
+  "capabilityVersion": 6,
+  "project": {
+    "id": "service-onboarding",
+    "title": "Die erste Woche im Campus-Service"
+  },
+  "ok": true,
+  "stage": "done",
+  "width": 1920,
+  "height": 1080,
+  "durationMs": 1219,
+  "slides": [
+    {
+      "index": 0,
+      "id": "s-1",
+      "profile": "teams-posts",
+      "file": "01-service-onboarding-teams-posts.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 205569,
+      "fit": [],
+      "sha256": "a2ef5207cde6d4b075ec6a27d261e99473481c1fee15d53a9cbd313870b88075"
+    },
+    {
+      "index": 1,
+      "id": "s-2",
+      "profile": "planner",
+      "file": "02-service-onboarding-planner.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 197239,
+      "fit": [],
+      "sha256": "60c7745819de99a4b7d34d4bba83470d374bfc1daba3277ba0f0ce2b029afa62"
+    },
+    {
+      "index": 2,
+      "id": "s-3",
+      "profile": "planner-task",
+      "file": "03-service-onboarding-planner-task.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 270149,
+      "fit": [],
+      "sha256": "a1fa8feb9f135028629e26e838a18f0c083d792699f488f5b7e578886ee58384"
+    },
+    {
+      "index": 3,
+      "id": "s-4",
+      "profile": "todo",
+      "file": "04-service-onboarding-todo.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 250446,
+      "fit": [],
+      "sha256": "801ab99884b3078639403a4ade6fe33e6ebc89d726b0e3505f02d4bb71316ca7"
+    },
+    {
+      "index": 4,
+      "id": "s-5",
+      "profile": "workflow",
+      "file": "05-service-onboarding-workflow.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 241120,
+      "fit": [],
+      "sha256": "73784de44f2661782d3d6fb65c9d762c6ce553c8b0d63166e40953e932b89cb3"
+    }
+  ],
+  "diagnostics": [],
+  "renderedAt": "2026-11-09T21:38:11.760Z"
+}

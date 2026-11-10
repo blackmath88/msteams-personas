@@ -25,7 +25,7 @@ export const LIMITS = { timeoutMs: 90_000, maxTimeoutMs: 180_000, scales: [1, 2]
 
 const TYPES = { '.js': 'text/javascript', '.css': 'text/css', '.html': 'text/html', '.svg': 'image/svg+xml', '.png': 'image/png', '.woff2': 'font/woff2' };
 /* The page only needs the renderer scripts; the authoring UI and router are left out. */
-const SKIP_SCRIPTS = ['src/workspace-editor.js', 'src/project-ui.js', 'src/app.js'];
+const SKIP_SCRIPTS = ['src/workspace-editor.js', 'src/project-ui.js', 'src/research-ui.js', 'src/app.js'];
 
 export function renderPage() {
   const html = readFileSync(join(ROOT, 'index.html'), 'utf8');

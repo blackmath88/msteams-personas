@@ -15,7 +15,7 @@ const call = (name, args = {}) => client.callTool({name, arguments: args});
 try {
   await client.connect(transport);
   const caps = (await call('get_capabilities')).structuredContent;
-  assert.equal(caps.capabilityVersion, 5);
+  assert.equal(caps.capabilityVersion, 6);
   assert.ok(caps.profiles['workspace-map'] && caps.profiles['workspace-scene']);
   assert.equal((await call('get_example')).structuredContent.slides.length, 3);
   const project = (await call('get_example', {kind: 'workspace'})).structuredContent;
