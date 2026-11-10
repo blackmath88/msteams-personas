@@ -13,7 +13,7 @@ Updated 2026-11-10. PR #14 is merged into `main` at `9a017f5`. `main` is the int
 
 ## Open
 
-- The next content expansion targets general business and public-administration contexts in Switzerland and Germany. The [proposed domain plan](BUSINESS-DOMAINS-CH-DE-BUILD-PLAN.md) and [Perplexity sparring prompt](research/PERPLEXITY-BUSINESS-DOMAINS-CH-DE-SPARRING.md) prepare selection; they do not add implemented domain examples.
+- The next content expansion targets general business and public-administration contexts in Switzerland and Germany. The [revised domain plan](BUSINESS-DOMAINS-CH-DE-BUILD-PLAN.md) incorporates the [Perplexity review and dispositions](research/BUSINESS-DOMAINS-CH-DE-REVIEW-DECISIONS.md): build administration and technical-service reference stories first; trade follows, with engineering provisionally competing with manufacturing for fourth place. These are planning documents; no new domain examples are implemented.
 
 - A real Microsoft tenant acceptance test and a real assistant-host trial for capability 6 remain unverified. Forms/Lists/Power Automate remain research only. Shared-component and workflow fields currently use JSON authoring; the form preserves them and exposes the limitation.
 

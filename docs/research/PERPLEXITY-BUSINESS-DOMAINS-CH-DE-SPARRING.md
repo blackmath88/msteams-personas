@@ -1,5 +1,7 @@
 # Perplexity sparring prompt for business domains in Switzerland and Germany
 
+Review received on 2026-11-10. This preserves the original brief for revision `f937a71`; its four-domain proposal is superseded by the [revised plan](../BUSINESS-DOMAINS-CH-DE-BUILD-PLAN.md). See the [returned review](PERPLEXITY-BUSINESS-DOMAINS-CH-DE-REVIEW-2026-11-10.md) and [review decisions](BUSINESS-DOMAINS-CH-DE-REVIEW-DECISIONS.md).
+
 Act as a critical product researcher and M365 adoption designer. Help me choose a small, useful set of business and public-administration examples for msteams-personas. Challenge our proposal; do not just confirm it.
 
 Repository: https://github.com/blackmath88/msteams-personas
