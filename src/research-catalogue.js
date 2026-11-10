@@ -1,9 +1,9 @@
 /* Shared, offline research catalogue. Evidence describes sources; examples are fictional synthesis. */
 (function (root, factory) {
-  var value = factory();
+  var value = factory(typeof module === 'object' && module.exports ? require('./business-catalogue.js') : root.BusinessContent);
   if (typeof module === 'object' && module.exports) module.exports = value;
   else root.ResearchCatalogue = value;
-})(typeof window !== 'undefined' ? window : globalThis, function () {
+})(typeof window !== 'undefined' ? window : globalThis, function (Business) {
   var date = '2026-11-09';
   function source(id, publisher, title, url, kind, claim, limitation) {
     return { id: id, publisher: publisher, title: title, url: url, accessed: date, kind: kind, supportedClaim: claim, limitations: limitation };
@@ -54,7 +54,18 @@
     { id: 'structured-requests', persona: 'service', title: 'Anfragen strukturiert entgegennehmen', objective: 'Datensatz, Aufgabe und Benachrichtigung unterscheiden.', trigger: 'Viele ähnliche Raumanfragen kommen an.', friction: 'Chatnachrichten haben keine einheitlichen Felder.', outcome: 'Geplanter Flow legt strukturierte Datensätze an und meldet Fehler.', question: 'Was geschieht, wenn der Flow fehlschlägt?', boundary: 'Provisorisch: Forms, Lists und Automate noch ohne Renderer und ohne geprüften Flow.', sources: ['uct-pass', 'adoption-library'], status: 'provisional', steps: [step('Anfragende', 'Forms', 'Angaben erfassen', 'Anfrage'), step('Verantwortliche', 'Power Automate', 'Flow explizit einrichten und überwachen', 'Lists-Datensatz'), step('Flow', 'Teams', 'Benachrichtigung explizit konfigurieren', 'Meldung')] },
     { id: 'recurring-operations', persona: 'service', title: 'Aufgabe oder Betriebsregister?', objective: 'Arbeit mit Abschluss von dauerhaften Datensätzen trennen.', trigger: 'Wiederkehrende Raumkontrollen nehmen zu.', friction: 'Ein Board wird als Anlagenregister verwendet.', outcome: 'Prüfauftrag als Aufgabe, Anlagenstammdaten im Fachsystem.', question: 'Was hat einen Abschluss und was einen Lebenszyklus?', boundary: 'Lists und automatische Wiederholung bleiben Recherche; keine neue Oberfläche.', sources: ['uct-pass', 'ms-tasks'], status: 'researched', steps: [step('Leitung', 'Planner', 'Prüfauftrag zuweisen', 'Aufgabe'), step('Betrieb', 'Fachsystem', 'Ressourcendaten pflegen', 'Betriebsregister')] }
   ];
+  sources = sources.concat(Business.sources);
+  personas.forEach(function (p) {
+    p.collection = 'hochschule'; p.domains = ['higher-education'];
+    p.teamPatterns = p.id === 'service' ? ['stable-team', 'service-team'] : p.id === 'practice' ? ['committee'] : ['project-team'];
+  });
+  personas = personas.concat(Business.personas);
+  scenarios = scenarios.concat(Business.scenarios);
   scenarios.forEach(function (s) {
+    var group = personas.find(function (p) { return p.id === s.persona; });
+    s.collection = group ? group.collection : 'hochschule';
+    s.domains = group ? group.domains : ['higher-education'];
+    s.teamPatterns = group ? group.teamPatterns : s.persona === 'existing-nora' ? ['individual'] : s.persona === 'existing-committee' ? ['committee'] : ['project-team'];
     s.evidence = s.sources.map(function (id) { return { source: id, use: 'Kontext oder Produktgrenze; konkrete Geschichte ist fiktive Synthese.' }; });
     s.synthesis = 'fictional-synthesis'; s.prerequisites = s.prerequisites || ['Vor Umsetzung lokale Richtlinien und aktuelle Produktdetails prüfen.'];
   });
@@ -65,11 +76,12 @@
     var s = get(id); if (!s || s.status !== 'renderable') throw new Error('Kein renderbares Beispiel: ' + id);
     var g = persona(s.persona), team = g.name;
     var p = { format: 'msteams-personas/project', projectVersion: 1, capabilityVersion: 6,
-      meta: { id: id, title: s.title, organisation: 'Hochschule Tannwil (fiktiv)', audience: 'Hochschulmitarbeitende und Trainer', goal: s.objective, locale: 'de-CH', fictional: true, source: { kind: 'fictional-synthesis', note: s.sources.join(', ') + ' · Quellenkartei im Hochschulkatalog, Zugriff ' + date }, assumptions: s.prerequisites.concat([s.boundary]), notes: s.question },
-      people: g.people.map(function (x, i) { return { id: 'p-' + (i + 1), name: x[0], role: x[1] }; }),
+      meta: { id: id, title: s.title, organisation: g.organisation || 'Hochschule Tannwil (fiktiv)', audience: g.audience || 'Hochschulmitarbeitende und Trainer', goal: s.objective, locale: 'de-CH', fictional: true, source: { kind: 'fictional-synthesis', note: s.sources.join(', ') + ' · ' + (g.sourceNote || 'Quellenkartei im Hochschulkatalog') + ', Zugriff ' + (g.accessed || date) }, assumptions: s.prerequisites.concat([s.boundary]), notes: s.question },
+      people: g.people.map(function (x, i) { return { id: x[2] || 'p-' + (i + 1), name: x[0], role: x[1] }; }),
       documents: [{ id: 'd-1', name: id === 'grant-submission' ? 'Antrag_Brueckenforschung.docx' : id === 'event-handover' ? 'Ablaufplan_Konferenz.docx' : id === 'peer-resource' ? 'Methodenblatt_Peerfeedback.docx' : 'Betriebshandbuch_Lernraeume.docx' }],
       tasks: [], states: [], scenes: [], slides: [] };
     function slide(sc, notes) { p.scenes.push(sc); p.slides.push({ id: 's-' + (p.slides.length + 1), scene: sc.id, presenterNotes: notes || (sc.profile === 'planner' ? 'Aufgaben bewusst im Plan anlegen. Person, Termin und offene Beiträge gemeinsam prüfen.' : sc.profile === 'planner-task' ? (id === 'peer-resource' ? 'Ava hat das Review erledigt. Die Checkliste und der abgeschlossene Status machen die Freigabe vor der Publikation sichtbar.' : 'Dieselbe Aufgabe öffnen: Kontext, Checkliste und Zuständigkeit prüfen.') : sc.profile === 'todo' ? 'Nur die gewählte Person sieht hier ihre zugewiesenen und gegebenenfalls persönlichen Aufgaben. Mein Tag wird bewusst gewählt.' : sc.profile === 'workflow' ? s.question : s.question) }); }
+    if (s.collection === 'business') return Business.populate(p, s, g, slide);
     function workflow() { slide({ id: 'sc-workflow', profile: 'workflow', team: g.name, title: s.title, question: s.question, boundary: s.boundary, steps: s.steps.map(function (x, i) { return Object.assign({ id: 'w-' + (i + 1) }, x); }) }); }
     if (id === 'shared-loop') {
       p.sharedComponents = [{ id: 'c-methoden', kind: 'table', title: 'Methodensammlung', owner: 'p-1', storage: 'onedrive' }];
@@ -126,6 +138,29 @@
     if (id === 'peer-resource') { var reviewSlide = p.slides[2]; p.slides[2] = p.slides[3]; p.slides[3] = reviewSlide; }
     workflow(); return p;
   }
-  return { version: 1, date: date, sources: sources, personas: personas, scenarios: scenarios, persona: persona, get: get, project: project,
-    catalogue: function () { return clone({ version: 1, date: date, personas: personas, scenarios: scenarios, sources: sources }); } };
+  var facets = {
+    domains: [{id:'administration',label:'Verwaltung'}, {id:'technical-service',label:'Handwerk & technischer Service'}, {id:'higher-education',label:'Hochschule'}],
+    teamPatterns: [{id:'stable-team',label:'Dauerhaftes Team'}, {id:'project-team',label:'Projektteam'}, {id:'service-team',label:'Service- und Auftragsteam'}, {id:'committee',label:'Gremium / Arbeitsgruppe'}, {id:'individual',label:'Einzelarbeit mit Zusammenarbeit'}]
+  };
+  // Stable references into the existing library, never copies of scenes or people.
+  var legacy = [
+    {world:'campus-people-development',domains:['higher-education'],teamPatterns:['stable-team','project-team']},
+    {world:'urban-health-analytics',domains:['higher-education'],teamPatterns:['project-team']},
+    {world:'nora-keller',domains:['higher-education'],teamPatterns:['individual']},
+    {world:'commission-digital-collaboration',domains:['higher-education'],teamPatterns:['committee']},
+    {world:'teaching-team',domains:['higher-education'],teamPatterns:['stable-team']},
+    {world:'brunner-marketing',domains:['technical-service'],teamPatterns:['stable-team','project-team']},
+    {world:'brunner-kundendienst',domains:['technical-service'],teamPatterns:['stable-team','service-team']}
+  ];
+  function matches(x, filters) {
+    filters = filters || {};
+    return (!filters.domain || x.domains.includes(filters.domain)) && (!filters.teamPattern || x.teamPatterns.includes(filters.teamPattern)) && (!filters.collection || x.collection === filters.collection);
+  }
+  function catalogue(filters) {
+    var groups = personas.filter(function (x) { return matches(x, filters); });
+    var entries = scenarios.filter(function (x) { return matches(x, filters); });
+    var refs = legacy.filter(function (x) { return matches(Object.assign({collection:x.domains.includes('higher-education')?'hochschule':'business'},x), filters); });
+    return clone({version:1,date:'2026-11-10',facets:facets,personas:groups,scenarios:entries,sources:sources,legacy:refs});
+  }
+  return { version: 1, date: '2026-11-10', sources: sources, personas: personas, scenarios: scenarios, legacy:legacy, facets:facets, matches:matches, persona: persona, get: get, project: project, catalogue:catalogue };
 });

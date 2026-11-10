@@ -123,7 +123,7 @@
           return '<li class="sit"><a href="' + route(s.id, vm.variant && vm.variant.id, 'szene', sc) + '">' +
             '<span class="sit-top">' + collBadge(vm.collection) + (sc ? '<span class="badge b-full">' + esc(t.screens[0][1]) + '</span>' : '') + '</span>' +
             '<strong>' + esc(vm.title) + '</strong><span class="sit-w">' + esc(vm.world.name) + '</span><span class="sit-f">' + esc(vm.friction) + '</span></a></li>';
-        }).join('') + '</ul></section>';
+        }).join('') + '</ul></section>' + window.ResearchUI.examples(tid);
     }
     var vm = vmFor('leadership-forum', 'eigenes-team');
     return crumbs([['Bibliothek', '#/'], ['Tools']]) +
@@ -132,7 +132,7 @@
         var ps = toolSits(t)[0], pvm = ps && vmFor(ps.id);
         var st = STATUS[t.status], prev = t.screens[0] && pvm ? frameHtml(A.app(pvm, t.screens[0][0], {}), t.label) : '<div class="tool-ph">Geplant</div>';
         return '<li><a href="#/tools/' + t.id + '">' + prev + '<span class="badge ' + st[1] + '">' + st[0] + '</span><strong>' + esc(t.label) + '</strong><span>' + esc(t.desc) + '</span></a></li>';
-      }).join('') + '</ul></section>';
+      }).join('') + '</ul></section>' + window.ResearchUI.examples(tid);
   }
   function worldCard(w) {
     var first = w.situations[0], vm = vmFor(first);
@@ -145,7 +145,7 @@
   /* ---------- Personas / Use cases ---------- */
   function personas(wid) {
     var ws = M.worlds();
-    if (wid) {
+    if (wid && wid !== 'auswahl') {
       var w = ws.filter(function (x) { return x.id === wid; })[0];
       if (!w) return notFound();
       return crumbs([['Bibliothek', '#/'], ['Team-Personas', '#/personas'], [w.name]]) +
@@ -156,7 +156,7 @@
     }
     return crumbs([['Bibliothek', '#/'], ['Team-Personas']]) +
       '<section class="block"><div class="block-h"><h1>Team-Personas</h1><p class="lead">Arbeitswelten, keine demografischen Profile: Wie ist die Arbeit organisiert, und wo reibt es?</p></div>' +
-      '<ul class="worlds">' + ws.map(worldCard).join('') + '</ul><h2>Neue Hochschulgruppen</h2><p>Vier recherchierte Ergänzungen mit eigenen Szenarien und Quellen.</p>' + window.ResearchUI.cards() + '</section>';
+      window.ResearchUI.discovery(ws, worldCard) + '</section>';
   }
   function usecases(uid) {
     if (uid) {
@@ -178,7 +178,7 @@
       '<ul class="ucs">' + LIB.usecases.map(function (u) {
         var n = LIB.situations.filter(function (s) { return s.usecases.indexOf(u.id) >= 0; }).length;
         return '<li><a href="#/usecases/' + u.id + '"><strong>' + esc(u.title) + '</strong><span>' + esc(u.question) + '</span><small>' + n + ' Situationen · Prinzip «' + esc(principleMeta(u.principle).title) + '»</small></a></li>';
-      }).join('') + '</ul></section>';
+      }).join('') + '</ul></section>' + window.ResearchUI.examples();
   }
 
   /* ---------- Configurator ---------- */
@@ -462,7 +462,7 @@
     var h = parse(), html, presenting = false, p = routeParams(h);
     document.body.classList.remove('presenting');
     if (!h.length) html = landing();
-    else if (h[0] === 'hochschule') html = window.ResearchUI.render(h);
+    else if ((h[0] === 'hochschule' || h[0] === 'beispiele')) html = window.ResearchUI.render(h);
     else if (h[0] === 'personas') html = personas(h[1]);
     else if (h[0] === 'usecases') html = usecases(h[1]);
     else if (h[0] === 'tools') html = tools(h[1]);
@@ -476,10 +476,10 @@
     document.title = (presenting ? 'Präsentation · ' : '') + (document.querySelector('h1') ? document.querySelector('h1').textContent + ' · ' : '') + 'msteams-personas';
     fitFrames();
     if (h[0] === 'projekt') window.ProjectUI.mount(app);
-    if (h[0] === 'hochschule') window.ResearchUI.mount(app);
     if (presenting) { var x = app.querySelector('[data-act="exit"]'); if (x) x.focus(); fitStage(); }
     else if (!render.keepFocus) { var m = document.getElementById('main'); m.focus({ preventScroll: true }); window.scrollTo(0, 0); }
     render.keepFocus = false;
+    if (h[0] === 'hochschule' || h[0] === 'beispiele' || h[0] === 'personas') window.ResearchUI.mount(app);
   }
 
   /* Re-render only the visual (keeps form focus while typing). */

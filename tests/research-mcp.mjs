@@ -14,7 +14,7 @@ const call = (name,args={}) => client.callTool({name,arguments:args}); const che
 try {
   await client.connect(transport);
   assert.ok((await client.listTools()).tools.some(t=>t.name==='get_catalogue'));
-  const catalogue=(await call('get_catalogue')).structuredContent;
+  const catalogue=(await call('get_catalogue',{collection:'hochschule'})).structuredContent;
   assert.equal(catalogue.personas.length,4); assert.equal(catalogue.scenarios.length,12);
   checks.push('MCP discovers four personas, twelve statuses and full source records');
   const caps=(await call('get_capabilities')).structuredContent; assert.equal(caps.capabilityVersion,6);
@@ -35,6 +35,6 @@ try {
     }
     checks.push(kind+': every retrieved PNG is byte-identical to CLI/gallery rendering');
   }
-  writeFileSync(resolve('docs/morning-review/mcp-checks.json'),JSON.stringify({ok:true,checks,scope:'Official SDK stdio client; no real assistant-host trial or live tenant acceptance.'},null,2)+'\n');
+  writeFileSync(resolve(process.env.MTP_TEST_OUTPUT || 'docs/morning-review','mcp-checks.json'),JSON.stringify({ok:true,checks,scope:'Official SDK stdio client; no real assistant-host trial or live tenant acceptance.'},null,2)+'\n');
   console.log(checks.join('\n'));
 }finally{await client.close();rmSync(temp,{recursive:true,force:true});}

@@ -8,17 +8,17 @@ const copy = x => structuredClone(x);
 const has = (p, code) => assert.ok(PC.validate(p).errors.some(e => e.code === code), JSON.stringify(PC.validate(p)));
 
 test('catalogue is traceable: four additions, twelve scenarios, six valid saved projects', () => {
-  assert.equal(R.personas.length, 4); assert.equal(R.scenarios.length, 12);
+  assert.equal(R.personas.filter(g=>g.collection==='hochschule').length, 4); assert.equal(R.scenarios.filter(s=>s.collection==='hochschule').length, 12);
   const sources = new Set(R.sources.map(s => s.id));
   for (const source of R.sources) {
-    assert.match(source.url, /^https:\/\//); assert.equal(source.accessed, '2026-11-09');
+    assert.match(source.url, /^https:\/\//); assert.match(source.accessed, /^2026-11-(09|10)$/);
     for (const k of ['publisher', 'kind', 'supportedClaim', 'limitations']) assert.ok(source[k]);
   }
   for (const g of R.personas) {
     assert.ok(g.sources.length >= 2);
     for (const k of ['purpose', 'roles', 'size', 'duration', 'rhythm', 'boundary', 'artefacts', 'friction', 'tools', 'question']) assert.ok(g[k]?.length);
   }
-  const complete = R.scenarios.filter(s => s.status === 'renderable'); assert.equal(complete.length, 6);
+  const complete = R.scenarios.filter(s => s.status === 'renderable' && s.collection === 'hochschule'); assert.equal(complete.length, 6);
   for (const s of R.scenarios) {
     assert.equal(s.synthesis, 'fictional-synthesis'); assert.ok(s.sources.every(id => sources.has(id)));
     assert.ok(s.evidence.length && s.steps.length && s.question && s.boundary);

@@ -16,7 +16,7 @@ export function getCapabilities() {
   };
 }
 
-export function getCatalogue() { return Research.catalogue(); }
+export function getCatalogue(filters = {}) { return Research.catalogue(filters); }
 export function getExample(kind) { if (Research.get(kind)?.status === 'renderable') return Research.project(kind); return ['workspace', 'workspace-houses'].includes(kind) ? PC.workspaceExample(kind) : PC.template(); }
 
 /* Accepts a parsed object or text (raw JSON or one ```json fence). Never throws. */

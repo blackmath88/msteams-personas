@@ -9,9 +9,10 @@ import { getCapabilities, getCatalogue, getExample, validateProject, renderToDir
 
 const HELP = `Usage: node tools/cli.mjs <command> [options]
 
-  catalogue                         researched personas, scenarios, evidence and status (JSON)
+  catalogue [--domain <id>] [--team-pattern <id>] [--collection business|hochschule]
+                                    researched personas, scenarios, evidence and status (JSON)
   capabilities                      supported profiles, limits and versions (JSON)
-  example [--kind tasks|workspace|workspace-houses] [--out project.json]      a complete valid example; also --kind weekly-meeting|shared-loop|grant-submission|event-handover|service-onboarding|peer-resource
+  example [--kind tasks|workspace|workspace-houses] [--out project.json]      a complete valid example; business: municipal-opening-hours|service-appointment-change; also --kind weekly-meeting|shared-loop|grant-submission|event-handover|service-onboarding|peer-resource
   validate <project.json | ->       validate; prints {ok, errors, warnings}
   render <project.json | -> --out <dir> [--scale 1|2] [--timeout <ms>]
                                     write ordered PNGs and manifest.json; prints the manifest
@@ -49,7 +50,7 @@ const { pos, opt } = args(process.argv.slice(2));
 const cmd = pos[0];
 if (opt.help || !cmd) { (cmd ? process.stdout : process.stderr).write(HELP + '\n'); process.exit(cmd || opt.help ? 0 : 2); }
 
-if (cmd === 'catalogue') out(getCatalogue());
+if (cmd === 'catalogue') out(getCatalogue({domain:opt.domain,teamPattern:opt['team-pattern'],collection:opt.collection}));
 else if (cmd === 'capabilities') out(getCapabilities());
 else if (cmd === 'example') {
   if (opt.kind && !getCapabilities().examples.includes(opt.kind)) fail('Choose --kind from capabilities.examples.');

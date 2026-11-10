@@ -1,0 +1,324 @@
+{
+  "format": "msteams-personas/project",
+  "projectVersion": 1,
+  "capabilityVersion": 6,
+  "meta": {
+    "id": "municipal-opening-hours",
+    "title": "Abgestimmt ist noch nicht veröffentlicht",
+    "organisation": "Gemeinde Lindenried (fiktiv)",
+    "audience": "Verwaltungsmitarbeitende und Trainer",
+    "goal": "Vorbereitung, interne Vereinbarung und Veröffentlichung unterscheiden.",
+    "locale": "de-CH",
+    "fictional": true,
+    "source": {
+      "kind": "fictional-synthesis",
+      "note": "cologne-records, ms-lightweight-2026, ms-notes, ms-requirements · Quellenkartei im gemeinsamen Katalog, Zugriff 2026-11-10"
+    },
+    "assumptions": [
+      "Interne direkt eingeladene Mitarbeitende mit Bearbeitungszugriff; Loop und benötigte Microsoft-Dienste lokal erlaubt.",
+      "Unterstützter Teams-Client, OneDrive/SharePoint und passende Lizenz; Exchange Online für den vollständigen Loop-Funktionsumfang prüfen.",
+      "Aufgaben gehören zum aus diesen Notizen erzeugten Plan. Kein Planbesitzer: Mitglieder können den Lightweight-Plan löschen.",
+      "Bisherige Notizen beim Review bewusst erneut öffnen; kein automatisches Übertragen in neue Terminnotizen.",
+      "Fiktiver lokaler Freigabeweg: Martin holt die Freigabe ein. Kein Ratsbeschluss und keine allgemeine Rechtsregel behauptet."
+    ],
+    "notes": "Der Entwurf ist fertig. Darf Lea die Website schon ändern?"
+  },
+  "people": [
+    {
+      "id": "anna-frei",
+      "name": "Anna Frei",
+      "role": "Leitung Einwohnerdienste"
+    },
+    {
+      "id": "cem-yilmaz",
+      "name": "Cem Yilmaz",
+      "role": "Schalterkoordination"
+    },
+    {
+      "id": "lea-roth",
+      "name": "Lea Roth",
+      "role": "Kommunikation"
+    },
+    {
+      "id": "martin-keller",
+      "name": "Martin Keller",
+      "role": "Sekretariat"
+    }
+  ],
+  "documents": [
+    {
+      "id": "d-1",
+      "name": "Entwurf_Servicezeiten.docx"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t-1",
+      "title": "Besetzung am Donnerstag prüfen"
+    },
+    {
+      "id": "t-2",
+      "title": "Website-Text vorbereiten"
+    },
+    {
+      "id": "t-3",
+      "title": "Lokale Freigabe einholen"
+    }
+  ],
+  "states": [
+    {
+      "id": "before",
+      "label": "Vorbereitung offen",
+      "tasks": {
+        "t-1": {
+          "list": "plan",
+          "owner": "cem-yilmaz",
+          "bucket": "Folgeaufgaben",
+          "due": "Mi 11.11.",
+          "done": false
+        },
+        "t-2": {
+          "list": "plan",
+          "owner": "lea-roth",
+          "bucket": "Folgeaufgaben",
+          "due": "Do 12.11.",
+          "done": false,
+          "notes": "Nur den Entwurf vorbereiten. Veröffentlichung erst nach dokumentierter Freigabe; diese ist noch offen.",
+          "checklist": [
+            {
+              "text": "Website-Text als Entwurf vorbereitet",
+              "done": false
+            },
+            {
+              "text": "Entwurf an Martin zur Prüfung verlinkt",
+              "done": false
+            }
+          ]
+        },
+        "t-3": {
+          "list": "plan",
+          "owner": "martin-keller",
+          "bucket": "Folgeaufgaben",
+          "due": "Fr 13.11.",
+          "done": false
+        }
+      },
+      "components": {
+        "c-servicezeiten": {
+          "agenda": [
+            {
+              "id": "a-besetzung",
+              "by": "anna-frei",
+              "text": "Besetzung und Website-Text klären"
+            }
+          ],
+          "decisions": [
+            {
+              "id": "e-vorbereitung",
+              "by": "anna-frei",
+              "text": "Nur vorbereiten. Lokale Freigabe steht noch aus."
+            }
+          ],
+          "taskIds": [
+            "t-1",
+            "t-2",
+            "t-3"
+          ]
+        }
+      }
+    },
+    {
+      "id": "after",
+      "label": "Vorbereitet · Freigabe offen",
+      "tasks": {
+        "t-1": {
+          "list": "plan",
+          "owner": "cem-yilmaz",
+          "bucket": "Folgeaufgaben",
+          "due": "Mi 11.11.",
+          "done": true
+        },
+        "t-2": {
+          "list": "plan",
+          "owner": "lea-roth",
+          "bucket": "Folgeaufgaben",
+          "due": "Do 12.11.",
+          "done": true,
+          "notes": "Nur den Entwurf vorbereiten. Veröffentlichung erst nach dokumentierter Freigabe; diese ist noch offen.",
+          "checklist": [
+            {
+              "text": "Website-Text als Entwurf vorbereitet",
+              "done": true
+            },
+            {
+              "text": "Entwurf an Martin zur Prüfung verlinkt",
+              "done": true
+            }
+          ],
+          "comment": {
+            "by": "lea-roth",
+            "text": "Entwurf ist bereit. Martins Freigabeauftrag ist weiterhin offen; noch nicht veröffentlichen."
+          }
+        },
+        "t-3": {
+          "list": "plan",
+          "owner": "martin-keller",
+          "bucket": "Folgeaufgaben",
+          "due": "Fr 13.11.",
+          "done": false
+        }
+      },
+      "components": {
+        "c-servicezeiten": {
+          "agenda": [
+            {
+              "id": "a-besetzung",
+              "by": "anna-frei",
+              "text": "Besetzung und Website-Text klären"
+            }
+          ],
+          "decisions": [
+            {
+              "id": "e-vorbereitung",
+              "by": "anna-frei",
+              "text": "Nur vorbereiten. Lokale Freigabe steht noch aus."
+            }
+          ],
+          "taskIds": [
+            "t-1",
+            "t-2",
+            "t-3"
+          ]
+        }
+      }
+    }
+  ],
+  "scenes": [
+    {
+      "id": "sc-vorschlag",
+      "profile": "teams-posts",
+      "team": "Servicekoordination Gemeinde Lindenried",
+      "channel": "Servicezeiten",
+      "posts": [
+        {
+          "id": "q-vorschlag",
+          "by": "anna-frei",
+          "title": "Donnerstag bis 18 Uhr: erst ein Vorschlag",
+          "time": "Mo 09:00",
+          "text": "Bitte Besetzung und Website-Text vorbereiten. Noch nichts veröffentlichen: Martin klärt die Freigabe.",
+          "document": "d-1",
+          "hint": "Gemeinsamer Entwurf ist noch keine Veröffentlichung."
+        }
+      ]
+    },
+    {
+      "id": "sc-notizen",
+      "profile": "meeting-notes",
+      "team": "Notizenplan Servicezeiten",
+      "component": "c-servicezeiten",
+      "state": "before",
+      "viewer": "anna-frei",
+      "accessConfirmed": true,
+      "meeting": "Montag, 09.00–09.20 · Servicekoordination"
+    },
+    {
+      "id": "sc-text",
+      "profile": "planner-task",
+      "team": "Notizenplan Servicezeiten",
+      "state": "after",
+      "task": "t-2"
+    },
+    {
+      "id": "sc-review",
+      "profile": "meeting-notes",
+      "team": "Notizenplan Servicezeiten",
+      "component": "c-servicezeiten",
+      "state": "after",
+      "viewer": "anna-frei",
+      "accessConfirmed": true,
+      "meeting": "Nächster Montag · bisherige Notizen öffnen"
+    },
+    {
+      "id": "sc-prinzip",
+      "profile": "workflow",
+      "team": "Servicekoordination Gemeinde Lindenried",
+      "title": "Abgestimmt ist noch nicht veröffentlicht",
+      "question": "Der Entwurf ist fertig. Darf Lea die Website schon ändern?",
+      "boundary": "Fiktiver lokaler Freigabeweg: Martin holt die Freigabe ein. Kein Ratsbeschluss und keine allgemeine Rechtsregel behauptet.",
+      "steps": [
+        {
+          "id": "w-1",
+          "actor": "Anna",
+          "tool": "Teams",
+          "action": "Entwurf mit offenen Punkten verlinken",
+          "artefact": "Servicezeiten-Entwurf",
+          "relation": "manual",
+          "evidence": null
+        },
+        {
+          "id": "w-2",
+          "actor": "Arbeitsgruppe",
+          "tool": "Loop-Notizen",
+          "action": "Besetzung und Text vorbereiten",
+          "artefact": "Vorbereitungsaufgaben",
+          "relation": "manual",
+          "evidence": null
+        },
+        {
+          "id": "w-3",
+          "actor": "Martin",
+          "tool": "Freigabeweg",
+          "action": "Erforderliche lokale Freigabe dokumentieren",
+          "artefact": "Freigabenachweis",
+          "relation": "manual",
+          "evidence": null
+        },
+        {
+          "id": "w-4",
+          "actor": "Lea",
+          "tool": "Website",
+          "action": "Erst danach bewusst veröffentlichen",
+          "artefact": "Öffnungszeiten",
+          "relation": "manual",
+          "evidence": null
+        }
+      ]
+    }
+  ],
+  "slides": [
+    {
+      "id": "s-1",
+      "scene": "sc-vorschlag",
+      "presenterNotes": "Anna verlinkt den Entwurf. Persönliche Sprechernotizen und Einwohnerfälle gehören nicht hierher. Alternative: Dokument mit Pendenzenliste."
+    },
+    {
+      "id": "s-2",
+      "scene": "sc-notizen",
+      "presenterNotes": "Erste Folgeaufgabe erzeugt den zugehörigen Lightweight-Plan. Keinen beliebigen bestehenden Plan und keinen Planbesitzer behaupten. In Planner öffnen ist manuell."
+    },
+    {
+      "id": "s-3",
+      "scene": "sc-text",
+      "presenterNotes": "Lea hat dieselbe Textaufgabe erledigt. Der Kommentar nennt ausdrücklich die offene Freigabe. Die erledigte Aufgabe ist keine Publikationsfreigabe."
+    },
+    {
+      "id": "s-4",
+      "scene": "sc-review",
+      "presenterNotes": "Dieselbe Komponente und dieselben Aufgaben erneut öffnen. t-1 und t-2 sind erledigt; t-3 bleibt offen. Keine automatische Übertragung in neue Terminnotizen."
+    },
+    {
+      "id": "s-5",
+      "scene": "sc-prinzip",
+      "presenterNotes": "Der Entwurf ist fertig. Darf Lea die Website schon ändern? Einfachere Alternative: Gemeinsames Dokument mit einer einfachen Pendenzenliste, wenn das genügt. Fachsystem- und Publikationsschritte sind manuell und werden hier nur erklärt."
+    }
+  ],
+  "sharedComponents": [
+    {
+      "id": "c-servicezeiten",
+      "kind": "meeting-notes",
+      "title": "Servicezeiten vorbereiten",
+      "owner": "anna-frei",
+      "storage": "onedrive"
+    }
+  ]
+}
