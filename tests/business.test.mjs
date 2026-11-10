@@ -28,7 +28,7 @@ test('municipal draft completion leaves release pending in the same meeting comp
   for(const k of ['id','title','owner','due'])assert.equal(draft[k],detail[k]);
   assert.equal(after.tasks.find(x=>x.id==='t-3').done,false);
   assert.match(detail.comment.text,/weiterhin offen/);
-  assert.ok(after.snapshot.decisions.some(x=>/erst nach/.test(x.text)));
+  assert.ok(after.snapshot.decisions.some(x=>/Freigabe steht noch aus/.test(x.text)));
 });
 test('service acceptance is explicit while order and customer tasks stay open',()=>{
   const p=R.project('service-appointment-change'),task=PC.compile(p,2).taskDetail.task,board=PC.compile(p,3).scene.tasks;

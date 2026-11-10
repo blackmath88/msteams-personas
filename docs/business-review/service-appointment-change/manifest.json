@@ -1,0 +1,75 @@
+{
+  "format": "msteams-personas/render-manifest",
+  "manifestVersion": 1,
+  "rendererVersion": "v3",
+  "projectVersion": 1,
+  "capabilityVersion": 6,
+  "project": {
+    "id": "service-appointment-change",
+    "title": "Termin verschoben: Wer übernimmt den Rest?"
+  },
+  "ok": true,
+  "stage": "done",
+  "width": 1920,
+  "height": 1080,
+  "durationMs": 1180,
+  "slides": [
+    {
+      "index": 0,
+      "id": "s-1",
+      "profile": "teams-chat",
+      "file": "01-service-appointment-change-teams-chat.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 191546,
+      "fit": [],
+      "sha256": "2ee84a3cb673f35bbf1fda86b901454daf6c3c5af82b9821c2bad1eb323c8d4c"
+    },
+    {
+      "index": 1,
+      "id": "s-2",
+      "profile": "teams-posts",
+      "file": "02-service-appointment-change-teams-posts.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 218948,
+      "fit": [],
+      "sha256": "ea85e2a22ef7868b0a46b97f6037248bb11f9d3891aea42da3453146a02c68f2"
+    },
+    {
+      "index": 2,
+      "id": "s-3",
+      "profile": "planner-task",
+      "file": "03-service-appointment-change-planner-task.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 302131,
+      "fit": [],
+      "sha256": "4cc50e5db156ee3dc32606d3160317a757b3a148ad7105de539e8db94557ab63"
+    },
+    {
+      "index": 3,
+      "id": "s-4",
+      "profile": "planner",
+      "file": "04-service-appointment-change-planner.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 214768,
+      "fit": [],
+      "sha256": "2e040f74866acae41fa7acaf37dc2b0ab0f7c40e5854e1016f8cefc6f8a48953"
+    },
+    {
+      "index": 4,
+      "id": "s-5",
+      "profile": "workflow",
+      "file": "05-service-appointment-change-workflow.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 266519,
+      "fit": [],
+      "sha256": "d5d99a5a96f46a81cbadd1a3aa6062796c7ac2b3ce0aaabde6c8e2041f45f9b4"
+    }
+  ],
+  "diagnostics": [],
+  "renderedAt": "2026-11-10T10:07:40.212Z"
+}

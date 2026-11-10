@@ -1,0 +1,88 @@
+
+> test
+> node --test tests/*.test.mjs
+
+✔ business examples are valid saved projects with neutral metadata and stable people (5.857878ms)
+✔ municipal draft completion leaves release pending in the same meeting component (0.964479ms)
+✔ service acceptance is explicit while order and customer tasks stay open (0.414253ms)
+✔ catalogue facets combine, retain personal work and never copy legacy scenes (3.486927ms)
+✔ new source dates and evidence limits are explicit, older projects remain identical (2.192843ms)
+✔ catalogue is traceable: four additions, twelve scenarios, six valid saved projects (12.513023ms)
+✔ capability six preserves earlier projects and rejects new profiles in old versions (2.264692ms)
+✔ Loop surfaces project the same snapshot and stable row identity (1.147563ms)
+✔ meeting, Planner, To Do and review preserve task identity, owner, due date and completion (1.315506ms)
+✔ broken component, snapshot, row author and task links have located diagnostics (5.47304ms)
+✔ shared components and all new scene fields tolerate malformed JSON without throwing (32.441274ms)
+✔ person replacement follows component authors and ownership without changing object IDs (0.897758ms)
+✔ publication follows a visible completed review, and onboarding retains a personal task (0.682806ms)
+✔ synchronisation cannot be attached to an unrelated tool transition (0.430867ms)
+✔ every legacy scenario is reachable through a library situation (4.737756ms)
+✔ seven worlds: five university, two business (0.404017ms)
+✔ all situation references resolve (people, use cases, principles) (3.973869ms)
+✔ custom names flow into scene and principle text; originals stay intact (0.641443ms)
+✔ every situation is complete and documented contradictions are explicit variants (0.696065ms)
+✔ variants change structure, not just labels (1.344379ms)
+✔ configurator is deterministic and different answers give different starting points (1.172341ms)
+✔ configurator flags examples borrowed from the other collection (0.310707ms)
+✔ setups with access or restriction assumptions carry them explicitly (0.577437ms)
+✔ story: copies come from Prinzip copies, canonical file is a scene file (0.729215ms)
+✔ story: content overrides rename the canonical file everywhere but leave originals intact (0.930608ms)
+✔ situations without a story only offer Teams (or nothing for personal work) (0.364217ms)
+✔ sequences: every step resolves to an available screen or a principle (0.816356ms)
+✔ chat: curated decision matches the principle; generated chats exist for team situations (0.845049ms)
+✔ task edits keep one identity across Teams tasks, Planner/To Do and Prinzip (0.506651ms)
+✔ AI simulation: rejected suggestions never become tasks; assumption names licensing (0.35946ms)
+✔ onboarding world is its own business context, not renamed university people (0.345259ms)
+✔ template and blank are valid projects of the current versions (3.586236ms)
+✔ save and reopen keeps every field, notes and assumptions included (0.537417ms)
+✔ renaming a person updates Teams, Planner and Prinzip views (2.097581ms)
+✔ changing only the after-state owner leaves the before state unchanged (0.254282ms)
+✔ absence: a task missing from a state is not shown there and not deleted (0.390667ms)
+✔ teaching text compiles into the principle binding (0.31322ms)
+✔ broken person reference is a located error; explicit replacement repairs it (0.873522ms)
+✔ rejects unknown versions and profiles, truncated JSON, oversized and ambiguous input (1.150818ms)
+✔ markup in text stays data: compile does not interpret it (0.249064ms)
+✔ authoring pack is built from the live capabilities and its example validates (1.366713ms)
+✔ null and non-object entries are located errors, never a crash (1.722697ms)
+✔ incorrectly typed metadata and fields are rejected (0.489575ms)
+✔ only the before/after states the editor supports are accepted (0.470547ms)
+✔ a task already in the shared plan before is shown as shared, not as a personal list item (0.216024ms)
+✔ more personal lists than the diagram holds is an error, not a silent drop (0.416485ms)
+✔ authoring pack states the Prinzip list limit and the trial wording rules (0.550076ms)
+✔ six-profile Leadership Forum validates without warnings; v1/v2 remain accepted (9.942362ms)
+✔ board, details and assigned To Do preserve id, title, owner, date, checklist and completion (1.711882ms)
+✔ To Do never leaks other owners or inherits missing snapshot tasks (0.688013ms)
+✔ personal-only To Do works without connection; shared tasks require explicit assumptions (0.883597ms)
+✔ details reject personal, unassigned and unknown tasks; comments repair person references (0.973112ms)
+✔ duplicate, empty, unknown To Do selections and conflicting progress are actionable (0.550116ms)
+✔ new fields handle malformed JSON types without throwing (19.811205ms)
+✔ budgets warn, checklist limits block, snapshots survive roundtrip; pack documents contract (2.847887ms)
+✔ valid teams-chat, catalogue and default three-slide sequence (8.068609ms)
+✔ v1 remains accepted but teams-chat needs capabilityVersion 2 at scene profile (1.033652ms)
+✔ chat rejects a known author outside the two participants (0.240251ms)
+✔ viewer and partner must differ (0.287182ms)
+✔ all chat person references are located and repairable (1.05917ms)
+✔ chat rejects prototype names as unknown people (1.915477ms)
+✔ chat budgets warn for long team and text, reject more than six messages (0.40608ms)
+✔ chat requires messages and nonempty text (1.020302ms)
+✔ chat fields handle every JSON type without throwing (13.185894ms)
+✔ compile produces renderer chat with hint marks, notes, unseen people and stable filename (1.369246ms)
+✔ project notes use hints, default only for unseen people; curated notes stay unchanged (2.283419ms)
+✔ workspace example validates and compiles map and scene from the same hierarchy (5.77951ms)
+✔ invalid workspace links, scope, shape, depth and old capability are refused (2.368828ms)
+✔ personal preview only compiles the selected owner’s workspace and explicit sharing (0.911569ms)
+✔ house overview projects membership while the comparison resolves the same file and channel IDs (0.780252ms)
+✔ house profiles reject old capabilities, invisible teams, empty membership and cross-team selection (2.534336ms)
+ℹ tests 71
+ℹ suites 0
+ℹ pass 71
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 302.201584
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice

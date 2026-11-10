@@ -1,0 +1,75 @@
+{
+  "format": "msteams-personas/render-manifest",
+  "manifestVersion": 1,
+  "rendererVersion": "v3",
+  "projectVersion": 1,
+  "capabilityVersion": 6,
+  "project": {
+    "id": "municipal-opening-hours",
+    "title": "Abgestimmt ist noch nicht veröffentlicht"
+  },
+  "ok": true,
+  "stage": "done",
+  "width": 1920,
+  "height": 1080,
+  "durationMs": 1275,
+  "slides": [
+    {
+      "index": 0,
+      "id": "s-1",
+      "profile": "teams-posts",
+      "file": "01-municipal-opening-hours-teams-posts.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 244015,
+      "fit": [],
+      "sha256": "59bd08922e183eacdbba212b145727835c146388e9debc45b8e7bb19b30116b9"
+    },
+    {
+      "index": 1,
+      "id": "s-2",
+      "profile": "meeting-notes",
+      "file": "02-municipal-opening-hours-meeting-notes.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 296901,
+      "fit": [],
+      "sha256": "28493d7b9ee797c41136f5070d4d4705c8dc3d9340ced76acc44a76a5637d702"
+    },
+    {
+      "index": 2,
+      "id": "s-3",
+      "profile": "planner-task",
+      "file": "03-municipal-opening-hours-planner-task.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 316833,
+      "fit": [],
+      "sha256": "5b2a995bf1ac742ed28319ec48dd3235c0998610acadff121a31a055c3e171c3"
+    },
+    {
+      "index": 3,
+      "id": "s-4",
+      "profile": "meeting-notes",
+      "file": "04-municipal-opening-hours-meeting-notes.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 298863,
+      "fit": [],
+      "sha256": "0eb7c6d3c9cf41f6f38eb70f6957a8e848125e3c7e82d2deb7fa6ca62fbb1245"
+    },
+    {
+      "index": 4,
+      "id": "s-5",
+      "profile": "workflow",
+      "file": "05-municipal-opening-hours-workflow.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 275052,
+      "fit": [],
+      "sha256": "0eec3e753816bd116f8ae430dfbc68ca49b637049af0f26becb30b75e632b683"
+    }
+  ],
+  "diagnostics": [],
+  "renderedAt": "2026-11-10T10:07:38.902Z"
+}

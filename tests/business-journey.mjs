@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import {mkdirSync,writeFileSync} from 'node:fs';
+import {mkdirSync,writeFileSync,readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import {resolve} from 'node:path';
 import R from '../src/research-catalogue.js';
 import {launch} from './cdp.mjs';
@@ -20,6 +21,9 @@ try{
   await check('individual work remains findable through a legacy reference',"!!document.querySelector('a[href=\"#/personas/nora-keller\"]')");
   await goto('#/personas');await check('reset restores complete discovery',"document.getElementById('discovery-domain').value===''&&document.querySelectorAll('.he-persona').length===6");
   await goto('#/beispiele');await check('business overview separates two examples from two research briefs',"document.querySelectorAll('.he-persona').length===2&&document.querySelectorAll('.he-status.renderable').length===2&&document.querySelectorAll('.he-status.researched').length===2");
+  for(const route of ['#/tools/planner','#/usecases']){
+    await goto(route);await check(route+' exposes the canonical reference pair',"!!document.querySelector('a[href=\"#/beispiele/municipal-opening-hours\"]')&&!!document.querySelector('a[href=\"#/beispiele/service-appointment-change\"]')");
+  }
   for(const s of R.scenarios.filter(s=>s.collection==='business'&&s.status==='renderable')){
     await goto('#/beispiele/'+s.id);
     for(let i=0;i<5;i++){
@@ -31,6 +35,10 @@ try{
     await check(s.id+' imports through review',"location.hash==='#/projekt/import'&&!!document.querySelector('[data-op=accept]')");
     await page.eval("document.querySelector('[data-op=accept]').click()");await page.sleep(180);
     assert.deepEqual(await page.eval('ProjectUI.current()'),R.project(s.id));checks.push(s.id+' preserves full JSON through import');
+    const output=await page.eval('ProjectRender.renderAll(ProjectUI.current(),{dataUrl:true})');assert.equal(output.ok,true,JSON.stringify(output.diagnostics));
+    const cli=JSON.parse(readFileSync(resolve('docs/business-review',s.id,'manifest.json')));
+    for(const [i,slide]of output.slides.entries())assert.equal(createHash('sha256').update(Buffer.from(slide.dataUrl.split(',')[1],'base64')).digest('hex'),cli.slides[i].sha256);
+    checks.push(s.id+' website exports five PNGs byte-identically to CLI');
   }
   await goto('#/beispiele/municipal-holiday-cover');await check('research-only entries have no export',"!document.querySelector('[data-he=export]')");
   for(const [w,h,dpr] of [[390,844,1],[720,500,2]]){

@@ -7,7 +7,7 @@ Mode: direct Codex Cloud foreground work. Trusted base: `origin/main` at `9a017f
 Slices:
 
 1. Two valid portable projects, per-source dates and neutral organisation metadata; preserve existing generated projects. Implemented, focused model checks passing.
-2. Combined domain/collaboration discovery, legacy references and individual-work preservation, CLI/MCP filters. Implemented; browser and integration checks in progress.
-3. Export and inspect actual PNGs, gallery, required checks and draft handoff. In progress.
+2. Combined domain/collaboration discovery, legacy references and individual-work preservation, CLI/MCP filters. Implemented; focused browser, CLI and SDK checks passed.
+3. Export and inspect actual PNGs, gallery, required checks and draft handoff. Ten PNGs and gallery generated and inspected. Required library/project journeys passed; isolated baseline MCP rerun passed 49/49. Final evidence, documentation and draft PR preparation complete this slice.
 
 Execution: existing Node/Chromium toolchain; no dependency installation needed. Foreground session has no enforced deadline. No claimed model-cost or usage measurement. Final evidence and limitations belong in `BUSINESS-REFERENCE-HANDOFF.md`.
