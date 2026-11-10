@@ -22,7 +22,7 @@ See [V3 handoff](docs/V3-BUILD-HANDOFF.md) for evidence, supported coverage and 
 
 Zwei neue [Business-Beispiele](index.html#/beispiele) zeigen interne Servicezeiten-Abstimmung in einer Gemeinde und die bestätigte Übernahme eines verschobenen Servicebesuchs. Zehn vollständige PNG-Folien, zwei zusätzliche Recherchebriefe und Quellen unterscheiden fiktive Geschichten von dokumentierter Praxis. Die [Review-Galerie](docs/business-review/index.html) und der [Handoff](docs/BUSINESS-REFERENCE-HANDOFF.md) zeigen Ergebnis, Prüfungen und offene Grenzen.
 
-[Team-Personas](index.html#/personas) lässt sich nach **Branche / Umfeld** und **Zusammenarbeit** filtern; bestehende Einzelarbeit bleibt erreichbar. CLI: `catalogue --domain administration --team-pattern committee`; MCP: `get_catalogue({domain:"administration",teamPattern:"committee"})`. Neue Projekte: `example --kind municipal-opening-hours` und `example --kind service-appointment-change`. Projektformat v1 und Fähigkeit 6 bleiben erhalten. Diese Ergänzung liegt auf dem Feature-Branch; GitHub Pages zeigt bis zum Merge weiterhin `main`.
+[Team-Personas](index.html#/personas) lässt sich nach **Branche / Umfeld** und **Zusammenarbeit** filtern; bestehende Einzelarbeit bleibt erreichbar. CLI: `catalogue --domain administration --team-pattern committee`; MCP: `get_catalogue({domain:"administration",teamPattern:"committee"})`. Neue Projekte: `example --kind municipal-opening-hours` und `example --kind service-appointment-change`. Projektformat v1 und Fähigkeit 6 bleiben erhalten. Die [veröffentlichte Bibliothek](https://blackmath88.github.io/msteams-personas/index.html#/beispiele) wird aus `main` bereitgestellt.
 
 ## Recherchierte Hochschul-Szenarien
 

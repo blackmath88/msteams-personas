@@ -1,8 +1,10 @@
 # Current status
 
-Updated 2026-11-10. PR #14 is merged into `main` at `9a017f5`. `main` is the integration branch for the viewer, portable projects, the CLI and the MCP server.
+Updated 2026-11-10. `main` is the integration branch for the viewer, portable projects, the CLI and the MCP server. PR #14 introduced the university collection; PR #15 adds the first administration/business reference pair and shared discovery.
 
 ## Available on main
+
+- Two administration/technical-service reference stories, ten PNGs, two additional research briefs, shared domain/collaboration filters with legacy references, and CLI/MCP discovery. See [gallery](business-review/index.html), [handoff](BUSINESS-REFERENCE-HANDOFF.md) and the [published business examples](https://blackmath88.github.io/msteams-personas/index.html#/beispiele).
 
 - Four researched higher-education group additions, twelve scenario records and six complete portable examples (32 PNGs). Meeting notes, cross-surface Loop tables and labelled workflows are capability 6. Discovery is shared by website, CLI `catalogue` and MCP `get_catalogue`. See the [morning gallery](morning-review/index.html) and [implementation handoff](PERSONA-SCENARIO-HANDOFF.md).
 
@@ -13,7 +15,7 @@ Updated 2026-11-10. PR #14 is merged into `main` at `9a017f5`. `main` is the int
 
 ## Open
 
-- Implemented on `feat/business-reference-stories`, pending review: two administration/technical-service reference stories, ten PNGs, two additional research briefs, shared domain/collaboration filters with legacy references, and CLI/MCP discovery. See [gallery](business-review/index.html) and [handoff](BUSINESS-REFERENCE-HANDOFF.md). This is not yet on `main` or GitHub Pages. Practitioner feedback and live acceptance remain open. Trade follows, with engineering provisionally competing with manufacturing for fourth place.
+- Practitioner feedback and live acceptance remain open for the administration/business pair. Trade follows, with engineering provisionally competing with manufacturing for fourth place.
 
 - A real Microsoft tenant acceptance test and a real assistant-host trial for capability 6 remain unverified. Forms/Lists/Power Automate remain research only. Shared-component and workflow fields currently use JSON authoring; the form preserves them and exposes the limitation.
 

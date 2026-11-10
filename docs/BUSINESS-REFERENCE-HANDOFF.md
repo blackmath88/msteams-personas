@@ -1,5 +1,7 @@
 # Verwaltung und technischer Service: Referenzpaar
 
+Veröffentlichung: Am 10. November 2026 hat der Benutzer Merge, Veröffentlichung und das Entfernen erledigter Branches autorisiert. Die [Business-Beispiele](https://blackmath88.github.io/msteams-personas/index.html#/beispiele) und die [vollständige Galerie](https://blackmath88.github.io/msteams-personas/docs/business-review/index.html) werden aus `main` bereitgestellt. Der folgende Buildbericht bewahrt die ursprünglichen Checkpoints und Prüfgrenzen.
+
 10. November 2026, Europe/Zurich. Direkter Codex-Cloud-Build auf `feat/business-reference-stories`, aus `main` bei `9a017f59ac7a9792f797d9195c98f6646960066a`. Die zwei Planungscommits wurden auf den isolierten Branch übernommen. Produkt-Checkpoint: `26ea512`; Sicht-/Responsive-Korrekturen: `8d5a6e7`. Die Galerie wurde mit dieser zweiten Revision gerendert; vollständige Renderbasis in [provenance.json](business-review/provenance.json). Kein Merge und kein Deployment. Eigene Modell-, Diff- und Sichtprüfung, kein unabhängiges Review. Keine weiteren Agenten oder laufenden Worker, keine zusätzlichen kostenpflichtigen APIs.
 
 ## Zuerst ansehen
@@ -10,7 +12,7 @@
 - [Persona-Karten](business-review/persona-cards.png), [Rechercheentscheidungen](research/BUSINESS-DOMAINS-CH-DE-REVIEW-DECISIONS.md), [ursprüngliches Sparring](research/PERPLEXITY-BUSINESS-DOMAINS-CH-DE-REVIEW-2026-11-10.md).
 - [Katalog mit Filtern](business-review/catalogue-filtered.png), [mobile Auswahl](business-review/catalogue-mobile.png).
 
-Lokal aus dem Repository: `python3 -m http.server 8766 --bind 127.0.0.1`. Dann `http://127.0.0.1:8766/docs/business-review/index.html`, `http://127.0.0.1:8766/index.html#/beispiele` oder `#/personas` öffnen. GitHub zeigt HTML-Dateien als Quelltext; die PNGs lassen sich direkt ansehen. Auf GitHub Pages ist weiterhin der Stand von `main` sichtbar.
+Lokal aus dem Repository: `python3 -m http.server 8766 --bind 127.0.0.1`. Dann `http://127.0.0.1:8766/docs/business-review/index.html`, `http://127.0.0.1:8766/index.html#/beispiele` oder `#/personas` öffnen. GitHub zeigt HTML-Dateien als Quelltext; die PNGs lassen sich direkt ansehen. Für die veröffentlichte HTML-Galerie den GitHub-Pages-Link oben verwenden.
 
 ## Implementiert
 

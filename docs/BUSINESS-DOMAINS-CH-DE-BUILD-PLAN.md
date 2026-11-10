@@ -1,6 +1,6 @@
 # Business domains and working patterns for Switzerland and Germany
 
-Date: 2026-11-10. Status: the first reference pair and minimal discovery are implemented on `feat/business-reference-stories`, pending review; see the [build handoff](BUSINESS-REFERENCE-HANDOFF.md). Practitioner recognition and follow-on portfolio selection remain open. This plan does not authorise a merge or deployment. See the [review decisions](research/BUSINESS-DOMAINS-CH-DE-REVIEW-DECISIONS.md) and [original returned review](research/PERPLEXITY-BUSINESS-DOMAINS-CH-DE-REVIEW-2026-11-10.md).
+Date: 2026-11-10. Status: the first reference pair and minimal discovery are implemented in PR #15; see the [build handoff](BUSINESS-REFERENCE-HANDOFF.md). Practitioner recognition and follow-on portfolio selection remain open. This plan alone does not authorise a merge or deployment; the user subsequently authorised publishing this completed slice on main. See the [review decisions](research/BUSINESS-DOMAINS-CH-DE-REVIEW-DECISIONS.md) and [original returned review](research/PERPLEXITY-BUSINESS-DOMAINS-CH-DE-REVIEW-2026-11-10.md).
 
 ## Outcome and direction
 
