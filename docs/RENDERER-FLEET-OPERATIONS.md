@@ -39,11 +39,16 @@ and never binds a wildcard address. This credential is internal between owned ho
 that ChatGPT supports arbitrary static bearer authentication. ChatGPT retains its existing tunnel
 access controls and tunnel ID. The runtime key remains in a local mode-0600 file reference.
 
+The tunnel service uses `fleet-tunnel.mjs` to stop its poller if its local gateway disappears.
+Otherwise an unhealthy replica could consume calls from the shared queue. Health is checked every
+two seconds (2.5-second probe deadline); a failing/in-flight call can return an error during this
+bounded detection interval. Submitted renders are still never automatically replayed.
+
 The configuration includes observed absolute `node`, `npm`, `python`, `chromium`, `root`, `artifacts`,
 `tokenFile`, `address`, `id` and ordered `hosts: [{id,url}]`. `fleet-services.py` generates systemd
 user units on Linux or launchd agents on macOS. It refuses to overwrite existing definitions.
 Provision `root/control` from the tested tools, `root/bin/tunnel-client` from a checksum-verified
-official release, and `root/tunnel.json` with the existing tunnel ID, key file reference and
+official release, and `root/tunnel.yaml` with the existing tunnel ID, key file reference and
 `mcp.server_urls: [{url: "http://127.0.0.1:8790/mcp", channel: "main"}]` (validate with `doctor`).
 
 Stop the previous stdio tunnel before starting any of the HTTP replicas. Back up its profile,
@@ -79,6 +84,7 @@ python3 control/fleet-update.py rollback /absolute/config.json    # previous kno
 python3 control/fleet-update.py rollback-test /absolute/config.json # broken synthetic candidate
 node control/fleet-smoke.mjs /absolute/config.json /path/to/evidence
 node control/fleet-smoke.mjs /absolute/config.json /path/to/evidence gateway
+node control/fleet-smoke.mjs /absolute/config.json /path/to/evidence gateway modern
 ```
 
 Before retrying a quarantined SHA, diagnose its log and remove only its `rejected.json` after the
@@ -93,6 +99,9 @@ bounded queue, drain and queue expiry tests. `python3 tests/fleet-update-test.py
 promotion, previous-release preservation and concurrent lock exclusion. `fleet-smoke.mjs` verifies
 stateless HTTP discovery, both house PNGs, actual dimensions and SHA-256, resource reads, manifest
 origin and path-traversal refusal. Run these checks on each host and through the connected plugin.
+The `modern` variant exercises MCP 2026-07-28 and its required method/name headers through both
+proxy hops; the default exercises legacy stateless MCP. Forward protocol metadata without copying
+caller authentication, Host or session IDs.
 
 Controlled service tests stop only owned renderer services and restore them in `finally`/operator
 cleanup. Demonstrate Mini and Blackbird selection, NUC recovery, old-origin retrieval, missing-origin

@@ -5,13 +5,16 @@ import { readFileSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 const [configFile, out, mode = 'host'] = process.argv.slice(2);
+const modern = process.argv[5] === 'modern';
 const config = JSON.parse(readFileSync(configFile, 'utf8'));
 const url = mode === 'gateway' ? `http://127.0.0.1:${config.gatewayPort || 8790}` : `http://${config.address}:${config.privatePort || 8791}`;
 const headers = { 'content-type': 'application/json', accept: 'application/json, text/event-stream', 'mcp-protocol-version': '2025-03-26',
   ...(mode === 'gateway' ? {} : { authorization: 'Bearer ' + readFileSync(config.tokenFile, 'utf8').trim() }) };
 let seq = 0;
 async function rpc(method, params = {}) {
-  const response = await fetch(url + '/mcp', { method: 'POST', headers, body: JSON.stringify({ jsonrpc: '2.0', id: ++seq, method, params }), signal: AbortSignal.timeout(115_000) });
+  const metadata = modern ? { 'io.modelcontextprotocol/protocolVersion': '2026-07-28', 'io.modelcontextprotocol/clientCapabilities': {}, 'io.modelcontextprotocol/clientInfo': { name: 'fleet-smoke', version: '1' } } : null;
+  const modernHeaders = modern ? { 'mcp-protocol-version': '2026-07-28', 'mcp-method': method, ...(params.name || params.uri ? { 'mcp-name': params.name || params.uri } : {}) } : {};
+  const response = await fetch(url + '/mcp', { method: 'POST', headers: { ...headers, ...modernHeaders }, body: JSON.stringify({ jsonrpc: '2.0', id: ++seq, method, params: { ...params, ...(metadata ? { _meta: metadata } : {}) } }), signal: AbortSignal.timeout(115_000) });
   assert.equal(response.status, 200);
   assert.equal(response.headers.get('mcp-session-id'), null, 'fleet MCP must be stateless');
   const text = await response.text();
@@ -21,7 +24,7 @@ async function rpc(method, params = {}) {
   assert.ok(!result.error, JSON.stringify(result)); return result.result;
 }
 const call = (name, args = {}) => rpc('tools/call', { name, arguments: args });
-await rpc('initialize', { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 'fleet-smoke', version: '1' } });
+if (!modern) await rpc('initialize', { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 'fleet-smoke', version: '1' } });
 const tools = (await rpc('tools/list')).tools.map(t => t.name);
 for (const name of ['render_project', 'render_components', 'get_catalogue', 'retrieve_artifact']) assert.ok(tools.includes(name));
 const caps = (await call('get_capabilities')).structuredContent;

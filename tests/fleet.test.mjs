@@ -1,7 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { RenderQueue } from '../tools/render-queue.mjs';
-import { FleetRouter, originOf, supports } from '../tools/fleet-routing.mjs';
+import { FleetRouter, originOf, supports, protocolHeaders } from '../tools/fleet-routing.mjs';
+
+test('HTTP proxy preserves modern MCP headers without forwarding caller credentials or sessions', () => {
+  assert.deepEqual(protocolHeaders({ 'mcp-method': 'tools/call', 'mcp-name': 'render_project', 'mcp-protocol-version': '2026-07-28', 'mcp-param-test': 'value', authorization: 'private', host: 'external', 'mcp-session-id': 'old' }),
+    { 'mcp-method': 'tools/call', 'mcp-name': 'render_project', 'mcp-protocol-version': '2026-07-28', 'mcp-param-test': 'value' });
+});
 
 const hosts = ['linuc', 'bruh', 'blackbird'].map(id => ({ id }));
 const healthy = () => ({ ready: true, reachable: true, readySince: 1, capabilities: { capabilityVersion: 6, profiles: { 'workspace-houses': {}, 'workspace-house-teams': {} } } });
