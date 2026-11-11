@@ -6,7 +6,7 @@ import { spawn } from 'node:child_process';
 import { readFileSync, realpathSync, existsSync, mkdirSync, openSync, closeSync } from 'node:fs';
 import { join } from 'node:path';
 import { timingSafeEqual } from 'node:crypto';
-import { FleetRouter, isRender, protocolHeaders } from './fleet-routing.mjs';
+import { FleetRouter, isRender, protocolHeaders, failureResponse } from './fleet-routing.mjs';
 
 const configPath = process.argv[2];
 const config = JSON.parse(readFileSync(configPath, 'utf8'));
@@ -20,7 +20,7 @@ let worker, readySince = 0, draining = false, forwarding = 0, update = null, sto
 const pause = ms => new Promise(r => setTimeout(r, ms));
 const headers = { authorization: `Bearer ${token}` };
 const json = (res, status, value) => res.writeHead(status, { 'content-type': 'application/json' }).end(JSON.stringify(value));
-const rpcError = (res, message, error) => json(res, 200, { jsonrpc: '2.0', id: message?.id ?? null, error: { code: -32000, message: error.message } });
+const rpcError = (res, message, error) => json(res, 200, failureResponse(message, error));
 function authorized(req) {
   const got = Buffer.from(req.headers.authorization || ''), want = Buffer.from(headers.authorization);
   return got.length === want.length && timingSafeEqual(got, want);
