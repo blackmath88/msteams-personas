@@ -15,7 +15,7 @@
 // at most MAX_RENDERS kept renders (oldest removed first).
 import { createServer } from 'node:http';
 import { randomBytes } from 'node:crypto';
-import { mkdirSync, readdirSync, readFileSync, rmSync, statSync, existsSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, writeFileSync, rmSync, statSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { McpServer, ResourceTemplate, createMcpHandler } from '@modelcontextprotocol/server';
@@ -23,11 +23,21 @@ import { serveStdio } from '@modelcontextprotocol/server/stdio';
 import { toNodeHandler, localhostHostValidation, localhostOriginValidation } from '@modelcontextprotocol/node';
 import * as z from 'zod/v4';
 import { getCapabilities, getCatalogue, getExample, validateProject, renderToDir, renderComponentsToDir } from './ops.mjs';
+import { RenderQueue } from './render-queue.mjs';
 
 const VERSION = '0.1.0';
 const ARTIFACTS = process.env.MTP_ARTIFACT_DIR || join(tmpdir(), 'msteams-personas-artifacts');
-const MAX_RENDERS = 20;
-const RENDER_ID = /^r-[0-9a-f]{16}$/;
+const MAX_RENDERS = Number(process.env.MTP_MAX_RENDERS || 100);
+const HOST = process.env.MTP_HOST_ALIAS || '';
+if (HOST && !/^[a-z][a-z0-9]{0,20}$/.test(HOST)) throw new Error('Invalid MTP_HOST_ALIAS');
+const deployment = { host: HOST || 'local', commit: process.env.MTP_RELEASE_SHA || 'development' };
+const RENDER_ID = /^r-(?:[a-z][a-z0-9]{0,20}-)?[0-9a-f]{16}$/;
+const newId = () => 'r-' + (HOST ? HOST + '-' : '') + randomBytes(8).toString('hex');
+function retainOrigin(dir, manifest, project) {
+  manifest.deployment = deployment;
+  writeFileSync(join(dir, 'manifest.json'), JSON.stringify(manifest, null, 2));
+  writeFileSync(join(dir, 'project.json'), JSON.stringify(project));
+}
 const uriOf = (id, file) => `mtp://renders/${id}/${file}`;
 /* Slide renders list `slides`, component renders list `components`; both carry `file`. */
 const filesOf = m => m.slides || m.components || [];
@@ -52,8 +62,8 @@ function renders() {
 function prune() { renders().slice(MAX_RENDERS).forEach(r => rmSync(join(ARTIFACTS, r.id), { recursive: true, force: true })); }
 
 /* One render at a time: Chromium is the expensive part. */
-let queue = Promise.resolve();
-function exclusive(fn) { const run = queue.then(fn, fn); queue = run.catch(() => {}); return run; }
+const queue = new RenderQueue();
+const exclusive = fn => queue.run(fn);
 
 const json = o => [{ type: 'text', text: JSON.stringify(o, null, 2) }];
 const ProjectArg = z.record(z.string(), z.unknown()).describe('The project as a JSON object (format "msteams-personas/project"). Use get_example for a complete valid project and get_capabilities for profiles and limits.');
@@ -70,7 +80,7 @@ function build() {
   server.registerTool('get_capabilities', {
     title: 'Capabilities', description: 'Supported screens (profiles), text budgets, limits, versions and output size.',
     annotations: { readOnlyHint: true }
-  }, async () => { const c = getCapabilities(); return { content: json(c), structuredContent: c }; });
+  }, async () => { const c = { ...getCapabilities(), deployment }; return { content: json(c), structuredContent: c }; });
 
   server.registerTool('get_catalogue', {
     title: 'Shared persona and scenario catalogue', description: 'Business, administration and higher-education groups, legacy library references, discovery facets, evidence and honest rendering status. Optional filters combine with AND; unknown values return no matches. Only renderable scenarios have example projects.', inputSchema: z.object({domain:z.string().optional(),teamPattern:z.string().optional(),collection:z.enum(['business','hochschule']).optional()}), annotations: { readOnlyHint: true }
@@ -91,10 +101,10 @@ function build() {
     inputSchema: z.object({ project: ProjectArg, scale: z.union([z.literal(1), z.literal(2)]).optional().describe('1 (default) or 2') }),
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false }
   }, async ({ project, scale }) => exclusive(async () => {
-    const id = 'r-' + randomBytes(8).toString('hex'), dir = join(ARTIFACTS, id);
+    const id = newId(), dir = join(ARTIFACTS, id);
     const m = await renderToDir(project, dir, { scale: scale ?? 1 });
     if (!m.ok) { rmSync(dir, { recursive: true, force: true }); return { isError: true, content: json({ ok: false, stage: m.stage, diagnostics: m.diagnostics }), structuredContent: { ok: false, stage: m.stage, diagnostics: m.diagnostics } }; }
-    prune();
+    retainOrigin(dir, m, project); prune();
     const result = { ok: true, renderId: id, manifestUri: uriOf(id, 'manifest.json'), ...m, slides: m.slides.map(s => ({ ...s, uri: uriOf(id, s.file) })) };
     return {
       structuredContent: result,
@@ -121,10 +131,10 @@ function build() {
     inputSchema: z.object({ project: ProjectArg, components: z.array(ComponentArg).min(1).max(8), scale: z.union([z.literal(1), z.literal(2)]).optional().describe('2 (default) or 1') }),
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false }
   }, async ({ project, components, scale }) => exclusive(async () => {
-    const id = 'r-' + randomBytes(8).toString('hex'), dir = join(ARTIFACTS, id);
+    const id = newId(), dir = join(ARTIFACTS, id);
     const m = await renderComponentsToDir(project, components, dir, { scale: scale ?? 2 });
     if (!m.ok) { rmSync(dir, { recursive: true, force: true }); return { isError: true, content: json({ ok: false, stage: m.stage, diagnostics: m.diagnostics }), structuredContent: { ok: false, stage: m.stage, diagnostics: m.diagnostics } }; }
-    prune();
+    retainOrigin(dir, m, project); prune();
     const result = { ok: true, renderId: id, manifestUri: uriOf(id, 'manifest.json'), ...m, components: m.components.map(c => ({ ...c, uri: uriOf(id, c.file) })) };
     return {
       structuredContent: result,
@@ -172,11 +182,14 @@ mkdirSync(ARTIFACTS, { recursive: true });
 
 if (argv.includes('--http')) {
   const port = Number(opt('--port') || process.env.PORT || 8787), host = opt('--host') || '127.0.0.1';
-  const handler = toNodeHandler(createMcpHandler(() => build()));
+  if (!['127.0.0.1', '::1', 'localhost'].includes(host)) throw new Error('MCP listener must stay on loopback; use the authenticated fleet host adapter');
+  const handler = toNodeHandler(createMcpHandler(() => build(), { legacy: 'stateless' }));
   const validateHost = localhostHostValidation(), validateOrigin = localhostOriginValidation();
   const http = createServer((req, res) => {
     if (!validateHost(req, res) || !validateOrigin(req, res)) return;
-    if (new URL(req.url, 'http://x').pathname !== '/mcp') { res.writeHead(404).end(); return; }
+    const path = new URL(req.url, 'http://x').pathname;
+    if (path === '/healthz') { res.writeHead(200, { 'content-type': 'application/json' }).end(JSON.stringify({ ...queue.status(), ...deployment, capabilities: getCapabilities() })); return; }
+    if (path !== '/mcp') { res.writeHead(404).end(); return; }
     void handler(req, res);
   });
   http.listen(port, host, () => console.error(`msteams-personas MCP (Streamable HTTP) on http://${host}:${http.address().port}/mcp · artifacts in ${ARTIFACTS}`));
