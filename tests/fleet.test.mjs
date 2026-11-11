@@ -1,7 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { RenderQueue } from '../tools/render-queue.mjs';
-import { FleetRouter, originOf, supports, protocolHeaders } from '../tools/fleet-routing.mjs';
+import { FleetRouter, originOf, supports, protocolHeaders, failureResponse } from '../tools/fleet-routing.mjs';
+
+test('unavailable artifacts and uncertain renders are explicit tool results, not retryable transport errors', () => {
+  for (const message of ['artifact_origin_unavailable: bruh', 'render_result_uncertain: linuc']) {
+    const response = failureResponse({ method: 'tools/call', id: 'original-id' }, new Error(message));
+    assert.equal(response.id, 'original-id'); assert.equal(response.result.isError, true);
+    assert.equal(response.result.content[0].text, message); assert.equal(response.error, undefined);
+  }
+});
 
 test('HTTP proxy preserves modern MCP headers without forwarding caller credentials or sessions', () => {
   assert.deepEqual(protocolHeaders({ 'mcp-method': 'tools/call', 'mcp-name': 'render_project', 'mcp-protocol-version': '2026-07-28', 'mcp-param-test': 'value', authorization: 'private', host: 'external', 'mcp-session-id': 'old' }),

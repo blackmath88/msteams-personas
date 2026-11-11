@@ -20,6 +20,14 @@ export const isRender = message => message.method === 'tools/call' && ['render_p
 export const protocolHeaders = headers => Object.fromEntries(Object.entries(headers)
   .filter(([name, value]) => /^mcp-/i.test(name) && name.toLowerCase() !== 'mcp-session-id' && typeof value === 'string'));
 
+export function failureResponse(message, error) {
+  const detail = { ok: false, code: error.message.split(':')[0], message: error.message };
+  // Domain failures are tool results, not transport failures that a connector may retry.
+  return { jsonrpc: '2.0', id: message?.id ?? null, ...(message?.method === 'tools/call'
+    ? { result: { isError: true, content: [{ type: 'text', text: error.message }], structuredContent: detail } }
+    : { error: { code: -32002, message: error.message } }) };
+}
+
 export function supports(status, message) {
   const caps = status?.capabilities;
   if (!status?.ready || !caps || caps.capabilityVersion < 6) return false;
