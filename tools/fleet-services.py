@@ -16,7 +16,7 @@ root = Path(c['root'])
 coordinator = '--coordinator' in sys.argv
 programs = {
     'renderer': [c['node'], str(root / 'control/fleet-host.mjs'), str(config_path)],
-    'tunnel': [str(root / 'bin/tunnel-client'), 'run', '--profile-file', str(root / 'tunnel.json')],
+    'tunnel': [c['node'], str(root / 'control/fleet-tunnel.mjs'), str(config_path)],
 }
 if coordinator:
     programs['updater'] = [c['python'], str(root / 'control/fleet-update.py'), 'fleet', str(config_path)]
