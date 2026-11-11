@@ -77,6 +77,7 @@ def promote(config, candidate, live=True, postcheck=True):
                 # Keep draining while checking; smoke bypasses gateway and uses the private host.
                 api(config, '/admin/resume', 'POST')
                 run(config, [config['node'], root / 'control/fleet-smoke.mjs', config['_path'], root / 'evidence' / sha])
+                run(config, [config['node'], root / 'control/fleet-smoke.mjs', config['_path'], root / 'evidence' / (sha + '-modern'), 'host', 'modern'])
         if old and old != candidate:
             atomic_link(root, 'previous', old)
     except BaseException:

@@ -15,6 +15,11 @@ export function originOf(message, legacyHost = 'blackbird') {
 
 export const isRender = message => message.method === 'tools/call' && ['render_project', 'render_components'].includes(message.params?.name);
 
+// Modern MCP validates method/name/parameter headers against the self-contained body.
+// Preserve protocol metadata across both proxy hops, without copying caller auth or Host.
+export const protocolHeaders = headers => Object.fromEntries(Object.entries(headers)
+  .filter(([name, value]) => /^mcp-/i.test(name) && name.toLowerCase() !== 'mcp-session-id' && typeof value === 'string'));
+
 export function supports(status, message) {
   const caps = status?.capabilities;
   if (!status?.ready || !caps || caps.capabilityVersion < 6) return false;

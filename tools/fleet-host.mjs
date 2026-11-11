@@ -6,7 +6,7 @@ import { spawn } from 'node:child_process';
 import { readFileSync, realpathSync, existsSync, mkdirSync, openSync, closeSync } from 'node:fs';
 import { join } from 'node:path';
 import { timingSafeEqual } from 'node:crypto';
-import { FleetRouter, isRender } from './fleet-routing.mjs';
+import { FleetRouter, isRender, protocolHeaders } from './fleet-routing.mjs';
 
 const configPath = process.argv[2];
 const config = JSON.parse(readFileSync(configPath, 'utf8'));
@@ -70,12 +70,12 @@ async function proxy(req, res, target, data, authenticated = false) {
   const response = await fetch(target + '/mcp', {
     method: 'POST', body: data,
     headers: { 'content-type': 'application/json', accept: req.headers.accept || 'application/json, text/event-stream',
-      ...(req.headers['mcp-protocol-version'] ? { 'mcp-protocol-version': req.headers['mcp-protocol-version'] } : {}),
+      ...protocolHeaders(req.headers),
       ...(authenticated ? headers : {}) }, signal: AbortSignal.timeout(110_000)
   });
   // Buffer a complete exchange: no session ID or request state is stored on a gateway.
   const bytes = Buffer.from(await response.arrayBuffer());
-  res.writeHead(response.status, { 'content-type': response.headers.get('content-type') || 'application/json' }).end(bytes);
+  res.writeHead(response.status, { 'content-type': response.headers.get('content-type') || 'application/json', ...protocolHeaders(Object.fromEntries(response.headers)) }).end(bytes);
 }
 async function reload() {
   if (!draining || forwarding) throw new Error('drain_required');

@@ -84,6 +84,7 @@ python3 control/fleet-update.py rollback /absolute/config.json    # previous kno
 python3 control/fleet-update.py rollback-test /absolute/config.json # broken synthetic candidate
 node control/fleet-smoke.mjs /absolute/config.json /path/to/evidence
 node control/fleet-smoke.mjs /absolute/config.json /path/to/evidence gateway
+node control/fleet-smoke.mjs /absolute/config.json /path/to/evidence gateway modern
 ```
 
 Before retrying a quarantined SHA, diagnose its log and remove only its `rejected.json` after the
@@ -98,6 +99,9 @@ bounded queue, drain and queue expiry tests. `python3 tests/fleet-update-test.py
 promotion, previous-release preservation and concurrent lock exclusion. `fleet-smoke.mjs` verifies
 stateless HTTP discovery, both house PNGs, actual dimensions and SHA-256, resource reads, manifest
 origin and path-traversal refusal. Run these checks on each host and through the connected plugin.
+The `modern` variant exercises MCP 2026-07-28 and its required method/name headers through both
+proxy hops; the default exercises legacy stateless MCP. Forward protocol metadata without copying
+caller authentication, Host or session IDs.
 
 Controlled service tests stop only owned renderer services and restore them in `finally`/operator
 cleanup. Demonstrate Mini and Blackbird selection, NUC recovery, old-origin retrieval, missing-origin
