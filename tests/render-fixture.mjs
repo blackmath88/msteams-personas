@@ -18,7 +18,11 @@ const actual = {}, problems = [];
 let browser = '';
 
 for (const file of files) {
-  const m = await renderProject(JSON.parse(readFileSync(join(ROOT, 'examples', file), 'utf8')));
+  const project = JSON.parse(readFileSync(join(ROOT, 'examples', file), 'utf8'));
+  let m = await renderProject(project);
+  /* A cold machine can be too slow to start the browser the first time. That is not a layout
+     result, so try once more; a second failure is reported. */
+  if (!m.ok && m.diagnostics.some(d => /did not start/.test(d.message))) { console.log(`${file}: browser did not start, retrying once`); m = await renderProject(project); }
   if (!m.ok) { problems.push(`${file}: render failed at stage ${m.stage}: ${m.diagnostics.filter(d => d.severity === 'error').map(d => d.message).join(' | ')}`); continue; }
   browser = m.environment.userAgent;
   actual[file] = m.slides.map(s => ({ id: s.id, textBlocks: s.layout.textBlocks, lines: s.layout.lines, hash: s.layout.hash }));
