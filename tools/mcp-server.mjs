@@ -117,9 +117,9 @@ function build() {
   }));
 
   const ComponentArg = z.object({
-    scene: z.string().describe('Scene id from the project (teams-posts, teams-chat or planner).'),
-    type: z.string().optional().describe('Optional check: teams.channel, teams.chat or planner.board; follows from the scene.'),
-    view: z.string().optional().describe('teams.channel: window | posts · teams.chat: window | messages · planner.board: board | bucket. Default: the first.'),
+    scene: z.string().describe('Scene id from the project (teams-posts, teams-chat, teams-account-switcher or planner).'),
+    type: z.string().optional().describe('Optional check: teams.channel, teams.chat, teams.account-switcher or planner.board; follows from the scene.'),
+    view: z.string().optional().describe('teams.channel: window | posts · teams.chat: window | messages · teams.account-switcher: menu · planner.board: board | bucket. Default: the first.'),
     select: z.record(z.string(), z.unknown()).optional().describe('posts: {"postIds": [...]} · messages: {"messageIds": [...]} · bucket: {"bucket": "<name>"} (required). Omit to show all.'),
     width: z.number().optional().describe('posts/messages only: list width in app px (420–1080, default 640). Narrower wraps text, so the picture stays readable at a smaller size.'),
     marks: z.boolean().optional().describe('Show the numbered hint badges from the project (default false; anchors are returned either way).')

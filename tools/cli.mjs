@@ -12,7 +12,7 @@ const HELP = `Usage: node tools/cli.mjs <command> [options]
   catalogue [--domain <id>] [--team-pattern <id>] [--collection business|hochschule]
                                     researched personas, scenarios, evidence and status (JSON)
   capabilities                      supported profiles, limits and versions (JSON)
-  example [--kind tasks|workspace|workspace-houses] [--out project.json]      a complete valid example; business: municipal-opening-hours|service-appointment-change; also --kind weekly-meeting|shared-loop|grant-submission|event-handover|service-onboarding|peer-resource
+  example [--kind tasks|workspace|workspace-houses|teams-account-switcher] [--out project.json]      a complete valid example; business: municipal-opening-hours|service-appointment-change; also --kind weekly-meeting|shared-loop|grant-submission|event-handover|service-onboarding|peer-resource
   validate <project.json | ->       validate; prints {ok, errors, warnings}
   render <project.json | -> --out <dir> [--scale 1|2] [--timeout <ms>]
                                     write ordered PNGs and manifest.json; prints the manifest

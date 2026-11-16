@@ -16,13 +16,14 @@
 (function (root, factory) {
   var core = factory(typeof module === 'object' && module.exports ? require('./workspace-core.js') : root.WorkspaceCore,
     typeof module === 'object' && module.exports ? require('./workspace-examples.js') : root.WorkspaceExample,
-    typeof module === 'object' && module.exports ? require('./collaboration-core.js') : root.CollaborationCore);
+    typeof module === 'object' && module.exports ? require('./collaboration-core.js') : root.CollaborationCore,
+    typeof module === 'object' && module.exports ? require('./account-switcher-core.js') : root.AccountSwitcherCore);
   if (typeof module === 'object' && module.exports) module.exports = core;
   else root.ProjectCore = core;
-})(typeof window !== 'undefined' ? window : globalThis, function (Workspace, workspaceExample, Collaboration) {
+})(typeof window !== 'undefined' ? window : globalThis, function (Workspace, workspaceExample, Collaboration, AccountSwitcher) {
   var FORMAT = 'msteams-personas/project';
   var PROJECT_VERSION = 1;
-  var CAPABILITY_VERSION = 6;
+  var CAPABILITY_VERSION = AccountSwitcher.VERSION;
   var RENDERER_VERSION = 'v3';
   var MAX_INPUT = 200 * 1024;
   var ID = /^[a-z][a-z0-9-]{0,39}$/;
@@ -57,7 +58,7 @@
         label: 'Prinzip: Aufgaben, vorher und nachher', renderer: 'principle:tasks', needs: ['before', 'after'],
         budgets: { title: 60, question: 90, problem: 200, recommendation: 200, boundary: 200 }
       }
-    }, Workspace.profiles, Collaboration.profiles),
+    }, Workspace.profiles, Collaboration.profiles, AccountSwitcher.profiles),
     limits: { people: 8, workspacePeople: 16, tasks: 12, documents: 8, slides: 6, slideTitle: 70, slideAssumptions: 3, slideAssumptionText: 160, presenterNotes: 1200, prinzipLists: PRINZIP_LISTS }
   };
 
@@ -186,7 +187,7 @@
     if (!isObj(p)) { err('not-object', '', 'Das Projekt ist kein JSON-Objekt.'); return { ok: false, errors: errors, warnings: warnings }; }
     if (p.format !== FORMAT) err('format', 'format', 'Unbekanntes Format. Erwartet: «' + FORMAT + '».');
     if (p.projectVersion !== PROJECT_VERSION) err('project-version', 'projectVersion', 'Projektversion ' + JSON.stringify(p.projectVersion) + ' wird nicht unterstützt (erwartet ' + PROJECT_VERSION + ').');
-    if (![1, 2, 3, 4, 5, CAPABILITY_VERSION].includes(p.capabilityVersion)) err('capability-version', 'capabilityVersion', 'Fähigkeitsversion ' + JSON.stringify(p.capabilityVersion) + ' wird nicht unterstützt (erwartet 1 bis ' + CAPABILITY_VERSION + ').');
+    if (![1, 2, 3, 4, 5, 6, CAPABILITY_VERSION].includes(p.capabilityVersion)) err('capability-version', 'capabilityVersion', 'Fähigkeitsversion ' + JSON.stringify(p.capabilityVersion) + ' wird nicht unterstützt (erwartet 1 bis ' + CAPABILITY_VERSION + ').');
     var meta = p.meta;
     if (!isObj(meta)) { err('meta', 'meta', 'Angaben zur Abfolge («meta») fehlen oder sind kein Objekt.'); meta = {}; }
     reqStr(meta, 'title', 'meta', 'meta-title', 'Die Abfolge braucht einen Titel.');
@@ -275,12 +276,13 @@
     });
     Workspace.check(p, err);
     Collaboration.check(p, err);
+    AccountSwitcher.check(p, err);
     scenes.forEach(function (e) {
       var sc = e.x, path = 'scenes[' + e.i + ']', prof = str(sc.profile) && Object.prototype.hasOwnProperty.call(CAPABILITIES.profiles, sc.profile) ? CAPABILITIES.profiles[sc.profile] : null;
       if (!prof) { err('unknown-profile', path + '.profile', 'Szene «' + diagnosticText(sc.id) + '»: Ansicht «' + diagnosticText(sc.profile) + '» wird nicht unterstützt. Möglich: ' + Object.keys(CAPABILITIES.profiles).join(', ') + '.'); return; }
       if (sc.profile === 'teams-chat' && p.capabilityVersion === 1) err('profile-version', path + '.profile', 'Teams: Chat zu zweit braucht capabilityVersion 2.');
       if (['todo', 'planner-task'].indexOf(sc.profile) >= 0 && p.capabilityVersion < 3) err('profile-version', path + '.profile', prof.label + ' braucht capabilityVersion 3.');
-      if (Workspace.isProfile(sc.profile) || Collaboration.isProfile(sc.profile)) return;
+      if (Workspace.isProfile(sc.profile) || Collaboration.isProfile(sc.profile) || AccountSwitcher.isProfile(sc.profile)) return;
       var B = prof.budgets;
       reqStr(sc, 'team', path, 'scene-team', 'Szene «' + diagnosticText(sc.id) + '» braucht einen Teamnamen.');
       if (len(sc.team) > B.team) warn('long', path + '.team', 'Teamname ist länger als ' + B.team + ' Zeichen.');
@@ -431,6 +433,7 @@
   /* Scene → view model; slides add only their teaching text. Components compile scenes directly. */
   function compileScene(p, sceneId, teaching) {
     var sc = idx(p.scenes)[sceneId]; if (!sc) return null;
+    if (AccountSwitcher.isProfile(sc.profile)) return { title: p.meta.title, accountSwitcher: AccountSwitcher.model(p, sc) };
     var P = idx(p.people), D = idx(p.documents || []);
     var people = p.people.map(function (x, i) { return { id: x.id, idx: i, original: x.name, name: x.name, role: x.role || '', external: false, outside: false }; });
     var byId = idx(people);
@@ -522,6 +525,7 @@
   /* What the existing slide composer needs for this slide: params, kind and principle meta. */
   function slidePlan(p, slideIndex) {
     var sl = p.slides[slideIndex], sc = sl && idx(p.scenes)[sl.scene]; if (!sc) return null;
+    if (AccountSwitcher.isProfile(sc.profile)) return { params: {}, kind: 'account-switcher', meta: null };
     if (Collaboration.isProfile(sc.profile)) return { params: {}, kind: 'collaboration', meta: null };
     if (Workspace.isProfile(sc.profile)) return { params: { mode: Workspace.hasTab(sc.profile) ? 'szene' : 'prinzip', sub: 'workspace', profile: sc.profile, tab: sc.tab, key: p.meta.id + '-' + sl.id }, kind: 'workspace', meta: null };
     if (sc.profile === 'prinzip-tasks') {
@@ -570,6 +574,11 @@
         board: { label: 'Ganzes Planner-Fenster', select: null },
         bucket: { label: 'Ein Bucket mit seinen Aufgaben', select: 'bucket', required: true }
       }
+    },
+    'teams.account-switcher': {
+      profile: 'teams-account-switcher', label: 'Teams: Konten und Organisationen',
+      teachingUses: ['Gastorganisation innerhalb desselben Kontos wählen', 'Ein anderes angemeldetes Konto wählen'],
+      views: { menu: { label: 'Profilmenü mit Organisationen und Konten', select: null } }
     }
   };
   /* Effective text size on the slide = text px × 72 × placed width ÷ picture width (inches, pt). */
@@ -693,6 +702,7 @@
     lines.push('- Ab capabilityVersion 6: sharedComponents [{id,kind:meeting-notes|table,title,owner,storage:onedrive}]. Vollständige Zustände in states[].components[componentId]. Für meeting-notes: agenda und decisions als Listen [{id,text,by}], taskIds als Referenzen auf Aufgaben desselben Zustands (list plan, owner und due nötig). Für table: rows [{id,text,by}], keine taskIds. Höchstens 3 Agendaeinträge, 2 Entscheide, 4 Aufgaben oder 4 Tabellenzeilen; je 100 Zeichen.');
     lines.push('- meeting-notes: team, component, state, viewer, meeting (bis 70 Zeichen), accessConfirmed:true. loop-component: team, component, state, viewer, partner, surface teams-chat|outlook, accessConfirmed:true. Titel und Inhalte nur am gemeinsamen Objekt, nie in Szenen duplizieren. Notizenplan entsteht beim ersten Aufgabeneintrag; Mein Tag bleibt persönliche Auswahl.');
     lines.push('- workflow: team, title, question, boundary, steps (2–5) [{id,actor,tool,action,artefact,relation:manual|link|sync,evidence}]. sync nur mit evidence loop-planner|planner-todo|loop-surfaces und dokumentierten Voraussetzungen. Dies sind Erklärbilder, keine Live-Integrationen. Business-Beispiele: municipal-opening-hours (interne Vorbereitung, Freigabe offen), service-appointment-change (Übernahme bestätigt, Auftrag offen). Katalogfilter: domain und teamPattern; Einzelarbeit bleibt verfügbar. Weitere Beispielprojekte: CLI catalogue und example --kind weekly-meeting oder shared-loop; MCP get_catalogue und get_example.');
+    lines.push('- Ab capabilityVersion 7: teams-account-switcher nutzt teamsAccounts mit {id,kind:work|personal,name,email,organisations:[{id,name,role:home|guest}]}. Die Szene wählt account und organisation per ID. highlightOrganisation kann eine andere Organisation desselben Kontos hervorheben. Nur fiktive E-Mail-Adressen unter example.org, example.com oder example.net. Beispiel: get_example({kind:"teams-account-switcher"}).');
     lines.push('- Behaupte nicht, du hättest die Folien gerendert oder das JSON geprüft. Die Prüfung macht die Website beim Import.');
     lines.push('- Kein HTML, kein CSS, kein Script, keine Bild-URLs. Texte sind reiner Text.');
     lines.push('');
@@ -755,7 +765,7 @@
   return {
     FORMAT: FORMAT, STATE_IDS: STATE_IDS.slice(), PROJECT_VERSION: PROJECT_VERSION, CAPABILITY_VERSION: CAPABILITY_VERSION, RENDERER_VERSION: RENDERER_VERSION, MAX_INPUT: MAX_INPUT,
     capabilities: function () { return copy(CAPABILITIES); },
-    template: template, workspaceExample: workspaceExample, blank: blank, parseInput: parseInput, validate: validate, summary: summary,
+    template: template, accountSwitcherExample: AccountSwitcher.example, workspaceExample: workspaceExample, blank: blank, parseInput: parseInput, validate: validate, summary: summary,
     compile: compile, compileScene: compileScene, slidePlan: slidePlan, fileName: fileName, planTasks: planTasks,
     COMPONENT_VERSION: COMPONENT_VERSION, components: componentCatalogue, validateComponents: validateComponents, componentFile: componentFile,
     authoringPack: authoringPack, repairPrompt: repairPrompt, replacePersonRef: replacePersonRef, newId: newId, serialise: serialise, copy: copy

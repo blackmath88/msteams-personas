@@ -22,7 +22,7 @@ try {
   const catalogue=(await call('get_catalogue',{collection:'hochschule'})).structuredContent;
   assert.equal(catalogue.personas.length,4); assert.equal(catalogue.scenarios.length,12);
   checks.push('MCP discovers four personas, twelve statuses and full source records');
-  const caps=(await call('get_capabilities')).structuredContent; assert.equal(caps.capabilityVersion,6);
+  const caps=(await call('get_capabilities')).structuredContent; assert.equal(caps.capabilityVersion,7);
   for(const s of R.scenarios.filter(s=>s.status==='renderable')) {
     const p=(await call('get_example',{kind:s.id})).structuredContent;
     assert.deepEqual(p,R.project(s.id)); assert.equal((await call('validate_project',{project:p})).structuredContent.ok,true);

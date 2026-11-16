@@ -41,7 +41,7 @@ await client.connect(new StdioClientTransport({ command: process.execPath, args:
 const tools = (await client.listTools()).tools.map(t => t.name);
 check('mcp: render_components discovered', tools.includes('render_components'), tools.join(', '));
 const caps = (await client.callTool({ name: 'get_capabilities', arguments: {} })).structuredContent;
-check('mcp: capabilities list component types', Object.keys(caps.components.types).join() === 'teams.channel,teams.chat,planner.board' && caps.components.readability.minTextPt === 12);
+check('mcp: capabilities list component types', Object.keys(caps.components.types).join() === 'teams.channel,teams.chat,planner.board,teams.account-switcher' && caps.components.readability.minTextPt === 12);
 
 const r = await client.callTool({ name: 'render_components', arguments: { project, components: specs } });
 const m = r.structuredContent;
@@ -70,6 +70,24 @@ writeFileSync(join(EV, 'mcp-stdio', 'manifest.json'), JSON.stringify(manifest, n
 const bad = await client.callTool({ name: 'render_components', arguments: { project, components: [{ scene: 'sc-kanal', view: 'posts', select: { postIds: ['q9'] } }, { scene: 'sc-prinzip' }, { scene: 'sc-plan', view: 'bucket' }] } });
 const codes = bad.structuredContent.diagnostics.map(d => d.code + '@' + d.path);
 check('mcp: located errors for unknown id, unsupported scene, missing bucket', bad.isError && codes.includes('unknown-entity@components[0].select.postIds[0]') && codes.includes('no-component@components[1].scene') && codes.includes('select-bucket@components[2].select.bucket'), codes.join(' '));
+const accountExample = await client.callTool({ name: 'get_example', arguments: { kind: 'teams-account-switcher' } });
+const accountProject = accountExample.structuredContent;
+const accountResponse = await client.callTool({ name: 'render_components', arguments: {
+  project: accountProject, components: [{ scene: 'uni-basel' }, { scene: 'als-gast' }, { scene: 'privates-konto' }]
+} });
+const accountManifest = accountResponse.structuredContent;
+check('account switcher: three menu states render', !accountResponse.isError && accountManifest.ok && accountManifest.components.length === 3, JSON.stringify(accountManifest.diagnostics));
+if (accountManifest.ok) {
+  const [home, guest, personal] = accountManifest.components;
+  check('account switcher: organisation and account are separately anchored',
+    home.anchors.some(a => a.entity === 'partner' && a.kind === 'organisation') &&
+    home.anchors.some(a => a.entity === 'privat-konto' && a.kind === 'account') &&
+    guest.anchors.some(a => a.entity === 'uni-konto' && a.kind === 'account') &&
+    personal.anchors.some(a => a.entity === 'uni-konto' && a.kind === 'account'));
+  check('account switcher: compact crop with readable text',
+    home.excerpt && home.width === 960 && home.height === 810 &&
+    home.anchors.every(a => inUnit(a.box)) && home.text.minPlacedWidthIn > 0);
+}
 await client.close();
 
 /* ---------- 2. CLI, same specs ---------- */

@@ -16,6 +16,7 @@
   var ATTRIBUTION = 'Fiktives Beispiel · nachgebildete Oberfläche, kein Produkt von Microsoft';
   /* Per component type: entity elements, the list that holds them, and the essential text. */
   var DOM = {
+    'teams.account-switcher': { item: '.as-entity', text: '.as-essential', kind: 'account' },
     'teams.channel': { item: '.t-post', list: '.t-posts', text: '.t-tx', kind: 'post' },
     'teams.chat': { item: '.c-msg', list: '.c-msgs', text: '.c-bub > p:last-child', kind: 'message' },
     'planner.board': { item: '.p-card', list: '.p-board', text: '.p-ct', kind: 'task' }
@@ -24,12 +25,13 @@
 
   function diag(code, message, extra) { return Object.assign({ code: code, path: '', message: message, severity: 'error' }, extra || {}); }
   function toDataUrl(b) { return new Promise(function (r, j) { var f = new FileReader(); f.onload = function () { r(f.result); }; f.onerror = function () { j(new Error('PNG konnte nicht gelesen werden')); }; f.readAsDataURL(b); }); }
-  function visible(el) { return el.offsetParent !== null && el.getBoundingClientRect().height > 0; }
+  function visible(el) { return (el instanceof SVGElement || el.offsetParent !== null) && el.getBoundingClientRect().height > 0; }
   function round(n) { return Math.round(n * 10000) / 10000; }
 
   function context(p, c) {
     var sc = p.scenes.filter(function (s) { return s.id === c.scene; })[0];
     if (c.type === 'teams.channel') return 'Microsoft Teams · ' + sc.team + ' › ' + (sc.channel || 'Allgemein');
+    if (c.type === 'teams.account-switcher') return 'Microsoft Teams · Konten und Organisationen';
     if (c.type === 'teams.chat') return 'Microsoft Teams · Chat';
     return 'Planner · ' + sc.team + (c.view === 'bucket' ? ' › ' + c.select : '');
   }
@@ -68,7 +70,7 @@
     Array.prototype.forEach.call(app.querySelectorAll(D.item + '[data-entity]'), function (el) {
       if (!visible(el)) return;
       var b = norm(el); if (!inside(b)) return;
-      anchors.push({ entity: el.getAttribute('data-entity'), kind: D.kind, box: b });
+      anchors.push({ entity: el.getAttribute('data-entity'), kind: el.getAttribute('data-entity-kind') || D.kind, box: b });
     });
     Array.prototype.forEach.call(app.querySelectorAll('.p-bucket[data-bucket]'), function (el) {
       var b = norm(el); if (inside(b) && el.getAttribute('data-bucket')) anchors.push({ entity: el.getAttribute('data-bucket'), kind: 'bucket', box: b });
@@ -80,7 +82,8 @@
 
   function renderOne(p, c, host, scale) {
     var D = DOM[c.type], vm = PC.compileScene(p, c.scene);
-    var html = vm && A.app(vm, PC.capabilities().profiles[c.profile].renderer, { annot: c.marks });
+    var menu = c.type === 'teams.account-switcher' && vm ? root.AccountSwitcherView.render(vm.accountSwitcher) : null;
+    var html = menu ? menu.svg : vm && A.app(vm, PC.capabilities().profiles[c.profile].renderer, { annot: c.marks });
     if (!html) return Promise.reject(new Error('Szene «' + c.scene + '» konnte nicht gezeichnet werden.'));
     host.innerHTML = '<div class="slide slide-cmp" style="width:' + A.W + 'px;height:' + A.H + 'px;background:#fff"><div class="sl-in" style="width:' + A.W + 'px;height:' + A.H + 'px">' + html + '</div></div>';
     var frame = host.firstChild, inner = frame.firstChild, app = inner.firstElementChild;
@@ -89,7 +92,7 @@
     var list = c.width && app.querySelector(D.list);
     if (list) { list.style.width = c.width + 'px'; list.style.flex = '1 0 auto'; list.style.alignSelf = 'flex-start'; }
     var problems = X.fitIssues(frame);
-    var box = cropBox(app, c, D);
+    var box = menu ? { x: 0, y: 0, w: menu.width, h: menu.height } : cropBox(app, c, D);
     if (!box) return Promise.reject(new Error('Für «' + c.view + '» wurde nichts gefunden.'));
     var m = measure(app, box, D);
     frame.style.width = box.w + 'px'; frame.style.height = box.h + 'px';

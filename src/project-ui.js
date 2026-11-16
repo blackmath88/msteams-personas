@@ -249,6 +249,8 @@
           var t = 'slides.' + i + '.teaching.', tc = sl.teaching || {};
           body = field('Titel', t + 'title', tc.title, { max: 60 }) + field('Frage', t + 'question', tc.question, { max: 90 }) + field('Situation', t + 'problem', tc.problem, { area: true, rows: 2, max: 200 }) +
             field('Empfehlung', t + 'recommendation', tc.recommendation, { area: true, rows: 2, max: 200 }) + field('Grenze', t + 'boundary', tc.boundary, { area: true, rows: 2, max: 200 });
+        } else if (sc && root.AccountSwitcherCore.isProfile(sc.profile)) {
+          body = '<p class="pj-small">Konten, Organisationen und die aktuelle Auswahl im Projekt-JSON bearbeiten.</p>';
         } else if (sc && root.CollaborationCore.isProfile(sc.profile)) {
           body = '<p class="pj-small">Diese Ansicht wird vollständig gerendert. Komponenten, Momentaufnahmen und Arbeitsflussschritte bleiben hier erhaltene Metadaten. Zum Ändern Projekt-JSON sichern, bearbeiten und erneut importieren.</p>' + field('Team / Plan', 'scenes.' + si + '.team', sc.team);
         } else body = '<p class="pj-err">Ansicht nicht unterstützt.</p>';
@@ -258,7 +260,7 @@
           body + '<p class="pj-f"><label for="f-sa-' + i + '">Voraussetzungen auf dieser Folie, eine pro Zeile (leer: alle der Abfolge)</label><textarea id="f-sa-' + i + '" data-slide-lines="' + i + '" rows="2">' + esc((sl.assumptions || []).join('\n')) + '</textarea></p>' +
           field('Notizen für die Moderation', 'slides.' + i + '.presenterNotes', sl.presenterNotes, { area: true, rows: 2 }) + '</li>';
       }).join('') + '</ol>' +
-      '<p class="pj-f"><label for="pj-addp">Folie hinzufügen</label><select id="pj-addp">' + Object.keys(prof).filter(function (k) { return !root.WorkspaceCore.isProfile(k) && !root.CollaborationCore.isProfile(k); }).map(function (k) { return '<option value="' + k + '">' + esc(prof[k].label) + '</option>'; }).join('') + '</select> <button type="button" class="btn sm" data-op="add-slide">Hinzufügen</button></p>' +
+      '<p class="pj-f"><label for="pj-addp">Folie hinzufügen</label><select id="pj-addp">' + Object.keys(prof).filter(function (k) { return !root.WorkspaceCore.isProfile(k) && !root.CollaborationCore.isProfile(k) && !root.AccountSwitcherCore.isProfile(k); }).map(function (k) { return '<option value="' + k + '">' + esc(prof[k].label) + '</option>'; }).join('') + '</select> <button type="button" class="btn sm" data-op="add-slide">Hinzufügen</button></p>' +
       '<p class="pj-small">Noch nicht unterstützt: weitere Ansichten (Outlook, Dateien), Antworten auf Beiträge, Bilder und eigene Layouts.</p></fieldset>' +
       '</div><div class="pj-prev" id="pj-prev" aria-label="Vorschau der Folien">' + previews(p) + '</div></div></section>';
     return html;

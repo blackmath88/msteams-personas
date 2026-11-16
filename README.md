@@ -18,6 +18,17 @@ The complete V3 trainer library is on `main` (merged at `300e006`). Open `index.
 
 See [V3 handoff](docs/V3-BUILD-HANDOFF.md) for evidence, supported coverage and limitations. Independent model review passed 17/17; the builder reports 110/110 Chromium checks. New-project authoring, CLI and MCP are described below.
 
+## Teams-Profilmenü
+
+Das Profil `teams-account-switcher` zeigt die aktive Organisation und weitere Organisationen desselben Kontos. Andere angemeldete Konten stehen separat darunter. Das Beispiel enthält Universität Basel, eine fiktive Gastorganisation und ein separates Privatkonto mit Adressen aus reservierten Beispieldomains. Ein Organisationswechsel behält dieselbe Konto-ID bei.
+
+```sh
+node tools/cli.mjs example --kind teams-account-switcher --out kontowechsel.json
+node tools/cli.mjs component kontowechsel.json --scene uni-basel --view menu --out profilmenue
+```
+
+MCP: `get_example({kind: "teams-account-switcher"})` und `render_components` mit `{scene: "uni-basel", type: "teams.account-switcher", view: "menu"}`. Die Szenen `als-gast` und `privates-konto` zeigen den Zustand nach einem Organisations- bzw. Kontowechsel. Die Komponente liefert getrennte Anker für Profilbild, Organisationen und Konten. Das Profil braucht capabilityVersion 7. Der Webeditor zeigt Vorschau und Export, bearbeitet werden die Konten im Projekt-JSON.
+
 ## Verwaltung und Business
 
 Zwei neue [Business-Beispiele](index.html#/beispiele) zeigen interne Servicezeiten-Abstimmung in einer Gemeinde und die bestätigte Übernahme eines verschobenen Servicebesuchs. Zehn vollständige PNG-Folien, zwei zusätzliche Recherchebriefe und Quellen unterscheiden fiktive Geschichten von dokumentierter Praxis. Die [Review-Galerie](docs/business-review/index.html) und der [Handoff](docs/BUSINESS-REFERENCE-HANDOFF.md) zeigen Ergebnis, Prüfungen und offene Grenzen.
