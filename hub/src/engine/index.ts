@@ -14,6 +14,8 @@ import '../../../src/m365-more.css';
 import '../../../src/workspace.css';
 import '../../../src/collaboration.css';
 
+import '../../../worlds.js';
+import '../../../src/library.js';
 import '../../../src/views.js';
 import '../../../src/m365.js';
 import '../../../src/m365-more.js';
@@ -31,7 +33,7 @@ import '../../../src/project-core.js';
 export type Project = {
   meta: { id?: string; title: string; assumptions?: string[] };
   scenes: { id: string; profile: string }[];
-  slides: { id: string; scene: string; title?: string }[];
+  slides: { id: string; scene: string; title?: string; presenterNotes?: string }[];
   [key: string]: unknown;
 };
 type ViewModel = Record<string, unknown>;
@@ -51,6 +53,34 @@ type Engine = {
   Export: { compose(vm: ViewModel, params: Record<string, unknown>, kind: string, meta: unknown): string | null; W: number; H: number };
 };
 const engine = window as unknown as Engine;
+
+/* ---------- content the repository already holds ---------- */
+export type World = {
+  id: string; name: string; tagline: string; tension: string; unit_type?: string; rhythm?: string; size: number;
+  people: { id: string; name: string; role: string; focus?: string }[];
+  collaboration?: { close_internal: string[]; occasional_internal: string[]; external: string[] };
+  boundary?: string; consulting_questions?: string[];
+};
+export type ResearchPersona = {
+  id: string; name: string; archetype: string; size: string; rhythm: string; purpose: string; roles: string[];
+  boundary: string; friction: string; question: string; people: [string, string][]; organisation?: string;
+};
+export type ResearchScenario = {
+  id: string; persona: string; title: string; objective: string; trigger: string; friction: string; outcome: string;
+  question: string; boundary: string; prerequisites: string[]; status: string;
+};
+type Data = {
+  HE_WORLDS: { worlds: World[]; modules: { id: string; nr: number; title: string; question: string }[] };
+  LIB: { business: World & { short?: string } };
+  ResearchCatalogue: { personas: ResearchPersona[]; scenarios: ResearchScenario[]; project(id: string): Project };
+};
+const data = window as unknown as Data;
+export const Content = {
+  worlds: data.HE_WORLDS.worlds,
+  themes: data.HE_WORLDS.modules,
+  businessWorld: data.LIB.business,
+  research: data.ResearchCatalogue
+};
 
 export const ProjectCore = engine.ProjectCore;
 

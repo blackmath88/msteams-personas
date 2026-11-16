@@ -2,7 +2,7 @@
 
 Reader-facing practice hub: a team persona first, then its workspace, then situations and tools that end in team agreements. The existing website in the repository root stays as it is; this is a second front on the same engine.
 
-Status: base to build on. Content is placeholder text from the Unibas example deck. Prepared for Cloudflare, not deployed.
+Status: reads the repository's teams and stories; editorial wording is in draft. Prepared for Cloudflare, not deployed.
 
 ## Run
 
@@ -54,30 +54,47 @@ npx wrangler deploy
 
 The renderer files are browser scripts that attach to `window`. A small plugin in `vite.config.ts` wraps them so they behave as they do behind a `<script>` tag.
 
+## Content
+
+Teams, situations and screens are read from the repository's data files; nothing is copied.
+
+| Shown in the hub | Source |
+| --- | --- |
+| 12 teams, 8 of them in the switcher, business first | `worlds.js`, `src/library.js`, `src/research-catalogue.js` |
+| 11 situations with 52 screens | `src/research-catalogue.js` and `examples/*.project.json` |
+| 6 themes | `worlds.js` (`modules`) |
+| Sector, featured teams, theme, agreement, transfer question | `src/content/teams.ts`, `src/content/editorial.ts` (editorial layer of the hub) |
+
+What is missing, and where to add it: [CONTENT-TODO.md](CONTENT-TODO.md). In the pages, a dashed «Inhalt fehlt» box marks a gap and an «Entwurf» tag marks wording that still needs review.
+
 ## Addresses
 
 | Address | Page |
 | --- | --- |
-| `#/<team>` | Landing, seen from one team |
-| `#/<team>/basis?schritt=3` | Team and workspace, one step at a time |
-| `#/<team>/situation/<id>?schritt=vereinbarung` | A situation in five beats |
+| `#/<team>` | Landing with three doors |
+| `#/<team>/team` | Team persona |
+| `#/<team>/arbeitsbereich?schritt=2` | House, room, shelf |
+| `#/<team>/situationen?thema=planner&q=…` | All situations by theme, with a text filter |
+| `#/<team>/situation/<id>?schritt=szene&bild=2` | A situation in five beats; «Szene» has one address per screen |
 | `#/<team>/werkzeug/<id>` | A tool: the agreements that involve it |
+| `#/<team>/vereinbarungen` | Adopted agreements, printable |
+| `#/<team>/teamskizze` | Team sketch (placeholder) |
+| `#/<team>/teams` | All teams by sector |
 
-Team and step are part of the address, so a link can point to an exact step.
+The team is always the first part of the address. It orders the situations (own team, similar setting, other) and owns the adopted agreements; it never hides a situation, and a situation always shows its own team.
 
 ## Where things are
 
 | Path | Content |
 | --- | --- |
-| `src/content/teams.ts` | Team personas |
-| `src/content/modules.ts` | Situations, tools, the five beats |
-| `src/routes/` | Landing, Basis, Situation, ToolPage |
-| `src/components/` | Shell (sidebar), Scaled (screens), Stepper |
+| `src/engine/index.ts` | Bridge to the renderers and data files |
+| `src/content/teams.ts` | Teams from the data files, plus sector and featured selection |
+| `src/content/stories.ts` | Situations, screens, tools, ordering by closeness |
+| `src/content/editorial.ts` | Theme, agreement and transfer question per situation |
+| `src/routes/` | One file per page |
+| `src/components/` | Shell (sidebar), Scaled (screens), Stepper, StoryCard, Todo |
 | `src/agreements.ts` | Adopted agreements per team, stored in the browser |
 
 ## Known gaps
 
-- Only the administration team has workspace views; only «Die Teamsitzung» has a scene.
-- The house views are shown as complete slides, including the slide heading. A house component without slide chrome does not exist in the engine yet.
-- Personas and situations here are separate from the portable projects; a module cannot yet reference a shared persona and setup.
-- Search, the team agreement sheet and tests are not built.
+See [CONTENT-TODO.md](CONTENT-TODO.md). In short: all agreement sentences are drafts, only one team has house views, the older library with Outlook, Explorer and SharePoint is not connected, and the team sketch, hub-wide search and tests are not built.
