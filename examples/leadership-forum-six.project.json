@@ -229,31 +229,57 @@
     {
       "id": "s-1",
       "scene": "sc-chat",
+      "title": "Im Chat abgesprochen: Wer weiss davon?",
+      "assumptions": [
+        "Fiktive Lehrsituation für das Leadership Forum 2027."
+      ],
       "presenterNotes": "Einstieg, ca. 1 Minute. Campus & People Development organisiert das Leadership Forum. Frage: Wer weiss nach dieser Absprache, was Daniel tun soll? Daniel sieht diesen Chat nicht. Die Aufgaben existieren bisher nur in eigenen Listen. Kurze Absprachen im Chat sind sinnvoll. Eine Verpflichtung für andere muss jedoch im gemeinsamen Arbeitskontext sichtbar werden."
     },
     {
       "id": "s-2",
       "scene": "sc-kanal",
+      "title": "Der Kanal hält das Ergebnis fest – aber wer macht was?",
+      "assumptions": [
+        "Ein Projektteam «Leadership Forum 2027» mit Kanal «Organisation» und gemeinsamem Plan besteht bereits."
+      ],
       "presenterNotes": "Ca. 1 Minute. Sophie hält das Sitzungsergebnis im Projektkanal fest. Daniel bestätigt den Versandtermin. Frage: Können wir hier auf einen Blick sehen, ob der Raum schon bestätigt ist? Der Kanal erhält den Gesprächskontext. Die drei Aufgaben erfassen wir anschliessend manuell in Planner. Die Folie zeigt keine automatische Übertragung."
     },
     {
       "id": "s-3",
       "scene": "sc-plan",
+      "title": "Im Plan hat jede Pendenz Person und Termin",
+      "assumptions": [
+        "Ein Projektteam «Leadership Forum 2027» mit Kanal «Organisation» und gemeinsamem Plan besteht bereits.",
+        "Die Übertragung aus Chat und Kanal in Planner erfolgt in dieser Übung von Hand."
+      ],
       "presenterNotes": "Ca. 1 Minute. Was, wer, bis wann und wo? Mara: Raum bis 6. November. Sophie: Referierende bis 6. November. Daniel: Einladung bis 9. November. Buckets folgen Arbeitsbereichen. Bei der Einladung zeigt die Karte dieselbe Checkliste wie die nächste Detailansicht."
     },
     {
       "id": "s-detail",
       "scene": "sc-detail",
+      "title": "Dieselbe Aufgabe im Detail",
+      "assumptions": [
+        "Die Übertragung aus Chat und Kanal in Planner erfolgt in dieser Übung von Hand."
+      ],
       "presenterNotes": "Ca. 1 Minute. Dieselbe Einladung wie auf dem Board. Daniel ist verantwortlich, Termin bleibt 9. November. Die Checkliste enthält Teilschritte. Ein abgehakter Punkt setzt den Fortschritt nicht automatisch. In dieser Momentaufnahme hat Daniel In Bearbeitung gewählt. Der Kommentar bewahrt die Freigabe bei der Aufgabe."
     },
     {
       "id": "s-todo",
       "scene": "sc-todo",
+      "title": "Daniels Tag: geteilte und persönliche Aufgaben",
+      "assumptions": [
+        "Die persönliche To-Do-Liste ist nicht geteilt.",
+        "Daniel nutzt dasselbe Arbeitskonto in Planner und To Do, die Planner-Verbindung ist aktiviert.",
+        "Daniel hat die gezeigten Aufgaben bewusst zu Mein Tag hinzugefügt. Die gemeinsame Aufgabe bleibt dieselbe Aufgabe im Plan."
+      ],
       "presenterNotes": "Ca. 1 Minute. Daniel hat bewusst zwei Aufgaben zu Mein Tag hinzugefügt. Die Sitzungsnotizen sind persönlich und nicht geteilt. Die Einladung ist weiterhin dieselbe gemeinsame Planner-Aufgabe mit gleichem Termin, keine neue Kopie. Voraussetzungen: gleiches Arbeitskonto und aktivierte Planner-Verbindung. Mein Tag ist eine persönliche Auswahl. Hier keine universelle automatische Synchronisation beliebiger Plantypen versprechen."
     },
     {
       "id": "s-4",
       "scene": "sc-prinzip",
+      "assumptions": [
+        "Fiktive Lehrsituation für das Leadership Forum 2027."
+      ],
       "presenterNotes": "Ca. 2 Minuten. Drei Pendenzen wechseln aus den persönlichen Listen in den gemeinsamen Plan. Daniels Sitzungsnotizen bleiben persönlich. Die Einladung erscheint in seinem Mein Tag als dieselbe zugewiesene Aufgabe. Frage: Bei welcher eigenen Aufgabe müssen andere den Stand kennen? Den Plan im Teammeeting gemeinsam durchgehen.",
       "teaching": {
         "title": "Teamrelevante Pendenzen werden sichtbar",

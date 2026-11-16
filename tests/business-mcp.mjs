@@ -8,6 +8,11 @@ import {tmpdir} from 'node:os';
 import {createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import R from '../src/research-catalogue.js';
+import {renderProject} from '../tools/render.mjs';
+/* The same project rendered by the CLI operation on this machine, in this run. Comparing with
+   hashes committed from another machine would test the machine, not the code. */
+const cliRender = async project => { const d = mkdtempSync(join(tmpdir(), 'mtp-cli-')); try { const m = await renderProject(project, { outDir: d }); assert.equal(m.ok, true, JSON.stringify(m.diagnostics)); return m; } finally { rmSync(d, { recursive: true, force: true }); } };
+
 const temp=mkdtempSync(join(tmpdir(),'business-mcp-')),client=new Client({name:'business-check',version:'1.0'}),checks=[];
 const call=(name,args={})=>client.callTool({name,arguments:args});
 try{
@@ -23,7 +28,7 @@ try{
     assert.ok(caps.examples.includes(id));const p=(await call('get_example',{kind:id})).structuredContent;
     assert.deepEqual(p,R.project(id));assert.equal((await call('validate_project',{project:p})).structuredContent.ok,true);
     const r=await call('render_project',{project:p}),m=r.structuredContent;assert.equal(m.ok,true,JSON.stringify(m));
-    const cli=JSON.parse(readFileSync(resolve('docs/business-review',id,'manifest.json')));
+    const cli=await cliRender(p);
     assert.equal(m.slides.length,5);
     for(const [i,sl]of m.slides.entries()){
       const content=(await client.readResource({uri:sl.uri})).contents[0],bytes=Buffer.from(content.blob,'base64');

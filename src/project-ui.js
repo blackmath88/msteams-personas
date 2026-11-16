@@ -254,7 +254,9 @@
         } else body = '<p class="pj-err">Ansicht nicht unterstützt.</p>';
         return '<li class="pj-slide"><h3>Folie ' + (i + 1) + ' · ' + esc(pr ? pr.label : (sc ? sc.profile : '?')) + '</h3>' +
           '<p class="pj-move"><button type="button" class="btn sm" data-op="up" data-i="' + i + '"' + (i ? '' : ' disabled') + ' aria-label="Folie ' + (i + 1) + ' nach oben">↑</button><button type="button" class="btn sm" data-op="down" data-i="' + i + '"' + (i < p.slides.length - 1 ? '' : ' disabled') + ' aria-label="Folie ' + (i + 1) + ' nach unten">↓</button><button type="button" class="btn sm" data-op="del-slide" data-i="' + i + '" aria-label="Folie ' + (i + 1) + ' entfernen">Entfernen</button></p>' +
-          body + field('Notizen für die Moderation', 'slides.' + i + '.presenterNotes', sl.presenterNotes, { area: true, rows: 2 }) + '</li>';
+          (sc && sc.profile !== 'prinzip-tasks' ? field('Folientitel (leer: Titel der Abfolge)', 'slides.' + i + '.title', sl.title, { max: PC.capabilities().limits.slideTitle }) : '') +
+          body + '<p class="pj-f"><label for="f-sa-' + i + '">Voraussetzungen auf dieser Folie, eine pro Zeile (leer: alle der Abfolge)</label><textarea id="f-sa-' + i + '" data-slide-lines="' + i + '" rows="2">' + esc((sl.assumptions || []).join('\n')) + '</textarea></p>' +
+          field('Notizen für die Moderation', 'slides.' + i + '.presenterNotes', sl.presenterNotes, { area: true, rows: 2 }) + '</li>';
       }).join('') + '</ol>' +
       '<p class="pj-f"><label for="pj-addp">Folie hinzufügen</label><select id="pj-addp">' + Object.keys(prof).filter(function (k) { return !root.WorkspaceCore.isProfile(k) && !root.CollaborationCore.isProfile(k); }).map(function (k) { return '<option value="' + k + '">' + esc(prof[k].label) + '</option>'; }).join('') + '</select> <button type="button" class="btn sm" data-op="add-slide">Hinzufügen</button></p>' +
       '<p class="pj-small">Noch nicht unterstützt: weitere Ansichten (Outlook, Dateien), Antworten auf Beiträge, Bilder und eigene Layouts.</p></fieldset>' +
@@ -355,6 +357,11 @@
     var p = cur(); if (!p) return;
     if (t.tagName === 'SELECT') return;
     if (t.hasAttribute('data-path')) setPath(p, t.getAttribute('data-path'), t.value);
+    else if (t.hasAttribute('data-slide-lines')) {
+      /* Emptied = back to the project's assumptions. An explicit empty list from JSON stays until edited. */
+      var own = t.value.split('\n').map(function (x) { return x.trim(); }).filter(Boolean), slide = p.slides[+t.getAttribute('data-slide-lines')];
+      if (own.length) slide.assumptions = own; else delete slide.assumptions;
+    }
     else if (t.hasAttribute('data-lines')) setPath(p, t.getAttribute('data-lines'), t.value.split('\n').map(function (x) { return x.trim(); }).filter(Boolean));
     else return;
     if (/^states\.\d+\.tasks\..+\.(notes|checklist|comment)/.test(t.getAttribute('data-path') || '')) p.capabilityVersion = Math.max(p.capabilityVersion, 3);

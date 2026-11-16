@@ -528,7 +528,7 @@
   }
   function renderSlide(slide, name) {
     var scale = state.hires ? 2 : 1;
-    return (document.fonts ? document.fonts.ready : Promise.resolve()).then(function () { return X.toPNG(slide, scale); }).then(function (blob) {
+    return X.fontsReady().then(function () { return X.toPNG(slide, scale); }).then(function (blob) {
       var nm = scale === 2 ? name.replace(/\.png$/, '@2x.png') : name;
       X.download(blob, nm);
       return { name: nm, blob: blob, size: blob.size, scale: scale };

@@ -4,6 +4,15 @@
 // Run:                    node tests/project-journey.mjs [baseUrl]
 import { launch } from './cdp.mjs';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
+import assert from 'node:assert/strict';
+import { renderProject } from '../tools/render.mjs';
+/* The same project rendered by the CLI operation on this machine, in this run. Comparing with
+   hashes committed from another machine would test the machine, not the code. */
+const cliRender = async project => { const d = mkdtempSync(join(tmpdir(), 'mtp-cli-')); try { const m = await renderProject(project, { outDir: d }); assert.equal(m.ok, true, JSON.stringify(m.diagnostics)); return m; } finally { rmSync(d, { recursive: true, force: true }); } };
+
 
 const BASE = process.argv[2] || 'http://127.0.0.1:8766/index.html';
 const SHOTS = new URL('../docs/screenshots/bridge/', import.meta.url).pathname;
@@ -205,9 +214,9 @@ try {
   check('cli/mcp project: before-plan task shown as shared in the preview', /Schon im gemeinsamen Plan[\s\S]*Bücherkiste/.test(await prevText(2)) && !/Liste von Renate/.test(await prevText(2)));
   const web = await p.eval(`ProjectUI.exportAll({download:false,dataUrl:true}).then(r=>r.slides.map(s=>({name:s.fileName,data:s.dataUrl.split(',')[1]})))`);
   const { createHash } = await import('node:crypto');
-  let cliM = null; try { cliM = JSON.parse(readFileSync(new URL('../docs/evidence-cli-mcp/cli/manifest.json', import.meta.url), 'utf8')); } catch { /* run tests/mcp-e2e.mjs first */ }
+  let cliM = null; try { cliM = await cliRender(JSON.parse(lib)); } catch { /* reported by the check below */ }
   const webHashes = web.map(w => createHash('sha256').update(Buffer.from(w.data, 'base64')).digest('hex'));
-  check('cli/mcp project: website export = CLI files (names, order, bytes)', cliM && web.map(w => w.name).join() === cliM.slides.map(s => s.file).join() && webHashes.join() === cliM.slides.map(s => s.sha256).join(), cliM ? '' : 'no CLI manifest');
+  check('cli/mcp project: website export = CLI files (names, order, bytes)', cliM && web.map(w => w.name).join() === cliM.slides.map(s => s.file).join() && webHashes.join() === cliM.slides.map(s => s.sha256).join(), cliM ? '' : 'CLI render failed');
   await p.shot(SHOTS + '07-cli-mcp-project-editor.png', true);
 
   // 390 px

@@ -58,7 +58,7 @@
         budgets: { title: 60, question: 90, problem: 200, recommendation: 200, boundary: 200 }
       }
     }, Workspace.profiles, Collaboration.profiles),
-    limits: { people: 8, workspacePeople: 16, tasks: 12, documents: 8, slides: 6, presenterNotes: 1200, prinzipLists: PRINZIP_LISTS }
+    limits: { people: 8, workspacePeople: 16, tasks: 12, documents: 8, slides: 6, slideTitle: 70, slideAssumptions: 3, slideAssumptionText: 160, presenterNotes: 1200, prinzipLists: PRINZIP_LISTS }
   };
 
   function copy(x) { return JSON.parse(JSON.stringify(x)); }
@@ -374,6 +374,17 @@
       if (!sc) { err('unknown-scene', path + '.scene', 'Folie ' + (i + 1) + ': Szene «' + sl.scene + '» fehlt.'); return; }
       optStr(sl, 'presenterNotes', path, 'Folie ' + (i + 1));
       if (len(sl.presenterNotes) > L.presenterNotes) warn('long', path + '.presenterNotes', 'Folie ' + (i + 1) + ': Notizen sind sehr lang.');
+      /* Optional per slide: its own heading, and the assumptions that matter on this slide.
+         Absent = the project's title and all of its assumptions; an empty list = none here. */
+      optStr(sl, 'title', path, 'Folie ' + (i + 1));
+      if (len(sl.title) > L.slideTitle) warn('long', path + '.title', 'Folie ' + (i + 1) + ': Der Folientitel ist länger als ' + L.slideTitle + ' Zeichen.');
+      if (sl.assumptions != null) {
+        if (!Array.isArray(sl.assumptions) || !sl.assumptions.every(str)) err('type', path + '.assumptions', 'Folie ' + (i + 1) + ': «assumptions» muss eine Liste von Texten sein.', { expected: 'string[]' });
+        else {
+          if (sl.assumptions.length > L.slideAssumptions) warn('long', path + '.assumptions', 'Folie ' + (i + 1) + ': Mehr als ' + L.slideAssumptions + ' Voraussetzungen machen die Fusszeile schwer lesbar.');
+          sl.assumptions.forEach(function (a, j) { if (len(a) > L.slideAssumptionText) warn('long', path + '.assumptions[' + j + ']', 'Folie ' + (i + 1) + ': Voraussetzung ' + (j + 1) + ' ist länger als ' + L.slideAssumptionText + ' Zeichen.'); });
+        }
+      }
       if (sc.profile === 'prinzip-tasks') {
         var t = sl.teaching, B = CAPABILITIES.profiles['prinzip-tasks'].budgets;
         if (!isObj(t)) { err('teaching', path + '.teaching', 'Prinzip-Folie ' + (i + 1) + ': Lehrtext («teaching») fehlt.'); return; }
@@ -409,7 +420,13 @@
   /* ---------- Compiler: project + slide -> view model the existing renderers accept ---------- */
   function compile(p, slideIndex) {
     var sl = p.slides[slideIndex]; if (!sl) return null;
-    return compileScene(p, sl.scene, sl.teaching);
+    var vm = compileScene(p, sl.scene, sl.teaching);
+    if (!vm) return vm;
+    /* The footer keeps naming the sequence; the heading can be the slide's own. */
+    vm.projectTitle = vm.title;
+    if (str(sl.title) && sl.title.trim()) vm.title = sl.title.trim();
+    if (Array.isArray(sl.assumptions)) vm.assumptions = sl.assumptions.filter(str);
+    return vm;
   }
   /* Scene → view model; slides add only their teaching text. Components compile scenes directly. */
   function compileScene(p, sceneId, teaching) {
@@ -679,6 +696,7 @@
     lines.push('- Behaupte nicht, du hättest die Folien gerendert oder das JSON geprüft. Die Prüfung macht die Website beim Import.');
     lines.push('- Kein HTML, kein CSS, kein Script, keine Bild-URLs. Texte sind reiner Text.');
     lines.push('');
+    lines.push('Optional pro Folie (slides): «title» ist die Überschrift dieser Folie (höchstens ' + CAPABILITIES.limits.slideTitle + ' Zeichen, sonst gilt meta.title). «assumptions» ist eine Liste der Voraussetzungen, die auf dieser Folie zählen (höchstens ' + CAPABILITIES.limits.slideAssumptions + '; sonst erscheinen alle aus meta.assumptions, eine leere Liste zeigt keine). Gib jeder Folie einen eigenen Titel, der sagt, worauf die Teilnehmenden achten sollen.');
     lines.push('Optionale Chat-Szene (in scenes einfügen und in slides referenzieren): ' + JSON.stringify({ id: 'sc-chat', profile: 'teams-chat', team: 'Werkstatt Velotech', viewer: 'p-marco', partner: 'p-aylin', messages: [{ id: 'm1', by: 'p-aylin', text: 'Ich übernehme die Bremsen.', hint: 'Der Entscheid ist noch nicht im Plan.', decision: true }], notSeenBy: ['p-jonas'] }));
     lines.push('Optionale Detailszene: ' + JSON.stringify({ id: 'sc-detail', profile: 'planner-task', team: 'Werkstatt Velotech', state: 'after', task: 't-bremsen' }));
     lines.push('Optionale To-Do-Szene: ' + JSON.stringify({ id: 'sc-todo', profile: 'todo', team: 'Werkstatt Velotech', state: 'after', viewer: 'p-aylin', taskIds: ['t-bremsen', 't-lager'], personalListPrivate: true, myDaySelected: true, plannerConnected: true }));

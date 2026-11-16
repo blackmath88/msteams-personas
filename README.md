@@ -83,7 +83,14 @@ npm test
 python3 -m http.server 8766 --bind 127.0.0.1 &   # for the browser journeys
 node tests/journey.mjs && node tests/project-journey.mjs
 node tests/mcp-e2e.mjs                           # MCP SDK client over stdio + HTTP, and CLI
+node tests/render-fixture.mjs                    # every example renders and wraps like the baseline
 ```
+
+### Same output on every machine
+
+Slides and application screens use the bundled font Selawik (metric-compatible with Segoe UI, SIL OFL), embedded in `assets/fonts.css`; rendering stays in the browser and offline. An export stops with a clear message when the font is missing. Each rendered slide reports a `layout.hash` of its line breaks in the manifest, and `tests/render-fixture.mjs` compares all examples with `tests/fixtures/layout-baseline.json`. GitHub Actions (`.github/workflows/checks.yml`) runs data checks, unit tests and this fixture on Linux and macOS for every push. After an intended layout change: `node tests/render-fixture.mjs --update`. After changing a font file: `node tools/gen-fonts-css.mjs`. Details and limits: [render reliability handoff](docs/RENDER-RELIABILITY-HANDOFF.md).
+
+Slides in a portable project may set their own `title` and `assumptions`; without them the sequence title and all project assumptions are shown as before. A screen without teaching hints is centred instead of leaving an empty explanation panel.
 
 Browser journey instructions and runtime requirements: [V3 handoff](docs/V3-BUILD-HANDOFF.md).
 

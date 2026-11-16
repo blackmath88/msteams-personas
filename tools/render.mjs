@@ -24,16 +24,29 @@ export const MANIFEST_FORMAT = 'msteams-personas/render-manifest';
 export const LIMITS = { timeoutMs: 90_000, maxTimeoutMs: 180_000, scales: [1, 2] };
 
 const TYPES = { '.js': 'text/javascript', '.css': 'text/css', '.html': 'text/html', '.svg': 'image/svg+xml', '.png': 'image/png', '.woff2': 'font/woff2' };
-/* The page only needs the renderer scripts; the authoring UI and router are left out. */
-const SKIP_SCRIPTS = ['src/workspace-editor.js', 'src/project-ui.js', 'src/research-ui.js', 'src/app.js'];
+/*
+ * Everything the render page loads, in order. This list is explicit on purpose: the page is not
+ * derived from index.html, so a change there cannot silently alter headless rendering.
+ * tests/render-page.test.mjs keeps the two in step: every script in index.html must be listed
+ * either here or in UI_ONLY_SCRIPTS, in the same order, and the stylesheets must match.
+ */
+export const RENDER_STYLES = ['assets/fonts.css', 'src/app.css', 'src/m365.css', 'src/m365-more.css', 'src/project.css', 'src/workspace.css', 'src/collaboration.css'];
+export const RENDER_SCRIPTS = [
+  'worlds.js', 'src/library.js', 'src/library-he.js', 'src/story.js', 'src/scenes-v3.js', 'src/model.js', 'src/configurator.js',
+  'src/views.js', 'src/m365.js', 'src/m365-more.js', 'src/workspace-view.js', 'src/export.js',
+  'src/workspace-core.js', 'src/workspace-examples.js', 'src/collaboration-core.js', 'src/business-catalogue.js', 'src/research-catalogue.js',
+  'src/collaboration-view.js', 'src/project-core.js', 'src/project-render.js', 'src/component-render.js'
+];
+/* Authoring UI and router: part of the website, never loaded by the render page. */
+export const UI_ONLY_SCRIPTS = ['src/workspace-editor.js', 'src/project-ui.js', 'src/research-ui.js', 'src/app.js'];
 
 export function renderPage() {
-  const html = readFileSync(join(ROOT, 'index.html'), 'utf8');
-  const head = html.slice(0, html.indexOf('</head>'));
-  const sprite = html.match(/<svg width="0" height="0"[\s\S]*?<\/svg>/)[0];
-  const scripts = [...html.matchAll(/<script src="([^"]+)"><\/script>/g)].map(m => m[1]).filter(s => !SKIP_SCRIPTS.includes(s));
-  return `${head}\n<meta name="robots" content="noindex"></head>\n<body class="render-page">\n${sprite}\n` +
-    scripts.map(s => `<script src="${s}"></script>`).join('\n') + '\n</body></html>';
+  /* The icon sprite is markup inside index.html, shared with the website. */
+  const sprite = readFileSync(join(ROOT, 'index.html'), 'utf8').match(/<svg width="0" height="0"[\s\S]*?<\/svg>/);
+  if (!sprite) throw new Error('index.html no longer contains the icon sprite the render page needs.');
+  return '<!DOCTYPE html>\n<html lang="de">\n<head>\n<meta charset="UTF-8">\n<meta name="robots" content="noindex">\n<title>msteams-personas render</title>\n' +
+    RENDER_STYLES.map(s => `<link rel="stylesheet" href="${s}">`).join('\n') + `\n</head>\n<body class="render-page">\n${sprite[0]}\n` +
+    RENDER_SCRIPTS.map(s => `<script src="${s}"></script>`).join('\n') + '\n</body></html>';
 }
 
 /* Static server for the internal page: GET only, files under the repo's src/ and assets/ plus worlds.js. */
@@ -127,8 +140,8 @@ export async function renderProject(project, opts = {}) {
   try {
     const { r, pageErrors, durationMs } = await inPage(`ProjectRender.renderAll(${JSON.stringify(project)}, { dataUrl: true, scale: ${scale} })`, timeoutOf(opts));
     const diagnostics = pageDiagnostics(r, pageErrors), ok = r.ok && !pageErrors.length;
-    const slides = r.slides.map(s => ({ index: s.index, id: s.id, profile: s.profile, file: s.fileName, width: r.width, height: r.height, bytes: s.bytes, fit: s.fit, data: s.dataUrl }));
-    const manifest = baseManifest(project, { ok, stage: ok ? 'done' : r.stage, width: r.width, height: r.height, durationMs, slides: ok ? slides.map(({ data, ...s }) => s) : [], diagnostics });
+    const slides = r.slides.map(s => ({ index: s.index, id: s.id, profile: s.profile, file: s.fileName, width: r.width, height: r.height, bytes: s.bytes, fit: s.fit, layout: s.layout, data: s.dataUrl }));
+    const manifest = baseManifest(project, { ok, stage: ok ? 'done' : r.stage, width: r.width, height: r.height, durationMs, environment: r.environment, slides: ok ? slides.map(({ data, ...s }) => s) : [], diagnostics });
     if (ok && opts.outDir) { const e = writeAll(opts.outDir, slides, manifest, 'slides'); if (e) return baseManifest(project, { ok: false, stage: 'write', slides: [], diagnostics: [e] }); }
     return manifest;
   } catch (e) {

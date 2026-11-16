@@ -1,5 +1,5 @@
 /* The map is a teaching diagram. The adjacent app preview retains its own M365 styling. */
-.wp-slide{position:relative;box-sizing:border-box;background:#f5f8f8;color:#172e30;text-align:left;font-family:system-ui,sans-serif}
+.wp-slide{position:relative;box-sizing:border-box;background:#f5f8f8;color:#172e30;text-align:left;font-family:var(--mtp-font)}
 .wp-head{position:absolute;left:66px;top:47px;right:66px}
 .wp-head p,.wp-kind{font-weight:700;color:#005d58;letter-spacing:.06em;text-transform:uppercase;font-size:25px;margin:0 0 12px}
 .wp-head h2{font-size:58px;line-height:1.12;margin:0;overflow-wrap:anywhere}
@@ -8,7 +8,7 @@
 .wp-map h3{font-size:39px;line-height:1.12;margin:10px 0 14px;overflow-wrap:anywhere}
 .wp-map p:not(.wp-kind){font-size:27px;line-height:1.25;margin:12px 0;overflow-wrap:anywhere}
 .wp-map p.wp-kind{margin-top:12px}
-.wp-mark{display:inline-grid;place-items:center;width:37px;height:37px;margin-right:13px;border-radius:50%;background:#006761;color:white;font:700 24px/1 system-ui,sans-serif;vertical-align:middle;flex:none}
+.wp-mark{display:inline-grid;place-items:center;width:37px;height:37px;margin-right:13px;border-radius:50%;background:#006761;color:white;font:700 24px/1 var(--mtp-font);vertical-align:middle;flex:none}
 .wp-map ul{margin:12px 0 14px;padding:0;list-style:none}
 .wp-map li{display:flex;align-items:center;min-height:47px;padding:4px 12px;gap:10px;border-bottom:1px solid #dce8e6;font-size:27px;line-height:1.13;overflow-wrap:anywhere}
 .wp-map li span:first-child{min-width:0}
@@ -48,7 +48,7 @@
 .wp-guide .wp-guide-focus{font-size:22px}
 
 /* Architectural cutaway and its matching Teams scene. Sizes follow docs/mockups/three-houses.html at 1920 px (1 cqw = 19.2 px). */
-.wp-house-slide{background:radial-gradient(ellipse at 88% 9%,#ecebff,transparent 55%),#f7f7fc;color:#202239;font-family:"Segoe UI",Arial,sans-serif}
+.wp-house-slide{background:radial-gradient(ellipse at 88% 9%,#ecebff,transparent 55%),#f7f7fc;color:#202239;font-family:var(--mtp-font)}
 .wp-house-head{position:absolute;left:96px;top:64px;right:96px}
 .wp-house-scene .wp-house-head{left:48px;right:48px}
 .wp-house-head p{margin:0}
@@ -123,7 +123,7 @@
 .wp-entry-chev{width:16px;height:16px;color:#616161;margin-left:auto}
 .wp-entry-on{background:#ebf3fc}
 .wp-entry-empty{color:#616161;font-style:italic;font-size:17px}
-.wp-house-slide .wp-mark{width:28px;height:28px;margin:0 0 0 8px;background:#e8a200;color:#1b1a19;font:700 16px/1 "Segoe UI",Arial,sans-serif;box-shadow:0 0 0 3px #fff;vertical-align:middle}
+.wp-house-slide .wp-mark{width:28px;height:28px;margin:0 0 0 8px;background:#e8a200;color:#1b1a19;font:700 16px/1 var(--mtp-font);box-shadow:0 0 0 3px #fff;vertical-align:middle}
 .wp-room-files .wp-mark{margin:0}
 .wp-house button{cursor:pointer}
 .wp-house button:focus-visible{outline:3px solid #242424;outline-offset:-4px}

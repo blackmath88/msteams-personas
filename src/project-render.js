@@ -17,11 +17,11 @@
   /* opts: { scale: 1|2, dataUrl: bool, onProgress(i, n) } */
   function renderAll(p, opts) {
     opts = opts || {};
-    var v = PC.validate(p), base = { rendererVersion: PC.RENDERER_VERSION, width: X.W * (opts.scale || 1), height: X.H * (opts.scale || 1) };
+    var v = PC.validate(p), base = { rendererVersion: PC.RENDERER_VERSION, environment: { userAgent: navigator.userAgent, fonts: ['Selawik 1.01', 'MTP Symbols'] }, width: X.W * (opts.scale || 1), height: X.H * (opts.scale || 1) };
     if (!v.ok) return Promise.resolve(Object.assign(base, { ok: false, stage: 'validate', slides: [], diagnostics: v.errors.concat(v.warnings) }));
     var host = document.createElement('div'), slides = [], problems = [];
     host.className = 'export-host'; document.body.appendChild(host);
-    var chain = document.fonts ? document.fonts.ready : Promise.resolve();
+    var chain = X.fontsReady();
     p.slides.forEach(function (sl, i) {
       chain = chain.then(function () {
         if (opts.onProgress) opts.onProgress(i, p.slides.length);
@@ -31,11 +31,11 @@
         var el = host.querySelector('.slide');
         if (!el) { problems.push(diag('compose', 'Folie ' + (i + 1) + ' konnte nicht zusammengesetzt werden.', where)); return; }
         X.densify(el); X.tighten(el);
-        var fit = X.fitIssues(el);
+        var fit = X.fitIssues(el), layout = X.layout(el);
         fit.forEach(function (f) { problems.push(diag('fit', 'Folie ' + (i + 1) + ': Inhalt passt nicht (' + f + '). Bitte Text kürzen oder Einträge entfernen.', Object.assign({ detail: f }, where))); });
         return X.toPNG(el, opts.scale || 1).then(function (blob) {
           return (opts.dataUrl ? toDataUrl(blob) : Promise.resolve(null)).then(function (d) {
-            slides.push({ index: i, id: sl.id, profile: p.scenes.filter(function (s) { return s.id === sl.scene; })[0].profile, fileName: PC.fileName(p, i), bytes: blob.size, blob: opts.dataUrl ? undefined : blob, dataUrl: d || undefined, fit: fit });
+            slides.push({ index: i, id: sl.id, profile: p.scenes.filter(function (s) { return s.id === sl.scene; })[0].profile, fileName: PC.fileName(p, i), bytes: blob.size, layout: layout, blob: opts.dataUrl ? undefined : blob, dataUrl: d || undefined, fit: fit });
           });
         }, function (e) { problems.push(diag('render', 'Folie ' + (i + 1) + ': PNG-Erzeugung fehlgeschlagen (' + e.message + ').', where)); });
       });
