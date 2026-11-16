@@ -5,6 +5,7 @@ Updated 2026-11-10. `main` is the integration branch for the viewer, portable pr
 ## On branch `claude/kind-darwin-bs5cgr` (not merged)
 
 - Praxis-Hub base in `hub/`: a reader-facing second front (React, TanStack Router, Vite) that draws screens with the existing renderers. Placeholder content, not deployed. See [hub/README.md](../hub/README.md).
+- [Praxis-Hub concept](PRAXIS-HUB-CONCEPT.md): content inventory, what can be ported, navigation and the team sketch. Proposal, not built.
 
 ## Available on main
 
