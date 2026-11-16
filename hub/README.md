@@ -2,7 +2,7 @@
 
 Reader-facing practice hub: a team persona first, then its workspace, then situations and tools that end in team agreements. The existing website in the repository root stays as it is; this is a second front on the same engine.
 
-Status: base to build on. Content is placeholder text from the Unibas example deck. Not deployed.
+Status: base to build on. Content is placeholder text from the Unibas example deck. Prepared for Cloudflare, not deployed.
 
 ## Run
 
@@ -13,6 +13,34 @@ npm run dev        # http://localhost:5173
 npm run build      # type-check, then static files in hub/dist
 npm run preview    # serve the build
 ```
+
+## Deploy on Cloudflare
+
+The build is a folder of static files (`hub/dist`). There is no Worker code and no server routing, because addresses use the `#` part of the URL.
+
+Connect the repository in the Cloudflare dashboard with these settings:
+
+| Setting | Value |
+| --- | --- |
+| Root directory | `hub` |
+| Build command | `npm run build` |
+| Output directory (Pages) | `dist` |
+| Deploy command (Workers) | `npx wrangler deploy` |
+| Node version | 22, read from `hub/.nvmrc` |
+
+The build reads `../src`, `../assets` and `../examples`, so Cloudflare must check out the whole repository, not only `hub/`. If you limit builds by path, include `hub/`, `src/`, `assets/` and `examples/`.
+
+Or deploy from a terminal:
+
+```sh
+cd hub
+npm ci && npm run build
+npx wrangler deploy
+```
+
+- `wrangler.jsonc` describes a Workers project with static assets, named `praxis-hub`. Its dry run passes; a real deploy has not been run.
+- `public/_headers` sets a content security policy, basic security headers and long caching for hashed files. The pages were checked in a browser with this policy applied.
+- `X-Robots-Tag: noindex` is set while the content is placeholder text. Remove that line in `public/_headers` when the hub should be found by search engines.
 
 ## Stack
 
@@ -53,4 +81,3 @@ Team and step are part of the address, so a link can point to an exact step.
 - The house views are shown as complete slides, including the slide heading. A house component without slide chrome does not exist in the engine yet.
 - Personas and situations here are separate from the portable projects; a module cannot yet reference a shared persona and setup.
 - Search, the team agreement sheet and tests are not built.
-- Publishing needs a decision: GitHub Pages currently serves the repository root without a build step.
