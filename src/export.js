@@ -33,6 +33,7 @@
 
   /* Returns the slide HTML, or null if the combination is not available. */
   function compose(vm, p, kind, principleMeta) {
+    if (kind === 'account-switcher') return root.AccountSwitcherView.compose(vm);
     if (kind === 'collaboration') return root.CollaborationView.compose(vm);
     if (kind === 'workspace') return root.WorkspaceView.compose(vm, p);
     if (p.mode === 'prinzip') {

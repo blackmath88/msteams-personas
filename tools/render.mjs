@@ -35,7 +35,7 @@ export const RENDER_SCRIPTS = [
   'worlds.js', 'src/library.js', 'src/library-he.js', 'src/story.js', 'src/scenes-v3.js', 'src/model.js', 'src/configurator.js',
   'src/views.js', 'src/m365.js', 'src/m365-more.js', 'src/workspace-view.js', 'src/export.js',
   'src/workspace-core.js', 'src/workspace-examples.js', 'src/collaboration-core.js', 'src/business-catalogue.js', 'src/research-catalogue.js',
-  'src/collaboration-view.js', 'src/project-core.js', 'src/project-render.js', 'src/component-render.js'
+  'src/collaboration-view.js', 'src/account-switcher-core.js', 'src/account-switcher-view.js', 'src/project-core.js', 'src/project-render.js', 'src/component-render.js'
 ];
 /* Authoring UI and router: part of the website, never loaded by the render page. */
 export const UI_ONLY_SCRIPTS = ['src/workspace-editor.js', 'src/project-ui.js', 'src/research-ui.js', 'src/app.js'];
