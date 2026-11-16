@@ -4,9 +4,11 @@ Updated 2026-11-10. `main` is the integration branch for the viewer, portable pr
 
 ## On branch `claude/kind-darwin-bs5cgr` (not merged)
 
-- Render reliability round 1: bundled Selawik font, font check before every export, line-break fingerprint per slide, cross-host render fixture, GitHub Actions checks, explicit render-page load list, and three slide fixes (optional slide title, optional slide assumptions, no empty explanation panel). See the [handoff](RENDER-RELIABILITY-HANDOFF.md) for evidence and open points.
+- Praxis-Hub base in `hub/`: a reader-facing second front (React, TanStack Router, Vite) that draws screens with the existing renderers. Placeholder content, not deployed. See [hub/README.md](../hub/README.md).
 
 ## Available on main
+
+- Render reliability round 1 (PR #21): bundled Selawik font, font check before export, line-break fingerprint, cross-host render fixture, GitHub Actions checks, explicit render-page load list, optional slide title and assumptions. See the [handoff](RENDER-RELIABILITY-HANDOFF.md).
 
 - Two administration/technical-service reference stories, ten PNGs, two additional research briefs, shared domain/collaboration filters with legacy references, and CLI/MCP discovery. See [gallery](business-review/index.html), [handoff](BUSINESS-REFERENCE-HANDOFF.md) and the [published business examples](https://blackmath88.github.io/msteams-personas/index.html#/beispiele).
 

@@ -28,6 +28,22 @@ jobs:
       - name: assets/fonts.css matches the font files
         run: node tools/gen-fonts-css.mjs && git diff --exit-code -- assets/fonts.css
 
+  hub:
+    name: Praxis-Hub builds
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: hub
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: hub/package-lock.json
+      - run: npm ci
+      - run: npm run build
+
   render:
     name: Render fixture (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
