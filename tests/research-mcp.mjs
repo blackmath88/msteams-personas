@@ -7,6 +7,11 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import R from '../src/research-catalogue.js';
+import { renderProject } from '../tools/render.mjs';
+/* The same project rendered by the CLI operation on this machine, in this run. Comparing with
+   hashes committed from another machine would test the machine, not the code. */
+const cliRender = async project => { const d = mkdtempSync(join(tmpdir(), 'mtp-cli-')); try { const m = await renderProject(project, { outDir: d }); assert.equal(m.ok, true, JSON.stringify(m.diagnostics)); return m; } finally { rmSync(d, { recursive: true, force: true }); } };
+
 const temp = mkdtempSync(join(tmpdir(),'research-mcp-'));
 const client = new Client({name:'research-regression',version:'1.0.0'});
 const transport = new StdioClientTransport({command:process.execPath,args:[resolve('tools/mcp-server.mjs')],env:{...process.env,MTP_ARTIFACT_DIR:temp},stderr:'ignore'});
@@ -26,7 +31,7 @@ try {
   for(const kind of ['weekly-meeting','shared-loop']) {
     const result=await call('render_project',{project:R.project(kind)}),m=result.structuredContent;
     assert.equal(result.isError,undefined); assert.equal(m.ok,true);
-    const cli=JSON.parse(readFileSync(resolve('docs/morning-review',kind,'manifest.json')));
+    const cli=await cliRender(R.project(kind));
     assert.equal(m.slides.length,cli.slides.length);
     for(let i=0;i<m.slides.length;i++) {
       const data=(await client.readResource({uri:m.slides[i].uri})).contents[0];

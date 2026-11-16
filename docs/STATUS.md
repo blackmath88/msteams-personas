@@ -2,6 +2,10 @@
 
 Updated 2026-11-10. `main` is the integration branch for the viewer, portable projects, the CLI and the MCP server. PR #14 introduced the university collection; PR #15 adds the first administration/business reference pair and shared discovery.
 
+## On branch `claude/kind-darwin-bs5cgr` (not merged)
+
+- Render reliability round 1: bundled Selawik font, font check before every export, line-break fingerprint per slide, cross-host render fixture, GitHub Actions checks, explicit render-page load list, and three slide fixes (optional slide title, optional slide assumptions, no empty explanation panel). See the [handoff](RENDER-RELIABILITY-HANDOFF.md) for evidence and open points.
+
 ## Available on main
 
 - Two administration/technical-service reference stories, ten PNGs, two additional research briefs, shared domain/collaboration filters with legacy references, and CLI/MCP discovery. See [gallery](business-review/index.html), [handoff](BUSINESS-REFERENCE-HANDOFF.md) and the [published business examples](https://blackmath88.github.io/msteams-personas/index.html#/beispiele).

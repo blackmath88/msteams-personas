@@ -4,6 +4,14 @@ import {createHash} from 'node:crypto';
 import {resolve} from 'node:path';
 import R from '../src/research-catalogue.js';
 import {launch} from './cdp.mjs';
+import {mkdtempSync,rmSync} from 'node:fs';
+import {join} from 'node:path';
+import {tmpdir} from 'node:os';
+import {renderProject} from '../tools/render.mjs';
+/* The same project rendered by the CLI operation on this machine, in this run. Comparing with
+   hashes committed from another machine would test the machine, not the code. */
+const cliRender = async project => { const d = mkdtempSync(join(tmpdir(), 'mtp-cli-')); try { const m = await renderProject(project, { outDir: d }); assert.equal(m.ok, true, JSON.stringify(m.diagnostics)); return m; } finally { rmSync(d, { recursive: true, force: true }); } };
+
 const dir=resolve('docs/business-review/checks');mkdirSync(dir,{recursive:true});
 const page=await launch({port:0}),checks=[];
 const check=async(name,expr)=>{assert.ok(await page.eval(expr),name);checks.push(name);console.log('PASS '+name);};
@@ -36,7 +44,7 @@ try{
     await page.eval("document.querySelector('[data-op=accept]').click()");await page.sleep(180);
     assert.deepEqual(await page.eval('ProjectUI.current()'),R.project(s.id));checks.push(s.id+' preserves full JSON through import');
     const output=await page.eval('ProjectRender.renderAll(ProjectUI.current(),{dataUrl:true})');assert.equal(output.ok,true,JSON.stringify(output.diagnostics));
-    const cli=JSON.parse(readFileSync(resolve('docs/business-review',s.id,'manifest.json')));
+    const cli=await cliRender(R.project(s.id));
     for(const [i,slide]of output.slides.entries())assert.equal(createHash('sha256').update(Buffer.from(slide.dataUrl.split(',')[1],'base64')).digest('hex'),cli.slides[i].sha256);
     checks.push(s.id+' website exports five PNGs byte-identically to CLI');
   }

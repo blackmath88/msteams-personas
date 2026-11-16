@@ -1,17 +1,17 @@
 /* M365 application renderers. Fixed 1440 x 810 design viewport; scaled by .appframe. */
-.m3{position:relative;overflow:hidden;background:#fff;color:#242424;font-family:"Segoe UI","Segoe UI Web (West European)",-apple-system,BlinkMacSystemFont,"Noto Sans","Helvetica Neue",Arial,sans-serif;font-size:14px;line-height:1.43;text-align:left;letter-spacing:0}
+.m3{position:relative;overflow:hidden;background:#fff;color:#242424;font-family:var(--mtp-font);font-size:14px;line-height:1.43;text-align:left;letter-spacing:0}
 .m3 *{box-sizing:border-box;margin:0;padding:0}
 .m3 ul,.m3 ol{list-style:none}
 .m3 .fi{width:20px;height:20px;flex:none;display:inline-block;vertical-align:middle}
 .m3 time{color:#616161;font-size:12px}
 .m-av{width:var(--s);height:var(--s);border-radius:50%;display:inline-grid;place-items:center;flex:none;color:#fff;font-weight:600;font-size:calc(var(--s) * .38);line-height:1}
 .m-av-0{background:#4b5bbd}.m-av-1{background:#1f7a6f}.m-av-2{background:#b2502a}.m-av-3{background:#7a4fa0}.m-av-4{background:#3b6f9a}.m-av-5{background:#8c6a12}
-.m-mk{position:absolute;top:-9px;left:-9px;width:24px;height:24px;border-radius:50%;background:#e8a200;color:#1b1a19;font:700 13px/24px "Segoe UI",Arial,sans-serif;text-align:center;box-shadow:0 0 0 3px #fff;z-index:2}
+.m-mk{position:absolute;top:-9px;left:-9px;width:24px;height:24px;border-radius:50%;background:#e8a200;color:#1b1a19;font:700 13px/24px var(--mtp-font);text-align:center;box-shadow:0 0 0 3px #fff;z-index:2}
 .m-fn .m-mk,.m-tn .m-mk,.o-att .m-mk,.s-pane .m-mk{position:relative;top:0;left:0;margin-left:8px;display:inline-block;flex:none}
 .s-pane .m-mk{position:absolute;top:12px;right:12px;left:auto}
 /* file type glyphs */
 .ft{width:22px;height:22px;border-radius:3px;display:inline-grid;place-items:center;flex:none;position:relative}
-.ft b{font:700 11px/1 "Segoe UI",Arial,sans-serif;color:#fff}
+.ft b{font:700 11px/1 var(--mtp-font);color:#fff}
 .ft-x{background:#107c41}.ft-w{background:#185abd}.ft-p{background:#c43e1c}.ft-pdf{background:#d13438}.ft-pdf b{font-size:7px}
 .ft-folder{width:24px;height:19px;border-radius:2px 3px 3px 3px;background:#f0c040;margin-top:3px}
 .ft-folder::before{content:"";position:absolute;left:0;top:-3px;width:10px;height:5px;border-radius:2px 2px 0 0;background:#dcaa2e}
@@ -218,7 +218,7 @@
 .appframe .m3{position:absolute;left:0;top:0;transform-origin:0 0}
 
 /* ================= Slide compositions (1920 x 1080) ================= */
-.slide{position:relative;background:#eef0f4;color:#1c1f26;font-family:"Segoe UI",system-ui,-apple-system,"Noto Sans","Helvetica Neue",Arial,sans-serif;overflow:hidden;line-height:1.4}
+.slide{position:relative;background:#eef0f4;color:#1c1f26;font-family:var(--mtp-font);overflow:hidden;line-height:1.4}
 .slide *{box-sizing:border-box}
 .sl-app{position:relative;overflow:hidden;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.12),0 18px 48px rgba(20,30,60,.16);background:#fff;flex:none}
 .sl-in{position:absolute;left:0;top:0;transform-origin:0 0}
@@ -233,6 +233,7 @@
 .sl-k{margin:0;font-size:22px;color:#5d6475;font-weight:600;letter-spacing:.02em}
 .sl-h h2{margin:4px 0 0;font-size:46px;line-height:1.15;font-weight:700;letter-spacing:-.01em}
 .sl-row{position:absolute;left:56px;top:176px;right:56px;display:flex;gap:36px;align-items:flex-start}
+.slide-solo .sl-row{justify-content:center}
 .sl-notes{flex:1;min-width:0;max-height:737px;overflow:hidden}
 .sl-nh{margin:0 0 18px;font-size:22px;font-weight:700;color:#5d6475;text-transform:uppercase;letter-spacing:.06em}
 .sl-notes ol{list-style:none;margin:0;padding:0;display:grid;gap:22px}

@@ -1,0 +1,53 @@
+name: checks
+
+# Runs on every push. Nothing here deploys: GitHub Pages keeps publishing main on its own.
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    name: Data, unit tests and generated files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: node check-worlds.mjs
+      - run: npm test
+      - name: assets/fonts.css matches the font files
+        run: node tools/gen-fonts-css.mjs && git diff --exit-code -- assets/fonts.css
+
+  render:
+    name: Render fixture (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            chromium: google-chrome
+          - os: macos-latest
+            chromium: /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
+    env:
+      CHROMIUM: ${{ matrix.chromium }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Every example must render completely and wrap its text exactly like the committed
+      # baseline, on Linux and on macOS. A difference means output depends on the machine.
+      - run: node tests/render-fixture.mjs

@@ -26,8 +26,8 @@
   }
   function aiNote(vm, tool) { return vm.ai && (tool === 'recap' || tool === 'planner' || tool === 'plantask') ? vm.ai.short : ''; }
   function foot(vm, extra) {
-    var a = vm.assumptions && vm.assumptions.length ? 'Voraussetzung: ' + vm.assumptions.join(' · ') : vm.variant && vm.variant.assumption ? 'Annahme: ' + vm.fill(vm.variant.assumption) : '';
-    return '<p class="sl-foot"><span>Fiktives Beispiel · nachgebildete Oberfläche, kein Produkt von Microsoft · ' + esc(vm.title) + '</span>' +
+    var a = vm.assumptions && vm.assumptions.length ? (vm.assumptions.length > 1 ? 'Voraussetzungen: ' : 'Voraussetzung: ') + vm.assumptions.join(' · ') : vm.variant && vm.variant.assumption ? 'Annahme: ' + vm.fill(vm.variant.assumption) : '';
+    return '<p class="sl-foot"><span>Fiktives Beispiel · nachgebildete Oberfläche, kein Produkt von Microsoft · ' + esc(vm.projectTitle || vm.title) + '</span>' +
       (a || extra ? '<span class="sl-assume">' + esc([extra, a].filter(Boolean).join(' · ')) + '</span>' : '') + '</p>';
   }
 
@@ -66,6 +66,13 @@
         foot(vm, extra) + '</div>';
     }
     var notes = p.annot === false ? [] : A.notes(vm, p.sub);
+    var outside = vm.scene.outside && vm.scene.outside.length && tool === 'teams';
+    /* Nothing to explain beside the screen: no empty panel, the application takes the width. */
+    if (!notes.length && !outside) {
+      return '<div class="slide slide-folie slide-solo" data-kind="folie" style="width:' + SW + 'px;height:' + SH + 'px">' +
+        '<header class="sl-h"><p class="sl-k">' + esc(TOOL_LABEL[tool]) + ' · ' + esc(vm.team) + '</p><h2>' + esc(vm.title) + '</h2></header>' +
+        '<div class="sl-row">' + scaled(html, 0.95) + '</div>' + foot(vm, extra) + '</div>';
+    }
     return '<div class="slide slide-folie" data-kind="folie" style="width:' + SW + 'px;height:' + SH + 'px">' +
       '<header class="sl-h"><p class="sl-k">' + esc(TOOL_LABEL[tool]) + ' · ' + esc(vm.team) + '</p><h2>' + esc(vm.title) + '</h2></header>' +
       '<div class="sl-row">' + scaled(html, 0.93) +
@@ -156,13 +163,58 @@
     box.dataset.tight = '1';
   }
 
+  /*
+   * Bundled fonts (assets/fonts.css). document.fonts.ready only covers fonts already in use, so
+   * every face is requested explicitly and then checked: measuring or exporting with a system
+   * fallback would wrap text differently on each machine. Rejects when a face is missing.
+   */
+  var FONT_FACES = ['400 16px "Selawik"', '600 16px "Selawik"', '700 16px "Selawik"'];
+  var fontsPromise = null;
+  function fontsReady() {
+    if (fontsPromise) return fontsPromise;
+    if (!document.fonts || !document.fonts.load) return (fontsPromise = Promise.reject(new Error('Dieser Browser kann die mitgelieferte Schrift nicht laden.')));
+    var all = FONT_FACES.map(function (f) { return document.fonts.load(f, 'Aä'); }).concat([document.fonts.load('400 16px "MTP Symbols"', '→✓')]);
+    fontsPromise = Promise.all(all).then(function (loaded) {
+      if (loaded.some(function (faces) { return !faces.length; })) throw new Error('Die mitgelieferte Schrift (assets/fonts.css) wurde nicht geladen. Ohne sie fällt der Umbruch je nach Gerät anders aus.');
+      return document.fonts.ready;
+    });
+    fontsPromise.catch(function () { fontsPromise = null; });
+    return fontsPromise;
+  }
+
+  /*
+   * Layout fingerprint: how many lines each text block takes, in document order. Two machines
+   * that wrap every text the same way produce the same hash, even when anti-aliasing differs,
+   * so renders can be compared across hosts without comparing pixels.
+   */
+  function layout(el) {
+    var counts = [], walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), node, range = document.createRange();
+    while ((node = walker.nextNode())) {
+      if (!node.nodeValue.trim()) continue;
+      range.selectNodeContents(node);
+      var tops = [], rects = range.getClientRects();
+      for (var i = 0; i < rects.length; i++) {
+        if (!rects[i].width) continue;
+        var t = Math.round(rects[i].top);
+        if (!tops.some(function (x) { return Math.abs(x - t) <= 2; })) tops.push(t);
+      }
+      if (tops.length) counts.push(tops.length);
+    }
+    var h = 0x811c9dc5, text = counts.join(',');
+    for (var k = 0; k < text.length; k++) { h ^= text.charCodeAt(k); h = Math.imul(h, 0x01000193) >>> 0; }
+    return { textBlocks: counts.length, lines: counts.reduce(function (a, b) { return a + b; }, 0), hash: ('0000000' + h.toString(16)).slice(-8) };
+  }
+
   var cssCache = null;
   function allCss() {
     if (cssCache) return cssCache;
-    var t = [];
+    var t = [], blocked = 0;
     Array.prototype.forEach.call(document.styleSheets, function (ss) {
-      try { Array.prototype.forEach.call(ss.cssRules, function (r) { t.push(r.cssText); }); } catch (e) { /* cross-origin sheet: none expected */ }
+      try { Array.prototype.forEach.call(ss.cssRules, function (r) { t.push(r.cssText); }); } catch (e) { blocked++; }
     });
+    /* Opened from file://, Chromium does not let a page read its own stylesheets. The picture
+       would be drawn without any styling, so stop instead of exporting a broken PNG. */
+    if (blocked) throw new Error('Der Browser gibt die Gestaltung der Seite hier nicht frei (direkt als Datei geöffnet). Ansehen und Bearbeiten funktionieren; für den PNG-Export die Website über https oder einen lokalen Server öffnen.');
     return (cssCache = t.join('\n'));
   }
 
@@ -172,7 +224,8 @@
     var wrap = document.createElement('div');
     wrap.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
     wrap.className = 'export-root';
-    var style = document.createElement('style'); style.textContent = allCss() + '\n.export-root{margin:0}';
+    var css; try { css = allCss(); } catch (e) { return Promise.reject(e); }
+    var style = document.createElement('style'); style.textContent = css + '\n.export-root{margin:0}';
     wrap.appendChild(style);
     var sprite = document.querySelector('body > svg'); if (sprite) wrap.appendChild(sprite.cloneNode(true));
     var clone = slideEl.cloneNode(true); clone.style.transform = 'none'; wrap.appendChild(clone);
@@ -201,5 +254,5 @@
     setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
   }
 
-  root.Export = { compose: compose, toPNG: toPNG, fitIssues: fitIssues, densify: densify, tighten: tighten, fileName: fileName, download: download, W: SW, H: SH };
+  root.Export = { compose: compose, toPNG: toPNG, fitIssues: fitIssues, densify: densify, tighten: tighten, fontsReady: fontsReady, layout: layout, fileName: fileName, download: download, W: SW, H: SH };
 })(window);

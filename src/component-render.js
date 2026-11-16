@@ -117,7 +117,7 @@
     if (!v.ok) return Promise.resolve(Object.assign(base, { ok: false, stage: 'validate', components: [], diagnostics: v.errors.concat(v.warnings) }));
     var host = document.createElement('div'), out = [], problems = [];
     host.className = 'export-host'; document.body.appendChild(host);
-    var chain = document.fonts ? document.fonts.ready : Promise.resolve();
+    var chain = X.fontsReady();
     v.components.forEach(function (c) {
       chain = chain.then(function () { return renderOne(p, c, host, scale); }).then(function (r) {
         r.fit.forEach(function (f) { problems.push(diag('fit', 'Komponente ' + (c.index + 1) + ': Inhalt passt nicht (' + f + ').', { path: 'components[' + c.index + ']', detail: f })); });

@@ -12,7 +12,7 @@ export async function launch({ bin = process.env.CHROMIUM || 'chromium', port = 
   const base = mkdtempSync(join(tmpdir(), 'mtp-cdp-')), dir = join(base, 'profile');
   /* Chromium's own scratch files go next to the profile, so closing removes both. */
   mkdirSync(dir); mkdirSync(join(base, 'tmp'));
-  const args = ['--headless=new', '--disable-gpu', '--no-sandbox', '--hide-scrollbars', '--no-first-run', '--no-default-browser-check', '--disable-extensions', '--disable-component-update', '--disable-background-networking', `--remote-debugging-port=${port}`, `--user-data-dir=${dir}`];
+  const args = ['--headless=new', '--disable-gpu', '--no-sandbox', '--hide-scrollbars', '--font-render-hinting=none', '--no-first-run', '--no-default-browser-check', '--disable-extensions', '--disable-component-update', '--disable-background-networking', `--remote-debugging-port=${port}`, `--user-data-dir=${dir}`];
   if (width && height) args.push(`--window-size=${width},${height}`);
   /* Chromium puts a Unix socket below TMPDIR; socket paths are limited to ~100 bytes, so a
      long TMPDIR is left alone and the socket dir is removed via the profile's link instead. */

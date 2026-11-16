@@ -1,0 +1,358 @@
+{
+  "note": "Line-wrap fingerprint per slide. Regenerate with: node tests/render-fixture.mjs --update",
+  "recordedWith": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36",
+  "examples": {
+    "bibliothek-tannwil.project.json": [
+      {
+        "id": "s-kanal",
+        "textBlocks": 50,
+        "lines": 52,
+        "hash": "89d64c1b"
+      },
+      {
+        "id": "s-plan",
+        "textBlocks": 45,
+        "lines": 51,
+        "hash": "93562142"
+      },
+      {
+        "id": "s-prinzip",
+        "textBlocks": 42,
+        "lines": 47,
+        "hash": "2b47c5be"
+      }
+    ],
+    "event-handover.project.json": [
+      {
+        "id": "s-1",
+        "textBlocks": 42,
+        "lines": 47,
+        "hash": "f526b95e"
+      },
+      {
+        "id": "s-2",
+        "textBlocks": 43,
+        "lines": 50,
+        "hash": "6cd1c055"
+      },
+      {
+        "id": "s-3",
+        "textBlocks": 63,
+        "lines": 74,
+        "hash": "c1d9a237"
+      },
+      {
+        "id": "s-4",
+        "textBlocks": 28,
+        "lines": 37,
+        "hash": "cd80bc10"
+      },
+      {
+        "id": "s-5",
+        "textBlocks": 34,
+        "lines": 38,
+        "hash": "91f2a2a3"
+      }
+    ],
+    "grant-submission.project.json": [
+      {
+        "id": "s-1",
+        "textBlocks": 42,
+        "lines": 47,
+        "hash": "f526b95e"
+      },
+      {
+        "id": "s-2",
+        "textBlocks": 43,
+        "lines": 49,
+        "hash": "678df02c"
+      },
+      {
+        "id": "s-3",
+        "textBlocks": 63,
+        "lines": 73,
+        "hash": "0c4c4be2"
+      },
+      {
+        "id": "s-4",
+        "textBlocks": 28,
+        "lines": 37,
+        "hash": "cd80bc10"
+      },
+      {
+        "id": "s-5",
+        "textBlocks": 34,
+        "lines": 40,
+        "hash": "c944f21b"
+      }
+    ],
+    "leadership-forum-six.project.json": [
+      {
+        "id": "s-1",
+        "textBlocks": 39,
+        "lines": 40,
+        "hash": "096d66d5"
+      },
+      {
+        "id": "s-2",
+        "textBlocks": 48,
+        "lines": 55,
+        "hash": "b52e206e"
+      },
+      {
+        "id": "s-3",
+        "textBlocks": 50,
+        "lines": 55,
+        "hash": "9ebbac90"
+      },
+      {
+        "id": "s-detail",
+        "textBlocks": 75,
+        "lines": 82,
+        "hash": "445d37ed"
+      },
+      {
+        "id": "s-todo",
+        "textBlocks": 33,
+        "lines": 44,
+        "hash": "3c32db45"
+      },
+      {
+        "id": "s-4",
+        "textBlocks": 42,
+        "lines": 55,
+        "hash": "e67ed208"
+      }
+    ],
+    "lichtblick-kulissenwechsel.project.json": [
+      {
+        "id": "s-kanal",
+        "textBlocks": 47,
+        "lines": 49,
+        "hash": "564e7bbc"
+      },
+      {
+        "id": "s-chat",
+        "textBlocks": 42,
+        "lines": 45,
+        "hash": "817b01f8"
+      },
+      {
+        "id": "s-plan",
+        "textBlocks": 41,
+        "lines": 44,
+        "hash": "d709478f"
+      },
+      {
+        "id": "s-prinzip",
+        "textBlocks": 37,
+        "lines": 49,
+        "hash": "5d7b1c3a"
+      }
+    ],
+    "municipal-opening-hours.project.json": [
+      {
+        "id": "s-1",
+        "textBlocks": 42,
+        "lines": 48,
+        "hash": "3c92b6cf"
+      },
+      {
+        "id": "s-2",
+        "textBlocks": 55,
+        "lines": 64,
+        "hash": "2896b42f"
+      },
+      {
+        "id": "s-3",
+        "textBlocks": 64,
+        "lines": 77,
+        "hash": "1112a1d2"
+      },
+      {
+        "id": "s-4",
+        "textBlocks": 57,
+        "lines": 67,
+        "hash": "fa135744"
+      },
+      {
+        "id": "s-5",
+        "textBlocks": 34,
+        "lines": 41,
+        "hash": "16d916d8"
+      }
+    ],
+    "peer-resource.project.json": [
+      {
+        "id": "s-1",
+        "textBlocks": 30,
+        "lines": 33,
+        "hash": "46b39948"
+      },
+      {
+        "id": "s-2",
+        "textBlocks": 44,
+        "lines": 50,
+        "hash": "72e246ab"
+      },
+      {
+        "id": "s-4",
+        "textBlocks": 28,
+        "lines": 37,
+        "hash": "cd80bc10"
+      },
+      {
+        "id": "s-3",
+        "textBlocks": 56,
+        "lines": 66,
+        "hash": "5d1c5ed9"
+      },
+      {
+        "id": "s-5",
+        "textBlocks": 41,
+        "lines": 46,
+        "hash": "3c28eaf5"
+      },
+      {
+        "id": "s-6",
+        "textBlocks": 39,
+        "lines": 46,
+        "hash": "02325855"
+      }
+    ],
+    "service-appointment-change.project.json": [
+      {
+        "id": "s-1",
+        "textBlocks": 30,
+        "lines": 34,
+        "hash": "4db3a44d"
+      },
+      {
+        "id": "s-2",
+        "textBlocks": 42,
+        "lines": 47,
+        "hash": "3b92b53c"
+      },
+      {
+        "id": "s-3",
+        "textBlocks": 71,
+        "lines": 86,
+        "hash": "af5133e3"
+      },
+      {
+        "id": "s-4",
+        "textBlocks": 46,
+        "lines": 55,
+        "hash": "20fd8382"
+      },
+      {
+        "id": "s-5",
+        "textBlocks": 39,
+        "lines": 48,
+        "hash": "bee0e66f"
+      }
+    ],
+    "service-onboarding.project.json": [
+      {
+        "id": "s-1",
+        "textBlocks": 42,
+        "lines": 47,
+        "hash": "f526b95e"
+      },
+      {
+        "id": "s-2",
+        "textBlocks": 43,
+        "lines": 50,
+        "hash": "3de9264d"
+      },
+      {
+        "id": "s-3",
+        "textBlocks": 63,
+        "lines": 75,
+        "hash": "6f972f02"
+      },
+      {
+        "id": "s-4",
+        "textBlocks": 33,
+        "lines": 44,
+        "hash": "3c32db45"
+      },
+      {
+        "id": "s-5",
+        "textBlocks": 34,
+        "lines": 37,
+        "hash": "92abaa7e"
+      }
+    ],
+    "shared-loop.project.json": [
+      {
+        "id": "s-1",
+        "textBlocks": 39,
+        "lines": 46,
+        "hash": "0b9e40fd"
+      },
+      {
+        "id": "s-2",
+        "textBlocks": 39,
+        "lines": 45,
+        "hash": "c3b037a4"
+      },
+      {
+        "id": "s-3",
+        "textBlocks": 39,
+        "lines": 45,
+        "hash": "c3b037a4"
+      },
+      {
+        "id": "s-4",
+        "textBlocks": 39,
+        "lines": 46,
+        "hash": "0b9e40fd"
+      },
+      {
+        "id": "s-5",
+        "textBlocks": 34,
+        "lines": 38,
+        "hash": "32ecf0e3"
+      }
+    ],
+    "weekly-meeting.project.json": [
+      {
+        "id": "s-1",
+        "textBlocks": 54,
+        "lines": 62,
+        "hash": "e8e168f3"
+      },
+      {
+        "id": "s-2",
+        "textBlocks": 43,
+        "lines": 49,
+        "hash": "678df02c"
+      },
+      {
+        "id": "s-3",
+        "textBlocks": 28,
+        "lines": 37,
+        "hash": "cd80bc10"
+      },
+      {
+        "id": "s-4",
+        "textBlocks": 55,
+        "lines": 64,
+        "hash": "bd7caeef"
+      },
+      {
+        "id": "s-5",
+        "textBlocks": 60,
+        "lines": 70,
+        "hash": "c41005a9"
+      },
+      {
+        "id": "s-6",
+        "textBlocks": 39,
+        "lines": 47,
+        "hash": "ff32539c"
+      }
+    ]
+  }
+}
