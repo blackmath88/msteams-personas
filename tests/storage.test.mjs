@@ -11,7 +11,7 @@ const codes = p => PC.validate(p).errors.map(e => e.code);
 
 test('metaphors: same input gives the same picture, and only palette colours are used', () => {
   const palette = Object.values(M.colours).map(c => c.toLowerCase());
-  for (const name of ['rucksack', 'regal', 'haus', 'person', 'schluessel']) {
+  for (const name of ['rucksack', 'regal', 'haus', 'zimmer', 'person', 'schluessel']) {
     const o = { size: 300, highlight: true, label: 'Maras <Rucksack>' };
     const svg = M[name](o);
     assert.equal(svg, M[name](o), name);

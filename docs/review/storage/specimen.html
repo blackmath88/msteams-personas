@@ -16,9 +16,9 @@ svg{font-family:var(--mtp-font)}
 var M = Metaphors, rows = [
   [['rucksack', {}, 'normal'], ['rucksack', { sidePocket: 'highlight' }, 'sidePocket: highlight'], ['rucksack', { highlight: true }, 'highlight'], ['rucksack', { empty: true }, 'empty'], ['rucksack', { crossed: true }, 'crossed'], ['rucksack', { label: 'Maras Rucksack' }, 'label'], ['rucksack', { stroke: 4.5 }, '4.5 px'], ['rucksack', { look: 'print' }, 'print']],
   [['regal', {}, 'normal'], ['regal', { count: 3, labels: ['Allgemein', 'Pilotphase', 'Auswertung'] }, 'count: 3, labels'], ['regal', { highlight: 1 }, 'highlight: 1'], ['regal', { empty: true }, 'empty'], ['regal', { crossed: true }, 'crossed'], ['regal', { stroke: 4.5 }, '4.5 px']],
-  [['haus', {}, 'normal'], ['haus', { open: true }, 'open'], ['haus', { highlight: true, label: 'Onboarding 2027' }, 'highlight, label'], ['person', {}, 'normal'], ['person', { rucksack: true }, 'rucksack'], ['person', { rucksack: true, walking: true }, 'walking'], ['person', { crossed: true }, 'crossed'], ['schluessel', { size: 70 }, 'normal'], ['schluessel', { size: 70, highlight: true }, 'highlight']]
+  [['haus', {}, 'normal'], ['haus', { open: true }, 'open'], ['haus', { highlight: true, label: 'Onboarding 2027' }, 'highlight, label'], ['zimmer', {}, 'zimmer + regal'], ['zimmer', { highlight: true }, 'highlight'], ['person', {}, 'normal'], ['person', { rucksack: true }, 'rucksack'], ['person', { rucksack: true, walking: true }, 'walking'], ['person', { crossed: true }, 'crossed'], ['schluessel', { size: 70 }, 'normal'], ['schluessel', { size: 70, highlight: true }, 'highlight']]
 ];
 document.getElementById('sheet').innerHTML = rows.map(function (r) {
-  return '<div class="row">' + r.map(function (x) { return '<figure>' + M[x[0]](Object.assign({ size: 205 }, x[1])) + '<figcaption>' + x[2] + '</figcaption></figure>'; }).join('') + '</div>';
+  return '<div class="row">' + r.map(function (x) { return '<figure>' + M[x[0]](Object.assign({ size: 178 }, x[1])) + '<figcaption>' + x[2] + '</figcaption></figure>'; }).join('') + '</div>';
 }).join('');
 </script></body></html>

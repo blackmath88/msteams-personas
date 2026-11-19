@@ -27,10 +27,10 @@
   function metaphor(vm) {
     var m = vm.storage, sc = m.scene, v = m.variant, who = vm.person(sc.owner);
     var left = v === 'c' ? '<span class="st-duo">' + M.person(opts(v, { size: 290 })) + M.rucksack(opts(v, { size: 240 })) + '</span>' : M.rucksack(opts(v, { size: 380 }));
-    var right = v === 'c' ? '<span class="st-inhouse">' + M.haus(opts(v, { size: 300, open: true })) + '<span>' + M.regal(opts(v, { size: 132 })) + '</span></span>' : M.regal(opts(v, { size: 380 }));
+    var right = M.zimmer(opts(v, { size: 262 }));
     var pointers = !m.crops ? '' : '<svg class="st-pointers" viewBox="0 0 1920 1080" aria-hidden="true">' +
       M.kreis(550, 834, 58, 50) + (v === 'c' ? M.pfeil(488, 812, 476, 652, [450, 740]) : M.pfeil(490, 815, 420, 694, [470, 720])) +
-      M.kreis(1641, 844, 56, 30) + (v === 'c' ? M.pfeil(1590, 884, 1346, 660, [1300, 960]) : M.pfeil(1590, 884, 1350, 736, [1310, 960])) + '</svg>';
+      M.kreis(1641, 844, 56, 30) + M.pfeil(1384, 830, 1346, 616, [1338, 770]) + '</svg>';
     return '<div class="slide st-slide st-metaphor st-v-' + v + (m.crops ? '' : ' st-nocrops') + '" style="width:1920px;height:1080px">' +
       '<header class="st-head"><p class="st-eyebrow">Prinzip · Wo liegt die Datei?</p><h2>' + E(sc.title) + '</h2>' +
       '<p class="st-deck">Der Rucksack gehört dir. Das Regal gehört dem Haus.</p></header>' +
@@ -38,7 +38,7 @@
       side('st-rucksack', 'Die Ausnahme', 'Rucksack', '= OneDrive «Eigene Dateien»', left, E(genitive(who.name)) + ' Rucksack',
         ['Gehört <strong>einer Person</strong>', 'Für das, was wirklich nur meins ist', 'Geht mit, wenn die Person geht'],
         m.crops && railCrop(), 'In Teams:<br>links «OneDrive»') +
-      side('st-regal', 'Der Normalfall', 'Regal', '= SharePoint hinter «Dateien»', right, v === 'c' ? 'Regal im Haus<br>«' + E(sc.team) + '»' : 'Regal im Zimmer<br>«' + E(sc.channel) + '»',
+      side('st-regal', 'Der Normalfall', 'Regal', '= SharePoint hinter «Dateien»', right, 'Zimmer «' + E(sc.channel) + '»<br>mit seinem Regal',
         ['Gehört <strong>dem Haus</strong> (Team)', 'Für unsere Dateien, auch für Unfertiges', 'Bleibt, wenn jemand auszieht'],
         m.crops && tabCrop(sc), 'In Teams: Reiter «Dateien» im Kanal') +
       '</div>' + pointers +

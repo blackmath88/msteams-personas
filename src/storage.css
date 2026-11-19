@@ -29,8 +29,6 @@
 .st-crop-tabs .t-chn p{margin:0}
 .st-pointers{position:absolute;left:0;top:0;width:1920px;height:1080px;pointer-events:none}
 .st-duo{display:flex;align-items:flex-end;gap:6px}
-.st-inhouse{position:relative;display:block}
-.st-inhouse>span{position:absolute;left:0;right:0;bottom:22px;display:flex;justify-content:center}
 .st-caption{margin:10px 0 0;font-size:24px;font-weight:600;line-height:1.25;text-align:center;max-width:300px}
 .st-foot{position:absolute;left:96px;right:96px;bottom:51px;display:flex;justify-content:space-between;align-items:baseline;gap:24px;margin:0;border-top:1.5px solid #202239;padding-top:15px;color:#4b4d68;font-size:19px;white-space:nowrap}
 .st-foot strong{color:#202239}
