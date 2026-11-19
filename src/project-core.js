@@ -16,13 +16,14 @@
 (function (root, factory) {
   var core = factory(typeof module === 'object' && module.exports ? require('./workspace-core.js') : root.WorkspaceCore,
     typeof module === 'object' && module.exports ? require('./workspace-examples.js') : root.WorkspaceExample,
-    typeof module === 'object' && module.exports ? require('./collaboration-core.js') : root.CollaborationCore);
+    typeof module === 'object' && module.exports ? require('./collaboration-core.js') : root.CollaborationCore,
+    typeof module === 'object' && module.exports ? require('./storage-core.js') : root.StorageCore);
   if (typeof module === 'object' && module.exports) module.exports = core;
   else root.ProjectCore = core;
-})(typeof window !== 'undefined' ? window : globalThis, function (Workspace, workspaceExample, Collaboration) {
+})(typeof window !== 'undefined' ? window : globalThis, function (Workspace, workspaceExample, Collaboration, Storage) {
   var FORMAT = 'msteams-personas/project';
   var PROJECT_VERSION = 1;
-  var CAPABILITY_VERSION = 6;
+  var CAPABILITY_VERSION = 7;
   var RENDERER_VERSION = 'v3';
   var MAX_INPUT = 200 * 1024;
   var ID = /^[a-z][a-z0-9-]{0,39}$/;
@@ -57,7 +58,7 @@
         label: 'Prinzip: Aufgaben, vorher und nachher', renderer: 'principle:tasks', needs: ['before', 'after'],
         budgets: { title: 60, question: 90, problem: 200, recommendation: 200, boundary: 200 }
       }
-    }, Workspace.profiles, Collaboration.profiles),
+    }, Workspace.profiles, Collaboration.profiles, Storage.profiles),
     limits: { people: 8, workspacePeople: 16, tasks: 12, documents: 8, slides: 6, slideTitle: 70, slideAssumptions: 3, slideAssumptionText: 160, presenterNotes: 1200, prinzipLists: PRINZIP_LISTS }
   };
 
@@ -186,7 +187,7 @@
     if (!isObj(p)) { err('not-object', '', 'Das Projekt ist kein JSON-Objekt.'); return { ok: false, errors: errors, warnings: warnings }; }
     if (p.format !== FORMAT) err('format', 'format', 'Unbekanntes Format. Erwartet: «' + FORMAT + '».');
     if (p.projectVersion !== PROJECT_VERSION) err('project-version', 'projectVersion', 'Projektversion ' + JSON.stringify(p.projectVersion) + ' wird nicht unterstützt (erwartet ' + PROJECT_VERSION + ').');
-    if (![1, 2, 3, 4, 5, CAPABILITY_VERSION].includes(p.capabilityVersion)) err('capability-version', 'capabilityVersion', 'Fähigkeitsversion ' + JSON.stringify(p.capabilityVersion) + ' wird nicht unterstützt (erwartet 1 bis ' + CAPABILITY_VERSION + ').');
+    if (![1, 2, 3, 4, 5, 6, CAPABILITY_VERSION].includes(p.capabilityVersion)) err('capability-version', 'capabilityVersion', 'Fähigkeitsversion ' + JSON.stringify(p.capabilityVersion) + ' wird nicht unterstützt (erwartet 1 bis ' + CAPABILITY_VERSION + ').');
     var meta = p.meta;
     if (!isObj(meta)) { err('meta', 'meta', 'Angaben zur Abfolge («meta») fehlen oder sind kein Objekt.'); meta = {}; }
     reqStr(meta, 'title', 'meta', 'meta-title', 'Die Abfolge braucht einen Titel.');
@@ -275,12 +276,13 @@
     });
     Workspace.check(p, err);
     Collaboration.check(p, err);
+    Storage.check(p, err);
     scenes.forEach(function (e) {
       var sc = e.x, path = 'scenes[' + e.i + ']', prof = str(sc.profile) && Object.prototype.hasOwnProperty.call(CAPABILITIES.profiles, sc.profile) ? CAPABILITIES.profiles[sc.profile] : null;
       if (!prof) { err('unknown-profile', path + '.profile', 'Szene «' + diagnosticText(sc.id) + '»: Ansicht «' + diagnosticText(sc.profile) + '» wird nicht unterstützt. Möglich: ' + Object.keys(CAPABILITIES.profiles).join(', ') + '.'); return; }
       if (sc.profile === 'teams-chat' && p.capabilityVersion === 1) err('profile-version', path + '.profile', 'Teams: Chat zu zweit braucht capabilityVersion 2.');
       if (['todo', 'planner-task'].indexOf(sc.profile) >= 0 && p.capabilityVersion < 3) err('profile-version', path + '.profile', prof.label + ' braucht capabilityVersion 3.');
-      if (Workspace.isProfile(sc.profile) || Collaboration.isProfile(sc.profile)) return;
+      if (Workspace.isProfile(sc.profile) || Collaboration.isProfile(sc.profile) || Storage.isProfile(sc.profile)) return;
       var B = prof.budgets;
       reqStr(sc, 'team', path, 'scene-team', 'Szene «' + diagnosticText(sc.id) + '» braucht einen Teamnamen.');
       if (len(sc.team) > B.team) warn('long', path + '.team', 'Teamname ist länger als ' + B.team + ' Zeichen.');
@@ -434,6 +436,7 @@
     var P = idx(p.people), D = idx(p.documents || []);
     var people = p.people.map(function (x, i) { return { id: x.id, idx: i, original: x.name, name: x.name, role: x.role || '', external: false, outside: false }; });
     var byId = idx(people);
+    if (Storage.isProfile(sc.profile)) return { title: p.meta.title, organisation: p.meta.organisation, storage: Storage.model(p, sc), person: function (id) { return byId[id]; }, assumptions: p.meta.assumptions || [] };
     if (Collaboration.isProfile(sc.profile)) return { title: p.meta.title, team: sc.team, collaboration: Collaboration.model(p, sc), person: function (id) { return byId[id]; }, assumptions: p.meta.assumptions || [] };
     if (Workspace.isProfile(sc.profile)) {
       var model = Workspace.model(p, sc);
@@ -523,6 +526,7 @@
   function slidePlan(p, slideIndex) {
     var sl = p.slides[slideIndex], sc = sl && idx(p.scenes)[sl.scene]; if (!sc) return null;
     if (Collaboration.isProfile(sc.profile)) return { params: {}, kind: 'collaboration', meta: null };
+    if (Storage.isProfile(sc.profile)) return { params: {}, kind: 'storage', meta: null };
     if (Workspace.isProfile(sc.profile)) return { params: { mode: Workspace.hasTab(sc.profile) ? 'szene' : 'prinzip', sub: 'workspace', profile: sc.profile, tab: sc.tab, key: p.meta.id + '-' + sl.id }, kind: 'workspace', meta: null };
     if (sc.profile === 'prinzip-tasks') {
       var t = sl.teaching || {};
@@ -703,6 +707,7 @@
     lines.push('');
     lines.push('Arbeitsbereich: workspace-map und workspace-scene verwenden dieselbe workspace.nodes-Liste. root und selected verweisen auf IDs. workspace-scene nutzt tab posts oder files. viewer ist für persönliche Ablagen erforderlich. house ist ein optionales Boolean für die Karte.');
     lines.push('Ab capabilityVersion 5: workspace-houses zeigt alle Teams der Person viewer anhand ihrer Mitgliedschaften. Keine Felder root, selected oder tab. workspace-house-teams zeigt ein Team (root) mit derselben Auswahl (selected) im Haus und in Teams, tab posts oder files. Optional: teamType und collaboration am Team, je maximal 24 Zeichen.');
+    lines.push('Ab capabilityVersion 7: storage-metaphor zeigt Rucksack (OneDrive, eine Person) und Regal (SharePoint, Kanal-Dateien) nebeneinander. Felder: title, owner (Personen-ID), team, channel; optional crops (false blendet die Teams-Ausschnitte aus). Das Regal ist der Normalfall, der Rucksack die Ausnahme.');
     lines.push('Vollständiges Haus-Beispiel: ' + JSON.stringify(workspaceExample('workspace-houses')));
     lines.push('Vollständiges Arbeitsbereich-Beispiel (alternativ zur Aufgabenabfolge): ' + JSON.stringify(workspaceExample()));
     lines.push('## Vollständiges Beispiel (Inhalt ersetzen, Struktur beibehalten)');

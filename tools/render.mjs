@@ -30,12 +30,12 @@ const TYPES = { '.js': 'text/javascript', '.css': 'text/css', '.html': 'text/htm
  * tests/render-page.test.mjs keeps the two in step: every script in index.html must be listed
  * either here or in UI_ONLY_SCRIPTS, in the same order, and the stylesheets must match.
  */
-export const RENDER_STYLES = ['assets/fonts.css', 'src/app.css', 'src/m365.css', 'src/m365-more.css', 'src/project.css', 'src/workspace.css', 'src/collaboration.css'];
+export const RENDER_STYLES = ['assets/fonts.css', 'src/app.css', 'src/m365.css', 'src/m365-more.css', 'src/project.css', 'src/workspace.css', 'src/collaboration.css', 'src/storage.css'];
 export const RENDER_SCRIPTS = [
   'worlds.js', 'src/library.js', 'src/library-he.js', 'src/story.js', 'src/scenes-v3.js', 'src/model.js', 'src/configurator.js',
   'src/views.js', 'src/m365.js', 'src/m365-more.js', 'src/workspace-view.js', 'src/export.js',
   'src/workspace-core.js', 'src/workspace-examples.js', 'src/collaboration-core.js', 'src/business-catalogue.js', 'src/research-catalogue.js',
-  'src/collaboration-view.js', 'src/project-core.js', 'src/project-render.js', 'src/component-render.js'
+  'src/collaboration-view.js', 'src/metaphors.js', 'src/storage-core.js', 'src/storage-view.js', 'src/project-core.js', 'src/project-render.js', 'src/component-render.js'
 ];
 /* Authoring UI and router: part of the website, never loaded by the render page. */
 export const UI_ONLY_SCRIPTS = ['src/workspace-editor.js', 'src/project-ui.js', 'src/research-ui.js', 'src/app.js'];

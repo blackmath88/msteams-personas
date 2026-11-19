@@ -34,6 +34,7 @@
   /* Returns the slide HTML, or null if the combination is not available. */
   function compose(vm, p, kind, principleMeta) {
     if (kind === 'collaboration') return root.CollaborationView.compose(vm);
+    if (kind === 'storage') return root.StorageView.compose(vm);
     if (kind === 'workspace') return root.WorkspaceView.compose(vm, p);
     if (p.mode === 'prinzip') {
       var pid = principleMeta ? principleMeta.id : 'chat';
@@ -94,6 +95,10 @@
       });
       if (footer.bottom > slideBox.bottom || footer.right > slideBox.right) out.push('Zusammenarbeit: Voraussetzungen passen nicht in die Fusszeile');
     }
+    Array.prototype.forEach.call(el.querySelectorAll('.st-head, .st-text'), function (box) {
+      var limit = box.matches('.st-head') ? el.querySelector('.st-sides').getBoundingClientRect().top : (box.parentNode.querySelector('.st-where') || box.parentNode).getBoundingClientRect()[box.parentNode.querySelector('.st-where') ? 'top' : 'bottom'];
+      if (box.getBoundingClientRect().bottom > limit - 4 || box.scrollWidth > box.clientWidth + 2) out.push('Ablage: Text passt nicht');
+    });
     Array.prototype.forEach.call(el.querySelectorAll('.wp-map section'), function (section) {
       if (section.scrollHeight > section.clientHeight + 2) out.push('Arbeitsbereich: Karte ist zu dicht');
     });

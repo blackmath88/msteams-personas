@@ -1,0 +1,8 @@
+{
+  "format": "msteams-personas/project", "projectVersion": 1, "capabilityVersion": 7,
+  "meta": { "id": "storage-variant-a", "title": "Rucksack & Regal", "organisation": "Programmkoordination (fiktiv)", "fictional": true, "assumptions": [] },
+  "people": [ { "id": "mara", "name": "Mara Conti", "role": "Programmkoordination" }, { "id": "sophie", "name": "Sophie Frei", "role": "Administration" } ],
+  "documents": [], "tasks": [], "states": [ { "id": "before", "label": "Vorher", "tasks": {} }, { "id": "after", "label": "Nachher", "tasks": {} } ],
+  "scenes": [ { "id": "sc-metapher", "profile": "storage-metaphor", "title": "Rucksack oder Regal?", "owner": "mara", "team": "Onboarding 2027", "channel": "Pilotphase", "variant": "a" } ],
+  "slides": [ { "id": "s-1", "scene": "sc-metapher", "presenterNotes": "Der Rucksack gehört einer Person, das Regal dem Haus. Das Regal ist der Normalfall." } ]
+}
